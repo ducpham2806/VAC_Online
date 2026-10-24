@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+
+  html,
+  body,
+  #root {
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #1a120c;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    image-rendering: pixelated;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+}
+
+.safe-top {
+  padding-top: max(0.35rem, env(safe-area-inset-top, 0px));
+}
+.safe-bottom {
+  padding-bottom: max(0.35rem, env(safe-area-inset-bottom, 0px));
+}
+.safe-left {
+  padding-left: max(0.5rem, env(safe-area-inset-left, 0px));
+}
+.safe-right {
+  padding-right: max(0.5rem, env(safe-area-inset-right, 0px));
+}
+
+.touch-btn {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  touch-action: manipulation;
+  transition: transform 0.1s ease, filter 0.12s ease;
+}
+.touch-btn:active {
+  transform: scale(0.94);
+}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd166"/>
+      <stop offset="55%" stop-color="#8ac926"/>
+      <stop offset="100%" stop-color="#2e8b8d"/>
+    </linearGradient>
+    <linearGradient id="goldBadge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe066"/>
+      <stop offset="100%" stop-color="#f59f00"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer Wood Frame (Maskable Safe) -->
+  <rect width="512" height="512" rx="110" fill="#3e2413"/>
+  <rect x="18" y="18" width="476" height="476" rx="96" fill="url(#sky)" stroke="#f5b82e" stroke-width="12"/>
+
+  <!-- Red Tile Farmhouse Roof (Vườn & Chuồng) -->
+  <polygon points="256,82 92,196 420,196" fill="#b83224" stroke="#3e2413" stroke-width="12" stroke-linejoin="round"/>
+  <rect x="136" y="196" width="240" height="92" rx="10" fill="#fff8eb" stroke="#3e2413" stroke-width="10"/>
+  <rect x="226" y="218" width="60" height="70" fill="#6e4121"/>
+
+  <!-- Conical Hat (Nón Lá) Emblem in Front -->
+  <polygon points="256,120 140,224 372,224" fill="#f5deb3" stroke="#3e2413" stroke-width="10" stroke-linejoin="round"/>
+  <line x1="256" y1="120" x2="200" y2="224" stroke="#c88a4b" stroke-width="5"/>
+  <line x1="256" y1="120" x2="256" y2="224" stroke="#c88a4b" stroke-width="5"/>
+  <line x1="256" y1="120" x2="312" y2="224" stroke="#c88a4b" stroke-width="5"/>
+
+  <!-- Lotus Pond Waves (Ao) -->
+  <path d="M 48 320 Q 152 295 256 320 T 464 320 L 464 460 L 48 460 Z" fill="#2e8b8d" stroke="#1b3b2b" stroke-width="8"/>
+  <circle cx="256" cy="306" r="24" fill="#f4a7b9" stroke="#3e2413" stroke-width="6"/>
+
+  <!-- Wooden Name Plaque: VAC ONLINE -->
+  <rect x="64" y="338" width="384" height="96" rx="24" fill="#543018" stroke="url(#goldBadge)" stroke-width="10"/>
+  <text x="256" y="394" font-size="64" text-anchor="middle" fill="#ffeb3b" font-family="system-ui, sans-serif" font-weight="900" letter-spacing="2">VAC ONLINE</text>
+  <text x="256" y="422" font-size="21" text-anchor="middle" fill="#fff8eb" font-family="system-ui, sans-serif" font-weight="700">NÔNG TRẠI 3 MIỀN VIỆT NAM</text>
+</svg>

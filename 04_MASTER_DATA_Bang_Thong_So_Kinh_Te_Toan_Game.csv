@@ -1,0 +1,147 @@
+Category,ID,Name_VN,Region,Unlock_Level,Time_Minutes,Seed_Or_Buy_Cost_Gold,Input_Ingredients,Yield_Count,Base_Sell_Gold,Max_Market_Gold_2x,Net_Profit_Base,Net_Profit_Max_Market,GPM_Max_Market,XP_Reward,Energy_Restore_Or_Cost,Stealable_Max_Per_Batch,Notes
+Crop_Common,CROP_01,Lúa Nước (Tẻ Thơm),All,1,2,2,1 Hạt Lúa,2,2,4,2,4,2.00,1,0,1,Cây lương thực gốc xay cám và nấu cơm
+Crop_Common,CROP_02,Rau Muống Nước,All,2,4,3,1 Hạt Rau Muống,2,3,6,3,6,1.50,2,0,1,Trồng ruộng nước hoặc đất ẩm
+Crop_Common,CROP_03,Ngô (Bắp) Nếp,All,2,7,4,1 Hạt Ngô,2,4,8,4,8,1.14,2,0,1,Nguyên liệu cám gà và sữa bắp
+Crop_Common,CROP_04,Hành Lá & Rau Mùi,All,3,10,5,1 Hạt Hành Mùi,2,5,10,5,10,1.00,2,0,1,Gia vị nêm canh cá và phở
+Crop_Common,CROP_05,Cải Ngọt & Cải Xanh,All,4,12,6,1 Hạt Cải,2,6,12,6,12,1.00,3,0,1,Nấu canh cá rô và muối dưa cải
+Crop_Common,CROP_06,Khoai Lang Mật,All,5,15,7,1 Dây Khoai,2,7,14,7,14,0.93,3,0,1,Nguyên liệu cám heo và khoai nướng
+Crop_Common,CROP_07,Đậu Tương (Đậu Nành),All,5,20,9,1 Hạt Đậu Tương,2,9,18,9,18,0.90,4,0,1,Làm đậu phụ làng Mơ và sữa đậu nành
+Crop_Common,CROP_08,Dưa Chuột (Dưa Leo),All,6,22,10,1 Hạt Dưa Leo,2,10,20,10,20,0.91,4,0,1,Leo giàn tre thấp - Ăn kèm cơm sườn
+Crop_Common,CROP_09,Mía Tím / Mía Lau,All,7,30,12,1 Hom Mía,2,12,24,12,24,0.80,5,0,1,Ép nước mía và thắng đường mật mía
+Crop_Common,CROP_10,Lạc (Đậu Phộng),All,7,35,13,1 Hạt Lạc,2,13,26,13,26,0.74,5,0,1,Làm kẹo lạc trà đá và ép dầu phộng
+Crop_Common,CROP_11,Sả Ớt Hiểm & Gừng Ta,All,8,45,15,1 Khóm Sả Ớt,2,15,30,15,30,0.67,6,0,1,Gia vị cay nồng cho món kho và hấp
+Crop_Common,CROP_12,Đậu Xanh Lòng Vàng,All,8,50,16,1 Hạt Đậu Xanh,2,16,32,16,32,0.64,7,0,1,Làm nhân bánh chưng bánh Pía và nấu chè
+Crop_Common,CROP_13,Cà Chua Đỏ & Cà Tím,All,9,60,19,1 Hạt Cà Chua,2,19,38,19,38,0.63,8,0,1,Nấu bún riêu cua đồng và canh trứng
+Crop_Common,CROP_14,Mướp Hương & Khổ Qua,All,10,75,21,1 Hạt Mướp,2,21,42,21,42,0.56,9,0,1,Leo giàn tre hoa vàng rực rỡ - Nấu canh cua
+Crop_Common,CROP_15,Lúa Nếp Cái Hoa Vàng,All,11,80,22,1 Hạt Nếp Quý,2,22,44,22,44,0.55,10,0,1,Gói bánh chưng bánh tét và đồ xôi ngũ sắc
+Crop_Common,CROP_16,Bầu Sao & Bí Đao,All,12,90,24,1 Hạt Bầu Bí,2,24,48,24,48,0.53,10,0,1,Trái bầu hồ lô đung đưa dưới giàn tre
+Crop_Common,CROP_17,Khoai Môn & Củ Sắn (Đậu),All,13,100,26,1 Củ Giống,2,26,52,26,52,0.52,11,0,1,Nấu chè khoai môn và làm nhân bò bía
+Crop_Common,CROP_18,Vừng (Mè Đen) & Hạt Sen,All,14,110,28,1 Hạt Giống,2,28,56,28,56,0.51,12,0,1,Làm bánh đa vừng và chè sen dưỡng tâm
+Crop_Common,CROP_19,Sen Đồng Tháp / Hồ Tây,All,15,120,30,1 Củ Sen Đầm,2,30,60,30,60,0.50,12,0,1,Trồng dưới đầm nước - Thu Hoa sen & Ngó sen
+Crop_Common,CROP_20,Dưa Hấu Mai An Tiêm,All,16,135,33,1 Hạt Dưa Hấu,2,33,66,33,66,0.49,14,0,1,Trái tròn xanh sọc đậm ruột đỏ tươi mát
+Crop_Common,CROP_21,Nấm Rơm & Mộc Nhĩ,All,17,150,36,1 Bịch Phôi Nấm + Rơm,2,36,72,36,72,0.48,15,0,1,Trồng trên ụ rơm ẩm - Làm nem rán và lẩu
+Crop_Common,CROP_22,Hoa Nhài & Hoa Cúc Vàng,All,18,160,38,1 Khóm Hoa,2,38,76,38,76,0.48,16,0,1,Ướp trà hoa nhài và thu hút Ong mật
+Crop_Tree_Common,CROP_23,Đu Đủ Ruột Đỏ (Lâu năm),All,8,120,120,Mua Cây (Thu 4 mùa = 13 quả),13,18,36,114,348,0.73,12,-2 Energy (Khi chặt),1,Làm gỏi đu đủ và mứt chua ngọt
+Crop_Tree_Common,CROP_24,Dừa Xiêm Xanh (Lâu năm),All,10,180,160,Mua Cây (Thu 4 mùa = 13 quả),13,25,50,165,490,0.68,16,-2 Energy (Khi cưa),1,Lấy nước dừa kho cá và cùi dừa làm kẹo
+Crop_Tree_Common,CROP_25,Ổi Lê & Hồng Xiêm (Lâu năm),All,12,195,190,Mua Cây (Thu 4 mùa = 13 quả),13,28,56,174,538,0.69,17,-2 Energy (Khi cưa),1,Trái cây dân dã chấm muối ớt
+Crop_Tree_Common,CROP_26,Chuối Tiêu Quê (Lâu năm),All,14,210,220,Mua Bụi (Thu 4 mùa = 13 nải),13,32,64,196,612,0.73,18,-2 Energy (Chặt thân),1,Khi chặt nhận thêm Thân Chuối băm cho Heo/Vịt
+Crop_Tree_Common,CROP_27,Xoài Cát Hòa Lộc (Lâu năm),All,15,225,260,Mua Cây (Thu 4 mùa = 13 quả),13,36,72,208,676,0.75,20,-2 Energy (Khi cưa),1,Làm xoài lắc và sinh tố xoài
+Crop_Tree_Common,CROP_28,Mít Thái / Mít Mật (Lâu năm),All,17,240,300,Mua Cây (Thu 4 mùa = 13 quả),13,40,80,220,740,0.77,22,-3 Energy (Khi cưa),1,Mít sấy khô và sữa chua mít
+Crop_Tree_Common,CROP_29,Tre Làng & Trúc Xanh (Lâu năm),All,19,200,240,Mua Khóm (Thu 4 mùa = 13 thân),13,34,68,202,644,0.81,19,-3 Energy (Khi đốn),1,Thu Măng tre nấu canh & Thân tre đan rổ/nón cho Nhân công
+Crop_Tree_Common,CROP_30,Cau & Trầu Không (Lâu năm),All,21,260,340,Mua Cây (Thu 4 mùa = 13 buồng),13,45,90,245,830,0.80,24,-3 Energy (Khi cưa),1,Vật phẩm bắt buộc cho Lễ Cưới Làng Quê & Cúng Tổ Tiên
+Crop_Regional,CROP_N01,Cải Cúc & Su Hào (Bắc Bậc 1),North,6,25,11,1 Hạt Giống Bắc,2,11,22,11,22,0.88,5,0,1,Rau vụ Đông Bắc Bộ - Bán khác miền +10% Xu
+Crop_Regional,CROP_C01,Tỏi Lý Sơn & Ớt Xiêm (Trung Bậc 1),Central,6,25,11,1 Hạt Giống Trung,2,11,22,11,22,0.88,5,0,1,Vua gia vị miền Trung - Bán khác miền +10% Xu
+Crop_Regional,CROP_S01,Bông Điên Điển & Bông Súng (Nam Bậc 1),South,6,25,11,1 Hạt Giống Nam,2,11,22,11,22,0.88,5,0,1,Rau mùa nước nổi Nam Bộ - Bán khác miền +10% Xu
+Crop_Regional,CROP_N02,Chè Tân Cương Thái Nguyên (Bắc Bậc 2),North,10,150,36,1 Hạt Chè Bắc,2,36,72,36,72,0.48,15,0,1,Búp chè xanh non sao trà đạo
+Crop_Regional,CROP_C02,Thanh Long Ruột Đỏ (Trung Bậc 2),Central,10,150,36,1 Hom Thanh Long,2,36,72,36,72,0.48,15,0,1,Đặc sản Bình Thuận xuất khẩu Tàu hỏa
+Crop_Regional,CROP_S02,Khóm (Dứa) Cầu Đúc (Nam Bậc 2),South,10,150,36,1 Chồi Khóm Nam,2,36,72,36,72,0.48,15,0,1,Nấu canh chua cá lóc và làm mứt khóm
+Crop_Regional,CROP_N03,Vải Thiều Thanh Hà (Bắc Bậc 3),North,16,240,320,Mua Cây Lâu Năm (13 chùm),13,42,84,226,772,0.80,22,-3 Energy,1,Vòm cây đỏ rực trái vải tiến vua
+Crop_Regional,CROP_C03,Giàn Nho Ninh Thuận (Trung Bậc 3),Central,16,240,320,Mua Giàn Lâu Năm (13 chùm),13,42,84,226,772,0.80,22,-3 Energy,1,Ủ rượu vang nho và mứt nho sấy
+Crop_Regional,CROP_S03,Măng Cụt Lái Thiêu (Nam Bậc 3),South,16,240,320,Mua Cây Lâu Năm (13 quả),13,42,84,226,772,0.80,22,-3 Energy,1,Nữ hoàng trái cây - Làm Gỏi gà măng cụt
+Crop_Regional,CROP_N04,Nhãn Lồng Hưng Yên & Mận Hậu (Bắc Bậc 4),North,18,280,380,Mua Cây Lâu Năm (13 chùm),13,50,100,270,920,0.82,25,-3 Energy,1,Long nhãn sấy khô nấu chè hạt sen
+Crop_Regional,CROP_C04,Hồ Tiêu Chư Sê & Điều Đỏ (Trung Bậc 4),Central,18,280,380,Mua Trụ Lâu Năm (13 giỏ),13,50,100,270,920,0.82,25,-3 Energy,1,Hạt tiêu cay nồng & Hạt điều rang muối
+Crop_Regional,CROP_S04,Vú Sữa Lò Rèn & Chôm Chôm (Nam Bậc 4),South,18,280,380,Mua Cây Lâu Năm (13 chùm),13,50,100,270,920,0.82,25,-3 Energy,1,Trái ngọt miệt vườn Cửu Long
+Crop_Regional,CROP_N05,Bưởi Diễn & Đào Nhật Tân (Bắc Bậc 5),North,22,330,440,Mua Cây Lâu Năm (13 quả),13,60,120,340,1120,0.85,28,-3 Energy,1,Đại đặc sản Bắc Bộ - Chè bưởi & Hoa Tết
+Crop_Regional,CROP_C05,Cà Phê Buôn Ma Thuột (Trung Bậc 5),Central,22,330,440,Mua Cây Lâu Năm (13 giỏ),13,60,120,340,1120,0.85,28,-3 Energy,1,Đại đặc sản Tây Nguyên - Cà phê phin & Cà phê muối
+Crop_Regional,CROP_S05,Sầu Riêng Ri6 & Dừa Sáp (Nam Bậc 5),South,22,330,440,Mua Cây Lâu Năm (13 trái),13,60,120,340,1120,0.85,28,-3 Energy,1,Đại đặc sản Nam Bộ - Bánh Pía & Chè Sầu
+Crop_Mutant,CROP_MUT_01,Lúa Tím Thảo Dược (Đột Biến Cấp 1),All_Hybrid,17,180,250,Ghép 2 Lúa Nếp + 1 Phấn Hoa + 2000 Xu (Tỷ lệ 35%),2,95,190,65,155,0.86,30,0,1,Vườn Ươm Chiết Cành - Gạo tím thảo dược quý
+Crop_Mutant,CROP_MUT_02,Dưa Hấu Vuông Tài Lộc (Đột Biến Cấp 2),All_Hybrid,20,240,400,Ghép 2 Dưa Hấu + 1 Bùn Phù Sa + 4000 Xu (Tỷ lệ 25%),2,150,300,100,240,1.00,40,0,1,Vườn Ươm Chiết Cành - Chưng bàn thờ Tết +50 Mỹ Quan
+Crop_Mutant,CROP_MUT_03,Bưởi Hồ Lô & Sen Nghìn Cánh (Đột Biến VIP),All_Hybrid,24,360,600,Ghép 1 Bưởi/Sen + 1 Mật Ong + 8000 Xu (Tỷ lệ 15%),2,240,480,160,380,1.06,60,0,1,Vườn Ươm Chiết Cành - Phát sáng lung linh trên vườn!
+Livestock_Common,ANI_01,Gà Ri (Trứng Gà Ta),All,2,15,40,1 Cám Gà (2 Lúa + 1 Ngô),1,14,28,6,16,1.07,4,0,0,Mỗi 3 lần thu nhận 1 Phân Hữu Cơ bón vườn
+Livestock_Common,ANI_02,Chim Cút Đẻ Trứng,All,5,20,65,1 Cám Cút (1 Lúa + 1 Đậu),1,16,32,7,19,0.95,5,0,0,Trứng cút lộn xào me và nhân bánh bao
+Livestock_Common,ANI_03,Vịt Cỏ Chạy Đồng (Trứng Vịt),All,6,30,90,1 Cám Vịt (1 Lúa + 1 Rau),1,19,38,9,23,0.77,6,0,0,Bơi dưới ao chúi đầu mò ốc giảm bùn đáy ao
+Livestock_Common,ANI_04,Thỏ Trắng & Bồ Câu Pháp,All,8,45,140,1 Cỏ Non (1 Rau + 1 Khoai + 1 Đậu),1,28,56,14,34,0.76,8,0,0,Nấu cháo bồ câu hạt sen bồi bổ +30 Energy
+Livestock_Common,ANI_05,Heo Móng Cái (Thịt Heo Sạch),All,9,90,250,1 Cám Heo (2 Khoai + 1 Ngô + 1 Thân Chuối),1,42,84,24,50,0.56,12,0,0,Mỗi 3 lần thu nhận 1 Hộp Trùn Quế nuôi cá
+Livestock_Common,ANI_06,Tằm Ăn Lá Dâu (Nhả Tơ Vàng),All,13,100,320,2 Lá Dâu / Lá Chuối Non,1,48,96,26,58,0.58,15,0,0,Thu Kén Tơ Tằm dệt quần áo bảo hộ cho Nhân công & Thời trang!
+Livestock_Common,ANI_07,Bò Vàng / Bò Sữa (Sữa Tươi),All,15,120,600,1 Cỏ Ủ (2 Đậu + 1 Mía + 1 Rơm),1,62,124,32,70,0.58,18,0,0,Nguyên liệu pha cà phê sữa làm sữa chua & bánh
+Livestock_Common,ANI_08,Ong Mật Hoa Nhãn / Hoa Cà Phê,All,17,140,450,Hút mật từ Cây ăn quả quanh vườn,1,55,110,35,80,0.57,18,0,0,Thu Mật Ong Rừng & Phấn Hoa (Dùng lai tạo Cây Đột Biến!)
+Livestock_Regional,ANI_N01,Gà Đông Tảo Hưng Yên (Bắc),North,14,60,180,1 Thóc Mầm (2 Lúa + 1 Đậu),1,40,80,27,52,0.87,14,0,0,Chân đỏ to oai vệ - Cho Trứng & Đùi gà tiến vua
+Livestock_Regional,ANI_C01,Dê Núi & Cừu Ninh Thuận (Trung),Central,14,60,180,1 Cỏ Ngô (2 Rau + 1 Ngô),1,40,80,27,52,0.87,14,0,0,Cho Sữa Dê & Lông Cừu Trắng dệt thời trang
+Livestock_Regional,ANI_S01,Vịt Đồng Lòng Đỏ Son (Nam),South,14,60,180,1 Mồi Ốc (1 Lúa + 1 Ốc),1,40,80,27,52,0.87,14,0,0,Làm Trứng vịt muối và nhân Bánh Pía Sóc Trăng
+Livestock_Regional,ANI_N02,Lợn Bản Cắp Nách / Bò Mông (Bắc VIP),North,21,150,550,2 Ngô Nếp + 1 Khoai Môn,1,78,156,48,106,0.71,24,0,0,Làm Thịt Trâu/Bò Gác Bếp Tây Bắc thượng hạng
+Livestock_Regional,ANI_C02,Hươu Sao Hương Sơn Lấy Nhung (Trung VIP),Central,21,150,550,2 Cỏ Non + 1 Nhân Sâm/Đậu,1,78,156,48,106,0.71,24,0,0,Thu Lộc Nhung & Sữa Hươu bồi bổ đại tiệc
+Livestock_Regional,ANI_S02,Nhà Nuôi Chim Yến Miệt Vườn (Nam VIP),South,21,150,550,Tự bay săn mồi + Nước tinh khiết,1,78,156,48,106,0.71,24,0,0,Thu Tổ Yến Sào chưng đường phèn hạt sen
+Pet_Guard,PET_01,Chó Phú Quốc Xoáy Lưng,All,5,480,0,Cho ăn 1 Cơm Thịt mỗi 8h,1,0,0,0,0,0,30,0,0,70% bắt trộm (Trừ 60 Xu ví trộm + 1 Dép Tổ Ong) & Đào vật tư kho
+Pet_Guard,PET_02,Mèo Tam Thể / Mèo Mướp,All,7,360,1500,Cho ăn 1 Cá Rô / Sữa mỗi 6h,1,0,0,0,0,0,25,0,0,Bắt chuột bảo vệ Bồ Thóc + Tăng 30 Điểm Mỹ Quan
+Pet_Guard,DEF_02,Đàn Ngỗng Trời Giữ Vườn,All,12,360,2500,Cho ăn 1 Lúa + 1 Rau mỗi 6h,1,0,0,0,0,0,25,0,0,40% mổ kẻ trộm (Trừ 30 Xu ví trộm) - Cộng dồn 85% với Chó
+Pet_Guard,PET_03,Trâu Đen Làng Quê (Cày Ruộng),All,16,480,0,Đổi bằng Voucher Tàu Hỏa,1,0,0,0,0,0,50,0,0,Buff Nội tại: Giảm 10% thời gian chín toàn bộ cây ruộng
+Pet_Guard,PET_04,Chim Sáo Đen Biết Nói (Lồng Tre),All,20,360,0,Mở từ Đập Niêu Gacha SSR,1,0,0,0,0,0,40,0,0,Hót chào khách sang thăm + Báo trước 30p mặt hàng Thương Lái Giá Cao!
+Aquaculture_Common,AQUA_01,Cá Rô Đồng,All,3,20,30,1 Mồi Cám (1 Lúa + 1 Rau),1,17,34,12,22,1.10,5,0,1,Mỗi lần kéo lưới tăng +1 Độ Bùn Ao
+Aquaculture_Common,AQUA_02,Tép Đồng & Cá Bống Nhỏ,All,5,25,40,1 Cám Gạo Ủ,1,21,42,15,28,1.12,6,0,1,Làm Tép đồng rang khế và Bánh xèo tôm nhảy
+Aquaculture_Common,AQUA_03,Cua Đồng & Ốc Bươu Đen,All,8,35,60,2 Rau Muống Ủ,1,26,52,20,36,1.03,8,0,1,Nguyên liệu nấu Bún riêu cua đồng & Ốc hấp sả
+Aquaculture_Common,AQUA_04,Cá Chép Vàng & Cá Diếc,All,11,45,100,1 Ngô + 1 Trùn Quế,1,34,68,26,46,1.02,10,0,1,Nấu cháo cá chép và thả cá Ông Công Ông Táo
+Aquaculture_Common,AQUA_05,Ếch Đồng & Lươn Vàng,All,13,60,140,1 Trùn Quế + 1 Cua Nhỏ,1,42,84,30,56,0.93,12,0,1,Đặt ống trúm tre ven ao - Làm Miến lươn & Ếch xào sả ớt
+Aquaculture_Common,AQUA_06,Cá Trê Vàng & Cá Rô Phi,All,15,75,180,1 Cám + 1 Trùn Quế,1,50,100,34,64,0.85,14,0,1,Cá trê nướng dầm mắm gừng
+Aquaculture_Common,AQUA_07,Cá Lóc (Cá Quả) Đồng,All,17,90,220,1 Cua/Ốc + 1 Ngô,1,58,116,38,68,0.76,16,0,1,Làm Cá lóc nướng trui cuốn lá sen & Canh chua
+Aquaculture_Common,AQUA_08,Trai Sông Ngậm Ngọc Trai,All,19,120,280,2 Bùn Phù Sa + 1 Đậu,1,68,136,44,88,0.73,20,0,1,Thu Thịt Trai nấu cháo + 25% rớt Ngọc Trai chế tác trang sức!
+Aquaculture_Common,AQUA_09,Ba Ba / Cua Đinh Nuôi Ao Đá,All,23,180,380,1 Cá Nhỏ + 1 Ốc Bươu,1,95,190,62,130,0.72,26,0,1,Món Ba ba om chuối đậu đại tiệc
+Aquaculture_Common,AQUA_10,Cá Chép Koi Ngũ Sắc (Hồ Cảnh),All,25,210,450,1 Mồi Cao Đạm + 1 Hạt Sen,1,110,220,75,155,0.74,28,0,0,Tăng +80 Điểm Mỹ Quan Phong Thủy cho Ao nhà
+Aquaculture_Regional,AQUA_N01,Cá Trắm Đen Vũ Đại (Bắc Bậc 1),North,15,150,260,1 Ốc Bươu + 1 Đậu Tương,1,70,140,45,95,0.63,18,0,1,Đặc sản Ao Bắc Bộ - Nguyên liệu số 1 Cá Kho Vũ Đại
+Aquaculture_Regional,AQUA_C01,Cá Bống Sông Trà & Tôm Sú (Trung Bậc 1),Central,15,150,260,1 Trùn Quế + 1 Ngô,1,70,140,45,95,0.63,18,0,1,Đặc sản Ao Trung Bộ - Cá bống kho tiêu đất võ
+Aquaculture_Regional,AQUA_S01,Cá Tra Cá Basa & Cá Linh Non (Nam Bậc 1),South,15,150,260,1 Cám Gạo + 1 Bông Điên Điển,1,70,140,45,95,0.63,18,0,1,Đặc sản Ao Nam Bộ - Nấu Lẩu mắm & Lẩu cá linh
+Aquaculture_Regional,AQUA_N02,Cá Anh Vũ & Cá Lăng Sông Đà (Bắc Bậc 2),North,21,195,380,1 Trùn Quế + 1 Tép Đồng,1,92,184,60,124,0.64,24,0,1,Chả cá Lã Vọng Hà Nội trứ danh
+Aquaculture_Regional,AQUA_C02,Cá Chình Suối & Ghẹ Xanh Đầm Ô Loan (Trung Bậc 2),Central,21,195,380,1 Cá Nhỏ + 1 Cua/Ốc,1,92,184,60,124,0.64,24,0,1,Ghẹ hấp bia và cháo hàu/ghẹ đầm Ô Loan
+Aquaculture_Regional,AQUA_S02,Cá Tai Tượng & Cá Kèo (Nam Bậc 2),South,21,195,380,1 Rau Muống + 1 Cám Đậu,1,92,184,60,124,0.64,24,0,1,Cá tai tượng chiên xù cuốn bánh tráng & Lẩu cá kèo
+Aquaculture_Regional,AQUA_N03,Rươi Tứ Kỳ Hải Dương (Bắc VIP),North,26,240,500,2 Bùn Phù Sa + 1 Đậu,1,120,240,80,160,0.67,30,0,1,Đặc sản Thủy sản VIP Bắc Bộ - Làm Chả rươi vỏ quýt
+Aquaculture_Regional,AQUA_C03,Tôm Hùm Bông Phú Yên (Trung VIP),Central,26,240,500,1 Cua/Ốc + 1 Cá Nhỏ,1,120,240,80,160,0.67,30,0,1,Đặc sản Thủy sản VIP Trung Bộ
+Aquaculture_Regional,AQUA_S03,Tôm Càng Xanh & Cua Cà Mau (Nam VIP),South,26,240,500,1 Trùn Quế + 2 Đậu Tương,1,120,240,80,160,0.67,30,0,1,Đặc sản Thủy sản VIP Nam Bộ
+Product_Basic,PROD_01,Cơm Trắng Nóng Hổi,All,4,5,12,3 Lúa Nước,1,11,22,5,10,2.00,3,+5 Energy / +25 Độ No Thợ,0,Bếp Củi Quê Mẹ - Nuôi cơm Nhân công Lán Thợ
+Product_Basic,PROD_02,Khoai Lang & Ngô Nướng Bếp Than,All,5,10,22,1 Khoai Lang + 1 Ngô + 1 Hành,1,20,40,9,18,1.80,6,+9 Energy / +30 Độ No Thợ,0,Bếp Củi Quê Mẹ
+Product_Basic,PROD_03,Canh Cải Cá Rô Đồng,All,5,20,62,1 Cá Rô + 2 Cải Xanh + 1 Hành,1,52,104,21,42,2.10,11,+16 Energy / +45 Độ No Thợ,0,Món khoái khẩu của Chú Tư Cày
+Product_Basic,PROD_04,Tép Đồng Rang Khế / Thịt Ba Chỉ,All,7,20,74,1 Tép Đồng + 1 Hành Ớt + 1 Mía,1,60,120,23,46,2.30,12,+18 Energy / +50 Độ No Thợ,0,Bếp Củi Quê Mẹ
+Product_Basic,PROD_05,Đậu Phụ Làng Mơ Rán Giòn,All,8,25,54,3 Đậu Tương,1,45,90,18,36,1.44,10,+12 Energy / +40 Độ No Thợ,0,Lò Làm Đậu & Bánh
+Product_Basic,PROD_06,Bánh Đa Vừng Nướng Quạt Than,All,9,20,48,2 Lúa + 1 Vừng Đen + 1 Khoai,1,42,84,18,36,1.80,9,+11 Energy / +35 Độ No Thợ,0,Món khoái khẩu của Cô Năm Thảo
+Product_Basic,PROD_07,Bánh Cuốn Nóng Nhân Thịt,All,10,30,110,2 Lúa + 1 Thịt Heo + 1 Hành,1,88,176,33,66,2.20,15,+20 Energy / +60 Độ No Thợ,0,Món khoái khẩu của Dì Bảy Bếp
+Product_Basic,PROD_08,Canh Bầu Nấu Tôm ("Chồng Chan Vợ Húp"),All,12,25,90,1 Bầu Sao + 1 Tép/Tôm + 1 Hành,1,74,148,29,58,2.32,14,+19 Energy / +55 Độ No Thợ,0,Món Giải Đố Ca Dao Ông Đồ
+Product_Basic,PROD_09,Nước Mía Siêu Sạch Quất Tắc,All,12,15,48,2 Mía Tím,1,42,84,18,36,2.40,9,+12 Energy / +15 Tinh Thần Thợ,0,Quán Nước Đầu Làng
+Product_Basic,PROD_10,Sữa Đậu Nành & Sữa Bắp Nóng,All,13,25,60,2 Đậu Tương + 1 Ngô + 1 Mía,1,52,104,22,44,1.76,11,+15 Energy / +20 Tinh Thần Thợ,0,Quán Nước Đầu Làng
+Product_Basic,PROD_11,Trà Đá Chè Xanh & Kẹo Lạc,All,13,20,98,1 Chè Thái Nguyên + 1 Lạc + 1 Mía,1,82,164,33,66,3.30,15,+18 Energy / +25 Tinh Thần Thợ,0,Thưởng phụ cấp giải khát cho Nhân công
+Product_Basic,PROD_12,Ốc Bươu Hấp Sả Lá Chanh,All,14,30,82,1 Cua/Ốc + 1 Sả Ớt,1,68,136,27,54,1.80,13,+18 Energy / +50 Độ No Thợ,0,Bếp Củi Quê Mẹ
+Product_Mid,PROD_13,Bún Riêu Cua Đồng Đậu Phụ,All,16,45,186,2 Lúa + 1 Cua Đồng + 1 Cà Chua + 1 Đậu Phụ,1,155,310,62,124,2.76,28,+28 Energy / +90 Độ No Thợ,0,Món khoái khẩu của Anh Sáu Kình (Ao Cá)
+Product_Mid,PROD_14,Miến Lươn Nghệ An / Cháo Lươn,All,16,40,144,2 Khoai/Đậu + 1 Lươn Đồng + 1 Hành Ớt,1,122,244,50,100,2.50,24,+25 Energy / +80 Độ No Thợ,0,Quầy Bún Phở Gia Truyền
+Product_Mid,PROD_15,Phở Bò Gia Truyền Hà Nội,All,17,50,192,2 Lúa + 1 Bò/Thịt + 1 Gừng Sả + 1 Hành,1,160,320,64,128,2.56,30,+30 Energy / +100 Độ No Thợ,0,Món khoái khẩu của Chú Tám Mộc
+Product_Mid,PROD_16,Cá Lóc Nướng Trui Cuốn Lá Sen,All,18,40,176,1 Cá Lóc + 1 Lá Sen + 1 Hành Ớt,1,148,296,60,120,3.00,26,+26 Energy / +85 Độ No Thợ,0,Bếp Củi Quê Mẹ
+Product_Mid,PROD_17,Dưa Cải & Cà Pháo Muối Chua,All,20,35,62,2 Cải Xanh + 1 Cà + 1 Ớt,1,55,110,24,48,1.37,12,+14 Energy / +35 Độ No Thợ,0,Xưởng Muối Dưa & Đồ Khô
+Product_Mid,PROD_18,Bánh Chưng Xanh / Bánh Tét Tết,All,20,90,180,2 Nếp Cái + 1 Đậu Xanh + 1 Thịt Heo,1,155,310,65,130,1.44,32,+35 Energy / +100 Độ No Thợ,0,Thưởng Tết cho toàn bộ Lán Thợ!
+Product_CrossRegion,PROD_N01,Cốm Làng Vòng Gói Lá Sen (Bắc),North_Recipe,12,35,88,2 Nếp Non + 1 Lá Sen,1,80,160,36,72,2.06,16,+20 Energy,0,Quà biếu NPC tăng +60 Điểm Thân Mật
+Product_CrossRegion,PROD_C01,Cà Phê Muối Cố Đô (Trung),Central_Recipe,15,30,192,1 Cà Phê (Trung) + 1 Sữa Bò + 1 Mía,1,170,340,74,148,4.93,28,+25 Energy / +30 Tinh Thần Thợ,0,Tăng tốc chạy +15% trong 15 phút
+Product_CrossRegion,PROD_S01,Bánh Pía Sầu Riêng Trứng Muối (Nam),South_Recipe,16,45,232,1 Sầu Riêng (Nam) + 1 Trứng Vịt (Nam) + 1 Đậu Xanh,1,205,410,89,178,3.96,35,+32 Energy / +35 Tinh Thần Thợ,0,Đặc sản bánh kẹo Nam Bộ bán chạy nhất Chợ
+Product_CrossRegion,PROD_19,Gỏi Gà Đông Tảo Măng Cụt (Bắc + Nam),All_Cross,19,50,248,1 Gà Đông Tảo (Bắc) + 1 Măng Cụt (Nam) + 1 Hành Ớt,1,220,440,96,192,3.84,38,+35 Energy,0,Món Hot Trend kết hợp Gà Bắc & Măng Cụt Nam!
+Product_CrossRegion,PROD_20,Bún Bò Huế Giò Heo Cay Nồng (Trung + Bắc),All_Cross,19,55,220,2 Lúa + 1 Thịt Móng Cái (Bắc) + 1 Sả Tỏi Lý Sơn (Trung),1,195,390,85,170,3.09,35,+34 Energy / +100 Độ No Thợ,0,Quầy Bún Phở Gia Truyền
+Product_CrossRegion,PROD_21,Lẩu Cá Linh Bông Điên Điển (Nam + Trung),All_Cross,20,60,214,1 Cá Linh (Nam) + 1 Bông Điên Điển (Nam) + 1 Khóm + 1 Ớt (Trung),1,190,380,83,166,2.77,36,+35 Energy,0,Món đặc sản Mùa Nước Nổi
+Product_CrossRegion,PROD_22,Cá Kho Tộ Vũ Đại (Giao Thoa 3 Miền),All_Cross,22,120,312,1 Cá Trắm (Bắc) + 1 Tiêu/Tỏi (Trung) + 1 Dừa (Nam),1,290,580,134,268,2.23,55,+45 Energy / Món Khoái Khẩu Quản Gia,0,Món Đại Tiệc kết hợp Đặc sản cả 3 Miền!
+Product_CrossRegion,PROD_23,Chè Khúc Bạch Sầu Riêng Vải Thiều (3 Miền),All_Cross,24,75,348,1 Vải Thiều (Bắc) + 1 Sầu Riêng (Nam) + 1 Sữa + 1 Hạt Sen,1,320,640,146,292,3.89,62,+42 Energy,0,Quán Nước Đầu Làng - Giá trị cao
+Product_CrossRegion,PROD_24,Chả Rươi Vỏ Quýt & Tôm Hùm Hấp Dừa (VIP 3 Miền),All_Cross,27,150,530,1 Rươi (Bắc) + 1 Tôm Hùm (Trung) + 1 Dừa Sáp (Nam),1,480,960,215,430,2.87,85,+60 Energy,0,Đỉnh cao ẩm thực Tiến Vua cuối game!
+Product_Craft,CRAFT_01,Nón Lá Bài Thơ & Rổ Rá Tre (Đồ Thợ),All,14,45,96,1 Tre Trúc + 1 Lá Sen/Cọ,1,85,170,37,74,1.23,20,-20% Tốc độ đói Nhân công (72h),0,Cấp phát cho Nhân công đội làm việc ngoài nắng!
+Product_Craft,CRAFT_02,Áo Cánh Nâu & Áo Bà Ba Vải Thô (Đồ Thợ),All,15,60,120,1 Kén Tơ Tằm + 1 Củ Nâu/Lá,1,110,220,50,100,1.67,25,+15% Tốc độ làm việc Nhân công (72h),0,Quần áo lao động cấp phát cho Nhân công Lán Thợ!
+Product_Craft,CRAFT_03,Áo Tơi Lá Cọ & Ủng Lội Ruộng (Đồ Thợ),All,18,75,150,2 Lá Dừa/Cọ + 1 Dây Mây,1,140,280,65,130,1.73,28,100% Làm việc dưới Mưa & -20% t/g Vét Ao,0,Trang bị bảo hộ cho Anh Sáu Kình (Ao Cá)
+Product_Craft,CRAFT_04,Đồng Phục Lụa Tân Châu / Hà Đông (Đồ Thợ VIP),All,24,120,216,2 Kén Tơ Tằm + 1 Hoa Cúc/Sen (Nhuộm),1,195,390,87,174,1.45,35,+25% Tốc độ Thợ & +5% Nhặt Vật Tư Kho,0,May quần áo đẹp cho Nhân công & Thời trang!
+Hired_Worker,WORK_01,Chú Tư Cày (Thợ Làm Vườn & Trồng Cây),All,14,1440,800,Lương 800 Xu/ngày + 60 Độ No + Áo Nón,1,0,0,0,0,0,50,Tự động Gieo hạt + Tưới nước + Thu hoạch Vườn,0,Mở khóa tại Lán Thợ Lv 14 (Thu hoạch sau 5p chín)
+Hired_Worker,WORK_02,Cô Năm Thảo (Người Chăn Nuôi & Xay Cám),All,16,1440,1100,Lương 1100 Xu/ngày + 75 Độ No + Áo Khăn,1,0,0,0,0,0,65,Tự động Xay cám + Cho Chuồng ăn + Thu Trứng/Sữa/Phân,0,Mở khóa tại Lán Thợ Lv 16
+Hired_Worker,WORK_03,Anh Sáu Kình (Thợ Chăm Ao Cá & Vét Bùn),All,18,1440,1500,Lương 1500 Xu/ngày + 90 Độ No + Áo Tơi Ủng,1,0,0,0,0,0,80,Tự động Ủ mồi + Nuôi Ao + Kéo lưới + Vét Bùn Ao (Free ⚡),0,Mở khóa tại Lán Thợ Lv 18
+Hired_Worker,WORK_04,Dì Bảy Bếp (Đầu Bếp Phụ & Nấu Cơm Thợ),All,20,1440,2000,Lương 2000 Xu/ngày + 100 Độ No + Tạp Dề,1,0,0,0,0,0,100,Tự động chạy 8 Nhà máy + Nấu cơm dọn lên Bàn Lán Thợ,0,Mở khóa tại Lán Thợ Lv 20
+Hired_Worker,WORK_05,Chú Tám Mộc (Thợ Vườn Cây Lâu Năm & Đan Lát),All,22,1440,2600,Lương 2600 Xu/ngày + 120 Độ No + Áo Chàm,1,0,0,0,0,0,120,Tự động Bón Bùn Phù Sa + Thu 18 Cây Lâu Năm + Cưa cây già,0,Mở khóa tại Lán Thợ Lv 22
+Hired_Worker,WORK_06,Ông Quản Gia Cửu (Tổng Quản Điền Trang VIP),All,25,1440,3500,Lương 3500 Xu/ngày (Free nếu có Thẻ Tháng VIP),1,0,0,0,0,0,150,Điều phối 5 thợ + Tự phát lương/cơm/áo + Đóng Tàu Hỏa,0,Mở khóa tại Lán Thợ Lv 25
+Benchmark_Feature,BM_BOOM_01,Thương Lái Đột Xuất: Cơn Sốt Nông Sản (09:00 & 20:00),All,9,180,0,Mỗi nhà 1 mặt hàng ngẫu nhiên giá 1.5x -> 3.0x Base,1,0,0,0,0,0,25,Bạn bè sang bán ké (Tối đa 20 món/người) -> Chủ nhà nhận +5% Hoa Hồng,0,Cảm hứng từ Stalk Market (Animal Crossing)
+Benchmark_Feature,BM_DINH_01,Trùng Tu Đình Làng Bậc 1: Cổng Tam Quan,All,11,0,5000,Gói Nông Sản Sơ Cấp (50 Lúa + 30 Ngô + 10 Gỗ Lim),1,0,0,0,0,0,150,Mở khóa Gánh Hàng Rong ghé thăm x2 lần/ngày + 20 Ngọc,0,Cảm hứng từ Community Center (Stardew Valley)
+Benchmark_Feature,BM_DINH_02,Trùng Tu Đình Làng Bậc 2: Sân Đình & Thủy Đình,All,16,0,15000,Gói Đặc Sản 3 Miền (10 Vải + 10 Cà Phê + 10 Sầu Riêng + 15 Ngói),1,0,0,0,0,0,350,Mở khóa Đập Niêu Gacha & Sân Thi Duyên Dáng Làng Quê + 50 Ngọc,0,Community Center Bậc 2
+Benchmark_Feature,BM_DINH_03,Trùng Tu Đình Làng Bậc 3: Đại Đình & Bia Đá Công Đức,All,23,0,50000,Gói Tiến Vua (5 Cá Kho Vũ Đại + 5 Chè Khúc Bạch + 5 Lụa Tơ Tằm),1,0,0,0,0,0,800,Khắc tên lên Bia Đá Công Đức + Buff vĩnh viễn +5% Sản lượng Toàn Trang Trại!,0,Community Center Bậc 3 Hoàn tất
+Benchmark_Feature,BM_TOTEM_01,Miếu Thần Nông / Ông Địa: Quẻ Đại Cát Mùa Vụ,All,8,1440,0,Dâng lễ mỗi sáng: 1 Trái Cây Tươi hoặc 1 Ly Cà Phê Sữa,1,0,0,0,0,0,15,25% Xác suất rút trúng: Tăng +20% rớt Nông sản Hoàng Kim ⭐ trong 24h,0,Tín ngưỡng dân gian vui tươi
+Benchmark_Feature,BM_TOTEM_02,Miếu Thần Nông / Ông Địa: Quẻ Tài Lộc Chợ Phiên,All,8,1440,0,Dâng lễ mỗi sáng: 1 Bánh Chưng hoặc 1 Đĩa Xôi Ngũ Sắc,1,0,0,0,0,0,15,25% Xác suất rút trúng: Tăng +10% Xu từ mọi Đơn hàng Hợp Tác Xã trong 24h,0,Quẻ Xăm May Mắn Đầu Ngày
+Benchmark_Feature,BM_TOTEM_03,Miếu Thần Nông / Ông Địa: Quẻ An Ninh Thôn Xóm,All,8,1440,0,Dâng lễ mỗi sáng: 1 Cơm Trắng + 1 Trứng Gà,1,0,0,0,0,0,15,25% Xác suất rút trúng: Chó Phú Quốc & Ngỗng tăng +15% tỷ lệ bắt trộm trong 24h,0,Quẻ Xăm May Mắn Đầu Ngày
+Benchmark_Feature,BM_TOTEM_04,Miếu Thần Nông / Ông Địa: Quẻ Gia Nhân Hăng Say,All,14,1440,0,Dâng lễ mỗi sáng: 1 Ấm Trà Đá Chè Xanh,1,0,0,0,0,0,15,25% Xác suất rút trúng: Toàn bộ Nhân công Lán Thợ giảm 30% tốc độ đói bụng trong 24h,0,Quẻ Xăm May Mắn Đầu Ngày
+Benchmark_Feature,BM_DERBY_01,Hội Làng Đua Thuyền Rồng Hợp Tác Xã (Thứ 6 - CN),All,13,4320,0,Mỗi thành viên làm tối đa 5 Nhiệm vụ Chèo Thuyền/tuần (+50m -> +150m/NV),1,0,0,0,0,0,200,Top 3 Bang hội nhận Cúp Vàng Đình Làng + 100 Ngọc + Giống Đột Biến,0,Cảm hứng từ Hay Day Neighborhood Derby
+Benchmark_Feature,BM_FASHION_01,Hội Thi Thời Trang "Duyên Dáng Làng Quê" Hàng Tuần,All,10,10080,500,Phối 12 Slots theo Chủ đề Tuần (Mỗi lượt chấm điểm bạn bè nhận +30 Xu),1,0,0,0,0,0,100,Top 3 dựng Tượng Đồng tại Cổng Chợ 7 ngày + Vương Miện SSR + 150 Ngọc,0,Cảm hứng từ Love Nikki / Play Together Contest
+Benchmark_Feature,BM_HOME_01,Khu Du Lịch Sinh Thái Homestay Cấp 1 (Nhà Sàn Tre),All,26,360,45000,Đón 2 Khách Thành Phố/lượt (Cần phục vụ 2 Món Đặc Sản + 500 Mỹ Quan),1,650,650,350,350,0.97,90,Nhận 650 Xu + 20 Điểm Danh Vọng + 10% rớt Quà Phố Thị (Ngọc/Vé Gacha),0,End-game Passive Income & Food Sink
+Benchmark_Feature,BM_HOME_02,Khu Du Lịch Sinh Thái Homestay Cấp 2 (Biệt Thự Đầm Sen),All,30,360,120000,Đón 4 Khách VIP/lượt (Cần 4 Món Đại Tiệc 3 Miền + 1200 Mỹ Quan),1,1600,1600,850,850,2.36,220,Nhận 1600 Xu + 50 Điểm Danh Vọng + 25% rớt Rương Thời Trang SR/SSR,0,End-game Luxury Sink & Reward
+New_Feature_Proposal,NEW_EXP_01,Thám Hiểm Rừng Trúc & Bãi Bồi Ven Sông (Đốt Stamina),All,11,0,0,Tốn 5 -> 15 ⚡ Năng lượng / lần chặt tre đào măng bắt cua đá mò cổ vật,3,45,90,45,90,3.00,20,-5 đến -15 Energy -> Thu Măng Rừng + Đất Sét + Mảnh Cổ Vật Đáy Ao,0,Cảm hứng từ Family Island / Coral Island Foraging
+New_Feature_Proposal,NEW_NIGHT_01,Chợ Đêm & Quầy Ẩm Thực Đường Phố (Tối Thứ 7 & CN),All,15,180,1000,Mở quầy từ 19:00 - 23:00 (Bán nhanh Món Ăn Bếp Quê theo Combo khách gọi),1,0,0,0,0,0,150,Bán trực tiếp Món Ăn với giá x1.8 Base + Chuỗi Combo thưởng Vé Số & Ngọc!,0,Cảm hứng từ Dave the Diver / Mystia's Izakaya
+New_Feature_Proposal,NEW_GUEST_01,Cột Mốc Check-in & Sổ Lưu Bút Cổng Làng,All,7,0,800,Khách sang thăm nhà bấm [Chụp Ảnh Check-in & Ký Lưu Bút] (Tối đa 10 khách/ngày),1,0,0,0,0,0,10,Chủ nhà nhận +10 Điểm Mỹ Quan/khách + 20 Xu; Khách ký nhận +15 Xu + 3 XP,0,Cảm hứng từ Animal Crossing / Play Together Guestbook
+New_Feature_Proposal,NEW_RELIEF_01,Sự Kiện "Lá Lành Đùm Lá Rách" (Cứu Trợ Sau Mưa Bão),All,9,120,0,Sau cơn Mưa Bão lớn: 3 ô giàn cây bị nghiêng -> Nhờ bạn bè bấm [Dựng Lại Giàn Giúp],1,0,0,0,0,0,30,Cây hồi phục ngay + Tăng 20% sản lượng; Bạn bè giúp nhận +30 Xu + 2 Điểm Nghĩa Xóm!,0,Tương tác cộng đồng nhân văn đậm chất Việt Nam
+New_Feature_Proposal,NEW_HEIR_01,Lễ Cưới Quê & Truyền Nghề Con Cái ("Gia Bảo Truyền Đời"),All,28,1440,50000,Đạt 10 Tim ❤️ với NPC + 10 Buồng Cau Trầu + Nhẫn Cưới Vàng -> Tổ chức Đám Cưới,1,0,0,0,0,0,500,Bạn đời nấu Mâm Cơm Sáng (+30 ⚡/ngày) + Con lớn phụ thu hoạch miễn phí 1 khu vực!,0,Cảm hứng từ Harvest Moon: A Wonderful Life / Rune Factory
+Defense,DEF_01,Bù Nhìn Rơm Đội Nón,All,7,0,500,2 Rơm + 1 Tre,1,0,0,0,0,0,10,0,0,20% xác suất làm giật mình kẻ trộm vườn
+Defense,TRAP_01,Bẫy Vỏ Chuối / Hố Bùn Ao,All,10,0,25,1 Vỏ Chuối + 1 Bùn Ao,1,0,0,0,0,0,5,0,0,100% chặn 1 lần trộm trên cây VIP + Trừ 40 Xu ví kẻ trộm
+IAP_Pack,IAP_01,Gói Về Quê Lập Nghiệp (Starter Pack),All,1,0,19000,19.000 VNĐ (Giới hạn 1 lần),1,0,0,0,0,0,0,+120 Gems + 3000 Gold + Chó Phú Quốc,0,Gói phá băng nạp lần đầu giá trị gấp 6x
+IAP_Pack,IAP_02,Thẻ Tháng Bác Nông Dân Mẫu Mực,All,1,43200,79000,79.000 VNĐ / 30 Ngày,1,0,0,0,0,0,0,750 Gems + 1200 Energy + Skip Ads + Free Quản Gia WORK_06,0,Trả thưởng theo ngày + Miễn phí lương Quản gia 30 ngày
+IAP_Pack,IAP_03,Sổ Tay Mùa Vụ (Season Pass),All,5,43200,99000,99.000 VNĐ / Mùa 30 Ngày,1,0,0,0,0,0,0,400 Gems + 25000 Gold + Set Thời Trang SR + Skin Nhà,0,Cày nhiệm vụ 30 cấp độ mở khóa
+IAP_Pack,IAP_04,Quỹ Khuyến Nông Trưởng Thành (Growth Fund),All,1,0,149000,149.000 VNĐ (Giới hạn 1 lần),1,0,0,0,0,0,0,Tổng 1750 Gems chia theo mốc Lv 5 -> Lv 30,0,Giữ chân người chơi cày cấp dài hạn

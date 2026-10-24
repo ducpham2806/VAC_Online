@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hương Đồng Gió Nội - Interactive Wireframe & Flow Prototype (Master v3.0)</title>
+  <style>
+    :root {
+      --wood-dark: #3e2413;
+      --wood-mid: #6e4121;
+      --wood-light: #c88a4b;
+      --bamboo-green: #4e8222;
+      --bamboo-light: #8fd14f;
+      --paper-bg: #fff8eb;
+      --paper-card: #fffdf7;
+      --rice-gold: #f5b82e;
+      --roof-red: #b83224;
+      --water-blue: #2e8b8d;
+      --text-main: #2a180c;
+      --text-muted: #664930;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body {
+      background: #1a120c;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #321b0d, #543018);
+      border-bottom: 4px solid var(--wood-light);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--rice-gold);
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: rgba(255,255,255,0.1);
+      color: #ffe8c2;
+      border: 2px solid var(--wood-light);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.78rem;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--rice-gold);
+      color: var(--wood-dark);
+      border-color: #fff;
+    }
+    main {
+      flex: 1;
+      padding: 14px;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .screen-view { display: none; }
+    .screen-view.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    #toast-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2b4c1b;
+      color: #fff;
+      border: 3px solid var(--rice-gold);
+      padding: 12px 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.65);
+      font-weight: 700;
+      font-size: 0.86rem;
+      max-width: 440px;
+      z-index: 9999;
+      display: none;
+    }
+
+    .game-frame {
+      background: #5ca852;
+      border: 6px solid var(--wood-mid);
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6), inset 0 0 0 3px var(--wood-light);
+      min-height: 620px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .wood-panel {
+      background: var(--paper-bg);
+      border: 4px solid var(--wood-mid);
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3), inset 0 0 0 2px var(--wood-light);
+      padding: 14px;
+    }
+    .panel-title {
+      background: var(--wood-mid);
+      color: var(--rice-gold);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+    .badge-north { background: #ffd1dc; color: #7a1c33; border: 1px solid #d96b87; }
+    .badge-central { background: #e2d4ff; color: #432371; border: 1px solid #8e6bc4; }
+    .badge-south { background: #d4f8d4; color: #1b5e20; border: 1px solid #5cb85c; }
+    .badge-ssr { background: linear-gradient(45deg, #ff9800, #ffeb3b); color: #4a1c00; border: 1px solid #fff; }
+
+    .hud-top {
+      background: rgba(45, 27, 14, 0.9);
+      border-bottom: 3px solid var(--wood-light);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .loa-phuong {
+      background: linear-gradient(90deg, #8b1e1e, #b82828);
+      border: 2px solid var(--rice-gold);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+    .btn-action {
+      background: var(--bamboo-green);
+      color: #fff;
+      border: 2px solid #b8f272;
+      padding: 6px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+    .btn-action:hover { filter: brightness(1.1); }
+    .btn-gold {
+      background: var(--rice-gold);
+      color: var(--wood-dark);
+      border: 2px solid #fff394;
+      padding: 6px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+
+    .farm-canvas {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      padding: 12px;
+      background: radial-gradient(circle at center, #78cc66 0%, #56a347 100%);
+    }
+    .zone-box {
+      background: rgba(255, 248, 235, 0.95);
+      border: 3px solid var(--wood-mid);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .farm-tile {
+      background: #8f5a3c;
+      border: 2px solid #5c3422;
+      border-radius: 8px;
+      padding: 8px 5px;
+      text-align: center;
+      color: #fff;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: transform 0.12s;
+    }
+    .farm-tile:hover { transform: scale(1.03); border-color: var(--rice-gold); }
+    .farm-tile.wet { background: #4a7c59; }
+    .farm-tile.pond { background: #2e8b8d; border-color: #184c5e; }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 12px;
+    }
+    .flow-step {
+      background: var(--paper-card);
+      border-left: 5px solid var(--bamboo-green);
+      border-radius: 8px;
+      padding: 8px 11px;
+      margin-bottom: 7px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+      font-size: 0.82rem;
+    }
+    .flow-arrow { text-align: center; color: var(--wood-mid); font-weight: 900; margin: 1px 0; }
+    .worker-card {
+      background: #fff;
+      border: 2px solid var(--wood-light);
+      border-radius: 10px;
+      padding: 9px;
+      margin-bottom: 7px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .worker-card.selected { border-color: var(--roof-red); background: #fff3e0; }
+    .progress-bar {
+      background: #e0d4c0;
+      height: 9px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .progress-fill { height: 100%; background: var(--bamboo-green); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">🌾 HƯƠNG ĐỒNG GIÓ NỘI — WIREFRAME &amp; FULL FEATURE PROTOTYPE (v3.0)</div>
+  <div class="nav-tabs">
+    <button class="nav-btn active" onclick="showTab('tab-flow')">1. Sơ Đồ Tổng Thể</button>
+    <button class="nav-btn" onclick="showTab('tab-char')">2. Tạo Nhân Vật &amp; 3 Miền</button>
+    <button class="nav-btn" onclick="showTab('tab-hud')">3. Nông Trại (HUD)</button>
+    <button class="nav-btn" onclick="showTab('tab-workers')">4. 🛖 Lán Thợ Gia Nhân</button>
+    <button class="nav-btn" onclick="showTab('tab-benchmark')">5. ⛩️ Đình Làng, Đột Biến &amp; Chợ Đêm</button>
+    <button class="nav-btn" onclick="showTab('tab-cook')">6. 🍲 Bếp Quê Ngẫu Nhiên</button>
+    <button class="nav-btn" onclick="showTab('tab-fashion')">7. 🪞 Tủ Đồ 12 Slots</button>
+    <button class="nav-btn" onclick="showTab('tab-market')">8. 📰 Báo Chợ &amp; Đi Trộm</button>
+    <button class="nav-btn" onclick="showTab('tab-liveops')">9. 🏮 Lịch Bloc, Gacha &amp; Vé Số</button>
+  </div>
+</header>
+
+<div id="toast-box"></div>
+
+<main>
+
+  <!-- TAB 1: MASTER FLOWS -->
+  <section id="tab-flow" class="screen-view active">
+    <div class="wood-panel" style="margin-bottom:12px;">
+      <div class="panel-title">
+        <span>🗺️ SƠ ĐỒ TỔNG THỂ HỆ SINH THÁI 140+ THỰC THỂ, LÁN THỢ &amp; 12 TÍNH NĂNG BENCHMARK</span>
+        <span class="badge badge-south">Master v3.0 — Không Trùng Lặp</span>
+      </div>
+      <div class="flow-grid">
+        <div class="zone-box">
+          <b>🔄 1. Vòng Lặp VAC (48 Cây + 19 Vật Nuôi + 19 Cá)</b>
+          <div class="flow-step" style="margin-top:6px;">Vườn (Lúa, Rau, Mía, Tre, Ла́ dâu) ➔ Xay Cám nuôi Chuồng (Gà, Vịt, Heo, Bò, Tằm) ➔ Thu Phân Hữu Cơ &amp; Trùn Quế.</div>
+          <div class="flow-step">Ủ mồi thả Ao Cá (Cá Trắm, Trai Ngọc, Tôm Hùm) ➔ Vét Bùn Ao lấy <b>Bùn Phù Sa</b> bón ngược lại Cây Ăn Quả (+2 quả &amp; 30% nổ Hoàng Kim ⭐).</div>
+        </div>
+
+        <div class="zone-box">
+          <b>🛖 2. Hệ Thống Thuê 6 Nhân Công Lán Thợ (Lv 14+)</b>
+          <div class="flow-step" style="margin-top:6px;">4 Vòng lặp Tiêu tiền: <b>Trả Lương Xu</b> (800–3,500 🪙) + <b>Dọn Cơm 2 Bữa</b> + <b>Cấp Áo Quần Bảo Hộ (72h)</b> + <b>Thưởng Phụ Cấp</b>.</div>
+          <div class="flow-step">Chờ 5 phút sau khi cây chín mới tự thu (chừa phút 3–5 cho bạn bè rình trộm!) &amp; cất vào <b>Giỏ Kho Lán Thợ (120 ô riêng)</b>.</div>
+        </div>
+
+        <div class="zone-box">
+          <b>⛩️ 3. 12 Tính Năng Tinh Hoa Thị Trường &amp; Mới</b>
+          <div class="flow-step" style="margin-top:6px;">• <b>Thương Lái Đột Xuất (09h/20h):</b> Giá x1.5–x3.0 khác nhau mỗi nhà; bạn bè sang bán ké chủ nhà hưởng +5% Hoa hồng!</div>
+          <div class="flow-step">• <b>Vườn Ươm Đột Biến, Trùng Tu Đình Làng, Rút Xăm Ông Địa, Thám Hiểm Rừng Trúc, Chợ Đêm T7/CN, Sổ Lưu Bút, Cứu Trợ Bão, Đua Thuyền Rồng, Homestay &amp; Lễ Cưới Truyền Nghề Con Cái!</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: CHARACTER & 3 REGIONS -->
+  <section id="tab-char" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>📜 GIẤY ĐĂNG KÝ VỀ QUÊ LẬP NGHIỆP (KHỞI TẠO NHÂN VẬT &amp; 3 VÙNG QUÊ)</span>
+        <span class="badge badge-north">10 Bậc Đặc Sản Độc Quyền Mỗi Miền</span>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+        <div class="zone-box" style="text-align:center;">
+          <div id="char-preview-bg" style="background:linear-gradient(180deg, #ffd1dc 0%, #dcedc1 100%); height:180px; border-radius:12px; border:3px solid var(--wood-mid); display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:2.8rem;">
+            <div id="char-hat" style="font-size:1.9rem; margin-bottom:-10px;">👒</div>
+            <div id="char-avatar">👧</div>
+            <div style="font-size:0.76rem; background:rgba(0,0,0,0.65); color:#fff; padding:3px 10px; border-radius:10px; margin-top:6px;" id="char-region-label">Quê hương: Đồng Bằng Bắc Bộ</div>
+          </div>
+          <div style="margin-top:8px; text-align:left; font-size:0.78rem; background:#fff; padding:8px; border-radius:8px;" id="region-perk-box">
+            <b>🎁 10 Bậc Đặc sản Miền Bắc:</b> Cải Cúc, Chè Thái Nguyên, Vải Thiều, Nhãn Lồng, Bưởi Diễn &amp; Đào, Gà Đông Tảo, Lợn Bản, Cá Trắm Đen, Cá Anh Vũ, Rươi Tứ Kỳ.
+          </div>
+        </div>
+
+        <div>
+          <div class="zone-box">
+            <label style="font-weight:700; display:block; margin-bottom:6px;">Chọn Giới Tính &amp; Vùng Quê Hương:</label>
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <button class="btn-action" onclick="setGender('👦')">👦 Nam Nông Dân</button>
+              <button class="btn-action" onclick="setGender('👧')">👧 Nữ Thôn Nữ</button>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
+              <button class="btn-gold" onclick="selectRegion('NORTH')">🎋 Miền Bắc</button>
+              <button class="btn-gold" onclick="selectRegion('CENTRAL')">⛰️ Miền Trung</button>
+              <button class="btn-gold" onclick="selectRegion('SOUTH')">🥥 Miền Nam</button>
+            </div>
+          </div>
+          <button class="btn-action" style="width:100%; padding:11px; background:var(--roof-red);" onclick="showTab('tab-hud')">💮 ĐÓNG DẤU ĐỎ &amp; BẮT ĐẦU VỀ QUÊ! ➔</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: MAIN HUD OVERLAY -->
+  <section id="tab-hud" class="screen-view">
+    <div class="game-frame">
+      <div class="hud-top">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <div style="background:var(--wood-light); padding:5px 10px; border-radius:10px; font-weight:800; color:var(--wood-dark); cursor:pointer;" onclick="showTab('tab-fashion')">
+            👧 Tư Hậu (Lv.22) | ✨ 1,580 | 🏡 640
+          </div>
+          <div style="background:#2b4c1b; border:2px solid #8fd14f; padding:4px 10px; border-radius:8px; font-size:0.8rem;">
+            ⚡ Năng lượng: <b>45/50</b> <button class="btn-gold" style="padding:1px 6px;" onclick="notify('🍚 Đã ăn المâm Cơm Sáng do Bạn Đời nấu (+30 ⚡ Năng lượng miễn phí)!')">+</button>
+          </div>
+        </div>
+
+        <div class="loa-phuong">
+          <span>📢 <b>LOA:</b> Nhà [Minh Râu] có Thương lái mua Sầu Riêng giá đỉnh x2.9!</span>
+          <button class="btn-gold" style="padding:2px 8px; font-size:0.73rem;" onclick="claimLucky()">🧧 Xin Vía (<span id="lucky-left">32</span>/50)</button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="background:#3e2723; border:2px solid var(--rice-gold); padding:4px 10px; border-radius:8px; font-size:0.8rem;">🪙 <b>38,500</b></div>
+          <div style="background:#1a3a3a; border:2px solid #4dd0e1; padding:4px 10px; border-radius:8px; font-size:0.8rem;">💎 <b>350</b></div>
+        </div>
+      </div>
+
+      <div class="farm-canvas">
+        <div>
+          <div class="zone-box" style="background:#fff3e0; border-color:var(--roof-red);">
+            <div style="display:flex; justify-content:space-between;">
+              <b>🛖 LÁN THỢ (4/6 Thợ)</b>
+              <span class="badge badge-south">Giỏ Thợ: 84/120</span>
+            </div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn-action" style="flex:1; background:var(--roof-red);" onclick="showTab('tab-workers')">🛖 Quản Lý Thợ &amp; Cơm</button>
+              <button class="btn-gold" onclick="notify('🧺 Đã rút 84 Nông sản từ Giỏ Kho Lán Thợ về Kho chính!')">📥 Thu Giỏ</button>
+            </div>
+          </div>
+
+          <div class="zone-box">
+            <b>⛩️ TINH HOA LÀNG QUÊ &amp; BENCHMARK</b>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:6px;">
+              <button class="btn-gold" onclick="showTab('tab-benchmark')">🧬 Vườn Ươm &amp; ⛩️ Đình Làng</button>
+              <button class="btn-gold" onclick="showTab('tab-benchmark')">🏮 Chợ Đêm &amp; 🌲 Rừng Trúc</button>
+              <button class="btn-action" onclick="notify('🙏 Ông Địa cười Hahaha! Bạn rút trúng [Quẻ Đại Cát Mùa Vụ: +20% nổ Nông sản Hoàng Kim ⭐ suốt 24h]!')">🙏 Rút Xăm Ông Địa</button>
+              <button class="btn-action" onclick="notify('✍️ Sổ Lưu Bút Cổng Làng: Hôm nay có 6 bạn bè sang chụp ảnh Check-in giúp bạn nhận +60 Điểm Mỹ Quan & +120 Xu!')">📸 Sổ Lưu Bút (6)</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="zone-box">
+            <b>🌱 VƯỜN 48 LOẠI CÂY &amp; GIỐNG ĐỘT BIẾN</b>
+            <div class="tile-grid">
+              <div class="farm-tile wet" onclick="notify('🌾 Thu hoạch Lúa Tím Thảo Dược [Đột biến Cấp 1]: Nhận +2 Bó Lúa Tím phát sáng (Bán 190 🪙)!')">🌾 <b>Lúa Tím ⭐</b><br/><span style="color:#ffeb3b;">★ ĐỘT BIẾN!</span></div>
+              <div class="farm-tile" onclick="notify('🍉 Dưa Hấu Vuông Tài Lộc [Đột biến Cấp 2]: Chưng Tết tăng +50 Mỹ Quan hoặc bán 300 🪙!')">🍉 <b>Dưa Vuông ⭐</b><br/><span style="color:#ffeb3b;">★ CHÍN RỘ!</span></div>
+              <div class="farm-tile" onclick="notify('🍐 Bưởi Hồ Lô Tiến Vua [Đột biến VIP]: Nổ thông báo lên Loa Phường Toàn Server!')">🍐 <b>Bưởi Hồ Lô</b><br/><small>Đang lớn</small></div>
+              <div class="farm-tile" onclick="notify('🎋 Tre Làng: Thu +2 Măng Tre & +2 Thân Tre đan Nón lá cho Nhân công!')">🎋 <b>Tre Làng</b><br/><span style="color:#ffeb3b;">★ Có Măng!</span></div>
+              <div class="farm-tile" onclick="notify('🌴 Cây Cau & Trầu Không: Thu hoạch Buồng Cau chuẩn bị cho Lễ Cưới Làng Quê!')">🌴 <b>Cây Cau Trầu</b><br/><small>Còn 25p</small></div>
+              <div class="farm-tile" onclick="showTab('tab-benchmark')">🌲 <b>Rừng Trúc</b><br/><span style="color:#ffeb3b;">[Đào Măng -5⚡]</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="zone-box">
+            <b>🐄 CHUỒNG, 🐟 AO CÁ &amp; 🏡 HOMESTAY</b>
+            <div class="tile-grid" style="grid-template-columns: 1fr 1fr;">
+              <div class="farm-tile" style="background:#6d4c41;" onclick="notify('🐛 Nong Tằm Ăn Lá Dâu: Thu +2 Kén Tơ Vàng dệt Áo Lụa & Đồng phục Nhân công!')">🐛 <b>Nong Tằm</b><br/><span style="color:#ffeb3b;">★ Có Kén Tơ!</span></div>
+              <div class="farm-tile" style="background:#5d4037;" onclick="notify('🦜 Chim Sáo Đen Biết Nói: Chủ nhân ơi, 20:00 tối nay Thương lái sẽ mua [Cá Trắm Đen] với giá gấp x2.8 đấy!')">🦜 <b>Chim Sáo Đen</b><br/><span style="color:#ffeb3b;">Báo Thương Lái!</span></div>
+              <div class="farm-tile pond" onclick="notify('🦪 Trai Sông Ngậm Ngọc: Nổ +1 Viên Ngọc Trai Tự Nhiên chế tác Khuyên tai SR!')">🦪 <b>Bè Trai Ngọc</b><br/><span style="color:#ffeb3b;">★ NỔ NGỌC!</span></div>
+              <div class="farm-tile pond" onclick="notify('🏡 Đảo Du Lịch Homestay: Đoàn khách thành phố vừa trả phòng! Bạn nhận +1,600 Xu + 50 Danh Vọng + 1 [Rương Thời Trang SR]!')">🏡 <b>Đảo Homestay</b><br/><span style="color:#ffeb3b;">★ Thu 1,600🪙!</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-top" style="border-top:3px solid var(--wood-light); border-bottom:none;">
+        <div style="font-size:0.78rem;">
+          💬 <b>[Hợp Tác Xã]</b> <b>Bác Bảy:</b> Tối nay 20h anh em nhớ vào bấm Đánh Trống Đua Thuyền Rồng x2 tốc độ nhé!
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action" style="background:var(--roof-red);" onclick="showTab('tab-benchmark')">⛩️ Đình Làng &amp; Đột Biến</button>
+          <button class="btn-gold" onclick="showTab('tab-market')">🚚 Thương Lái &amp; Đi Trộm</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: HIRED WORKERS -->
+  <section id="tab-workers" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>🛖 LÁN THỢ ĐỒNG QUÊ &amp; QUẢN LÝ 6 GIA NHÂN (LV 14 – 25+)</span>
+        <span class="badge badge-ssr">4 Vòng Lặp Tiêu Tiền: Lương Xu + Mâm Cơm + Áo Quần + Phụ Cấp</span>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+        <div class="zone-box">
+          <div class="worker-card selected" id="wcard-1" onclick="selectWorker(1)">
+            <div><b>1. 🌾 Chú Tư Cày (Lv.14 - Làm Vườn)</b><br/><small>Lương: 800 🪙/ngày | Tự gieo &amp; thu sau 5p chín</small><div class="progress-bar"><div class="progress-fill" id="wbar-1" style="width:85%;"></div></div></div>
+            <span class="badge badge-south" id="wstatus-1">No: 85% 😊</span>
+          </div>
+          <div class="worker-card" id="wcard-2" onclick="selectWorker(2)">
+            <div><b>2. 🐄 Cô Năm Thảo (Lv.16 - Chăn Nuôi)</b><br/><small>Lương: 1,100 🪙/ngày | Tự xay cám &amp; thu Trứng/Tơ</small><div class="progress-bar"><div class="progress-fill" id="wbar-2" style="width:60%;"></div></div></div>
+            <span class="badge badge-north" id="wstatus-2">No: 60% 🙂</span>
+          </div>
+          <div class="worker-card" id="wcard-3" onclick="selectWorker(3)">
+            <div><b>3. 🐟 Anh Sáu Kình (Lv.18 - Ao Cá &amp; Vét Bùn)</b><br/><small>Lương: 1,500 🪙/ngày | Tự Vét Bùn Ao (Free ⚡)</small><div class="progress-bar"><div class="progress-fill" id="wbar-3" style="width:20%; background:var(--roof-red);"></div></div></div>
+            <span class="badge badge-north" id="wstatus-3">ĐÓI: 20% 😓</span>
+          </div>
+          <div class="worker-card" id="wcard-4" onclick="selectWorker(4)">
+            <div><b>4. 🍲 Dì Bảy Bếp (Lv.20 - Chạy Máy &amp; Nấu Cơm)</b><br/><small>Lương: 2,000 🪙/ngày</small></div>
+            <span class="badge badge-south">No: 90% 😊</span>
+          </div>
+          <div class="worker-card" id="wcard-5" onclick="selectWorker(5)">
+            <div><b>5. 🪵 Chú Tám Mộc (Lv.22 - 18 Cây Lâu Năm)</b><br/><small>Lương: 2,600 🪙/ngày</small></div>
+            <span class="badge badge-central">Đang làm</span>
+          </div>
+          <div class="worker-card" id="wcard-6" onclick="selectWorker(6)">
+            <div><b>6. 📋 Ông Quản Gia Cửu (Lv.25 - Tổng Quản VIP)</b><br/><small>Miễn phí lương với Thẻ Tháng VIP</small></div>
+            <span class="badge badge-ssr">VIP</span>
+          </div>
+        </div>
+
+        <div class="zone-box">
+          <h4 id="w-detail-name" style="color:var(--roof-red); margin-bottom:8px;">🌾 Chú Tư Cày (Thợ Làm Vườn)</h4>
+          <div class="flow-step">
+            <b>1. 🍚 Dọn Cơm Lán Thợ (Food Sink):</b> <span id="w-fav-food">Khoái khẩu: Canh Cải Cá Rô</span><br/>
+            <button class="btn-action" style="margin-top:6px;" onclick="feedWorker(45, 'Canh Cải Cá Rô + Cơm Trắng')">🍲 Dọn Cơm + Canh Cá (+45 Độ No)</button>
+          </div>
+          <div class="flow-step">
+            <b>2. 👕 Cấp Áo Quần Bảo Hộ (Cloth Sink - 72h):</b><br/>
+            <div id="w-gear-status" style="margin:4px 0;">Đang mặc: Nón Lá + Áo Cánh Nâu (+15% Tốc độ)</div>
+            <button class="btn-gold" onclick="equipWorkerGear('Đồng Phục Lụa Tân Châu VIP', '+25% Tốc độ & +5% Nhặt Vật Tư')">✨ Cấp Đồng Phục Lụa Tơ Tằm</button>
+          </div>
+          <div class="flow-step">
+            <b>3. 🪙 Trả Lương &amp; Thưởng Phụ Cấp (Gold Sink):</b><br/>
+            <button class="btn-gold" style="margin-top:6px;" onclick="payWorkerSalary()">🪙 Gia Hạn Lương 3 Ngày</button>
+            <button class="btn-action" style="background:var(--roof-red); margin-top:6px;" onclick="giveWorkerBonus()">🧧 Thưởng Phụ Cấp (+25% Hăng Say)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5 (NEW): BENCHMARK & NEW FEATURES HUB -->
+  <section id="tab-benchmark" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>⛩️ TRUNG TÂM 12 TÍNH NĂNG TINH HOA: VƯỜN ƯƠM ĐỘT BIẾN, ĐÌNH LÀNG, CHỢ ĐÊM, RỪNG TRÚC &amp; ĐUA THUYỀN</span>
+        <span class="badge badge-ssr">Đã Đồng Bộ Đầy Đủ Dữ Liệu Vào 04_MASTER_DATA.csv</span>
+      </div>
+      <div class="flow-grid">
+        <!-- Box 1: Mutant Nursery -->
+        <div class="zone-box" style="background:#f3e5f5;">
+          <h4 style="color:#4a148c;">🧬 1. VƯỜN ƯƠM CHIẾT CÀNH ĐỘT BIẾN (Lv.17)</h4>
+          <p style="font-size:0.78rem; margin:6px 0;">Kết hợp 2 Giống + Phấn Hoa Ong Mật / Bùn Phù Sa (Có bảo hiểm Pity 100% nổ!):</p>
+          <div class="flow-step"><b>🌾 Lúa Tím Thảo Dược:</b> 2 Nếp + 1 Phấn Hoa + 2,000 🪙 (Tỷ lệ 35%)</div>
+          <div class="flow-step"><b>🍉 Dưa Hấu Vuông Tài Lộc:</b> 2 Dưa + 1 Bùn Ao + 4,000 🪙 (Tỷ lệ 25%)</div>
+          <div class="flow-step"><b>🍐 Bưởi Hồ Lô &amp; Sen Nghìn Cánh:</b> 1 Bưởi + 1 Mật Ong + 8,000 🪙 (15%)</div>
+          <button class="btn-action" style="width:100%; background:#6a1b9a;" onclick="notify('🧬 Chiết ghép thành công (-4,000 🪙)! Bạn nhận được 1 Hạt Giống [🍉 Dưa Hấu Vuông Tài Lộc] phát sáng!')">🧬 Chiết Ghép Dưa Hấu Vuông Ngay!</button>
+        </div>
+
+        <!-- Box 2: Village Shrine Restoration -->
+        <div class="zone-box" style="background:#fff8e1;">
+          <h4 style="color:var(--roof-red);">⛩️ 2. TRÙNG TU ĐÌNH LÀNG &amp; SỔ CÔNG ĐỨC (Lv.11)</h4>
+          <p style="font-size:0.78rem; margin:6px 0;">Đóng góp Gói Sản Vật 3 Miền khôi phục 3 bậc Đình Làng:</p>
+          <div class="flow-step">✅ <b>Bậc 1 (Cổng Tam Quan):</b> Đã mở Gánh Hàng Rong x2 + 20 💎</div>
+          <div class="flow-step">⏳ <b>Bậc 2 (Sân Đình - Đang góp 3/4):</b> Cần thêm 2 Sầu Riêng + 15,000 🪙</div>
+          <div class="flow-step">🔒 <b>Bậc 3 (Đại Đình &amp; Bia Đá):</b> Buff vĩnh viễn <b>+5% Sản lượng Toàn Trang Trại!</b></div>
+          <button class="btn-gold" style="width:100%;" onclick="notify('⛩️ Đã quyên góp 2 Sầu Riêng vào Đình Làng! Tên bạn đã được ghi lên Bảng Vàng Công Đức!')">⛩️ Quyên Góp Sản Vật Trùng Tu Đình Làng</button>
+        </div>
+
+        <!-- Box 3: Night Market & Dragon Boat -->
+        <div class="zone-box" style="background:#e0f7fa;">
+          <h4 style="color:#006064;">🏮 3. CHỢ ĐÊM T7-CN &amp; 🐉 ĐUA THUYỀN RỒNG</h4>
+          <div class="flow-step" style="margin-top:6px;">
+            <b>🏮 Chợ Đêm Ẩm Thực (19:00–23:00 T7 &amp; CN):</b><br/>
+            Mang 5 Món Ăn ra quầy phục vụ khách 3 phút ➔ Bán giá <b>x1.8 Base (Miễn thuế)</b> + Tip Vé Số &amp; Ngọc!
+          </div>
+          <div class="flow-step">
+            <b>🐉 Đua Thuyền Rồng Hợp Tác Xã:</b><br/>
+            Thuyền bang bạn đang ở mốc <b>1,450m (Hạng 2)</b>!
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action" style="flex:1;" onclick="notify('🏮 Mở quầy Chợ Đêm! Khách sành ăn vừa gọi Combo [Cá Kho Vũ Đại + Trà Đá] -> Bạn nhận +1,040 Xu & +1 Vé Số!')">🏮 Mở Quầy Chợ Đêm</button>
+            <button class="btn-gold" style="flex:1;" onclick="notify('🥁 TÙNG TÙNG! Bạn đã hoàn thành nhiệm vụ Chèo Thuyền giúp Thuyền Rồng Hợp Tác Xã tiến thêm +120m!')">🥁 Chèo Thuyền (+120m)</button>
+          </div>
+        </div>
+
+        <!-- Box 4: Bamboo Forest & Heirloom -->
+        <div class="zone-box" style="background:#e8f5e9;">
+          <h4 style="color:var(--bamboo-green);">🌲 4. RỪNG TRÚC (ĐỐT ⚡) &amp; 👶 GIA BẢO TRUYỀN ĐỜI</h4>
+          <div class="flow-step" style="margin-top:6px;">
+            <b>🌲 Thám Hiểm Rừng Trúc &amp; Bãi Bồi:</b><br/>
+            Đào măng rừng (`-5⚡`), Bắt cua đá (`-8⚡`), Mò Rương Cổ Vật (`-12⚡` nhận Mảnh Trống Đồng/Bát Sứ Chu Đậu!).
+          </div>
+          <div class="flow-step">
+            <b>💍 Lễ Cưới Quê &amp; Truyền Nghề Con Cái (Lv.28):</b><br/>
+            Đạt 10 Tim ❤️ + 10 Buồng Cau Trầu ➔ Bạn đời nấu cơm sáng (`+30⚡/ngày`) &amp; Con lớn phụ nhặt trứng miễn phí!
+          </div>
+          <button class="btn-action" style="width:100%;" onclick="notify('🏺 Bạn tốn -12 ⚡ lặn mò Rương Trầm Tích Bến Sông: Nhặt được 1 [Bát Sứ Cổ Chu Đậu] trưng bày Tủ Kính Nhà Chính (+100 💎 khi đủ bộ)!')">🏺 Mò Rương Cổ Vật Bãi Bồi (-12⚡)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 6: COOKING -->
+  <section id="tab-cook" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>🍲 BẾP CỦI QUÊ MẸ — SÁNG TẠO MÓN NGẪU NHIÊN &amp; NẤU CƠM LÁN THỢ</span>
+        <button class="btn-gold" onclick="showTab('tab-hud')">⬅ Quay lại Nông trại</button>
+      </div>
+      <div style="text-align:center; padding:12px;">
+        <div id="pot-slots" style="display:flex; justify-content:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+          <span class="badge badge-north">1. 🐟 Cá Trắm [Bắc]</span>
+          <span class="badge badge-central">2. 🌶️ Hồ Tiêu [Trung]</span>
+          <span class="badge badge-south">3. 🥥 Dừa Xiêm [Nam]</span>
+        </div>
+        <button class="btn-action" style="background:var(--roof-red);" onclick="cookDish()">🔥 Nổi Lửa Quạt Than Nấu Thử!</button>
+        <div id="cook-result" style="display:none; margin-top:12px; background:#e8f5e9; border:2px solid var(--bamboo-green); padding:10px; border-radius:8px;">
+          <b>🎉 MỞ KHÓA MÓN MỚI: Cá Kho Tộ Vũ Đại (Mỹ Vị ⭐⭐⭐) — Thưởng +10 💎 + 50 XP!</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 7: FASHION -->
+  <section id="tab-fashion" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>🪞 GƯƠNG SOI 12 SLOTS THỜI TRANG &amp; HỘI THI DUYÊN DÁNG LÀNG QUÊ</span>
+        <span class="badge badge-ssr">Transmog Giữ Ngoại Hình &amp; Khâu Ghép 3->1</span>
+      </div>
+      <div style="display:flex; gap:12px; justify-content:space-around; flex-wrap:wrap; text-align:center;">
+        <div class="zone-box" style="flex:1;">
+          <b>✨ ĐIỂM PHONG CÁCH: 1,580</b>
+          <div style="font-size:3rem; margin:12px 0;">✨👒✨<br/>👧<br/>👞👞</div>
+          <button class="btn-gold" onclick="notify('🧵 Đã khâu ghép 3 món trùng bậc Lam thành 1 [Mấn Hoàng Cung - Bậc Tím SR]!')">🧵 Khâu Ghép 3 Đồ Trùng ➔ Lên Bậc Tím</button>
+          <button class="btn-action" onclick="notify('📸 Đã nộp bộ phối đồ dự thi Hội Thi Duyên Dáng Làng Quê tuần này (Chủ đề: Cổ Phục Ba Miền)!')">📸 Nộp Ảnh Thi Duyên Dáng Tuần</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 8: MARKET, TRADER BOOM & STEALING -->
+  <section id="tab-market" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>📰 BÁO CHỢ 3 MIỀN, 🚚 THƯƠNG LÁI ĐỘT XUẤT (GIÁ x2.9) &amp; 🏘️ THĂM NHÀ / KÝ LƯU BÚT / CỨU TRỢ BÃO</span>
+        <span class="badge badge-south">Thuế Chợ 10% | Hoa Hồng Chủ Nhà +5%</span>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:14px;">
+        <div class="zone-box">
+          <h4>🚚 THƯƠNG LÁI ĐỘT XUẤT ĐANG THU MUA GIÁ ĐỈNH!</h4>
+          <div class="flow-step" style="margin-top:8px;">
+            <b>Nhà bạn bè [Minh Râu - Miền Trung]:</b><br/>
+            Xe tải đang mua <b>🥭 Sầu Riêng Ri6</b> với giá gấp <b>x2.9 (174 🪙/trái)</b>!<br/>
+            <button class="btn-gold" style="margin-top:6px;" onclick="notify('🚚 Bạn đã bán 10 Sầu Riêng tại xe tải nhà Minh Râu thu về +1,740 Xu! Minh Râu nhận được +87 Xu Hoa hồng môi giới (+5%)!')">🚚 Mang Sầu Riêng Sang Bán Ké (x2.9)!</button>
+          </div>
+        </div>
+
+        <div class="zone-box" style="background:#e8f5e9;">
+          <b>🏘️ ĐANG ĐỨNG TẠI NHÀ: [Út Nhỏ - Miền Nam]</b>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px;">
+            <button class="btn-action" onclick="notify('🥷 Bạn đội nón lá hái trộm thành công +1 Sầu Riêng ngay trong cửa sổ vàng 2 phút trước khi Chú Tư Cày nhà Út Nhỏ ra thu!')">🤏 Hái Trộm Vườn (-1⚡)</button>
+            <button class="btn-gold" onclick="notify('🆘 Bạn đã dựng giúp giàn Bầu bị nghiêng sau cơn mưa giông cho Út Nhỏ! Bạn nhận +30 Xu + 2 Điểm Nghĩa Xóm, giàn bầu Út Nhỏ tăng +20% sản lượng!')">🆘 Dựng Giàn Giúp Sau Bão (+30🪙)</button>
+            <button class="btn-action" style="grid-column: span 2; background:var(--wood-mid);" onclick="notify('📸 Đã chụp ảnh Check-in & Ký Sổ Lưu Bút tại Cổng Làng nhà Út Nhỏ! Bạn nhận +15 Xu, Út Nhỏ nhận +10 Điểm Mỹ Quan!')">📸 Chụp Ảnh Check-in &amp; ✍️ Ký Sổ Lưu Bút (+15🪙)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 9: LIVEOPS -->
+  <section id="tab-liveops" class="screen-view">
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>🏮 LỊCH BLOC ĐIỂM DANH, ĐẬP NIÊU ĐẤT GACHA &amp; XỔ SỐ KIẾN THIẾT 18:00</span>
+        <button class="btn-gold" onclick="showTab('tab-hud')">⬅ Quay lại Nông trại</button>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; text-align:center;">
+        <div class="zone-box">
+          <h4 style="color:var(--roof-red);">📅 LỊCH BLOC QUÊ NỘI</h4>
+          <p style="margin:8px 0;">Dự báo thời tiết: ☀️ Nắng Vàng ➔ 🌧️ Chiều Mưa Rào</p>
+          <button class="btn-action" style="background:var(--roof-red); width:100%;" onclick="notify('👋 Đã xé tờ lịch hôm nay nhận +30 ⚡ Năng lượng + 1 Vé Số!')">👋 Vuốt Tay Xé Lịch</button>
+        </div>
+        <div class="zone-box">
+          <h4>🏺 ĐẬP NIÊU ĐẤT GACHA</h4>
+          <p style="margin:8px 0;">Pity: 10 lượt nổ Tím SR, 30 lượt nổ Vàng SSR</p>
+          <button class="btn-gold" style="width:100%;" onclick="notify('💥 BỐP! Đập vỡ niêu đất nhận 1 [Áo Dài Ngũ Thân Lụa - SR]!')">🔨 Đập Niêu Miễn Phí</button>
+        </div>
+        <div class="zone-box">
+          <h4>🎟️ XỔ SỐ KIẾN THIẾT 18:00</h4>
+          <p style="margin:8px 0;">Độc Đắc: <b>50,000 🪙 + 200 💎</b> (10 vé trật đổi 1 vé Gacha)</p>
+          <button class="btn-gold" style="width:100%;" onclick="notify('🎟️ Đã mua vé số [688] giá 500 Xu Vàng!')">+ Mua Vé Số (500 🪙)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let toastTimer = null;
+  function notify(msg) {
+    const box = document.getElementById('toast-box');
+    box.innerText = msg;
+    box.style.display = 'block';
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { box.style.display = 'none'; }, 4000);
+  }
+
+  function showTab(tabId) {
+    document.querySelectorAll('.screen-view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    const idxMap = { 'tab-flow':0, 'tab-char':1, 'tab-hud':2, 'tab-workers':3, 'tab-benchmark':4, 'tab-cook':5, 'tab-fashion':6, 'tab-market':7, 'tab-liveops':8 };
+    if (idxMap[tabId] !== undefined) {
+      document.querySelectorAll('.nav-btn')[idxMap[tabId]].classList.add('active');
+    }
+  }
+
+  function setGender(icon) {
+    document.getElementById('char-avatar').innerText = icon;
+    notify('Đã chọn nhân vật ' + icon);
+  }
+
+  function selectRegion(reg) {
+    const label = document.getElementById('char-region-label');
+    const perk = document.getElementById('region-perk-box');
+    if (reg === 'NORTH') {
+      label.innerText = 'Quê hương: Đồng Bằng Bắc Bộ';
+      perk.innerHTML = '<b>🎁 10 Bậc Đặc sản Miền Bắc:</b> Cải Cúc, Chè Thái Nguyên, Vải Thiều, Nhãn Lồng, Bưởi Diễn & Đào, Gà Đông Tảo, Lợn Bản, Cá Trắm Đen, Cá Anh Vũ, Rươi Tứ Kỳ.';
+    } else if (reg === 'CENTRAL') {
+      label.innerText = 'Quê hương: Trung Bộ - Tây Nguyên';
+      perk.innerHTML = '<b>🎁 10 Bậc Đặc sản Miền Trung:</b> Tỏi Lý Sơn, Thanh Long, Nho, Hồ Tiêu & Điều, Cà Phê Buôn Ma Thuột, Dê Cừu, Hươu Sao, Cá Bống, Ghẹ Ô Loan, Tôm Hùm.';
+    } else {
+      label.innerText = 'Quê hương: Miệt Vườn Nam Bộ';
+      perk.innerHTML = '<b>🎁 10 Bậc Đặc sản Miền Nam:</b> Bông Điên Điển, Khóm Cầu Đúc, Măng Cụt, Vú Sữa, Sầu Riêng Ri6, Vịt Đồng, Nhà Yến, Cá Tra/Cá Linh, Cá Tai Tượng, Cua Cà Mau.';
+    }
+    notify('Đã chọn ' + label.innerText);
+  }
+
+  function claimLucky() {
+    const el = document.getElementById('lucky-left');
+    let count = parseInt(el.innerText, 10);
+    if (count > 0) {
+      el.innerText = count - 1;
+      notify('🧧 Xin vía thành công! Nhận +120 Xu Vàng & +5 ⚡ Năng lượng!');
+    }
+  }
+
+  let currentWorker = 1;
+  const workerData = {
+    1: { name: '🌾 Chú Tư Cày (Thợ Làm Vườn)', fav: 'Canh Cải Cá Rô Đồng & Cơm Trắng' },
+    2: { name: '🐄 Cô Năm Thảo (Người Chăn Nuôi)', fav: 'Bánh Đa Vừng & Sữa Đậu Nành' },
+    3: { name: '🐟 Anh Sáu Kình (Thợ Ao Cá & Vét Bùn)', fav: 'Bún Riêu Cua Đồng & Nước Mía' },
+    4: { name: '🍲 Dì Bảy Bếp (Đầu Bếp Phụ)', fav: 'Bánh Cuốn Nóng & Chè Hạt Sen' },
+    5: { name: '🪵 Chú Tám Mộc (Thợ Cây Lâu Năm)', fav: 'Phở Bò Hà Nội & Cà Phê Muối' },
+    6: { name: '📋 Ông Quản Gia Cửu (Tổng Quản VIP)', fav: 'Cá Kho Tộ Vũ Đại & Trà Sen' }
+  };
+
+  function selectWorker(id) {
+    currentWorker = id;
+    document.querySelectorAll('.worker-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('wcard-' + id).classList.add('selected');
+    document.getElementById('w-detail-name').innerText = workerData[id].name;
+    document.getElementById('w-fav-food').innerText = 'Khoái khẩu: ' + workerData[id].fav;
+  }
+
+  function feedWorker(amount, mealName) {
+    const bar = document.getElementById('wbar-' + currentWorker);
+    const st = document.getElementById('wstatus-' + currentWorker);
+    if (bar && st) {
+      bar.style.width = '100%';
+      bar.style.background = '#4e8222';
+      st.innerText = 'No: 100% 🤩';
+    }
+    notify('🍚 Đã dọn [' + mealName + '] cho ' + workerData[currentWorker].name + '!');
+  }
+
+  function equipWorkerGear(gearName, buffText) {
+    document.getElementById('w-gear-status').innerText = 'Đang mặc: ' + gearName + ' (' + buffText + ')';
+    notify('👕 Đã cấp phát [' + gearName + '] cho ' + workerData[currentWorker].name + '!');
+  }
+
+  function payWorkerSalary() {
+    notify('🪙 Đã gia hạn Hợp đồng Lương thêm 3 ngày cho ' + workerData[currentWorker].name + '!');
+  }
+
+  function giveWorkerBonus() {
+    notify('🧧 Đã thưởng Phụ cấp Ngày Mùa! Tinh thần của ' + workerData[currentWorker].name + ' đạt 100% Hăng Say!');
+  }
+
+  function cookDish() {
+    document.getElementById('cook-result').style.display = 'block';
+    notify('🔥 Nổi lửa thành công! Khám phá ra món Cá Kho Tộ Vũ Đại (Mỹ Vị ⭐⭐⭐)!');
+  }
+</script>
+
+</body>
+</html>
