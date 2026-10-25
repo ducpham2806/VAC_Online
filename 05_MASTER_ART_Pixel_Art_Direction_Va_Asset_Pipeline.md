@@ -1,79 +1,85 @@
-# 🎨 MASTER ART BIBLE 3.0: ĐỊNH HƯỚNG NGHỆ THUẬT PIXEL ART & QUY TRÌNH TẠO ASSET TOÀN GAME
-**Dự án:** Hương Đồng Gió Nội (Nông Trại Ba Miền – VAC Online)
-**Thể loại Art:** Cozy Bright Vietnamese Pixel Art (`3/4 Top-Down Oblique`, `32x32 px` Grid, `8–12 Frames` Seamless Loop)
-**Phiên bản:** Master Art 3.0 (Đã đồng bộ 140+ Nông/Thủy sản, Cây đột biến, 6 Nhân công `WORK_01..06`, Đình làng & 12 Tính năng Benchmark)
+# TÀI LIỆU ĐỊNH HƯỚNG NGHỆ THUẬT PIXEL ART 64 MÀU, QUY CHUẨN ANIMATION 8–12 FRAMES, VFX & ÂM THANH ĐỒNG QUÊ (MASTER ART, ANIMATION & AUDIO BIBLE)
+## Dự án: **VAC ONLINE — HƯƠNG ĐỒNG GIÓ NỘI (GAME NÔNG TRẠI 3 MIỀN VIỆT NAM)**
+**Mã tài liệu:** `05_MASTER_ART_Pixel_Art_Direction_Va_Asset_Pipeline.md` *(Đã hợp nhất `05_MASTER_ART` + `09_MASTER_ASSET_ANIMATION_VFX_UI_LIST`, chuẩn hóa tên 6 Nhân công & 155 Thực thể)*  
+**Phiên bản:** Master Art & Audio 5.0  
+**Đối tượng sử dụng:** Technical Artist, 2D Pixel Animator, VFX Artist, Sound Engineer & Frontend Developer
 
 ---
 
-## 1. TẦM NHÌN NGHỆ THUẬT & THÔNG SỐ KỸ THUẬT CỐT LÕI (CORE SPECS)
+## PHẦN 1: THÔNG SỐ KỸ THUẬT PIXEL ART & BẢNG MÀU 3 MIỀN (`CORE ART SPECS`)
 
-* **Tầm nhìn:** Tái hiện bức tranh làng quê Việt Nam tươi sáng, ấm áp, hoài niệm nhưng rực rỡ sức sống – kết hợp độ sắc nét Pixel Art hiện đại của *Stardew Valley / Fields of Mistria* với màu nắng vàng mật ong của *Mùa Hè Của Kikujiro / Mắt Biếc*.
-* **Góc nhìn (Camera Projection):** **3/4 Top-Down Oblique** (Nhìn từ trên xuống nghiêng 45 độ, thấy rõ mặt đứng phía trước và mặt trên của mái nhà, luống đất, bờ ao).
-* **Đơn vị Lưới chuẩn (Base Tile Grid):** **`32 x 32 pixels`** (`1 Tile = 32x32 px`).
-* **Độ phân giải Render gốc (Internal Resolution):** `640 x 360 px` (Ngang 16:9) hoặc `360 x 640 px` (Dọc 9:16), phóng đại nguyên lần (`integer scale 3x / 4x`) lên màn hình Full HD/Mobile.
-* **Quy tắc Vàng Pixel Art (Zero Anti-Aliasing):**
-  1. Tuyệt đối dùng `image-rendering: pixelated;` và `roundPixels: true` trong Phaser 3.
-  2. Không bao giờ xoay (rotate) hoặc co giãn lẻ (`scale 1.35x`) một sprite pixel bằng code (gây hiện tượng răng cưa Mixels).
-  3. Viền ngoài (Outline) không bao giờ dùng màu đen tuyền (`#000000`) mà dùng **Selective Colored Outlines** (nâu đất `#3D2314` cho gỗ/cây, xanh rêu đậm `#1B3B2B` cho lá, tím than `#23192D` cho bóng đổ ban đêm).
+### 1.1. Quy Chuẩn Góc Nhìn, Lưới Ô Đất & Viền Màu Ấm
+* **Góc nhìn (`Camera Projection`):** `3/4 Top-Down Oblique` (Nhìn từ trên xuống nghiêng 45°, thấy rõ cả mặt trước và mặt mái công trình/luống đất).
+* **Đơn vị Lưới gốc (`Base Grid`):** `32 x 32 px` (Khi render lên bản đồ Oblique/Isometric trong `FarmScene.ts` có kích thước ô tương tác `168 x 80 px` để ngón cái chạm chính xác trên màn hình điện thoại ngang).
+* **3 Quy Tắc Vàng Pixel Art (`Zero Mixels & Selective Outlines`):**
+  1. Bật `pixelArt: true` và `roundPixels: true` trong cấu hình Phaser 3.
+  2. **CẤM dùng viền đen tuyền (`#000000`)**: Bắt buộc dùng **Viền Màu Ấm Chọn Lọc (`Selective Colored Outlines`)** — Nâu đất nung đậm `#3D2314` cho nhà gỗ/thân cây/nhân vật, Xanh rừng đậm `#1B3B2B` cho tán lá/bờ ao, Tím than `#23192D` cho bóng đổ.
+  3. Khi xuất file từ phần mềm vẽ (Aseprite / Photoshop / AI Generator), đặt trên nền khóa màu `#FF00FF` (Magenta) để script tách nền sạch 100% không bị viền răng cưa trắng.
 
----
+### 1.2. Bảng Màu Chủ Đạo Ba Miền & Đột Biến Ngũ Sắc
 
-## 2. BẢNG MÀU CHUẨN 3 MIỀN & ÁNH SÁNG ĐỘNG (COLOR PALETTES)
-
-| Vùng / Hệ | Mã Màu Chủ Đạo (Hex) | Cảm Hứng & Ứng Dụng Thị Giác |
+| Phân Vùng / Hệ | Bộ Mã Màu Chủ Đạo (`Hex Palette`) | Ứng Dụng Thị Giác Trên Bản Đồ |
 | :--- | :--- | :--- |
-| **Miền Bắc (Đồng Bằng & Trung Du)** | `#7FB800` (Xanh Cốm), `#C85A32` (Đỏ Gạch Nung), `#5C6B73` (Xám Đá Ong) | Ngói mũi hài rêu phong, bờ đê cỏ mượt, hoa đào phai `#F4A7B9`, sương sớm mờ ảo. |
-| **Miền Trung (Duyên Hải & Cao Nguyên)** | `#F5B700` (Vàng Hoa Mai/Nắng), `#5E4B56` (Tím Huế Trầm), `#8D3B24` (Đất Đỏ Bazan) | Đèn lồng Hội An lung linh, nhà rường gỗ lim, đồi cà phê đất đỏ, cát trắng biển xanh `#2EC4B6`. |
-| **Miền Nam (Miền Tây Sông Nước)** | `#8AC926` (Xanh Lá Dừa Tươi), `#C99E67` (Nâu Phù Sa), `#FFB703` (Vàng Lúa Chín) | Kênh rạch chằng chịt, cầu khỉ tre, xuồng ba lá, vườn sầu riêng – măng cụt – bưởi da xanh trĩu quả. |
-| **Cây Đột Biến & Thần Thoại (`CROP_MUT`)** | `#9B5DE5` (Tím Thảo Dược), `#FFD166` (Vàng Kim Tài Lộc), `#F15BB5` (Hồng Sen Nghìn Cánh) | Hiệu ứng hạt sáng lấp lánh (Sparkle Shimmer `8 frames`), viền lá ánh kim nổi bật trên nền ruộng thường. |
+| **Miền Bắc (`NORTH`)** | `#7FB800` (Xanh Cốm), `#C85A32` (Đỏ Gạch Bát Tràng), `#5C6B73` (Xám Đá Ong), `#F4A7B9` (Hồng Đào) | Nhà chính ngói đỏ 3 gian, giếng làng đá ong, đường gạch đỏ, đồi chè và vườn vải thiều. |
+| **Miền Trung (`CENTRAL`)** | `#F5B700` (Vàng Nắng/Hoa Mai), `#5E4B56` (Tím Huế), `#8D3B24` (Đất Đỏ Bazan), `#2EC4B6` (Xanh Biển) | Nhà rường cổ kính, đèn lồng Hội An, vườn cà phê Buôn Ma Thuột và hồ tiêu. |
+| **Miền Nam (`SOUTH`)** | `#8AC926` (Xanh Lá Dừa), `#C99E67` (Nâu Phù Sa), `#FFB703` (Vàng Lúa Chín), `#2E8B8D` (Xanh Kênh Rạch) | Cầu khỉ tre, xuồng ba lá, đầm sen Đồng Tháp, vườn sầu riêng Ri6 và măng cụt. |
+| **Đột Biến (`MUTANT`)** | `#9B5DE5` (Tím Thảo Dược), `#FFD166` (Vàng Kim Tài Lộc), `#F15BB5` (Hồng Sen Nghìn Cánh) | Hạt sáng lấp lánh quanh gốc *Lúa Tím*, *Dưa Hấu Vuông* và *Bưởi Hồ Lô*. |
 
 ---
 
-## 3. QUY CHUẨN KÍCH THƯỚC & DIỄN HOẠT NHÂN VẬT, THÚ CƯNG, GIA NHÂN (`8–12 FRAMES`)
+## PHẦN 2: QUY CHUẨN DIỄN HOẠT ĐA KHUNG HÌNH (`8 – 12 FRAMES SEAMLESS LOOPS`)
 
-### 3.1. Khung xương Nhân vật Người chơi (12-Slot Layered Paperdoll)
-* **Kích thước khung (Canvas):** `48 x 64 px` (chừa khoảng trống phía trên cho Nón lá, Khăn đóng, Vương miện và phía bên cho Cần câu, Cuốc).
-* **Thứ tự vẽ 12 Lớp (Z-Index từ thấp đến cao):**
-  `[0] Shadow` -> `[1] Back/Cape` -> `[2] Body Base` -> `[3] Pants/Skirt` -> `[4] Shoes (Dép tổ ong/Guốc mộc)` -> `[5] Shirt (Áo bà ba/Áo dài/Áo tứ thân)` -> `[6] Hair` -> `[7] Face/Eyes` -> `[8] Glasses` -> `[9] Hat` -> `[10] Hand Tool` -> `[11] Pet/Aura`.
-* **Số khung hình (Frame Count) bắt buộc để mượt mà:**
-  * `Idle (Đứng thở & chớp mắt)`: **8 frames** (`10 FPS`, seamless loop).
-  * `Walk (Đi bộ 4 hướng)`: **8 frames** (`12 FPS`, có độ nảy đầu 1–2px và vung tay tự nhiên).
-  * `Run (Chạy nhanh / Rượt trộm)`: **8 frames** (`15 FPS`, nghiêng người về phía trước + bụi đất bay sau gót).
-  * `Farm Actions (Cuốc đất / Tưới nước / Gặt lúa / Quăng chài)`: **10–12 frames** (`14 FPS`, có Anticipation lấy đà -> Impact -> Follow-through).
-
-### 3.2. Bộ 6 Nhân công Thuê (`WORK_01..WORK_06`) & Trang thái Biểu cảm
-Mỗi nhân công có kích thước `48 x 64 px`, phân biệt rõ silhouette và trang phục bảo hộ:
-* **`WORK_01` – Bác Ba Làm Vườn:** Đội nón lá, vắt khăn rằn trên vai, cầm bình ô-doa tưới nước miệt mài (`10 frames`).
-* **`WORK_02` – Chú Tư Điền Chủ:** Mặc áo nâu sồng, đội nón cối/nón lá, tay cầm liềm gặt lúa xoèn xoẹt + vác bao thóc (`12 frames`).
-* **`WORK_03` – Cô Năm Chăn Nuôi:** Mặc áo bà ba hồng phấn, xách xô cám gỗ, vẫy tay gọi gà vịt chạy theo (`10 frames`).
-* **`WORK_04` – Anh Sáu Ngư Phủ:** Mặc áo tơi lá cọ, đội nón lá, đứng trên cầu tre quăng chài & kéo vó bè cá (`12 frames`).
-* **`WORK_05` – Dì Bảy Đầu Bếp:** Mặc tạp dề thổ cẩm, tay cầm quạt nan quạt bếp củi đỏ lửa & đảo chảo gang (`10 frames`).
-* **`WORK_06` – Chú Tám Quản Gia:** Mặc áo dài khăn đóng lịch lãm, cầm sổ sách và bàn tính gỗ gõ lách cách (`8 frames`).
-* **Trạng thái đặc biệt (Visual States):**
-  * **Đói bụng (`No Stamina`):** Ngồi bệt dưới gốc cây phe phẩy nón lá, bong bóng `[💭 Đói bụng!]` nảy trên đầu (`8 frames`).
-  * **Rách đồ bảo hộ (`0% Durability`):** Quần áo có vết vá, đi chậm lại, hiện icon `[🧥 Cần thay đồ bảo hộ]`.
-  * **Hưng phấn (`Morale Bonus`):** Có nốt nhạc dân ca và tim hồng bay quanh người khi làm việc.
+### 2.1. 5 Quy Tắc Làm Mượt Animation Không Bị Giật (`Zero Popping`)
+1. **Số lượng Frame tiêu chuẩn:** Mọi chuyển động lặp lại (Idle, Walk, Sóng lúa, Sóng nước, Cá nhảy) phải có từ **8 đến 12 frames** ở tốc độ `8 – 15 FPS`.
+2. **Khép vòng hình Sin (`0° -> 315°`):** `Frame 8` không bao giờ vẽ trùng hệt `Frame 1` mà là bước chuyển tiếp ngay trước `Frame 1`.
+3. **Độ trễ lệch pha theo tọa độ (`Per-Tile Phase Offset`):** Trong `FarmScene.ts`, mỗi ô đất có `phaseOffset = idx * 0.85`, giúp các luống lúa đung đưa nối tiếp nhau như làn sóng gió thực tế.
+4. **Chuyển động thứ cấp (`Follow-Through`):** Tà áo bà ba, vành nón lá, tai chú chó Phú Quốc nảy trễ hơn thân người `1 frame`.
+5. **Phản hồi Xúc giác 3 Lớp khi chạm (`3-Layer Tactile Feedback`):**
+   * *Lớp 1 (Tween):* Co giãn `scaleX: 1.07, scaleY: 0.92` trong `90ms` (`yoyo: true`).
+   * *Lớp 2 (Particles):* Bắn 6 hạt nước `fx_water_drop` (khi tưới) hoặc 6 ngôi sao vàng `fx_gold_star` (khi thu hoạch).
+   * *Lớp 3 (Sound & Haptic):* Phát âm thanh `playWaterSplash()` / `playHarvestCoin()` + rung nhẹ `triggerHaptic('light')`.
 
 ---
 
-## 4. QUY CHUẨN CÂY TRỒNG, ĐỘT BIẾN, VẬT NUÔI & CÔNG TRÌNH BENCHMARK
+## PHẦN 3: DANH MỤC KIỂM KÊ TOÀN BỘ ASSETS THEO TỪNG NHÓM THỰC THỂ
 
-### 4.1. Cây trồng Ngắn ngày, Cây ăn quả & Cây Đột Biến (48 loài)
-* **5 Giai đoạn sinh trưởng:** `Hạt giống` -> `Nảy mầm` -> `Cây non` -> `Ra hoa/Trưởng thành` -> `Thu hoạch (Quả chín lấp lánh)`.
-* **Sức sống Môi trường (Ambient Life – Không bao giờ tĩnh):** Toàn bộ lúa, rau, hoa, lá cây ăn quả đều phải có **8 frames đung đưa theo gió (`Wind Sway Loop`)** lệch pha nhau giữa các ô đất liền kề để tạo hiệu ứng "sóng lúa rì rào".
-* **3 Cây Đột Biến Ngũ Sắc (`CROP_MUT_01..03`):**
-  * *Lúa Tím Thảo Dược:* Bông lúa màu tím ngọc bích tỏa đom đóm tím ban đêm (`8 frames`).
-  * *Dưa Hấu Vuông Tài Lộc:* Quả dưa hình lập phương màu xanh ngọc bích, chính giữa có chữ "Phúc/Lộc" khắc nổi vàng kim (`8 frames` lấp lánh).
-  * *Bưởi Hồ Lô & Sen Nghìn Cánh:* Quả bưởi thắt eo hình hồ lô buộc dây chỉ đỏ; hoa sen 3 tầng cánh xếp lớp tỏa hào quang hồng phấn.
+### 3.1. Nhóm Nhân Vật Chính (12-Slot Paperdoll) & 6 Gia Nhân Lán Thợ (`WORK_01..06`)
 
-### 4.2. Kiến trúc Công trình Làng Quê & Tính năng Benchmark
-1. **Lán Thợ Đồng Quê (`Worker Lodge` – `128x96 px`, 4x3 Tiles):** Nhà gỗ mái tranh 3 gian ấm cúng, trước sân có bàn tre uống trà đá, giá treo nón lá – ủng cao su – áo tơi, ống khói bếp bốc khói trắng hình xoắn ốc (`10 frames`).
-2. **Vườn Ươm Chiết Cành (`Mutant Nursery` – `128x128 px`, 4x4 Tiles):** Giàn tre lợp lưới mát, bàn ghép cành có lọ phấn hoa phát sáng, chậu đất nung chạm khắc hoa văn Đông Sơn.
-3. **Đình Làng Cổ Kính (`Village Communal House` – `256x192 px`, 8x6 Tiles):**
-   * *Giai đoạn 0 (Đổ nát):* Mái ngói rêu phong sứt mẻ, cột gỗ phủ dây leo.
-   * *Giai đoạn 1–2 (Đang trùng tu):* Có giàn giáo tre, thợ mộc đục đẽo.
-   * *Giai đoạn 3 (Hoàn mỹ):* Mái đao cong vút chạm Lưỡng Long Chầu Nguyệt, sân gạch Bát Tràng đỏ au, Cổng Tam Quan treo cờ hội ngũ sắc bay phấp phới (`10 frames`) và **Bia Đá Công Đức** chạm vàng.
-4. **Miếu Thần Nông / Tượng Ông Địa (`64x64 px`, 2x2 Tiles):** Miếu gạch đỏ nhỏ dưới gốc đa cổ thụ, đĩa ngũ quả tươi tắn, nén nhang cháy đỏ có làn khói trầm hương uốn lượn bay lên (`12 frames`).
-5. **Khu Homestay Sinh Thái (`160x128 px`, 5x4 Tiles):** Nhà sàn gỗ bên hồ sen (Bắc), Nhà rường đèn lồng (Trung), hoặc Bungalow lá dừa ven kênh (Nam) có bàn tiệc bày mâm cỗ 3 miền.
-6. **Xe Thương Lái Đột Xuất (`96x64 px`):** Xe công nông đỏ / Xe lam cổ điển chở đầy sọt tre hoặc Ghe bầu thương hồ cập bến sông, có đèn nháy và bảng giá `🔥 x2.5 GIÁ THU MUA!`.
-7. **Cột Mốc Check-in & Sổ Lưu Bút Cổng Làng (`64x64 px`):** Cột mốc đá khắc tên nông trại kèm cuốn sổ gỗ đặt trên bệ tre cho khách ký tên.
+| Mã Định Danh | Tên Nhân Vật / Nhân Công | Kích Thước Khung | Màu Áo & Nón Đặc Trưng | Bộ Animation & Trạng Thái Biểu Cảm Trên Bản Đồ |
+| :--- | :--- | :---: | :--- | :--- |
+| `CHAR_PLAYER` | **👦/👧 Điền Chủ (Nam/Nữ)** | `48 x 64 px` | 12 lớp tách rời (`FASH_01..12`) | `Idle` (8f), `Walk_4Dir` (8f), `Water` (10f), `Harvest` (10f), `Steal_Sneak` (8f). |
+| `WORK_01` | **🌾 Chú Tư Cày** *(Thợ Làm Vườn – Lv.14)* | `48 x 48 px` | Áo cánh nâu `#8D5524` + Nón lá `#F5DEB3` | Đi tuần khu Vườn; khi `Độ No < 35%` đổi nhãn đỏ **`[Đói ➔ Về Lán]`** và tự đi bộ về Lán Thợ. |
+| `WORK_02` | **🐄 Cô Năm Thảo** *(Chăn Nuôi – Lv.16)* | `48 x 48 px` | Áo bà ba hồng `#F4A7B9` + Nón lá `#F5DEB3` | Đi tuần khu Chuồng & Xay cám; tự về Lán Thợ ăn cơm khi đói. |
+| `WORK_03` | **🐟 Anh Sáu Kình** *(Thợ Ao Cá – Lv.18)* | `48 x 48 px` | Áo tơi xanh `#2E8B8D` + Mũ cói `#D2B48C` | Đi tuần bờ Ao & tự Vét Bùn Ao; tự về Lán Thợ ăn cơm khi đói. |
+| `WORK_04` | **🍲 Dì Bảy Bếp** *(Đầu Bếp – Lv.20)* | `48 x 48 px` | Áo đỏ `#E63946` + Khăn bếp `#FFF8EB` | Đứng cạnh Nhà Chính & Bếp Củi quạt than nấu cơm nuôi thợ. |
+| `WORK_05` | **🪵 Chú Tám Mộc** *(Cây Lâu Năm – Lv.22)*| `48 x 48 px` | Áo chàm `#386641` + Mũ cối `#A7C957` | Đi tuần khu Vườn Cây Ăn Quả Lâu Năm & bón Bùn Phù Sa. |
+| `WORK_06` | **📋 Ông Quản Gia Cửu** *(Tổng Quản – Lv.25)*| `48 x 48 px` | Áo dài vàng `#F5B82E` + Khăn đóng `#3D2314`| Đi tuần giữa Lán Thợ và Ga Tàu Thống Nhất điều phối cả đội. |
+| `PET_DOG` | **🐕 Chó Xoáy Phú Quốc** *(Canh gác 70%)* | `48 x 48 px` | Lông vàng lửa `#C85A32` + Cổ đỏ `#3D2314` | Chạy tuần tra dọc cổng làng và Sạp Chợ, sủa vang khi có kẻ trộm. |
+
+### 3.2. Nhóm Công Trình Kiến Trúc, Phương Tiện & Thời Tiết Động
+1. **5 Công trình Tương tác Chính trên Bản đồ (`FarmScene.ts`):**
+   * `bldg_house` (`185 x 74 px`): **🏠 Nhà Chính 3 Gian Mái Ngói Đỏ** (Mở `COOKING` Modal).
+   * `bldg_lodge` (`198 x 74 px`): **🛖 Lán Thợ Gia Nhân Mái Tranh** (Mở `WORKERS` Modal).
+   * `bldg_dinh` (`210 x 74 px`): **⛩️ Đình Làng Cổ Kính & Vườn Ươm Đột Biến** (Mở `BENCHMARK` Modal).
+   * `bldg_market` (`175 x 74 px`): **📰 Sạp Báo Chợ 3 Miền & Cổng Đi Trộm** (Mở `MARKET_STEAL` Modal).
+   * `bldg_train` (`120 x 32 px`): **🚂 Đầu Máy Tàu Thống Nhất Bắc – Nam** chạy dọc đường ray phía Bắc làng (Chạm vào phát tiếng còi tàu và mở `COOP_QUESTS` Modal).
+2. **4 Bộ Hiệu Ứng Hạt Thời Tiết & Phản Hồi (`Particle Textures`):**
+   * `fx_water_drop` (`8x8 px`, `#4DD0E1`): Hạt nước bắn ra khi tưới cây.
+   * `fx_gold_star` (`6x6 px`, `#FFEB3B`): Sao vàng lấp lánh khi thu hoạch nông sản.
+   * `fx_raindrop` (`2x12 px`, `#90E0EF`): Mưa rào rơi chéo toàn màn hình khi thời tiết `RAINY` (kèm lớp phủ màu `#1D3557` alpha `0.22`).
+   * `fx_firefly` (`8x8 px`, `#D9ED92`): Đom đóm bay lượn nhấp nháy ban đêm khi thời tiết `FIREFLY_NIGHT` (kèm lớp phủ đêm trăng `#0B132B` alpha `0.36`).
+
+---
+
+## PHẦN 4: ĐẶC TẢ ÂM THANH ĐỒNG QUÊ & NHẠC NỀN NGŨ CUNG (`WEB AUDIO SYNTHESIZER`)
+
+Toàn bộ âm thanh trong `src/services/soundEffects.ts` được tổng hợp trực tiếp bằng **Web Audio API** (không phụ thuộc file `.mp3` ngoài, giúp tốc độ tải trang `< 1 giây` và không bao giờ lỗi 404 Audio):
+1. **🎵 Nhạc Nền Ngũ Cung Ba Miền (`toggleFolkBgm`):**
+   * Chuỗi giai điệu Ngũ cung Việt Nam (*Hò – Xự – Xang – Xê – Cống*: `523.25Hz (C5) ➔ 587.33Hz (D5) ➔ 698.46Hz (F5) ➔ 783.99Hz (G5) ➔ 880.0Hz (A5)`), nhịp `680ms/nốt`, âm sắc `sine` êm dịu như tiếng sáo trúc chiều quê.
+2. **🔊 6 Hiệu Ứng Âm Thanh Tương Tác (`SFX`):**
+   * `playWaterSplash()`: Sóng `sine` vuốt tần số từ `520Hz` lên `880Hz` trong `120ms` (Tiếng gáo nước dừa tưới cây).
+   * `playHarvestCoin()`: Hợp âm đôi `triangle` (`660Hz` & `880Hz`) ngân vang trong `230ms` (Tiếng thu hoạch nổ Xu Vàng).
+   * `playDogBark()`: Sóng `sawtooth` gằn từ `220Hz` xuống `110Hz` trong `190ms` (Tiếng Chó Phú Quốc sủa bắt trộm).
+   * `playTrainWhistle()`: Hợp âm đôi `440Hz + 554.37Hz` ngân `360ms` (Tiếng còi Tàu Thống Nhất Bắc – Nam).
+   * `playClayPotSmash()`: Sóng `square` dội từ `310Hz` xuống `95Hz` (Tiếng đập vỡ niêu đất Đình Làng).
+   * `playCelebrationGong()`: Chuỗi hợp âm 4 nốt `C5 – E5 – G5 – C6` (Tiếng chiêng trống mừng Đăng ký / Kết hôn / Xuất Bằng Khen).

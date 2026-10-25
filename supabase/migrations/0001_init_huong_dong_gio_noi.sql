@@ -1,6 +1,7 @@
 -- =============================================================================
 -- HƯƠNG ĐỒNG GIÓ NỘI (NÔNG TRẠI BA MIỀN - VAC ONLINE)
--- SUPABASE POSTGRESQL SCHEMA, RLS & ATOMIC ANTI-CHEAT RPCs (MASTER TECH 4.0)
+-- SUPABASE POSTGRESQL SCHEMA, RLS & ATOMIC ANTI-CHEAT RPCs (MASTER TECH 4.1)
+-- Chạy an toàn nhiều lần (Idempotent 100%) trong Supabase SQL Editor
 -- =============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -77,7 +78,8 @@ CREATE TABLE IF NOT EXISTS public.hired_workers (
 -- 5. BẢNG MARKET_LISTINGS (BÁO CHỢ PHIÊN P2P BA MIỀN - THUẾ 10%)
 CREATE TABLE IF NOT EXISTS public.market_listings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  seller_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  seller_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  seller_name TEXT NOT NULL DEFAULT 'Hợp Tác Xã Ba Miền',
   seller_region TEXT NOT NULL,
   item_id TEXT NOT NULL,
   quantity INT NOT NULL CHECK (quantity > 0),
@@ -85,6 +87,10 @@ CREATE TABLE IF NOT EXISTS public.market_listings (
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'SOLD', 'CANCELLED')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Đảm bảo tương thích nếu bảng market_listings đã được tạo ở lần chạy trước
+ALTER TABLE public.market_listings ALTER COLUMN seller_id DROP NOT NULL;
+ALTER TABLE public.market_listings ADD COLUMN IF NOT EXISTS seller_name TEXT NOT NULL DEFAULT 'Hợp Tác Xã Ba Miền';
 
 -- 6. BẢNG TRADER_BOOMS (THƯƠNG LÁI ĐỘT XUẤT 09:00 & 20:00 - GIÁ 1.5x -> 3.0x)
 CREATE TABLE IF NOT EXISTS public.trader_booms (
@@ -108,7 +114,7 @@ CREATE TABLE IF NOT EXISTS public.farm_guestbook (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- BẬT ROW LEVEL SECURITY (RLS - CHỈ CHO CLIENT SELECT)
+-- BẬT ROW LEVEL SECURITY (RLS) CHO CẢ 7 BẢNG
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.inventories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.farm_entities ENABLE ROW LEVEL SECURITY;
@@ -116,6 +122,15 @@ ALTER TABLE public.hired_workers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.market_listings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.trader_booms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.farm_guestbook ENABLE ROW LEVEL SECURITY;
+
+-- XÓA POLICY CŨ NẾU ĐÃ TỒN TẠI TRƯỚC KHI TẠO MỚI (IDEMPOTENT)
+DROP POLICY IF EXISTS "Public profiles readable" ON public.profiles;
+DROP POLICY IF EXISTS "Own inventory readable" ON public.inventories;
+DROP POLICY IF EXISTS "Public farm entities readable for visiting" ON public.farm_entities;
+DROP POLICY IF EXISTS "Own workers readable" ON public.hired_workers;
+DROP POLICY IF EXISTS "Market listings readable" ON public.market_listings;
+DROP POLICY IF EXISTS "Trader booms readable" ON public.trader_booms;
+DROP POLICY IF EXISTS "Guestbook readable" ON public.farm_guestbook;
 
 CREATE POLICY "Public profiles readable" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "Own inventory readable" ON public.inventories FOR SELECT USING (auth.uid() = user_id);
@@ -127,6 +142,7 @@ CREATE POLICY "Guestbook readable" ON public.farm_guestbook FOR SELECT USING (tr
 
 -- =============================================================================
 -- CÁC HÀM ATOMIC POSTGRESQL RPC (CHỐNG GIAN LẬN 100% SERVER-AUTHORITATIVE)
+-- Lưu ý PL/pgSQL: Ký tự phần trăm trong RAISE EXCEPTION phải viết là %%
 -- =============================================================================
 
 -- RPC 1: HÁI TRỘM / CÂU TRỘM NHÀ BẠN BÈ (ZERO-SUM PENALTY & BẢO HIỂM 80%)
@@ -165,8 +181,9 @@ BEGIN
     RAISE EXCEPTION 'Bạn đã hái trộm ô này trong vụ mùa hiện tại rồi!';
   END IF;
 
+  -- Dùng 80%% trong RAISE EXCEPTION để không bị PL/pgSQL hiểu nhầm là biến format %
   IF v_entity.remaining_yield <= CEIL(v_entity.total_yield * 0.80) THEN
-    RAISE EXCEPTION 'Ô đất đã chạm ngưỡng Bảo hiểm 80% sản lượng tối thiểu cho chủ nhà!';
+    RAISE EXCEPTION 'Ô đất đã chạm ngưỡng Bảo hiểm 80%% sản lượng tối thiểu cho chủ nhà!';
   END IF;
 
   -- Trừ 1 Stamina
@@ -181,7 +198,7 @@ BEGIN
     UPDATE public.profiles SET gold = gold - v_penalty WHERE id = p_thief_id;
     UPDATE public.profiles SET gold = gold + v_host_gain WHERE id = v_entity.user_id;
 
-    -- Thưởng 1 Chiếc Dép Tổ Ong (CRAFT_SLIPPER)
+    -- Thưởng 1 Chiếc Dép Tổ Ong (ITEM_DEP_TO_ONG)
     INSERT INTO public.inventories (user_id, item_id, quantity)
     VALUES (p_thief_id, 'ITEM_DEP_TO_ONG', 1)
     ON CONFLICT (user_id, item_id) DO UPDATE SET quantity = public.inventories.quantity + 1;
@@ -256,3 +273,12 @@ BEGIN
   );
 END;
 $$;
+
+-- KHỞI TẠO DỮ LIỆU MẪU SẠP CHỢ PHIÊN 3 MIỀN (NẾU BẢNG ĐANG TRỐNG)
+INSERT INTO public.market_listings (seller_name, seller_region, item_id, quantity, unit_price, status)
+SELECT * FROM (VALUES
+  ('HTX Kinh Bắc', 'NORTH', 'CROP_N01', 5, 195, 'ACTIVE'),
+  ('Nông Trang Phố Núi', 'CENTRAL', 'CROP_C01', 4, 240, 'ACTIVE'),
+  ('Miệt Vườn Cái Mơn', 'SOUTH', 'CROP_S01', 3, 290, 'ACTIVE')
+) AS seed(seller_name, seller_region, item_id, quantity, unit_price, status)
+WHERE NOT EXISTS (SELECT 1 FROM public.market_listings LIMIT 1);

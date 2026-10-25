@@ -12,9 +12,11 @@ import {
   INITIAL_MARKET_LISTINGS,
   INITIAL_WORKERS,
 } from '../data/masterData';
+import { GuestbookEntry, vacRealtime } from '../services/realtimeService';
 
 export type ActiveModalType =
   | null
+  | 'AUTH_GATE'
   | 'REGISTER'
   | 'COOP_QUESTS'
   | 'WORKERS'
@@ -23,7 +25,9 @@ export type ActiveModalType =
   | 'MARKET_STEAL'
   | 'FASHION'
   | 'LIVEOPS'
-  | 'SUPABASE_CONFIG';
+  | 'ENCYCLOPEDIA'
+  | 'SUPABASE_CONFIG'
+  | 'QC_REPORT';
 
 export type WeatherType = 'SUNNY' | 'RAINY' | 'FIREFLY_NIGHT';
 
@@ -40,11 +44,28 @@ export interface CoopOrder {
   completed: boolean;
 }
 
+export interface TrainCrate {
+  id: string;
+  carriageName: string;
+  itemId: string;
+  itemName: string;
+  emoji: string;
+  requiredQty: number;
+  rewardGold: number;
+  rewardVoucher: number;
+  filled: boolean;
+}
+
 export interface StoryQuest {
   id: string;
   chapter: string;
   title: string;
+  npcSpeaker: string;
+  npcQuote: string;
   desc: string;
+  choiceEmpLabel: string;
+  choicePragLabel: string;
+  selectedChoice?: 'EMP' | 'PRAG';
   rewardGold: number;
   rewardGems: number;
   completed: boolean;
@@ -52,6 +73,8 @@ export interface StoryQuest {
 
 interface GameState {
   playerName: string;
+  accountType: 'GUEST' | 'REGISTERED';
+  userEmail: string;
   gender: GenderType;
   region: RegionType;
   level: number;
@@ -63,17 +86,29 @@ interface GameState {
   styleScore: number;
   fengShuiScore: number;
   neighborPoints: number;
+  trainVouchers: number;
+  dragonBoatMeters: number;
+  npcHearts: number;
+  isMarried: boolean;
+  homestayLevel: number;
+  lodgeDiningTableMeals: number;
+  workerAutoTickEnabled: boolean;
   workerPantryCount: number;
-  pondMudCounter: number; // 0..10 mẻ lưới -> Vét bùn ao (-3 ⚡)
+  pondMudCounter: number;
   wildPlotsUnlocked: number;
   weather: WeatherType;
   dinhLangStage: number;
   mutantPityCount: number;
   activeTotemBuff: string | null;
+  loaPhuongText: string;
   luckyPacketsLeft: number;
+  onlineFarmersCount: number;
+  dbTablesStatus: string;
   blocCalendarCheckedToday: boolean;
-  rookieDaysClaimed: number; // 1..7 Ngày Tân Thủ
+  rookieDaysClaimed: number;
   lotteryTickets: string[];
+  transmogItemId: string | null;
+  fashionContestEntered: boolean;
   toastMessage: string | null;
   activeModal: ActiveModalType;
   visitingFriendName: string | null;
@@ -83,21 +118,45 @@ interface GameState {
   tiles: FarmTileEntity[];
   workers: HiredWorkerState[];
   marketListings: MarketListingItem[];
+  guestbookEntries: GuestbookEntry[];
   coopOrders: CoopOrder[];
+  trainCrates: TrainCrate[];
   storyQuests: StoryQuest[];
   chatMessages: ChatMessage[];
 
   // Actions
+  initSupabaseRealtimeSync: () => void;
+  syncCatalogToSupabaseCloud: () => Promise<void>;
+  postItemToMarket: (itemId: string, qty: number, unitPrice: number) => Promise<void>;
+  signFriendGuestbook: (message: string) => Promise<void>;
+  tickWorkerAutomation: () => void;
+  toggleWorkerAutoTick: () => void;
+  addMealsToLodgeTable: (portions: number, costGold: number) => void;
+  fillTrainCrate: (crateId: string) => void;
+  rowDragonBoatDerby: () => void;
+  giftNpcForMarriage: () => void;
+  serveHomestayGuests: () => void;
   setToast: (msg: string) => void;
   setActiveModal: (modal: ActiveModalType) => void;
   setProfile: (name: string, gender: GenderType, region: RegionType) => void;
+  applyAuthAccount: (
+    account: {
+      playerName: string;
+      email: string;
+      accountType: 'GUEST' | 'REGISTERED';
+      gender: GenderType;
+      region: RegionType;
+    },
+    isNewSignupOrGuest: boolean,
+    isGuestUpgrade: boolean
+  ) => void;
   setSelectedSeed: (seedId: string) => void;
   cycleWeather: () => void;
   interactTile: (tileId: string) => void;
   dredgePondMud: () => void;
   expandWildLand: () => void;
   deliverCoopOrder: (orderId: string) => void;
-  claimStoryQuest: (questId: string) => void;
+  claimStoryQuest: (questId: string, branchChoice?: 'EMP' | 'PRAG') => void;
   claimRookieDayReward: () => void;
   claimWorkerPantry: () => void;
   feedWorker: (workerCode: HiredWorkerState['code'], mealName: string, bellyGain: number) => void;
@@ -105,6 +164,7 @@ interface GameState {
   payWorkerSalary: (workerCode: HiredWorkerState['code']) => void;
   giveWorkerBonus: (workerCode: HiredWorkerState['code']) => void;
   cookRandomDish: (ingredients: string[]) => void;
+  craftOrBuyCatalogItem: (itemId: string) => void;
   prayAtTotem: () => void;
   contributeDinhLang: () => void;
   breedMutantCrop: (targetMutantId: string, costGold: number, baseChance: number, pityLimit: number) => void;
@@ -119,6 +179,10 @@ interface GameState {
   tearBlocCalendar: () => void;
   smashClayPotGacha: () => void;
   buyLotteryTicket: (forFriend: boolean) => void;
+  fuseDuplicateFashion: (itemId: string) => void;
+  setTransmogSlot: (itemId: string) => void;
+  enterFashionContest: () => void;
+  simulateOfflineWorkerProgress: (hoursOffline: number) => void;
   sendChatMessage: (content: string) => void;
   fastForwardTime: () => void;
 }
@@ -127,9 +191,9 @@ const createInitialTiles = (): FarmTileEntity[] => {
   const list: FarmTileEntity[] = [];
   const now = Date.now();
   const presetItems = [
-    'CROP_01', 'CROP_01', 'CROP_02', 'CROP_03',
+    'CROP_01', 'CROP_02', 'CROP_03', 'CROP_15',
     'CROP_N03', 'CROP_C05', 'CROP_S05', 'CROP_MUT_01',
-    'AQUA_01', 'AQUA_08', 'CROP_15', null,
+    'AQUA_01', 'AQUA_08', 'AQUA_N01', null,
   ];
 
   for (let i = 0; i < 12; i++) {
@@ -158,6 +222,8 @@ const createInitialTiles = (): FarmTileEntity[] => {
 
 export const useGameStore = create<GameState>((set, get) => ({
   playerName: 'Tư Hậu Lập Nghiệp',
+  accountType: 'REGISTERED',
+  userEmail: 'tuhau@vaconline.vn',
   gender: 'FEMALE',
   region: 'NORTH',
   level: 20,
@@ -169,6 +235,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   styleScore: 1420,
   fengShuiScore: 520,
   neighborPoints: 18,
+  trainVouchers: 4,
+  dragonBoatMeters: 450,
+  npcHearts: 7,
+  isMarried: false,
+  homestayLevel: 1,
+  lodgeDiningTableMeals: 6,
+  workerAutoTickEnabled: true,
   workerPantryCount: 68,
   pondMudCounter: 8,
   wildPlotsUnlocked: 12,
@@ -176,11 +249,16 @@ export const useGameStore = create<GameState>((set, get) => ({
   dinhLangStage: 1,
   mutantPityCount: 2,
   activeTotemBuff: 'Quẻ Đại Cát (+20% Tỷ lệ Nông sản Hoàng Kim ⭐)',
+  loaPhuongText: '[Minh Râu] trúng Độc Đắc 18h nhận 50,000 🪙!',
   luckyPacketsLeft: 32,
+  onlineFarmersCount: 1,
+  dbTablesStatus: 'Đang kiểm tra & đồng bộ 155 thực thể lên Supabase Cloud...',
   blocCalendarCheckedToday: false,
   rookieDaysClaimed: 2,
   lotteryTickets: ['168', '688'],
-  toastMessage: '🌾 Chạm vào ô ruộng để Gieo/Tưới/Bón bùn, hoặc bấm [📋 Nhiệm vụ & HTX] để giao đơn hàng!',
+  transmogItemId: 'FASH_03',
+  fashionContestEntered: false,
+  toastMessage: `🌾 VAC Online v2.0 Complete: Đã bật Tự Động Hóa 6 Nhân Công, Ga Tàu Thống Nhất, Đua Thuyền Rồng, Homestay & Lễ Cưới Quê!`,
   activeModal: null,
   visitingFriendName: null,
   selectedSeedId: 'CROP_01',
@@ -189,18 +267,43 @@ export const useGameStore = create<GameState>((set, get) => ({
     CROP_01: 24,
     CROP_02: 15,
     CROP_03: 12,
+    CROP_05: 10,
+    CROP_07: 9,
+    CROP_09: 8,
     CROP_15: 8,
+    CROP_19: 6,
+    CROP_24: 5,
+    CROP_29: 6,
+    CROP_30: 10,
+    CROP_N01: 8,
+    CROP_C01: 8,
+    CROP_S01: 8,
     CROP_N03: 6,
     CROP_C05: 5,
     CROP_S05: 4,
     ANI_01: 10,
+    ANI_05: 5,
     ANI_06: 7,
+    ANI_07: 4,
+    ANI_N01: 3,
     AQUA_01: 11,
+    AQUA_03: 6,
     AQUA_08: 3,
-    REC_01: 6,
-    REC_12: 2,
+    AQUA_N01: 4,
+    PROD_01: 8,
+    PROD_03: 6,
+    PROD_13: 3,
+    PROD_22: 2,
     CRAFT_01: 4,
+    CRAFT_02: 3,
     CRAFT_03: 3,
+    CRAFT_04: 1,
+    MAC_01: 1,
+    MAC_02: 1,
+    MAC_03: 1,
+    MAC_04: 1,
+    MAC_07: 1,
+    MAC_08: 1,
     ITEM_BUN_PHU_SA: 6,
     ITEM_DEP_TO_ONG: 2,
   },
@@ -209,13 +312,30 @@ export const useGameStore = create<GameState>((set, get) => ({
   workers: INITIAL_WORKERS,
   marketListings: INITIAL_MARKET_LISTINGS,
 
+  guestbookEntries: [
+    {
+      id: 'GB_1',
+      hostName: 'Tư Hậu Lập Nghiệp',
+      visitorName: 'Út Nhỏ Miền Tây',
+      message: 'Vườn vải thiều và đầm sen nhà bạn đẹp quá, mình ghé chụp ảnh check-in tặng +10 Mỹ Quan nè!',
+      timestamp: '09:15',
+    },
+    {
+      id: 'GB_2',
+      hostName: 'Tư Hậu Lập Nghiệp',
+      visitorName: 'Lý Trưởng Kinh Bắc',
+      message: 'Đã sang dựng giúp giàn bầu sau cơn mưa rào, chúc điền chủ vụ mùa bội thu!',
+      timestamp: '09:30',
+    },
+  ],
+
   coopOrders: [
     {
       id: 'ORD_01',
       title: 'Đơn Bếp Ăn Trường Làng',
       requester: 'Cô Giáo Hương',
       itemId: 'CROP_01',
-      itemName: 'Lúa Nước Tẻ Thơm',
+      itemName: 'Lúa Nước (Tẻ Thơm)',
       emoji: '🌾',
       requiredQty: 5,
       rewardGold: 220,
@@ -239,32 +359,192 @@ export const useGameStore = create<GameState>((set, get) => ({
       title: 'Đơn Đặc Sản Tiến Vua',
       requester: 'Thương Nhân Phố Cổ',
       itemId: 'CROP_N03',
-      itemName: 'Vải Thiều Thanh Hà',
+      itemName: 'Vải Thiều Thanh Hà (Bắc Bậc 3)',
       emoji: '🍒',
       requiredQty: 2,
       rewardGold: 520,
       rewardXp: 65,
       completed: false,
     },
+    {
+      id: 'ORD_04',
+      title: 'Đơn Đại Tiệc Làng Vũ Đại',
+      requester: 'Cụ Bá Kiến',
+      itemId: 'PROD_22',
+      itemName: 'Cá Kho Tộ Vũ Đại (Giao Thoa 3 Miền)',
+      emoji: '🥘',
+      requiredQty: 1,
+      rewardGold: 680,
+      rewardXp: 90,
+      completed: false,
+    },
+  ],
+
+  trainCrates: [
+    {
+      id: 'TR_01',
+      carriageName: 'Toa 1 (Hà Nội ➔ Huế)',
+      itemId: 'CROP_N01',
+      itemName: 'Cải Cúc & Su Hào (Bắc)',
+      emoji: '🥬',
+      requiredQty: 3,
+      rewardGold: 360,
+      rewardVoucher: 1,
+      filled: false,
+    },
+    {
+      id: 'TR_02',
+      carriageName: 'Toa 2 (Huế ➔ Đà Nẵng)',
+      itemId: 'CROP_C05',
+      itemName: 'Cà Phê Buôn Ma Thuột (Trung)',
+      emoji: '☕',
+      requiredQty: 2,
+      rewardGold: 540,
+      rewardVoucher: 2,
+      filled: false,
+    },
+    {
+      id: 'TR_03',
+      carriageName: 'Toa 3 (Đà Nẵng ➔ Sài Gòn)',
+      itemId: 'CROP_S05',
+      itemName: 'Sầu Riêng Ri6 & Dừa Sáp (Nam)',
+      emoji: '🥭',
+      requiredQty: 2,
+      rewardGold: 620,
+      rewardVoucher: 2,
+      filled: false,
+    },
   ],
 
   storyQuests: [
     {
       id: 'Q_CH1',
-      chapter: 'Chương 1: Bỏ Phố Về Quê',
-      title: 'Khơi thông Giếng Đá Ong & Vét Bùn Ao Cũ',
-      desc: 'Thu hoạch 2 mẻ cá dưới ao và bấm Vét Bùn Đáy Ao để lấy Phù Sa bón cho vườn cây của Ông Bảy.',
+      chapter: 'Chương 1 (Lv.1): Bức Thư Trong Chiếc Tráp Gỗ Lim',
+      title: 'Giữ Đất Tổ Tiên & Gieo Vụ Lúa Đầu Mùa',
+      npcSpeaker: '🎩 Thương Nhân Bá Kiến',
+      npcQuote: '"Ký giấy nhượng lại mảnh vườn này lấy 2,000 Xu tiêu xài, đỡ phải chân lấm tay bùn trả khoản khế ước 50,000 Xu của ông nội cháu!"',
+      desc: 'Từ chối bán đất tổ tiên, tưới nước Giếng Làng (-15% t/g) và thu hoạch mẻ Lúa Nước đầu tiên để mở Trang Gia Phả #1.',
+      choiceEmpLabel: '🤝 Giữ đất tổ tiên (+30 Phong Thủy & +3 Nghĩa Xóm)',
+      choicePragLabel: '🪙 Đòi Bá Kiến đặt cọc lúa sạch (+350 🪙)',
       rewardGold: 600,
       rewardGems: 15,
       completed: false,
     },
     {
       id: 'Q_CH2',
-      chapter: 'Chương 2: Khói Bếp Quê Mẹ',
-      title: 'Nấu Nồi Cá Kho Vũ Đại & Dọn Cơm Đãi Lán Thợ',
-      desc: 'Phối 3 nguyên liệu trong Bếp Quê và dọn 1 bữa cơm nóng hổi cho Chú Tư Cày.',
+      chapter: 'Chương 2 (Lv.3): Mùi Khói Bếp Của Mẹ & Bí Mật Đáy Ao',
+      title: 'Vét Bùn Phù Sa & Đỏ Lửa Bếp Củi Quê Mẹ',
+      npcSpeaker: '👴 Bác Trưởng Thôn Bảy',
+      npcQuote: '"Mùi cá kho riềng sả bốc lên làm bác nhớ bà nội cháu xưa kia quá... Bát đầu tiên mới ra lò, cháu tính đem biếu ai trước?"',
+      desc: 'Vét Bùn Đáy Ao lấy 3 Xô Phù Sa và phối 3 nguyên liệu trong Nồi Đất Bếp Quê để tìm lại Trang Gia Phả #2.',
+      choiceEmpLabel: '🤝 Biếu Bác Bảy & Lớp học làng (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Bán mở hàng Quán Nước đầu làng (+350 🪙)',
+      rewardGold: 900,
+      rewardGems: 20,
+      completed: false,
+    },
+    {
+      id: 'Q_CH3',
+      chapter: 'Chương 3 (Lv.6): Chuyến Xe Hợp Tác Xã & Đêm Mưa Giông',
+      title: 'Dựng Giàn Sau Bão & Giao Đơn Trường Làng',
+      npcSpeaker: '👩‍🏫 Cô Giáo Hương',
+      npcQuote: '"Cơn mưa đầu mùa làm tốc mái bếp ăn trường làng rồi... May mà có chuyến xe rau gạo Hợp Tác Xã của bạn kịp chở tới!"',
+      desc: 'Dựng lại giàn cây bị nghiêng sau mưa bão (+20% sản lượng) và giao 1 Đơn Hàng Hợp Tác Xã mở Trang Gia Phả #3.',
+      choiceEmpLabel: '🤝 Góp tre gỗ sửa mái bếp trường (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Ký hợp đồng cung ứng giá sỉ (+350 🪙)',
       rewardGold: 1200,
       rewardGems: 25,
+      completed: false,
+    },
+    {
+      id: 'Q_CH4',
+      chapter: 'Chương 4 (Lv.9): Bóng Đêm Rình Rập & Chó Phú Quốc',
+      title: 'Huấn Luyện Chó Phú Quốc & Mở Sổ Lưu Bút Cổng Làng',
+      npcSpeaker: '👴 Bác Trưởng Thôn Bảy',
+      npcQuote: '"Đêm qua có kẻ rón rén vào vườn xoài đánh rơi chiếc Dép Tổ Ong! Cháu mau huấn luyện chú Chó Xoáy Phú Quốc canh sân nhé!"',
+      desc: 'Ghé thăm trang trại hàng xóm qua Báo Chợ, ký Sổ Lưu Bút và mở khóa 4 Lớp Phòng Thủ (Trang Gia Phả #4).',
+      choiceEmpLabel: '🤝 Đóng bảng Lưu Bút kết bạn (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Đặt thêm Bẫy Vỏ Chuối phạt 50 Xu (+350 🪙)',
+      rewardGold: 1500,
+      rewardGems: 30,
+      completed: false,
+    },
+    {
+      id: 'Q_CH5',
+      chapter: 'Chương 5 (Lv.12): Tiếng Còi Tàu Thống Nhất Bắc – Nam',
+      title: 'Đóng Toa Hàng Xuyên Việt & Kết Nối Đặc Sản 3 Miền',
+      npcSpeaker: '👧 Út Nhỏ Miền Tây',
+      npcQuote: '"Ghe Sầu riêng Ri6 của em vừa cập bến tàu! Mình kết nghĩa giao thương 3 miền Bắc – Trung – Nam nghen!"',
+      desc: 'Đóng 1 Toa Hàng trên Ga Tàu Thống Nhất hoặc đăng bán nông sản lên Chợ Phiên 3 Miền để mở Trang Gia Phả #5.',
+      choiceEmpLabel: '🤝 Kết nghĩa đồng hương 3 miền (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Đón đầu Thương Lái giá sốt x2.5 (+350 🪙)',
+      rewardGold: 2000,
+      rewardGems: 35,
+      completed: false,
+    },
+    {
+      id: 'Q_CH6',
+      chapter: 'Chương 6 (Lv.14): Lán Thợ Đồng Quê & Giọt Mồ Hôi Chú Tư',
+      title: 'Xây Lán Thợ 6 Gia Nhân & Dọn Mâm Cơm Quê Ấm Áp',
+      npcSpeaker: '👨‍🌾 Chú Tư Cày',
+      npcQuote: '"Cậu/Cô chủ không chê lão nông này già cả, còn nấu canh cải cá rô đãi cơm trưa... Tôi xin thề chăm từng gốc lúa như ruộng nhà!"',
+      desc: 'Thuê nhân công Lán Thợ, dọn cơm lên Bàn Ăn Chung và thu hoạch Giỏ Kho Thợ (120 ô) mở Trang Gia Phả #6.',
+      choiceEmpLabel: '🤝 Đãi thêm trà bánh ngày mùa (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Phân ca tự động hóa 24/7 (+350 🪙)',
+      rewardGold: 2500,
+      rewardGems: 40,
+      completed: false,
+    },
+    {
+      id: 'Q_CH7',
+      chapter: 'Chương 7 (Lv.16): Bí Truyền Khung Cửi Lụa & Áo Mới',
+      title: 'Nuôi Tằm Dệt Lụa Tân Châu & Dự Thi Duyên Dáng',
+      npcSpeaker: '👗 Cô Ba Tiệm May',
+      npcQuote: '"Tơ tằm năm nay óng ả như nắng thu! Điền chủ muốn may áo bảo hộ cho Lán Thợ trước hay may Áo Dài Ngũ Thân dự hội?"',
+      desc: 'Cấp phát áo quần bảo hộ 72h cho nhân công và khâu ghép trang phục 12 Slots để mở Trang Gia Phả #7.',
+      choiceEmpLabel: '🤝 Ưu tiên áo ấm cho 6 Gia nhân (+30 Phong Thủy)',
+      choicePragLabel: '🪙 May Lễ phục dự thi Duyên Dáng (+350 🪙)',
+      rewardGold: 3200,
+      rewardGems: 45,
+      completed: false,
+    },
+    {
+      id: 'Q_CH8',
+      chapter: 'Chương 8 (Lv.18): Hạt Giống Ngũ Sắc Trong Rừng Trúc Cổ',
+      title: 'Thám Hiểm Rừng Trúc & Lai Tạo Lúa Tím Đột Biến',
+      npcSpeaker: '🪵 Chú Tám Mộc',
+      npcQuote: '"Hũ sành cổ trong Rừng Trúc chứa phấn hoa đột biến của Ông Nội cháu đấy! Chiết cành đủ Pity là chắc chắn nổ 100%!"',
+      desc: 'Thám hiểm Rừng Trúc (-6⚡) và chiết cành tại Vườn Ươm Đột Biến Đình Làng để mở Trang Gia Phả #8.',
+      choiceEmpLabel: '🤝 Chia sẻ giống quý cho Hợp Tác Xã (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Đấu giá giống đột biến ở Chợ Đêm (+350 🪙)',
+      rewardGold: 4000,
+      rewardGems: 50,
+      completed: false,
+    },
+    {
+      id: 'Q_CH9',
+      chapter: 'Chương 9 (Lv.22): Đại Tiệc Tiến Vua Cảm Hóa Bá Kiến',
+      title: 'Nấu Cá Kho Vũ Đại 3 Miền & Xóa Khế Ước 50,000 Xu',
+      npcSpeaker: '🎩 Thương Nhân Bá Kiến',
+      npcQuote: '"Miếng cá trắm kho tiêu thấm nước dừa này... 40 năm rồi ta mới được ăn lại vị mẹ nấu. Ta xin đốt tờ khế ước và góp tiền xây Đình Làng!"',
+      desc: 'Nấu món Đại Tiệc Giao Thoa 3 Miền và công đức trùng tu Đình Làng để mở Trang Gia Phả #9.',
+      choiceEmpLabel: '🤝 Mời Bá Kiến khắc tên Bia Công Đức (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Ký hiệp ước bao tiêu Chợ Đêm 0% thuế (+350 🪙)',
+      rewardGold: 6000,
+      rewardGems: 60,
+      completed: false,
+    },
+    {
+      id: 'Q_CH10',
+      chapter: 'Chương 10 (Lv.25+): Trầu Cau Nên Duyên & Gia Bảo Truyền Đời',
+      title: 'Lễ Cưới 10 Tim ❤️, Homestay Đầm Sen & Bằng Khen Điền Chủ',
+      npcSpeaker: '💍 Người Bạn Đời Tri Kỷ',
+      npcQuote: '"Từ hai bàn tay trắng ngày mới về quê, giờ cánh đồng lúa chín vàng rực rỡ... Mình viết tiếp cuốn Gia Phả Ba Miền cho đời con cháu nhé!"',
+      desc: 'Đạt 10/10 Tim Kết hôn, đón đoàn khách Du lịch Homestay Đầm Sen và xuất ảnh Bằng Khen Điền Chủ Mẫu Mực (.PNG).',
+      choiceEmpLabel: '🤝 Khắc chữ Gia Phả Tình Quê (+30 Phong Thủy)',
+      choicePragLabel: '🪙 Mở rộng Đại Điền Trang Bốn Biển (+350 🪙)',
+      rewardGold: 10000,
+      rewardGems: 100,
       completed: false,
     },
   ],
@@ -288,16 +568,356 @@ export const useGameStore = create<GameState>((set, get) => ({
     },
   ],
 
+  initSupabaseRealtimeSync: () => {
+    vacRealtime.initRealtime(
+      (incomingMsg) => {
+        set((st) => ({
+          chatMessages: [...st.chatMessages, incomingMsg],
+        }));
+      },
+      (loaPayload) => {
+        set({
+          loaPhuongText: `[${loaPayload.sender}] ${loaPayload.achievement}`,
+          luckyPacketsLeft: 50,
+          toastMessage: `📢 LOA PHƯỜNG REALTIME: [${loaPayload.sender}] ${loaPayload.achievement}`,
+        });
+      },
+      (count) => {
+        set({ onlineFarmersCount: count });
+      },
+      (incomingListing) => {
+        set((st) => ({
+          marketListings: [incomingListing, ...st.marketListings],
+          toastMessage: `📰 SẠP MỚI TRÊN CHỢ 3 MIỀN: [${incomingListing.sellerName}] vừa đăng bán ${incomingListing.quantity} ${incomingListing.itemName}!`,
+        }));
+      },
+      (incomingGuestbook) => {
+        set((st) => ({
+          guestbookEntries: [incomingGuestbook, ...st.guestbookEntries],
+          fengShuiScore: st.fengShuiScore + 10,
+          toastMessage: `📖 LƯU BÚT MỚI: [${incomingGuestbook.visitorName}] vừa ký Sổ Lưu Bút Cổng Làng (+10 Điểm Mỹ Quan)!`,
+        }));
+      }
+    );
+
+    vacRealtime.checkDatabaseTables().then((res) => {
+      set((st) => ({
+        dbTablesStatus: res.detail,
+        marketListings: res.cloudListings && res.cloudListings.length > 0 ? res.cloudListings : st.marketListings,
+        guestbookEntries: res.cloudGuestbook && res.cloudGuestbook.length > 0 ? res.cloudGuestbook : st.guestbookEntries,
+      }));
+    });
+  },
+
+  syncCatalogToSupabaseCloud: async () => {
+    set({ toastMessage: '☁️ Đang đồng bộ trọn bộ 155 thực thể VAC Online lên Supabase Cloud...' });
+    const res = await vacRealtime.syncFullCatalogToSupabase();
+    const check = await vacRealtime.checkDatabaseTables();
+    set((st) => ({
+      dbTablesStatus: check.detail,
+      marketListings: check.cloudListings && check.cloudListings.length > 0 ? check.cloudListings : st.marketListings,
+      guestbookEntries: check.cloudGuestbook && check.cloudGuestbook.length > 0 ? check.cloudGuestbook : st.guestbookEntries,
+      toastMessage: res.message,
+    }));
+  },
+
+  postItemToMarket: async (itemId, qty, unitPrice) => {
+    const state = get();
+    const haveQty = state.inventory[itemId] ?? 0;
+    const spec = GAME_CATALOG.find((c) => c.id === itemId);
+    if (!spec || qty <= 0) return;
+
+    if (haveQty < qty) {
+      set({ toastMessage: `⚠️ Kho chỉ còn ${haveQty} ${spec.name}, không đủ ${qty} để đăng bán!` });
+      return;
+    }
+
+    const minPrice = Math.max(1, Math.floor(spec.baseSellGold * 0.8));
+    const maxPrice = Math.max(minPrice + 2, spec.baseSellGold * 2);
+    const clampedPrice = Math.min(maxPrice, Math.max(minPrice, unitPrice));
+
+    const createdListing = await vacRealtime.postMarketListingToCloud(
+      state.playerName,
+      state.region,
+      state.level,
+      itemId,
+      qty,
+      clampedPrice
+    );
+
+    const netRevenueAfterTax = Math.floor(clampedPrice * qty * 0.9);
+    set((st) => ({
+      gold: st.gold + netRevenueAfterTax,
+      inventory: {
+        ...st.inventory,
+        [itemId]: haveQty - qty,
+      },
+      marketListings: [createdListing, ...st.marketListings],
+      toastMessage: `📰 Đã đăng bán ${qty} ${spec.emoji} ${spec.name} lên Báo Chợ 3 Miền Cloud! Tạm ứng +${netRevenueAfterTax} 🪙 (Đã trừ 10% Thuế Chợ)!`,
+    }));
+  },
+
+  signFriendGuestbook: async (message) => {
+    const state = get();
+    const targetHost = state.visitingFriendName ?? state.playerName;
+    const cleanMsg = message.trim() || 'Chúc trang trại vụ mùa bội thu, lúa đầy bồ cá đầy ao!';
+    const entry = await vacRealtime.signGuestbookToCloud(targetHost, state.playerName, cleanMsg);
+    set((st) => ({
+      gold: st.gold + 20,
+      xp: st.xp + 5,
+      fengShuiScore: st.fengShuiScore + 10,
+      neighborPoints: st.neighborPoints + 1,
+      guestbookEntries: [entry, ...st.guestbookEntries],
+      toastMessage: `📖 Đã chụp ảnh Check-in & Ký Sổ Lưu Bút Cổng Làng nhà [${targetHost}]! Nhận +20 🪙, +10 Điểm Mỹ Quan & +1 Nghĩa Xóm!`,
+    }));
+  },
+
+  tickWorkerAutomation: () => {
+    const state = get();
+    if (!state.workerAutoTickEnabled) return;
+
+    const now = Date.now();
+    let nextPantry = state.workerPantryCount;
+    let nextMudCounter = state.pondMudCounter;
+    let nextMealsOnTable = state.lodgeDiningTableMeals;
+    const nextInv = { ...state.inventory };
+    const actionsLog: string[] = [];
+
+    // 1. Dì Bảy Bếp (WORK_04) tự động nấu thêm cơm nếu bàn ăn còn < 3 suất
+    const diBay = state.workers.find((w) => w.code === 'WORK_04' && w.isHired && w.belly >= 25);
+    if (diBay && nextMealsOnTable < 3) {
+      nextMealsOnTable += 2;
+      actionsLog.push('Dì Bảy Bếp dọn +2 suất cơm nóng lên Bàn Ăn Lán Thợ');
+    }
+
+    // 2. Nhân công đói bụng (< 35%) tự động về Bàn Ăn Lán Thợ ăn cơm
+    const updatedWorkers = state.workers.map((w) => {
+      if (!w.isHired || w.contractDaysLeft <= 0) return w;
+      let belly = Math.max(10, w.belly - 2);
+      let statusText = w.statusText;
+      if (belly < 35 && nextMealsOnTable > 0) {
+        nextMealsOnTable -= 1;
+        belly = 100;
+        statusText = `Vừa ăn cơm tại Bàn Lán Thợ (No 100% 🤩) - Đang làm việc hăng say!`;
+        actionsLog.push(`${w.name} đã ăn 1 suất cơm tại Bàn Ăn Lán Thợ (Hồi 100% Độ No)`);
+      }
+      return { ...w, belly, statusText };
+    });
+
+    // 3. Chú Tư Cày (WORK_01), Anh Sáu Kình (WORK_03), Chú Tám Mộc (WORK_05) chăm sóc ô đất/ao
+    const chuTu = updatedWorkers.find((w) => w.code === 'WORK_01' && w.isHired && w.belly >= 25);
+    const anhSau = updatedWorkers.find((w) => w.code === 'WORK_03' && w.isHired && w.belly >= 25);
+    const chuTam = updatedWorkers.find((w) => w.code === 'WORK_05' && w.isHired && w.belly >= 25);
+
+    const updatedTiles = state.tiles.map((t) => {
+      // Tự động thu hoạch ô đã chín (vào Giỏ Kho Lán Thợ, tối đa 120)
+      if (t.itemId && t.matureAt && now >= t.matureAt && nextPantry < 120) {
+        const canHarvestLand = (t.zoneType === 'LAND' || t.zoneType === 'ORCHARD') && (chuTu || chuTam);
+        const canHarvestPond = t.zoneType === 'POND' && anhSau;
+        if (canHarvestLand || canHarvestPond) {
+          nextPantry = Math.min(120, nextPantry + 2);
+          if (t.zoneType === 'POND') {
+            nextMudCounter = Math.min(10, nextMudCounter + 1);
+          }
+          const replantId = t.itemId;
+          const spec = GAME_CATALOG.find((c) => c.id === replantId);
+          actionsLog.push(`Thu tự động [${spec?.name ?? replantId}] vào Giỏ Thợ & gieo vụ mới`);
+          return {
+            ...t,
+            plantedAt: now,
+            matureAt: now + Math.max(2, spec?.growOrCraftMinutes ?? 5) * 60_000,
+            watered: Boolean(chuTu) || state.weather === 'RAINY',
+            mudApplied: false,
+            isGolden: false,
+          };
+        }
+      }
+
+      // Tự động tưới nước Giếng Làng bởi Chú Tư Cày
+      if (t.itemId && !t.watered && t.matureAt && chuTu) {
+        return {
+          ...t,
+          watered: true,
+          matureAt: t.matureAt - Math.floor((t.matureAt - now) * 0.15),
+        };
+      }
+
+      // Tự động bón Bùn Phù Sa cho Cây ăn quả bởi Chú Tám Mộc
+      if (t.itemId && t.zoneType === 'ORCHARD' && !t.mudApplied && chuTam && (nextInv.ITEM_BUN_PHU_SA ?? 0) > 0) {
+        nextInv.ITEM_BUN_PHU_SA = (nextInv.ITEM_BUN_PHU_SA ?? 1) - 1;
+        actionsLog.push('Chú Tám Mộc bón Bùn Phù Sa kích nổ Trái Cây Hoàng Kim ⭐');
+        return {
+          ...t,
+          mudApplied: true,
+          isGolden: true,
+        };
+      }
+
+      return t;
+    });
+
+    // 4. Anh Sáu Kình (WORK_03) tự động Vét Bùn Ao khi đầy 10/10 (Miễn phí ⚡ cho chủ nhà!)
+    if (anhSau && nextMudCounter >= 10) {
+      nextMudCounter = 0;
+      nextInv.ITEM_BUN_PHU_SA = (nextInv.ITEM_BUN_PHU_SA ?? 0) + 3;
+      actionsLog.push('Anh Sáu Kình tự động Vét Bùn Đáy Ao (0 ⚡) nhận +3 Xô Bùn Phù Sa!');
+    }
+
+    set({
+      tiles: updatedTiles,
+      workers: updatedWorkers,
+      workerPantryCount: nextPantry,
+      pondMudCounter: nextMudCounter,
+      lodgeDiningTableMeals: nextMealsOnTable,
+      inventory: nextInv,
+      ...(actionsLog.length > 0
+        ? { toastMessage: `🛖 [Lán Thợ Tự Động]: ${actionsLog[0]}!` }
+        : {}),
+    });
+  },
+
+  toggleWorkerAutoTick: () => {
+    const next = !get().workerAutoTickEnabled;
+    set({
+      workerAutoTickEnabled: next,
+      toastMessage: next
+        ? '🟢 Đã BẬT chế độ Tự Động Hóa 6 Nhân Công Lán Thợ (Tự tưới, tự thu vào Giỏ Thợ & tự ăn cơm)!'
+        : '⏸️ Đã TẠM DỪNG Nhân công tự động để bạn tự tay thu hoạch!',
+    });
+  },
+
+  addMealsToLodgeTable: (portions, costGold) => {
+    const state = get();
+    if (state.gold < costGold) {
+      set({ toastMessage: '⚠️ Không đủ Xu Vàng để dọn thêm mâm cơm lên Bàn Ăn Lán Thợ!' });
+      return;
+    }
+    set({
+      gold: state.gold - costGold,
+      lodgeDiningTableMeals: state.lodgeDiningTableMeals + portions,
+      toastMessage: `🍚 Đã dọn thêm +${portions} suất cơm nóng lên Bàn Ăn Chung Lán Thợ (Tổng: ${state.lodgeDiningTableMeals + portions} suất)!`,
+    });
+  },
+
+  fillTrainCrate: (crateId) => {
+    const state = get();
+    const crate = state.trainCrates.find((c) => c.id === crateId);
+    if (!crate || crate.filled) return;
+    const have = state.inventory[crate.itemId] ?? 0;
+    if (have < crate.requiredQty) {
+      set({
+        toastMessage: `🚂 Cần ${crate.requiredQty} ${crate.itemName} để đóng ${crate.carriageName} (Kho hiện có: ${have})!`,
+      });
+      return;
+    }
+    set({
+      gold: state.gold + crate.rewardGold,
+      xp: state.xp + 55,
+      trainVouchers: state.trainVouchers + crate.rewardVoucher,
+      inventory: {
+        ...state.inventory,
+        [crate.itemId]: have - crate.requiredQty,
+      },
+      trainCrates: state.trainCrates.map((c) => (c.id === crateId ? { ...c, filled: true } : c)),
+      toastMessage: `🚂 Đã đóng xong [${crate.carriageName}] trên Ga Tàu Thống Nhất! Nhận +${crate.rewardGold} 🪙 & +${crate.rewardVoucher} 🎟️ Voucher Tàu Hỏa (Đổi Trâu Đen)!`,
+    });
+  },
+
+  rowDragonBoatDerby: () => {
+    const state = get();
+    if (state.stamina < 4) {
+      set({ toastMessage: '⚡ Cần 4 Năng lượng để tham gia chèo Thuyền Rồng Hợp Tác Xã!' });
+      return;
+    }
+    const nextMeters = state.dragonBoatMeters + 120;
+    set({
+      stamina: state.stamina - 4,
+      dragonBoatMeters: nextMeters,
+      gold: state.gold + 380,
+      gems: state.gems + 5,
+      xp: state.xp + 40,
+      toastMessage: `🚣 Tùng! Tùng! Tùng! Bạn chèo thuyền tiến thêm +120m (Tổng: ${nextMeters}/1,000m)! Nhận +380 🪙, +5 💎 & +40 XP!`,
+    });
+  },
+
+  giftNpcForMarriage: () => {
+    const state = get();
+    if (state.isMarried) {
+      set({
+        stamina: Math.min(state.maxStamina, state.stamina + 30),
+        workerPantryCount: Math.min(120, state.workerPantryCount + 10),
+        toastMessage: '💒 Bạn đời vừa nấu Mâm Cơm Sáng (+30 ⚡) & Bé Tiểu Đồng phụ thu hoạch +10 Nông sản vào Giỏ!',
+      });
+      return;
+    }
+    const nextHearts = Math.min(10, state.npcHearts + 1);
+    const marriedNow = nextHearts >= 10;
+    if (marriedNow) {
+      const loaText = 'vừa tổ chức Lễ Cưới Làng Quê (Đạt 10/10 Tim ❤️ với Tri Kỷ)!';
+      vacRealtime.broadcastLoaPhuong(state.playerName, loaText);
+      set({
+        npcHearts: 10,
+        isMarried: true,
+        styleScore: state.styleScore + 250,
+        fengShuiScore: state.fengShuiScore + 200,
+        loaPhuongText: `[${state.playerName}] ${loaText}`,
+        toastMessage:
+          '💒 CHÚC MỪNG TRĂM NĂM HẠNH PHÚC! Đạt 10/10 Tim ❤️, mở khóa Gia Bảo Truyền Đời (+30 ⚡ mỗi sáng & Tiểu Đồng phụ việc miễn phí)!',
+      });
+    } else {
+      set({
+        npcHearts: nextHearts,
+        xp: state.xp + 25,
+        toastMessage: `💝 Đã biếu Cốm Làng Vòng & Cau Trầu cho Tri Kỷ! Độ thân mật đạt ${nextHearts}/10 Tim ❤️!`,
+      });
+    }
+  },
+
+  serveHomestayGuests: () => {
+    const state = get();
+    const rewardGold = state.homestayLevel === 1 ? 650 : 1600;
+    set({
+      gold: state.gold + rewardGold,
+      gems: state.gems + 10,
+      fengShuiScore: state.fengShuiScore + 20,
+      xp: state.xp + 90,
+      toastMessage: `🏡 Đón đoàn Khách Du Lịch Homestay Cấp ${state.homestayLevel} thưởng thức Đặc Sản 3 Miền: Nhận +${rewardGold.toLocaleString()} 🪙, +10 💎 Ngọc & +20 Phong Thủy!`,
+    });
+  },
+
   setToast: (msg) => set({ toastMessage: msg }),
   setActiveModal: (modal) => set({ activeModal: modal }),
-  setProfile: (playerName, gender, region) =>
+  setProfile: (playerName, gender, region) => {
+    const cleanName = playerName.replace(/[<>]/g, '').trim() || 'Điền Chủ';
     set({
-      playerName,
+      playerName: cleanName,
       gender,
       region,
       activeModal: null,
-      toastMessage: `💮 Đã đóng dấu đỏ! Chào mừng Điền chủ ${playerName} về quê hương ${region}!`,
-    }),
+      toastMessage: `💮 Đã đóng dấu đỏ! Chào mừng Điền chủ ${cleanName} về quê hương ${region}!`,
+    });
+  },
+  applyAuthAccount: (account, isNewSignupOrGuest, isGuestUpgrade) => {
+    const state = get();
+    const cleanName = account.playerName.replace(/[<>]/g, '').trim() || 'Điền Chủ';
+    const bonusGold = isGuestUpgrade ? 1000 : isNewSignupOrGuest && account.accountType === 'REGISTERED' ? 500 : 0;
+    const bonusGems = isGuestUpgrade ? 50 : 0;
+    set({
+      playerName: cleanName,
+      accountType: account.accountType,
+      userEmail: account.email,
+      gender: account.gender,
+      region: account.region,
+      gold: state.gold + bonusGold,
+      gems: state.gems + bonusGems,
+      activeModal: isNewSignupOrGuest ? 'REGISTER' : null,
+      toastMessage: isGuestUpgrade
+        ? `🛡️ Đã liên kết Tài khoản Khách lên Chính thức (${account.email})! Nhận +50 💎 Ngọc & +1,000 🪙 Xu Vàng!`
+        : isNewSignupOrGuest
+        ? `🎉 Chào mừng [${cleanName}]! Hãy chọn Giới tính & Quê hương 3 Miền trong Giấy Đăng Ký Về Quê nhé!`
+        : `🌾 Chào mừng Điền chủ [${cleanName}] (${account.accountType === 'GUEST' ? 'Chế độ Khách' : account.email}) trở lại nông trại!`,
+    });
+  },
 
   setSelectedSeed: (seedId) => set({ selectedSeedId: seedId }),
 
@@ -306,7 +926,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     const order: WeatherType[] = ['SUNNY', 'RAINY', 'FIREFLY_NIGHT'];
     const next = order[(order.indexOf(state.weather) + 1) % order.length];
     if (next === 'RAINY') {
-      // Mưa rào tự động tưới ướt 100% ô ruộng!
       set({
         weather: next,
         tiles: state.tiles.map((t) => ({ ...t, watered: true })),
@@ -345,7 +964,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (!tile.itemId) {
       const seed = GAME_CATALOG.find((c) => c.id === state.selectedSeedId) ?? GAME_CATALOG[0];
       if (state.gold < seed.buyCostGold) {
-        set({ toastMessage: '⚠️ Không đủ Xu Vàng để mua giống!' });
+        set({ toastMessage: '⚠️ Không đủ Xu Vàng để mua giống/vật nuôi này!' });
         return;
       }
       set({
@@ -356,16 +975,22 @@ export const useGameStore = create<GameState>((set, get) => ({
                 ...t,
                 itemId: seed.id,
                 plantedAt: now,
-                matureAt: now + seed.growOrCraftMinutes * 60_000,
+                matureAt:
+                  now +
+                  Math.round(
+                    Math.max(1, seed.growOrCraftMinutes) *
+                      60_000 *
+                      (state.region === 'NORTH' && seed.category === 'CROP' ? 0.9 : 1)
+                  ),
                 watered: state.weather === 'RAINY',
                 mudApplied: false,
                 isGolden: false,
-                totalYield: 5,
-                remainingYield: 5,
+                totalYield: seed.yieldCount ?? 5,
+                remainingYield: seed.yieldCount ?? 5,
               }
             : t
         ),
-        toastMessage: `🌱 Đã gieo [${seed.emoji} ${seed.name}] (0 ⚡) - Chạm lần nữa để Tưới Nước Giếng Làng!`,
+        toastMessage: `🌱 Đã thả/gieo [${seed.emoji} ${seed.name}] (-${seed.buyCostGold} 🪙, 0 ⚡) - Chạm lần nữa để Chăm sóc / Tưới nước!`,
       });
       return;
     }
@@ -374,16 +999,20 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (!itemSpec) return;
 
     if (tile.matureAt && now >= tile.matureAt) {
-      const goldGain = itemSpec.baseSellGold * (tile.isGolden ? 3 : 1);
+      const yieldQty = itemSpec.yieldCount ?? 2;
+      const goldGain = itemSpec.baseSellGold * yieldQty * (tile.isGolden ? 3 : 1);
       const currentQty = state.inventory[itemSpec.id] ?? 0;
-      const nextMud = tile.zoneType === 'POND' ? Math.min(10, state.pondMudCounter + 1) : state.pondMudCounter;
+      const nextMud =
+        tile.zoneType === 'POND' || itemSpec.category === 'AQUA'
+          ? Math.min(10, state.pondMudCounter + 1)
+          : state.pondMudCounter;
       set({
         gold: state.gold + goldGain,
         xp: state.xp + itemSpec.xpReward,
         pondMudCounter: nextMud,
         inventory: {
           ...state.inventory,
-          [itemSpec.id]: currentQty + 2,
+          [itemSpec.id]: currentQty + yieldQty,
         },
         tiles: state.tiles.map((t) =>
           t.id === tileId
@@ -398,7 +1027,7 @@ export const useGameStore = create<GameState>((set, get) => ({
               }
             : t
         ),
-        toastMessage: `🧺 Thu hoạch [${itemSpec.emoji} ${itemSpec.name}${tile.isGolden ? ' HOÀNG KIM ⭐ (x3 Giá)' : ''}]: +2 vào Kho, +${goldGain} 🪙 & Độ bùn ao: ${nextMud}/10!`,
+        toastMessage: `🧺 Thu hoạch [${itemSpec.emoji} ${itemSpec.name}${tile.isGolden ? ' HOÀNG KIM ⭐ (x3 Giá)' : ''}]: +${yieldQty} vào Kho, +${goldGain} 🪙 & Độ bùn ao: ${nextMud}/10!`,
       });
       return;
     }
@@ -409,7 +1038,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         tiles: state.tiles.map((t) =>
           t.id === tileId ? { ...t, watered: true, matureAt: reducedTime } : t
         ),
-        toastMessage: `💧 Đã tưới Nước Giếng Làng cho [${itemSpec.name}] (-15% thời gian chín)!`,
+        toastMessage: `💧 Đã tưới Nước Giếng Làng / Chăm sóc [${itemSpec.name}] (-15% thời gian chờ)!`,
       });
       return;
     }
@@ -426,7 +1055,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         tiles: state.tiles.map((t) =>
           t.id === tileId ? { ...t, mudApplied: true, isGolden: isGoldenRoll, matureAt: now - 1000 } : t
         ),
-        toastMessage: `🪣 Đã bón Bùn Phù Sa đáy ao! Cây chín ngay lập tức ${isGoldenRoll ? 'và NỔ ĐỘT BIẾN HOÀNG KIM ⭐!' : '!'}`,
+        toastMessage: `🪣 Đã bón Bùn Phù Sa đáy ao! [${itemSpec.name}] chín ngay lập tức ${isGoldenRoll ? 'và NỔ ĐỘT BIẾN HOÀNG KIM ⭐!' : '!'}`,
       });
     }
   },
@@ -445,7 +1074,10 @@ export const useGameStore = create<GameState>((set, get) => ({
         ...state.inventory,
         ITEM_BUN_PHU_SA: (state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3,
       },
-      toastMessage: '🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): Nhận +3 Xô Bùn Phù Sa giàu dinh dưỡng (Đang có: ' + ((state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3) + ' xô) & +20 XP!',
+      toastMessage:
+        '🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): Nhận +3 Xô Bùn Phù Sa giàu dinh dưỡng (Đang có: ' +
+        ((state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3) +
+        ' xô) & +20 XP!',
     });
   },
 
@@ -471,7 +1103,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (!order || order.completed) return;
     const haveQty = state.inventory[order.itemId] ?? 0;
     if (haveQty < order.requiredQty) {
-      set({ toastMessage: `⚠️ Kho chưa đủ ${order.requiredQty} ${order.itemName} (Hiện có: ${haveQty})! Hãy thu hoạch thêm nhé!` });
+      set({ toastMessage: `⚠️ Kho chưa đủ ${order.requiredQty} ${order.itemName} (Hiện có: ${haveQty})! Hãy thu hoạch hoặc chế biến thêm nhé!` });
       return;
     }
     set({
@@ -487,16 +1119,28 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
   },
 
-  claimStoryQuest: (questId) => {
+  claimStoryQuest: (questId, branchChoice = 'EMP') => {
     const state = get();
     const q = state.storyQuests.find((item) => item.id === questId);
     if (!q || q.completed) return;
+    const extraGold = branchChoice === 'PRAG' ? 350 : 0;
+    const extraFengShui = branchChoice === 'EMP' ? 30 : 10;
+    const extraNeighbor = branchChoice === 'EMP' ? 3 : 1;
     set({
-      gold: state.gold + q.rewardGold,
+      gold: state.gold + q.rewardGold + extraGold,
       gems: state.gems + q.rewardGems,
-      xp: state.xp + 80,
-      storyQuests: state.storyQuests.map((item) => (item.id === questId ? { ...item, completed: true } : item)),
-      toastMessage: `📜 Hoàn thành ${q.chapter}: Nhận +${q.rewardGold} 🪙, +${q.rewardGems} 💎 Ngọc & +80 XP!`,
+      xp: state.xp + 100,
+      fengShuiScore: state.fengShuiScore + extraFengShui,
+      neighborPoints: state.neighborPoints + extraNeighbor,
+      storyQuests: state.storyQuests.map((item) =>
+        item.id === questId
+          ? { ...item, completed: true, selectedChoice: branchChoice }
+          : item
+      ),
+      toastMessage:
+        branchChoice === 'EMP'
+          ? `📜 Hoàn thành [${q.chapter}] theo Nhánh Nghĩa Tình: Nhận +${q.rewardGold} 🪙, +${q.rewardGems} 💎, +30 Phong Thủy & +3 Nghĩa Xóm!`
+          : `📜 Hoàn thành [${q.chapter}] theo Nhánh Thực Dụng: Nhận +${q.rewardGold + extraGold} 🪙 (+350 🪙 thưởng nhánh), +${q.rewardGems} 💎 & +100 XP!`,
     });
   },
 
@@ -636,10 +1280,55 @@ export const useGameStore = create<GameState>((set, get) => ({
       stamina: Math.min(state.maxStamina, state.stamina + 25),
       inventory: {
         ...state.inventory,
-        REC_12: (state.inventory.REC_12 ?? 0) + 1,
+        PROD_22: (state.inventory.PROD_22 ?? 0) + 1,
       },
       toastMessage:
         '🎉 KHÁM PHÁ CÔNG THỨC MỚI: [Cá Kho Tộ Vũ Đại - Mỹ Vị 3 Miền ⭐⭐⭐]! Thưởng nóng +10 💎 Ngọc, +50 XP & +25 ⚡!',
+    });
+  },
+
+  craftOrBuyCatalogItem: (itemId) => {
+    const state = get();
+    const spec = GAME_CATALOG.find((c) => c.id === itemId);
+    if (!spec) return;
+
+    if (
+      spec.category === 'CROP' ||
+      spec.category === 'TREE' ||
+      spec.category === 'MUTANT_CROP' ||
+      spec.category === 'ANIMAL' ||
+      spec.category === 'AQUA'
+    ) {
+      set({
+        selectedSeedId: spec.id,
+        activeModal: null,
+        toastMessage: `🌱 Đã chọn [${spec.emoji} ${spec.name}]! Chạm vào ô đất/ao trên bản đồ để gieo trồng hoặc chăn nuôi ngay!`,
+      });
+      return;
+    }
+
+    const cost = Math.max(0, spec.buyCostGold);
+    if (state.gold < cost) {
+      set({ toastMessage: `⚠️ Cần ${cost.toLocaleString()} 🪙 Xu Vàng để chế biến/mua [${spec.name}]!` });
+      return;
+    }
+
+    const staminaGain = spec.staminaDelta > 0 ? spec.staminaDelta : 0;
+    const styleGain = spec.category === 'FASHION' ? 80 : 0;
+
+    set({
+      gold: state.gold - cost + (spec.category === 'RECIPE' ? spec.baseSellGold : 0),
+      xp: state.xp + spec.xpReward,
+      stamina: Math.min(state.maxStamina, state.stamina + staminaGain),
+      styleScore: state.styleScore + styleGain,
+      inventory: {
+        ...state.inventory,
+        [spec.id]: (state.inventory[spec.id] ?? 0) + 1,
+      },
+      toastMessage:
+        spec.category === 'RECIPE'
+          ? `🍲 Đã chế biến xong [${spec.emoji} ${spec.name}] (+1 vào Kho, +${spec.xpReward} XP${staminaGain > 0 ? `, hồi +${staminaGain} ⚡` : ''})!`
+          : `✨ Đã sở hữu/chế tác [${spec.emoji} ${spec.name}] (+1 vào Kho, +${spec.xpReward} XP${styleGain > 0 ? `, +${styleGain} Phong Cách` : ''})!`,
     });
   },
 
@@ -672,10 +1361,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       return;
     }
     const nextStage = state.dinhLangStage + 1;
+    const loaText = `vừa công đức trùng tu Đình Làng lên Cấp ${nextStage}/3!`;
+    vacRealtime.broadcastLoaPhuong(state.playerName, loaText);
     set({
       gold: state.gold - cost,
       dinhLangStage: nextStage,
       fengShuiScore: state.fengShuiScore + 150,
+      loaPhuongText: `[${state.playerName}] ${loaText}`,
       toastMessage: `⛩️ Công đức thành công (-${cost.toLocaleString()} 🪙)! Đình Làng đạt Cấp ${nextStage}/3, khắc tên lên Bia Đá Công Đức & tăng +150 Phong Thủy!`,
     });
   },
@@ -691,15 +1383,18 @@ export const useGameStore = create<GameState>((set, get) => ({
     const spec = GAME_CATALOG.find((c) => c.id === targetMutantId);
 
     if (isSuccess && spec) {
+      const loaText = `vừa lai tạo thành công giống đột biến [${spec.emoji} ${spec.name}]!`;
+      vacRealtime.broadcastLoaPhuong(state.playerName, loaText);
       set({
         gold: state.gold - costGold,
         mutantPityCount: 0,
         fengShuiScore: state.fengShuiScore + 15,
+        loaPhuongText: `[${state.playerName}] ${loaText}`,
         inventory: {
           ...state.inventory,
           [spec.id]: (state.inventory[spec.id] ?? 0) + 1,
         },
-        toastMessage: `🧬 LAI TẠO ĐỘT BIẾN THÀNH CÔNG! Nhận được [${spec.emoji} ${spec.name}] trị giá ${spec.baseSellGold} 🪙 & +15 Phong Thủy!`,
+        toastMessage: `🧬 LAI TẠO ĐỘT BIẾN THÀNH CÔNG! Nhận được [${spec.emoji} ${spec.name}] trị giá ${spec.baseSellGold} 🪙 & phát Loa Phường toàn Server!`,
       });
     } else {
       set({
@@ -876,6 +1571,92 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
   },
 
+  fuseDuplicateFashion: (itemId) => {
+    const state = get();
+    const count = state.inventory[itemId] ?? 0;
+    if (count < 3) {
+      set({
+        toastMessage: `🧵 Cần đủ 3 món trùng nhau trong Tủ Đồ để khâu ghép nâng bậc (Hiện có: ${count}/3)!`,
+      });
+      return;
+    }
+    const spec = GAME_CATALOG.find((c) => c.id === itemId);
+    set({
+      inventory: {
+        ...state.inventory,
+        [itemId]: count - 2,
+      },
+      styleScore: state.styleScore + 150,
+      xp: state.xp + 45,
+      toastMessage: `✨ KHÂU GHÉP 3➔1 THÀNH CÔNG: Đã thêu kim tuyến nâng bậc [${spec?.name ?? itemId}] lên Phẩm chất Cao Cấp (+150 ✨ Phong Cách & +45 XP)!`,
+    });
+  },
+
+  setTransmogSlot: (itemId) => {
+    const spec = GAME_CATALOG.find((c) => c.id === itemId);
+    set({
+      transmogItemId: itemId,
+      toastMessage: `🎭 Đã khóa ngoại hình Transmog: Giữ diện mạo [${spec?.emoji ?? '👘'} ${spec?.name ?? itemId}] mà vẫn hưởng 100% chỉ số bộ trang bị mạnh nhất!`,
+    });
+  },
+
+  enterFashionContest: () => {
+    const state = get();
+    if (state.fashionContestEntered) {
+      set({
+        toastMessage: '📸 Bạn đã gửi ảnh dự thi Hội Thi Duyên Dáng Làng Quê tuần này rồi!',
+      });
+      return;
+    }
+    const prizeGold = Math.round(state.styleScore * 0.6 + state.fengShuiScore * 0.4);
+    const loaText = `vừa đạt giải Áo Dài & Trang Phục Truyền Thống Đẹp Nhất Tuần (${state.styleScore} ✨)!`;
+    vacRealtime.broadcastLoaPhuong(state.playerName, loaText);
+    set({
+      fashionContestEntered: true,
+      gold: state.gold + prizeGold,
+      gems: state.gems + 15,
+      neighborPoints: state.neighborPoints + 5,
+      loaPhuongText: `[${state.playerName}] ${loaText}`,
+      toastMessage: `📸 Đăng ký Hội Thi Duyên Dáng Làng Quê thành công! Nhận thưởng nóng +${prizeGold.toLocaleString()} 🪙, +15 💎 Ngọc & +5 Điểm Nghĩa Xóm!`,
+    });
+  },
+
+  simulateOfflineWorkerProgress: (hoursOffline) => {
+    const state = get();
+    const cleanHours = Math.max(1, Math.min(24, Math.floor(hoursOffline)));
+    const activeWorkers = state.workers.filter((w) => w.isHired && w.contractDaysLeft > 0);
+    if (activeWorkers.length === 0) {
+      set({
+        toastMessage: '🛖 Chưa có nhân công nào đang trong hợp đồng làm việc khi Offline!',
+      });
+      return;
+    }
+    const mealsNeeded = Math.min(state.lodgeDiningTableMeals, Math.ceil((activeWorkers.length * cleanHours) / 3));
+    const rawHarvestGain = activeWorkers.length * cleanHours * 4;
+    const nextPantry = Math.min(120, state.workerPantryCount + rawHarvestGain);
+    const actualAdded = nextPantry - state.workerPantryCount;
+
+    const updatedWorkers = state.workers.map((w) => {
+      if (!w.isHired) return w;
+      const nextGear = Math.max(0, w.gearHoursLeft - cleanHours);
+      const nextBelly = mealsNeeded > 0 ? Math.max(45, w.belly - cleanHours * 4 + 30) : Math.max(10, w.belly - cleanHours * 8);
+      return {
+        ...w,
+        belly: Math.min(100, nextBelly),
+        gearHoursLeft: nextGear,
+        statusText: `Vừa hoàn thành ${cleanHours}h làm việc Offline (+${Math.floor(rawHarvestGain / activeWorkers.length)} sản phẩm vào Giỏ Thợ)`,
+      };
+    });
+
+    set({
+      lodgeDiningTableMeals: Math.max(0, state.lodgeDiningTableMeals - mealsNeeded),
+      workerPantryCount: nextPantry,
+      stamina: Math.min(state.maxStamina, state.stamina + cleanHours * 10),
+      workers: updatedWorkers,
+      toastMessage: `🌙 [LAZY-TICK OFFLINE ${cleanHours} GIỜ]: ${activeWorkers.length} Nhân công đã ăn ${mealsNeeded} suất cơm, tự thu hoạch +${actualAdded} Nông sản vào Giỏ Thợ (${nextPantry}/120) & hồi đầy ⚡!`,
+    });
+  },
+
   sendChatMessage: (content) => {
     const state = get();
     if (!content.trim()) return;
@@ -888,6 +1669,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
     };
     set({ chatMessages: [...state.chatMessages, newMsg] });
+    vacRealtime.broadcastChat(newMsg);
   },
 
   fastForwardTime: () => {

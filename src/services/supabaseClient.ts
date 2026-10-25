@@ -1,17 +1,22 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+const DEFAULT_SUPABASE_URL = 'https://znabynzbcimpesrxxxsz.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'sb_publishable_EMp5ir8IUmc3LecYwe75BA_gbEpmOCW';
+
 const STORAGE_URL_KEY = 'hdgn_supabase_url';
 const STORAGE_ANON_KEY = 'hdgn_supabase_anon_key';
 
 export function getSupabaseCredentials(): { url: string; anonKey: string } {
   const envUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? '';
   const envKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ?? '';
-  const localUrl = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_URL_KEY) ?? '' : '';
-  const localKey = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_ANON_KEY) ?? '' : '';
+  const localUrl =
+    typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_URL_KEY) ?? '' : '';
+  const localKey =
+    typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_ANON_KEY) ?? '' : '';
 
   return {
-    url: localUrl || envUrl,
-    anonKey: localKey || envKey,
+    url: localUrl || envUrl || DEFAULT_SUPABASE_URL,
+    anonKey: localKey || envKey || DEFAULT_SUPABASE_KEY,
   };
 }
 
@@ -27,5 +32,11 @@ export const isSupabaseConfigured = Boolean(
 );
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(creds.url, creds.anonKey)
+  ? createClient(creds.url, creds.anonKey, {
+      realtime: {
+        params: {
+          eventsPerSecond: 10,
+        },
+      },
+    })
   : null;

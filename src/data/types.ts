@@ -5,21 +5,30 @@ export type EntityCategory =
   | 'TREE'
   | 'MUTANT_CROP'
   | 'ANIMAL'
+  | 'PET'
   | 'AQUA'
+  | 'MACHINE'
   | 'RECIPE'
   | 'CRAFT_GEAR'
+  | 'FASHION'
   | 'WORKER'
-  | 'BENCHMARK_FEATURE';
+  | 'BENCHMARK_FEATURE'
+  | 'DEFENSE'
+  | 'IAP';
 
 export interface CatalogItem {
   id: string;
   category: EntityCategory;
+  subGroup?: string;
   name: string;
   region: 'ALL' | RegionType;
   unlockLevel: number;
   buyCostGold: number;
   baseSellGold: number;
+  maxMarketGold?: number;
   growOrCraftMinutes: number;
+  yieldCount?: number;
+  inputIngredients?: string;
   xpReward: number;
   staminaDelta: number;
   emoji: string;

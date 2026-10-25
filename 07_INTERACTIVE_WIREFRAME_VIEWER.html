@@ -260,9 +260,10 @@
 <body>
 
 <header>
-  <div class="brand">🌾 HƯƠNG ĐỒNG GIÓ NỘI — WIREFRAME &amp; FULL FEATURE PROTOTYPE (v3.0)</div>
+  <div class="brand">🌾 HƯƠNG ĐỒNG GIÓ NỘI — WIREFRAME &amp; FULL FEATURE PROTOTYPE (v3.5)</div>
   <div class="nav-tabs">
-    <button class="nav-btn active" onclick="showTab('tab-flow')">1. Sơ Đồ Tổng Thể</button>
+    <button class="nav-btn active" onclick="showTab('tab-splash-auth')">0. ⛩️ Splash &amp; Đăng Nhập/Khách</button>
+    <button class="nav-btn" onclick="showTab('tab-flow')">1. Sơ Đồ Tổng Thể</button>
     <button class="nav-btn" onclick="showTab('tab-char')">2. Tạo Nhân Vật &amp; 3 Miền</button>
     <button class="nav-btn" onclick="showTab('tab-hud')">3. Nông Trại (HUD)</button>
     <button class="nav-btn" onclick="showTab('tab-workers')">4. 🛖 Lán Thợ Gia Nhân</button>
@@ -278,8 +279,80 @@
 
 <main>
 
+  <!-- TAB 0: SPLASH, 4-STAGE LOADING & AUTH GATE (LOGIN / REGISTER / GUEST / FORGOT PASSWORD) -->
+  <section id="tab-splash-auth" class="screen-view active">
+    <div class="wood-panel" style="margin-bottom:14px;">
+      <div class="panel-title">
+        <span>⛩️ MÀN HÌNH 0A: SPLASH &amp; LOADING 4 GIAI ĐOẠN (0% ➔ 100%)</span>
+        <span class="badge badge-ssr">Mobile Landscape Preloader</span>
+      </div>
+      <div class="zone-box" style="text-align:center; background:linear-gradient(180deg, #1b4332 0%, #3e2413 100%); color:#fff8eb; padding:18px;">
+        <div style="font-size:2.4rem;">⛩️ 🌾 🐃 🚂 🐕 🪷</div>
+        <h2 style="color:var(--rice-gold); margin:6px 0;">VAC ONLINE — HƯƠNG ĐỒNG GIÓ NỘI</h2>
+        <p style="font-size:0.84rem; margin-bottom:10px;">Game Nông Trại Ba Miền Việt Nam • 155 Thực Thể • 6 Gia Nhân Lán Thợ</p>
+        <div style="max-width:620px; margin:0 auto; text-align:left;">
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+            <span id="proto-load-text">Bước 3/4: Kết nối Supabase Cloud &amp; Kênh Loa Phường Làng Xóm...</span>
+            <span id="proto-load-pct">78%</span>
+          </div>
+          <div class="progress-bar" style="height:14px; border:2px solid var(--rice-gold); background:#2a180c;">
+            <div class="progress-fill" id="proto-load-bar" style="width:78%; background:linear-gradient(90deg, #4e8222, #f5b82e);"></div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem; margin-top:10px; color:#ffe8c2;">💡 Ca dao: &quot;Chuồn chuồn bay thấp thì mưa, bay cao thì nắng, bay vừa thì râm&quot; (Trời Mưa Rào tự động tưới 100% ô ruộng!)</p>
+        <button class="btn-gold" style="margin-top:10px;" onclick="document.getElementById('proto-load-bar').style.width='100%'; document.getElementById('proto-load-pct').innerText='100%'; notify('✅ Đã nạp xong 100% tài nguyên (155 Thực thể & Pixel Atlas)! Mời vào Cổng Làng Xác Thực!');">⚡ Chạy Đầy 100% Loading Ngay</button>
+      </div>
+    </div>
+
+    <div class="wood-panel">
+      <div class="panel-title">
+        <span>🔐 MÀN HÌNH 0B: CỔNG LÀNG XÁC THỰC (ĐĂNG NHẬP / ĐĂNG KÝ / CHƠI KHÁCH / QUÊN MẬT KHẨU OTP)</span>
+        <span class="badge badge-south">Supabase Auth + Local Vault</span>
+      </div>
+      <div class="flow-grid">
+        <div class="zone-box">
+          <h4>🔑 1. ĐĂNG NHẬP &amp; 📝 2. ĐĂNG KÝ MỚI (+500 🪙)</h4>
+          <div class="flow-step" style="margin-top:6px;">
+            <b>Email / Tên Điền Chủ:</b> <input type="text" value="tuhau@vaconline.vn" style="width:100%; padding:5px; margin-top:4px; border:1px solid var(--wood-light); border-radius:6px;" />
+          </div>
+          <div class="flow-step">
+            <b>Mật khẩu (&gt;= 6 ký tự):</b> <input type="password" value="123456" style="width:100%; padding:5px; margin-top:4px; border:1px solid var(--wood-light); border-radius:6px;" />
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action" style="flex:1;" onclick="notify('🔑 Đăng nhập thành công! Chào mừng Điền chủ Tư Hậu trở về nông trại!'); showTab('tab-hud');">🔑 Đăng Nhập</button>
+            <button class="btn-gold" style="flex:1;" onclick="notify('🎉 Đăng ký tài khoản mới thành công! Nhận +500 🪙 Lộc Tân Thủ & chuyển sang chọn Quê hương 3 Miền!'); showTab('tab-char');">📝 Đăng Ký (+500🪙)</button>
+          </div>
+        </div>
+
+        <div class="zone-box" style="background:#fff3e0;">
+          <h4>⚡ 3. CHƠI KHÁCH NGAY &amp; LIÊN KẾT TÀI KHOẢN (+50 💎)</h4>
+          <div class="flow-step" style="margin-top:6px;">
+            • <b>Chơi Khách 1 chạm:</b> Vào ngay không cần mật khẩu (Tạo ID <code>GUEST_XXXX</code>).<br/>
+            • <b>Liên kết bảo hộ:</b> Giữ nguyên 100% Vàng, Ngọc, Cấp độ &amp; Ruộng vườn, cộng thưởng nóng <b>+50 💎 Ngọc + 1,000 🪙</b>!
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action" style="flex:1; background:var(--water-blue);" onclick="notify('⚡ Đang vào nhanh bằng chế độ Chơi Khách [Khách Làng Quê #6886]!'); showTab('tab-char');">🏃 Vào Chơi Khách Ngay</button>
+            <button class="btn-gold" style="flex:1;" onclick="notify('🛡️ Liên kết Tài khoản Khách lên Chính thức thành công! Nhận +50 💎 Ngọc & +1,000 🪙 Xu Vàng!');">🔗 Liên Kết (+50💎)</button>
+          </div>
+        </div>
+
+        <div class="zone-box">
+          <h4>🔓 4. QUÊN MẬT KHẨU &amp; KHÔI PHỤC BẰNG MÃ OTP 6 SỐ</h4>
+          <div class="flow-step" style="margin-top:6px;">
+            <b>Bước 1:</b> Nhập Email đăng ký ➔ Nhận mã OTP 6 chữ số (VD: <code>686868</code>).<br/>
+            <b>Bước 2:</b> Nhập mã OTP + Mật khẩu mới để đặt lại mật khẩu an toàn.
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-action" style="flex:1;" onclick="notify('📩 Đã gửi Mã Khôi Phục OTP 6 số [686868] tới Email của bạn!');">📩 Gửi Mã OTP</button>
+            <button class="btn-gold" style="flex:1;" onclick="notify('✅ Đã xác nhận OTP [686868] và đặt lại mật khẩu mới thành công!');">🔄 Đổi Mật Khẩu Mới</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- TAB 1: MASTER FLOWS -->
-  <section id="tab-flow" class="screen-view active">
+  <section id="tab-flow" class="screen-view">
     <div class="wood-panel" style="margin-bottom:12px;">
       <div class="panel-title">
         <span>🗺️ SƠ ĐỒ TỔNG THỂ HỆ SINH THÁI 140+ THỰC THỂ, LÁN THỢ &amp; 12 TÍNH NĂNG BENCHMARK</span>
@@ -661,7 +734,7 @@
     document.querySelectorAll('.screen-view').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
-    const idxMap = { 'tab-flow':0, 'tab-char':1, 'tab-hud':2, 'tab-workers':3, 'tab-benchmark':4, 'tab-cook':5, 'tab-fashion':6, 'tab-market':7, 'tab-liveops':8 };
+    const idxMap = { 'tab-splash-auth':0, 'tab-flow':1, 'tab-char':2, 'tab-hud':3, 'tab-workers':4, 'tab-benchmark':5, 'tab-cook':6, 'tab-fashion':7, 'tab-market':8, 'tab-liveops':9 };
     if (idxMap[tabId] !== undefined) {
       document.querySelectorAll('.nav-btn')[idxMap[tabId]].classList.add('active');
     }

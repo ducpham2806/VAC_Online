@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VAC Online — Bản Đồ Lộ Trình Phát Triển Game (Facebook Poster Exporter)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body {
+      background: #1a120b;
+      color: #fff8eb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-download {
+      background: linear-gradient(90deg, #b83224, #d97706);
+      color: #fff;
+      border: 3px solid #f5b82e;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      transition: transform 0.15s;
+    }
+    .btn-download:hover { transform: scale(1.04); }
+    .canvas-wrap {
+      max-width: 100%;
+      overflow-x: auto;
+      border: 4px solid #6e4121;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.75);
+    }
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <span style="font-weight:800; color:#f5b82e;">🖼️ BẢN ĐỒ LỘ TRÌNH DỰ ÁN "VAC ONLINE" CHUẨN ĐĂNG FACEBOOK (1920 x 1080 Full HD)</span>
+    <button class="btn-download" onclick="downloadPoster()">📥 Tải Hình Ảnh .PNG Sắc Nét Để Đăng Facebook</button>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="roadmapCanvas" width="1920" height="1080"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('roadmapCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function renderRoadmap() {
+      // 1. Nền đồng quê 3 miền ấm áp
+      const bgGrad = ctx.createLinearGradient(0, 0, 1920, 1080);
+      bgGrad.addColorStop(0, '#1b4332');
+      bgGrad.addColorStop(0.5, '#2d6a4f');
+      bgGrad.addColorStop(1, '#3e2413');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1920, 1080);
+
+      // Họa tiết đồng cỏ & đom đóm trang trí nền
+      ctx.fillStyle = 'rgba(245, 184, 46, 0.08)';
+      for (let i = 0; i < 36; i++) {
+        ctx.beginPath();
+        ctx.arc((i * 173) % 1920, (i * 97) % 1080, 18 + (i % 4) * 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Khung viền gỗ lim & chỉ vàng ngoài cùng
+      ctx.lineWidth = 16;
+      ctx.strokeStyle = '#6e4121';
+      ctx.strokeRect(12, 12, 1896, 1056);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#f5b82e';
+      ctx.strokeRect(24, 24, 1872, 1032);
+
+      // 2. Bảng Tiêu đề Gỗ Lim phía trên
+      drawRoundedRect(ctx, 260, 42, 1400, 118, 24);
+      ctx.fillStyle = '#3e2413';
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#f5b82e';
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#f5b82e';
+      ctx.font = '900 40px "Segoe UI", sans-serif';
+      ctx.fillText('🌾 VAC ONLINE — BẢN ĐỒ LỘ TRÌNH PHÁT TRIỂN DỰ ÁN 🌾', 960, 96);
+
+      ctx.fillStyle = '#fff8eb';
+      ctx.font = 'bold 21px "Segoe UI", sans-serif';
+      ctx.fillText('HƯƠNG ĐỒNG GIÓ NỘI • GAME NÔNG TRẠI BA MIỀN VIỆT NAM (WEBGAME / PWA / iOS & ANDROID)', 960, 136);
+
+      // 3. Đường gạch đỏ làng quê nối 6 Giai đoạn (Z-shape Roadmap Path)
+      ctx.lineWidth = 18;
+      ctx.strokeStyle = '#c85a32';
+      ctx.setLineDash([22, 12]);
+      ctx.beginPath();
+      ctx.moveTo(350, 360);
+      ctx.lineTo(1570, 360);
+      ctx.lineTo(1570, 760);
+      ctx.lineTo(350, 760);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 4. Dữ liệu 6 Cột Mốc Giai Đoạn (Chỉ lấy Giai đoạn & Tính năng trong Game)
+      const stages = [
+        {
+          code: 'GIAI ĐOẠN 1 • PHASE 0 (v0.1)',
+          title: '⛩️ CỔNG LÀNG & NỀN TẢNG ĐÁM MÂY',
+          badge: 'Khởi Động',
+          color: '#2e8b8d',
+          x: 68,
+          y: 190,
+          items: [
+            '• Màn hình Splash 4 bước & Ca dao nhà nông',
+            '• Cổng Làng: Đăng nhập, Đăng ký (+500🪙), Quên MK',
+            '• Chơi Khách 1 chạm & Liên kết TK nhận +50💎',
+            '• Bản đồ Pixel Art 64 màu (Kéo chạm & Zoom)',
+            '• Đại Từ Điển 155 Thực thể & Nhạc Ngũ Cung',
+          ],
+        },
+        {
+          code: 'GIAI ĐOẠN 2 • PHASE 1 (v1.0)',
+          title: '🌾 RA MẮT VƯỜN – AO – CHUỒNG 3 MIỀN',
+          badge: 'Core MVP',
+          color: '#4e8222',
+          x: 666,
+          y: 190,
+          items: [
+            '• Chọn Nam/Nữ & 3 Miền Bắc – Trung – Nam (Có Buff)',
+            '• Trồng trọt, Chăn nuôi, Thả cá hoàn toàn 0⚡',
+            '• Vét Bùn Ao lấy Phù Sa kích nổ Hoàng Kim ⭐ (x3)',
+            '• Bếp Củi Nấu Ngẫu Nhiên & Đơn Hợp Tác Xã',
+            '• Thời tiết động, Quà 7 Ngày & Cốt truyện Ch.1–3',
+          ],
+        },
+        {
+          code: 'GIAI ĐOẠN 3 • DLC 1 (v1.2)',
+          title: '🚂 HỌP CHỢ BA MIỀN & LÁN THỢ',
+          badge: 'Giao Thương',
+          color: '#d97706',
+          x: 1264,
+          y: 190,
+          items: [
+            '• Báo Chợ Phiên P2P 3 Miền & Ga Tàu Thống Nhất',
+            '• Xe Thương Lái Đột Xuất thu mua giá sốt x2.5',
+            '• Mở Lán Thợ: Thuê Chú Tư, Cô Năm, Anh Sáu',
+            '• Bàn Ăn Chung Lán Thợ, Giỏ Kho 120 ô & Offline Tick',
+            '• Thám hiểm Rừng Trúc (-6⚡) & Cốt truyện Ch.5–6',
+          ],
+        },
+        {
+          code: 'GIAI ĐOẠN 4 • DLC 2 (v1.5)',
+          title: '🥷 ĐẠO CHÍCH LÀNG QUÊ & ĐÌNH LÀNG',
+          badge: 'Cộng Đồng',
+          color: '#b83224',
+          x: 68,
+          y: 590,
+          items: [
+            '• Ghé thăm nhà bạn & Hái trộm cửa sổ vàng 2 phút',
+            '• 4 Lớp Phòng Thủ: Chó Phú Quốc cắn rớt Dép Tổ Ong!',
+            '• Dựng giúp giàn cây sau bão (0⚡) & Ký Sổ Lưu Bút',
+            '• Trùng tu Đình Làng 3 cấp (+5% sản lượng) & Đua Thuyền',
+            '• Loa Phường Xin Vía Toàn Server & Cốt truyện Ch.4',
+          ],
+        },
+        {
+          code: 'GIAI ĐOẠN 5 • DLC 3 (v1.8)',
+          title: '👘 LỤA LÀ, ĐỘT BIẾN & VÉ SỐ 18:00',
+          badge: 'Sôi Động',
+          color: '#8e24aa',
+          x: 666,
+          y: 590,
+          items: [
+            '• Mở 3 Thợ VIP: Dì Bảy Bếp, Chú Tám Mộc, Quản Gia Cửu',
+            '• Tằm Dệt Lụa, Tủ Đồ 12 Slots, Ghép 3➔1 & Transmog',
+            '• Vườn Ươm Đột Biến (Lúa Tím, Dưa Vuông, Bưởi Hồ Lô)',
+            '• Hội Thi Duyên Dáng, Chợ Đêm x1.8 & Lịch Bloc',
+            '• Đập Niêu Gacha, Xổ Số 18:00 & Cốt truyện Ch.7–8',
+          ],
+        },
+        {
+          code: 'GIAI ĐOẠN 6 • DLC 4 (v2.0)',
+          title: '💍 LỄ CƯỚI QUÊ, HOMESTAY & APP MOBILE',
+          badge: 'Hoàn Thiện',
+          color: '#c2185b',
+          x: 1264,
+          y: 590,
+          items: [
+            '• Hẹn hò 10 Tim ❤️, Lễ Cưới Quê & Bé Tiểu Đồng nối nghiệp',
+            '• Khu Du Lịch Sinh Thái Homestay Đầm Sen 2 cấp',
+            '• Đại Tiệc Tiến Vua cảm hóa Bá Kiến xóa nợ 50,000🪙',
+            '• Xuất ảnh Bằng Khen Điền Chủ Mẫu Mực (.PNG)',
+            '• Phát hành App iOS / Android & Cốt truyện Ch.9–10',
+          ],
+        },
+      ];
+
+      stages.forEach((st) => {
+        const cardW = 588;
+        const cardH = 365;
+
+        // Đổ bóng thẻ
+        drawRoundedRect(ctx, st.x + 6, st.y + 8, cardW, cardH, 20);
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fill();
+
+        // Thân thẻ Giấy Dó viền Gỗ
+        drawRoundedRect(ctx, st.x, st.y, cardW, cardH, 20);
+        ctx.fillStyle = '#fff8eb';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#6e4121';
+        ctx.stroke();
+
+        // Thanh Header màu đặc trưng từng giai đoạn
+        drawRoundedRect(ctx, st.x + 8, st.y + 8, cardW - 16, 78, 14);
+        ctx.fillStyle = st.color;
+        ctx.fill();
+
+        // Huy hiệu góc phải
+        drawRoundedRect(ctx, st.x + cardW - 138, st.y + 18, 118, 30, 12);
+        ctx.fillStyle = '#f5b82e';
+        ctx.fill();
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#2a180c';
+        ctx.font = '900 14px "Segoe UI", sans-serif';
+        ctx.fillText(st.badge.toUpperCase(), st.x + cardW - 79, st.y + 38);
+
+        // Chữ tiêu đề Giai đoạn
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffefc1';
+        ctx.font = 'bold 15px "Segoe UI", sans-serif';
+        ctx.fillText(st.code, st.x + 22, st.y + 34);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 21px "Segoe UI", sans-serif';
+        ctx.fillText(st.title, st.x + 22, st.y + 68);
+
+        // Danh sách "Game sẽ có những gì"
+        ctx.fillStyle = '#2a180c';
+        ctx.font = 'bold 18.5px "Segoe UI", sans-serif';
+        st.items.forEach((line, idx) => {
+          const lineY = st.y + 124 + idx * 46;
+          // Nền dòng xen kẽ nhẹ
+          if (idx % 2 === 0) {
+            drawRoundedRect(ctx, st.x + 14, lineY - 26, cardW - 28, 38, 8);
+            ctx.fillStyle = '#f7ebd2';
+            ctx.fill();
+          }
+          ctx.fillStyle = '#2a180c';
+          ctx.fillText(line, st.x + 24, lineY);
+        });
+      });
+
+      // 5. Chân trang (Footer Banner)
+      drawRoundedRect(ctx, 68, 982, 1784, 56, 16);
+      ctx.fillStyle = '#321b0d';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#c88a4b';
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#f5b82e';
+      ctx.font = 'bold 19px "Segoe UI", sans-serif';
+      ctx.fillText(
+        '🌟 TỔNG QUY MÔ: 155 THỰC THỂ BẢN ĐỊA • 10 CHƯƠNG CỐT TRUYỆN GIA PHẢ • 6 GIA NHÂN TỰ ĐỘNG HÓA • 12 SLOTS THỜI TRANG • CHỢ P2P & HÁI TRỘM 🌟',
+        960,
+        1017
+      );
+    }
+
+    function downloadPoster() {
+      const link = document.createElement('a');
+      link.download = 'VAC_Online_Lo_Trinh_Phat_Trien_Facebook_1920x1080.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    renderRoadmap();
+  </script>
+</body>
+</html>
