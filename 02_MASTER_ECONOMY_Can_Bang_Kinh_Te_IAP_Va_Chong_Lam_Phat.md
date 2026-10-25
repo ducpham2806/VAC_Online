@@ -1,6 +1,7 @@
 # TÀI LIỆU KIẾN TRÚC KINH TẾ, ĐỊNH GIÁ GÓI IAP, LƯƠNG NHÂN CÔNG & CƠ CHẾ CHỐNG LẠM PHÁT (MASTER ECONOMY & MONETIZATION SPEC)
 ## Dự án: **HƯƠNG ĐỒNG GIÓ NỘI (NÔNG TRẠI BA MIỀN – VAC ONLINE)**
-**Phiên bản:** Master Economy 4.0 (Hoàn thiện Toán học Kinh tế cho 140+ Thực thể, 6 Nhân Công Lán Thợ & 12 Tính năng Benchmark / Đột phá mới)  
+**Mã tài liệu:** `02_MASTER_ECONOMY_Can_Bang_Kinh_Te_IAP_Va_Chong_Lam_Phat.md`  
+**Phiên bản:** Master Economy 5.0 (Hoàn thiện Toán học Kinh tế cho chuẩn 155 Thực thể, 6 Nhân Công Lán Thợ & 12 Tính năng Benchmark / IAP)  
 **Thực hiện bởi:** `@economy-designer` & `@game-designer`
 
 ---
