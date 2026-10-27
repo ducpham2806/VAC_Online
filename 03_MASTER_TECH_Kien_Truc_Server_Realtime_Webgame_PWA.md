@@ -1,7 +1,7 @@
-# TÀI LIỆU KIẾN TRÚC KỸ THUẬT SUPABASE REALTIME, ĐỒNG BỘ SẢNH CHUNG MULTIPLAYER, KHUNG HYPER-CASUAL SDK & BỘ QUY TẮC CODE CỐT LÕI (MASTER TECH & ENGINEERING RULES)
+# TÀI LIỆU KIẾN TRÚC KỸ THUẬT SUPABASE REALTIME, ĐỒNG BỘ SẢNH CHUNG MULTIPLAYER, KHUNG HYPER-CASUAL SDK & BỘ 14 QUY TẮC CODE CỐT LÕI (MASTER TECH & ENGINEERING RULES)
 ## Dự án: **VAC ONLINE — HƯƠNG ĐỒNG GIÓ NỘI (GAME NÔNG TRẠI 3 MIỀN VIỆT NAM)**
-**Mã tài liệu:** `03_MASTER_TECH_Kien_Truc_Server_Realtime_Webgame_PWA.md` *(Đã hợp nhất `03_MASTER_TECH` + `10_MASTER_AI_RULES` + **Phần 3: Kiến Trúc Đồng Bộ Sảnh Chung `10Hz` & Khung Plug-and-Play Hyper-Casual SDK**, loại bỏ trùng lặp)*  
-**Phiên bản:** Master Tech & Rules 6.0 (Full Production & Multiplayer Social Hub Edition)  
+**Mã tài liệu:** `03_MASTER_TECH_Kien_Truc_Server_Realtime_Webgame_PWA.md` *(Đã hợp nhất `03_MASTER_TECH` + `10_MASTER_AI_RULES` + **Phần 3: Kiến Trúc Đồng Bộ Sảnh Chung `10Hz` & Khung Plug-and-Play Hyper-Casual SDK**, tích hợp `RULE D0` & `RULE D1`)*  
+**Phiên bản:** Master Tech & Rules 7.0 (Full Production, Multiplayer Social Hub & Architectural Integrity Edition)  
 **Thực hiện bởi:** `@backend-architect`, `@godot-multiplayer-engineer`, `@frontend-developer`, `@technical-artist` & `@code-reviewer`  
 **Đối tượng sử dụng:** Frontend Engineers (Phaser 3 / React 19), Backend Engineers (Supabase PostgreSQL / Realtime), DevOps & Mobile Release Engineers
 
@@ -10,7 +10,7 @@
 ## PHẦN 1: NGĂN XẾP KỸ THUẬT & SƠ ĐỒ KIẾN TRÚC TỔNG THỂ (`SYSTEM ARCHITECTURE`)
 
 ### 1.1. Tech Stack Cố Định
-* **Frontend Game Engine:** `Phaser 3.88+` (WebGL/Canvas 2D Full-Bleed `100dvw x 100dvh`, `roundPixels: true`, `PixelAssetGenerator`, hỗ trợ đa Scene: `FarmScene`, `SocialPlazaScene`, `MinigameHostScene`).
+* **Frontend Game Engine:** `Phaser 3.88+` (WebGL/Canvas 2D Full-Bleed `100dvw x 100dvh`, `roundPixels: true`, `PixelAssetGenerator`, hỗ trợ đa Scene cô lập: `FarmScene`, `SocialPlazaScene`, `MinigameHostScene`).
 * **Frontend UI & State:** `Vite 6` + `React 19` + `TypeScript 5.8 (Strict Mode)` + `Tailwind CSS v4` + `Zustand Store` (`useGameStore.ts`).
 * **Audio & Canvas Utilities:** `CozySoundManager` (Web Audio API Synthesizer 0ms latency) + `certificateExporter.ts` (HTML5 Canvas PNG Exporter `960x540`).
 * **Backend & Multiplayer Cloud:** `Supabase` (`PostgreSQL 15+`, `Supabase Auth`, `Row Level Security`, `PL/pgSQL Atomic RPCs`, `Supabase Realtime Presence & Broadcast Sharded Rooms`).
@@ -66,11 +66,11 @@
 
 ---
 
-## PHẦN 2: KIẾN TRÚC DATABASE SUPABASE POSTGRESQL, RLS & ATOMIC RPC
+## PHẦN 2: KIẾN TRÚC DATABASE SUPABASE POSTGRESQL, RLS, ATOMIC RPC & QUY TẮC BẢO TOÀN DỮ LIỆU (`RULE D1`)
 
-### 2.1. Danh Mục 11 Bảng Dữ Liệu Trên Supabase (`0001`, `0002` & `0003` Migrations)
-1. `public.master_catalog`: Lưu trữ 155 thực thể chuẩn (`id`, `category`, `region`, `name`, `unlock_level`, `buy_cost_gold`, `base_sell_gold`, `grow_or_craft_minutes`, `xp_reward`).
-2. `public.profiles`: Hồ sơ người chơi (`id`, `display_name`, `gender`, `region`, `level`, `xp`, `gold`, `gems`, `stamina`, `style_score`, `feng_shui_score`, `neighbor_points`, `dinh_lang_stage`, **`festival_tokens` (`🏮 Xu Hội Làng`)**, **`arena_elo`**, **`daily_arcade_gold_earned`**).
+### 2.1. Danh Mục 11 Bảng Dữ Liệu Trên Supabase (`0001`, `0002` & `0003` Migrations — Additive-Only Schema)
+1. `public.master_catalog`: Lưu trữ 155 thực thể chuẩn (`id`, `category`, `region`, `name`, **`unlock_stage` (`1..5`)**, **`unlock_story_chapter` (`1..10`)**, `unlock_level`, `buy_cost_gold`, `base_sell_gold`, `grow_or_craft_minutes`, `xp_reward`) — phục vụ cơ chế **Mở khóa 3 tầng (`Stage + Story Chapter + Level`)** chia nhỏ 81 loài V-A-C qua 5 Giai đoạn.
+2. `public.profiles`: Hồ sơ người chơi (`id`, `display_name`, `gender`, `region`, `level`, `xp`, `gold`, `gems`, `stamina`, **`current_stage_unlocked` (`1..6`)**, **`highest_story_chapter_completed` (`0..10`)**, `style_score`, `feng_shui_score`, `neighbor_points`, `dinh_lang_stage`, `festival_tokens` (`🏮 Xu Hội Làng`), `arena_elo`, `daily_arcade_gold_earned`).
 3. `public.farm_entities`: Trạng thái từng ô đất/ao/vườn cây (`id`, `user_id`, `zone_type`, `item_id`, `planted_at`, `mature_at`, `watered`, `mud_applied`, `is_golden`, `remaining_yield`, `stolen_by`).
 4. `public.inventories`: Kho nông sản, món ăn, vật tư, kỷ vật 8x–9x và trang phục (`user_id`, `item_id`, `quantity`).
 5. `public.hired_workers`: Trạng thái 6 Nhân công Lán Thợ (`user_id`, `worker_code`, `is_hired`, `contract_expires_at`, `belly_meter`, `morale_meter`, `equipped_gear_id`, `gear_durability`).
@@ -82,7 +82,7 @@
 11. `public.minigame_leaderboards` *(Giai đoạn 6 - Mới)*: Bảng vàng kỷ lục tuần của từng trò chơi Hyper-Casual (`game_code`, `user_id`, `display_name`, `region`, `best_score`, `week_key`).
 
 ### 2.2. Đặc Tả 7 Hàm Atomic RPC Chống Gian Lận (`SECURITY DEFINER`)
-1. `public.rpc_sync_master_catalog(p_items JSONB)`: Đồng bộ trọn bộ 155 thực thể lên bảng `public.master_catalog`.
+1. `public.rpc_sync_master_catalog(p_items JSONB)`: Đồng bộ trọn bộ 155 thực thể lên bảng `public.master_catalog` bằng `ON CONFLICT (id) DO UPDATE` (tuyệt đối không xóa các dòng đang tham chiếu bởi `inventories` hoặc `farm_entities`).
 2. `public.rpc_post_market_listing(...)`: Kiểm tra khung giá hợp lệ `[0.8x, 2.0x Base_Sell_Gold]` ngay trên PostgreSQL.
 3. `public.rpc_attempt_steal(p_thief_id UUID, p_target_tile_id UUID)`: Khóa dòng `FOR UPDATE`, kiểm tra 3 phút ân huệ, trần bảo hiểm 80%, và phạt Zero-Sum `50 🪙` + tặng `Dép Tổ Ong` khi bị bắt.
 4. `public.rpc_sell_to_friend_trader(...)`: Khóa dòng `FOR UPDATE`, giới hạn mỗi khách bán ké tối đa `20 đơn vị`, cộng `+5%` hoa hồng cho chủ nhà.
@@ -160,12 +160,12 @@ export interface IHyperCasualCartridge {
 
 ---
 
-## PHẦN 4: BỘ 12 QUY TẮC KỸ THUẬT BẤT KHẢ XÂM PHẠM (MANDATORY ENGINEERING RULES)
+## PHẦN 4: BỘ 14 QUY TẮC KỸ THUẬT BẤT KHẢ XÂM PHẠM (MANDATORY ENGINEERING RULES — TÍCH HỢP `RULE D1`)
 
 | Mã Quy Tắc | Tên Quy Tắc | Nội Dung Bắt Buộc Khi Viết Code & Kiểm Thử |
 | :---: | :--- | :--- |
 | **RULE C1** | **TypeScript Strict & Zero `any`** | Toàn bộ file `.ts` / `.tsx` phải biên dịch `tsc --noEmit` với `0 errors`, không dùng kiểu `any`. |
-| **RULE C2** | **100% Data-Driven (155 Items)** | Mọi giá mua, giá bán, thời gian chín, XP đều phải tra cứu từ `GAME_CATALOG` (`src/data/masterData.ts`). |
+| **RULE C2** | **100% Data-Driven (155 Items)** | Mọi giá mua, giá bán, thời gian chín, XP, đợt mở khóa (`unlockStage`, `unlockChapter`) đều phải tra cứu từ `GAME_CATALOG` (`src/data/masterData.ts`). |
 | **RULE C3** | **XSS Input Sanitization** | Mọi chuỗi người dùng nhập (Tên Điền chủ, Tin nhắn Chat, Bong bóng thoại Sảnh Chung, Sổ Lưu Bút) phải lọc `.replace(/[<>]/g, '').trim()`. |
 | **RULE C4** | **Chống Số Dư Âm Tuyệt Đối** | Trước mọi thao tác tiêu tốn `gold`, `gems`, `stamina`, `festivalTokens`, `inventory[item]`, bắt buộc kiểm tra `>= cost`; khi trừ phạt dùng `Math.min(state.gold, penalty)`. |
 | **RULE C5** | **Khóa Trần Chỉ Số & Trần Thưởng Arcade (`Clamp`)** | `stamina = Math.min(maxStamina, stamina + gain)`; `workerPantryCount = Math.min(120, count + gain)`; `dailyArcadeGoldEarned <= 1500`. |
@@ -176,3 +176,5 @@ export interface IHyperCasualCartridge {
 | **RULE C10** | **Không Dùng `window.alert/confirm`** | Toàn bộ thông báo trong game phải hiển thị qua hệ thống **Toast Banner Gỗ/Tre** (`setToast`) hoặc Modal UI. |
 | **RULE C11** | **Zero External Audio Blocking** | Âm thanh và nhạc nền Ngũ Cung tổng hợp trực tiếp qua Web Audio API (`soundEffects.ts`), tự động `resume()` khi người chơi chạm màn hình. |
 | **RULE C12** | **Kiểm Thử Tự Động Snapshot An Toàn** | Bộ `runFullQCTestSuite()` (**37 Test Cases**) phải chụp `structuredClone` trước khi chạy và khôi phục 100% trạng thái sau khi kết thúc. |
+| **RULE C13** | **Bảo Toàn Cơ Sở Dữ Liệu (`Additive-Only DB Schema` - `RULE D1`)** | Mọi bản cập nhật SQL (`supabase/migrations/*.sql`) và `localStorage` chỉ được phép **mở rộng không phá hủy** (`CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS ... DEFAULT ...`). Tuyệt đối **cấm `DROP TABLE`, `DROP COLUMN`, hoặc thay đổi `ID` của 155 thực thể gốc** làm mất tài sản hay gãy dữ liệu người chơi cũ. |
+| **RULE C14** | **Cô Lập Module & Cảnh Báo Tác Động Chéo Sớm (`RULE D1`)** | Triển khai tính năng mới không được làm ảnh hưởng tới Core Gameplay VAC hoặc tính năng cũ. Nếu phát hiện có tác động chéo tới tính năng khác hoặc Database, **bắt buộc phải thông báo ngay từ Bước 1 (Lên Thiết Kế / Kế Hoạch) và chờ PO phê duyệt** trước khi viết code. |

@@ -260,8 +260,22 @@ export class FarmScene extends Phaser.Scene {
       tileSprite.on('pointerup', () => {
         if (this.isDragging) return;
         triggerHaptic('light');
-        if (tile.watered) soundFX.playHarvestCoin();
-        else soundFX.playWaterSplash();
+        const latestState = useGameStore.getState();
+        const currentTile = latestState.tiles.find((t) => t.id === tile.id) ?? tile;
+        const nowMs = Date.now();
+        const isRipeNow = currentTile.matureAt !== null && nowMs >= currentTile.matureAt;
+
+        if (!currentTile.itemId) {
+          soundFX.playSeedPlant();
+        } else if (currentTile.isTiltedByStorm || currentTile.isGolden) {
+          soundFX.playGoldenSparkle();
+        } else if (isRipeNow) {
+          soundFX.playHarvestCoin();
+        } else if (!currentTile.watered) {
+          soundFX.playWaterSplash();
+        } else {
+          soundFX.playGoldenSparkle();
+        }
 
         this.tweens.add({
           targets: [tileSprite, cropSprite, label],
@@ -270,8 +284,12 @@ export class FarmScene extends Phaser.Scene {
           duration: 90,
           yoyo: true,
         });
-        this.spawnClickParticles(x, y, tile.watered ? 'fx_gold_star' : 'fx_water_drop');
-        useGameStore.getState().interactTile(tile.id);
+        this.spawnClickParticles(
+          x,
+          y,
+          !currentTile.itemId || currentTile.watered ? 'fx_gold_star' : 'fx_water_drop'
+        );
+        latestState.interactTile(tile.id);
       });
 
       this.tileVisuals.push({

@@ -1,7 +1,7 @@
-# QUY TRÌNH CHUẨN CHO AI (CHATGPT, CLAUDE, ANTIGRAVITY) TỰ NHẬN DIỆN SKILL & DỰNG TỪNG TÍNH NĂNG KHÉP KÍN (MASTER AI SKILL-DRIVEN PLAYBOOK)
+# QUY TRÌNH CHUẨN CHO AI (CHATGPT, CLAUDE, ANTIGRAVITY) TỰ NHẬN DIỆN SKILL & DỰNG TỪNG TÍNH NĂNG KHÉP KÍN (MASTER AI SKILL-DRIVEN PLAYBOOK — INTEGRATED `RULE D0` & `RULE D1`)
 ## Dự án: **VAC ONLINE — HƯƠNG ĐỒNG GIÓ NỘI (GAME NÔNG TRẠI 3 MIỀN VIỆT NAM)**
 **Mã tài liệu:** `10_MASTER_AI_PLAYBOOK_Quy_Trinh_AI_Tu_Dong_Dung_Tung_Tinh_Nang.md`  
-**Phiên bản:** Master AI Playbook 9.0 (Tích hợp **Cơ chế AI Tự Nhận Diện & Kích Hoạt 17 Skills Chuyên Môn** vào Vòng lặp 6 Bước Khép Kín cho toàn bộ **52 Modules `M01.0` ➔ `M11.6`** qua **6 Giai Đoạn**, bao gồm **Giai Đoạn 6: Sảnh Chung Chợ Đình Đa Người Chơi, Đấu Trường PK/Loạn Chiến & Khung Lắp Ghép Hyper-Casual SDK**)  
+**Phiên bản:** Master AI Playbook 9.2 (Tích hợp **Bộ Đôi Quy Tắc Tối Thượng `RULE D0` + `RULE D1` (Cảnh Báo Tác Động Chéo Ngay Từ Bước Thiết Kế & Bảo Toàn Core Gameplay / Art / Code / Database)** và **Cơ chế AI Tự Nhận Diện 17 Skills Chuyên Môn** vào Vòng lặp 6 Bước Khép Kín cho toàn bộ **52 Modules `M01.0` ➔ `M11.6`** qua **6 Giai Đoạn**)  
 **Đối tượng sử dụng:** Chủ dự án (Product Owner) & Các AI Agents (**Antigravity, Claude Code / Claude 3.7+, ChatGPT o3/GPT-4o, Cursor, Windsurf**)
 
 ---
@@ -14,11 +14,11 @@ Trước khi bắt tay vào bất kỳ bước nào trong quy trình 6 bước, 
 flowchart TD
     Input["🎯 Nhận Lệnh Dựng Tính Năng: Module Mxx.y\n(Tổng 52 Modules qua 6 Giai đoạn)"] --> Detect["🧠 BƯỚC 0: AI TỰ NHẬN DIỆN & NẠP SKILL LIÊN QUAN\n(Tự động map tính năng với Bộ 17 Skills Chuyên Môn)"]
 
-    Detect --> S1["📐 BƯỚC 1: THIẾT KẾ & CHỐT SPEC\nSkills: @game-designer + @economy-designer\n+ @narrative-designer + @level-designer"]
-    S1 --> S2["🎨 BƯỚC 2: TẠO ASSET, BẢN ĐỒ, VFX & AUDIO\nSkills: @generate2dsprite + @video2dsprite + @generate2dmap\n+ @codeart2d + @technical-artist + @game-audio-engineer"]
-    S2 --> S3["🗄️ BƯỚC 3: CODE BACKEND, MULTIPLAYER SYNC & STORE\nSkills: @backend-architect + @godot-multiplayer-engineer + @economy-designer"]
-    S3 --> S4["📱 BƯỚC 4: CODE UI/UX, PHASER SCENE & CARTRIDGE SDK\nSkills: @ui-designer + @frontend-developer"]
-    S4 --> S5["🧪 BƯỚC 5: TỰ KIỂM THỬ & AUDIT BẢO MẬT\nSkills: @code-reviewer\n(Chạy tsc --noEmit + 37 TC trong qcTestRunner.ts)"]
+    Detect --> S1["📐 BƯỚC 1: THIẾT KẾ, ĐỐI CHIẾU RULE D0 & CẢNH BÁO TÁC ĐỘNG SỚM RULE D1\nSkills: @game-designer + @economy-designer + @narrative-designer + @level-designer\n(Nếu có ảnh hưởng tới Core Gameplay / Tính năng khác / DB -> BÁO NGAY & CHỜ PO DUYỆT)"]
+    S1 --> S2["🎨 BƯỚC 2: TẠO ASSET, BẢN ĐỒ, VFX & AUDIO NHẤT QUÁN (RULE D1)\nSkills: @generate2dsprite + @video2dsprite + @generate2dmap\n+ @codeart2d + @technical-artist + @game-audio-engineer"]
+    S2 --> S3["🗄️ BƯỚC 3: CODE BACKEND ADDITIVE-ONLY, MULTIPLAYER SYNC & STORE (RULE D1)\nSkills: @backend-architect + @godot-multiplayer-engineer + @economy-designer"]
+    S3 --> S4["📱 BƯỚC 4: CODE UI/UX, PHASER SCENE & CARTRIDGE SDK CÔ LẬP\nSkills: @ui-designer + @frontend-developer"]
+    S4 --> S5["🧪 BƯỚC 5: TỰ KIỂM THỬ HỒI QUY (NON-REGRESSION) & AUDIT BẢO MẬT\nSkills: @code-reviewer\n(Chạy tsc --noEmit + 37 TC trong qcTestRunner.ts + Kiểm toán RULE D0/D1)"]
     S5 --> S6{"💮 BƯỚC 6: TRÌNH PO DUYỆT\nSkills: @growth-hacker + @content-creator\n(Xuất Phiếu Nghiệm Thu & DỪNG CHỜ DUYỆT)"}
     S6 -- "Yêu cầu tinh chỉnh" --> Detect
     S6 -- "PO Gõ 'Duyệt' / 'Next'" --> Next["🚀 Chuyển sang Module tiếp theo"]
@@ -28,7 +28,7 @@ flowchart TD
 
 | Nhóm Khâu | Tên Skill Chuyên Môn | Khi Nào AI Tự Động Kích Hoạt Skill Này? (`Trigger Conditions`) | Đầu Ra Chuẩn Hóa Do Skill Đảm Nhiệm |
 | :--- | :--- | :--- | :--- |
-| **1. Thiết Kế & Kịch Bản (Bước 1)** | `@game-designer` | **Kích hoạt ở MỌI tính năng:** Thiết kế vòng lặp core loop, cơ chế Vườn – Ao – Chuồng, Lán Thợ, Đi trộm, Lễ hội, **PK Võ Đài 1v1/3v3, Loạn Chiến 8–12P & Hyper-Casual 30s**. | Đặc tả State Machine, luồng thao tác phản xạ & trường hợp biên. |
+| **1. Thiết Kế & Kịch Bản (Bước 1)** | `@game-designer` | **Kích hoạt ở MỌI tính năng:** Thiết kế vòng lặp core loop, cơ chế Vườn – Ao – Chuồng, Lán Thợ, Đi trộm, Lễ hội, **PK Võ Đài 1v1/3v3, Loạn Chiến 8–12P & Hyper-Casual 30s**. | Đặc tả State Machine, luồng thao tác phản xạ & **Bảng Đánh Giá Tác Động Chéo (`RULE D1`)**. |
 | | `@economy-designer` | Khi tính năng có liên quan đến **Vàng `🪙`, Ngọc `💎`, Năng lượng `⚡`, `🏮 Xu Hội Làng`, Lương thợ, Thuế chợ/Thuế sới đình 10%, Trần thưởng Hyper-Casual `1,500🪙/ngày`**. | Công thức toán học chống lạm phát, cân bằng `Sources vs. Sinks` (`94%–112%`) khớp file `02` & `04`. |
 | | `@narrative-designer` | Khi tính năng có **Nhiệm vụ Cốt truyện (10 Chương Gia Phả), Hội thoại NPC, Lời thoại ngắn (`Barks`) của 6 Gia nhân, Đố Ca dao Thực Khách Bí Ẩn**. | Kịch bản phân nhánh (`EMP` Nghĩa Tình vs `PRAG` Thực Dụng) & câu đố Ca dao 3 miền. |
 | | `@level-designer` | Khi tính năng tác động đến **Quy hoạch 25 Phân khu nông trại hoặc 5 Phân khu Sảnh Chung Chợ Đình (`48x32 Tiles`), Sới vật, Cầu khỉ, Ao bùn loạn chiến**. | Bố cục tọa độ lưới `3/4 Top-Down Oblique` thoáng đãng, dẫn hướng mắt tự nhiên. |
@@ -38,30 +38,37 @@ flowchart TD
 | | `@codeart2d` | Khi cần **sinh nhanh Texture/Sprite trực tiếp bằng mã nguồn (`PixelAssetGenerator.ts`)**, vẽ biểu tượng SVG/Canvas hoặc hiệu ứng hạt. | Texture Pixel Art sắc nét tạo trực tiếp trong bộ nhớ (`0ms` tải mạng) & xuất Bằng khen `.PNG`. |
 | | `@technical-artist` | Khi lập trình **Hiệu ứng thời tiết (`Mưa rào, Đom đóm`), Lửa nồi bánh chưng, Va chạm vật lý Võ Đài, Tween nảy xúc giác (`3-Layer Tactile`) & tối ưu 60 FPS**. | Hệ thống Particle VFX & Shader/Tween mượt trên trình duyệt di động. |
 | | `@game-audio-engineer` | Khi tích hợp **Nhạc nền Ngũ cung / Trống hội Sới đình** hoặc **SFX (`Tưới nước, Thu vàng, Chó sủa, Gậy bông chạm, Rơi xuống ao, Chiêng trống`)**. | Bộ tổng hợp âm thanh WebAudio API (`soundEffects.ts`) độ trễ `0ms`. |
-| **3. Backend & Multiplayer (Bước 3)** | `@backend-architect` | Khi thiết kế hoặc cập nhật **Bảng PostgreSQL, Row Level Security (RLS), Atomic RPC (`FOR UPDATE`), Quyết toán cược PK Zero-Sum (`rpc_settle_arena_wager`)**. | File SQL Migration (`0001..0003`), hàm chống gian lận Server-side & chống dàn xếp tỉ số. |
+| **3. Backend & Multiplayer (Bước 3)** | `@backend-architect` | Khi thiết kế hoặc cập nhật **Bảng PostgreSQL, Row Level Security (RLS), Atomic RPC (`FOR UPDATE`), Quyết toán cược PK Zero-Sum (`rpc_settle_arena_wager`)**. | File SQL Migration **Additive-Only** (`0001..0003`), bảo toàn 100% DB cũ & chống gian lận Server-side. |
 | | `@godot-multiplayer-engineer` | Khi lập trình **Đồng bộ vị trí người chơi tại Sảnh Chung (`10Hz Broadcast + 60 FPS Client LERP`), Phân kênh `25–30 CCU/Shard`, Đồng bộ Seed PRNG cho trận PK/Loạn Chiến & AI Bot Fallback**. | Kiến trúc mạng thời gian thực mượt mà, giảm 85% băng thông, ghép trận `< 3 giây`. |
 | **4. UI/UX & Frontend (Bước 4)** | `@ui-designer` | Khi thiết kế bố cục **Màn hình Splash/Auth, Main HUD 2-Thumb, Virtual Joystick + Emote Wheel Sảnh Chung, và Khung vỏ Máy Thùng Hyper-Casual**. | Giao diện chuẩn công thái học 2 ngón cái, nút `.touch-btn >= 38–44px`, bảo vệ vùng Tai thỏ. |
 | | `@frontend-developer` | Khi lập trình **Phaser 3 Scenes (`FarmScene`, `SocialPlazaScene`, `MinigameHostScene`), Chuẩn băng game `IHyperCasualCartridge`, React 19 & Zustand Store**. | Code TypeScript Strict Mode (`0 any`), tách biệt `Tap vs Drag > 12px`, lắp ghép minigame mới trong 1 file. |
-| **5. Kiểm Thử & Audit (Bước 5)** | `@code-reviewer` | **Kích hoạt bắt buộc ở Bước 5 của MỌI tính năng:** Rà soát lỗi tiềm ẩn, lỗ hổng XSS, lỗi âm tiền, vượt trần `1,500🪙/ngày` Hyper-Casual và viết Test Case. | Biên dịch `npx tsc --noEmit` (`0 errors`) & chạy `qcTestRunner.ts` (**37 TC**) đạt `100% PASS`. |
+| **5. Kiểm Thử & Audit (Bước 5)** | `@code-reviewer` | **Kích hoạt bắt buộc ở Bước 5 của MỌI tính năng:** Rà soát lỗi tiềm ẩn, lỗ hổng XSS, lỗi âm tiền, vượt trần `1,500🪙/ngày`, kiểm tra hồi quy tính năng cũ (`RULE D1`) và viết Test Case. | Biên dịch `npx tsc --noEmit` (`0 errors`) & chạy `qcTestRunner.ts` (**37 TC**) đạt `100% PASS`. |
 | **6. Duyệt & Tăng Trưởng (Bước 6)** | `@growth-hacker` & `@content-creator` | Khi tính năng liên quan đến **Vòng lặp lan tỏa (Xin vía Loa Phường, Mua vé số tặng bạn, Tiếp củi Bánh Chưng, Gạ kèo PK Sảnh Chung, Khoe Bằng khen `.PNG`)**. | Tối ưu tỷ lệ giữ chân (Retention/Viral loop) & xuất Phiếu Nghiệm Thu trình PO duyệt. |
 
 ---
 
-## PHẦN 2: QUY TRÌNH 6 BƯỚC KHÉP KÍN CÓ TÍCH HỢP SKILL & ĐỐI CHIẾU `RULE D0` (`6-STEP SKILL-DRIVEN WORKFLOW`)
+## PHẦN 2: QUY TRÌNH 6 BƯỚC KHÉP KÍN CÓ TÍCH HỢP SKILL, ĐỐI CHIẾU `RULE D0` & CẢNH BÁO TÁC ĐỘNG SỚM `RULE D1` (`6-STEP SKILL-DRIVEN WORKFLOW`)
 
-1. **📐 Bước 1 — Đối Chiếu Tài Liệu (`RULE D0`), Tự Nhận Diện Skill & Chốt Đặc Tả (`@game-designer`, `@economy-designer`, `@narrative-designer`, `@level-designer`):**
+1. **📐 Bước 1 — Đối Chiếu Tài Liệu (`RULE D0`), Đánh Giá Tác Động Chéo Sớm (`RULE D1`), Tự Nhận Diện Skill & Chốt Đặc Tả (`@game-designer`, `@economy-designer`, `@narrative-designer`, `@level-designer`, `@backend-architect`):**
    * **Kiểm toán `RULE D0` bắt buộc ở đầu mỗi task:** Đối chiếu nội dung mới với toàn bộ tài liệu đang có (`00` ➔ `10` & `AGENTS.md`), hợp nhất hoặc loại bỏ ngay mọi điểm trùng lặp, dư thừa hoặc lệch thông số trước khi triển khai.
-   * AI liệt kê bộ Skills kích hoạt cho Module hiện tại, đọc `01_MASTER_GDD`, `02_MASTER_ECONOMY`, `04_MASTER_DATA.csv`, `06_MASTER_UI_UX` và xuất 5 gạch đầu dòng chốt Input, Output, Công thức toán học & Edge cases.
-2. **🎨 Bước 2 — Tạo Asset Pixel Art, Animation, Bản Đồ & Âm Thanh (`@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`, `@technical-artist`, `@game-audio-engineer`):**
-   * Tạo Sprite/Texture (viền ấm `#3D2314`, không dùng `#000000`), hiệu ứng Phản hồi Xúc giác 3 Lớp (Tween + Particle VFX + Floating Text) và âm thanh WebAudio trong `soundEffects.ts`.
-3. **🗄️ Bước 3 — Lập Trình Backend Supabase, Multiplayer Sync & Zustand Store (`@backend-architect`, `@godot-multiplayer-engineer`, `@economy-designer`):**
-   * Viết bảng SQL bật RLS + hàm Atomic RPC (`FOR UPDATE`), kênh đồng bộ Realtime / Sharded Rooms, khai báo TypeScript Interface (`0 any`) và Zustand Action (chống âm tiền/năng lượng, khóa trần chỉ số, lọc XSS, hỗ trợ Offline Bot Fallback).
-4. **📱 Bước 4 — Lập Trình Giao Diện Phaser 3, Cartridge SDK & React 2-Thumb HUD (`@ui-designer`, `@frontend-developer`):**
-   * Tích hợp vào `FarmScene.ts`, `SocialPlazaScene.ts`, `MinigameHostScene.ts` (`IHyperCasualCartridge`) và `src/App.tsx` (`.touch-btn >= 38–44px`, `safe-area-inset-*`, không dùng `window.alert`).
-5. **🧪 Bước 5 — Kiểm Toán Mã Nguồn, Rà Soát Trùng Lặp (`RULE D0`) & Chạy Test Tự Động QC (`@code-reviewer`):**
-   * Chạy `npx tsc --noEmit` (`0 errors`), thêm/chạy kịch bản `TC-xx.ya` trong `src/services/qcTestRunner.ts` (có chụp `Snapshot` & khôi phục trạng thái 100%) và đối chiếu lại toàn bộ tài liệu/code để cắt bỏ phần thừa.
+   * **🛡️ Kiểm toán `RULE D1` & Cảnh Báo Tác Động Chéo Sớm (BẮT BUỘC NGAY TẠI BƯỚC 1):** Trước khi viết bất kỳ dòng code hay tạo asset nào, AI phải xuất bảng **`[🔍 ĐÁNH GIÁ TÁC ĐỘNG CHÉO - RULE D1 IMPACT REPORT]`** kiểm tra 5 hạng mục:
+     1. *Tác động tới Core Gameplay VAC & Năng lượng Hybrid (`0⚡`)*: Có làm lệch hướng nông trại 3 miền hay vi phạm lộ trình mở khóa 5 Đợt (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`) không?
+     2. *Tác động tới Kinh tế & Chống lạm phát*: Có vượt trần `Sources vs. Sinks` (`94%–112%`) hoặc trần Hyper-Casual `1,500 🪙/ngày` không?
+     3. *Tính nhất quán Art Style & UI/UX*: Có giữ đúng bảng 64 màu, góc `3/4 Top-Down`, viền ấm `#3D2314` và bố cục `2-Thumb Landscape HUD` không?
+     4. *Tính nhất quán Code & Ảnh hưởng tới Module khác*: Có sửa vào hàm/state đang dùng chung của tính năng cũ không?
+     5. *Sự đồng nhất & Bảo toàn Cơ sở dữ liệu*: Có đảm bảo **Additive-Only** (không xóa/đổi tên bảng, cột, hoặc `ID` của 155 thực thể gốc) không?
+     * 🚨 **CỔNG CHẶN AN TOÀN (`EARLY ALERT GATE`):** Nếu bất kỳ hạng mục nào ở trên **CÓ ẢNH HƯỞNG** tới tính năng khác, Core Gameplay hoặc Database, AI **BẮT BUỘC PHẢI THÔNG BÁO NGAY TẠI BƯỚC 1** (nêu rõ nguyên nhân, phạm vi ảnh hưởng và phương án cô lập/di trú an toàn) và **CHỜ CHỦ DỰ ÁN (PO) XÁC NHẬN ĐỒNG Ý** rồi mới được chuyển sang Bước 2!
+   * Sau khi kiểm tra an toàn, AI liệt kê bộ Skills kích hoạt cho Module hiện tại và xuất 5 gạch đầu dòng chốt Input, Output, Công thức toán học & Edge cases.
+2. **🎨 Bước 2 — Tạo Asset Pixel Art, Animation, Bản Đồ & Âm Thanh Nhất Quán (`@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`, `@technical-artist`, `@game-audio-engineer`):**
+   * Tạo Sprite/Texture (tuân thủ nghiêm ngặt `RULE D1`: bảng 64 màu 3 miền, góc `3/4 Top-Down`, viền ấm `#3D2314`, không dùng `#000000`), hiệu ứng Phản hồi Xúc giác 3 Lớp (Tween + Particle VFX + Floating Text) và âm thanh WebAudio trong `soundEffects.ts`.
+3. **🗄️ Bước 3 — Lập Trình Backend Additive-Only, Multiplayer Sync & Zustand Store (`@backend-architect`, `@godot-multiplayer-engineer`, `@economy-designer`):**
+   * Viết bảng SQL bật RLS + hàm Atomic RPC (`FOR UPDATE`) theo chuẩn **Bảo Toàn Database `RULE D1` (`Additive-Only`: chỉ dùng `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS ... DEFAULT ...`, bảo toàn 100% dữ liệu và `ID` cũ)**, kênh đồng bộ Realtime / Sharded Rooms, khai báo TypeScript Interface (`0 any`) và Zustand Action cô lập an toàn (chống âm tiền/năng lượng, khóa trần chỉ số, lọc XSS, hỗ trợ Offline Bot Fallback).
+4. **📱 Bước 4 — Lập Trình Giao Diện Phaser 3, Cartridge SDK & React 2-Thumb HUD Cô Lập (`@ui-designer`, `@frontend-developer`):**
+   * Tích hợp vào `FarmScene.ts`, `SocialPlazaScene.ts`, `MinigameHostScene.ts` (`IHyperCasualCartridge`) và `src/App.tsx` (`.touch-btn >= 38–44px`, `safe-area-inset-*`, không dùng `window.alert`) mà không làm thay đổi hay xô lệch các màn hình/tính năng đã có.
+5. **🧪 Bước 5 — Kiểm Toán Mã Nguồn, Kiểm Thử Hồi Quy (`RULE D1 Non-Regression`), Rà Soát Trùng Lặp (`RULE D0`) & Chạy Test Tự Động QC (`@code-reviewer`):**
+   * Chạy `npx tsc --noEmit` (`0 errors`), thêm/chạy kịch bản `TC-xx.ya` cùng toàn bộ **37 Test Cases** trong `src/services/qcTestRunner.ts` đạt `100% PASS` (chứng minh tính năng mới không gây lỗi hồi quy lên bất kỳ tính năng cũ nào) và đối chiếu lại toàn bộ tài liệu/code theo `RULE D0` & `RULE D1`.
 6. **💮 Bước 6 — Xuất Phiếu Nghiệm Thu & Dừng Chờ Chủ Dự Án Duyệt (`@growth-hacker`, `@content-creator`):**
-   * Xuất **Phiếu Nghiệm Thu Tính Năng** (ghi rõ bộ Skills đã kích hoạt, xác nhận đã đối chiếu `RULE D0` không trùng lặp, kết quả `tsc` + `QC Test`, hướng dẫn bấm thử 30 giây) và **DỪNG CHỜ ANH DUYỆT (`Duyệt` / `Next`)**.
+   * Xuất **Phiếu Nghiệm Thu Tính Năng** (ghi rõ bộ Skills đã kích hoạt, xác nhận đã đối chiếu `RULE D0` không trùng lặp + xác nhận `RULE D1` bảo toàn Core Gameplay/Art/Code/DB, kết quả `tsc` + `QC Test`, hướng dẫn bấm thử 30 giây) và **DỪNG CHỜ ANH DUYỆT (`Duyệt` / `Next`)**.
 
 ---
 
@@ -80,7 +87,7 @@ flowchart TD
 | **07** | `M02.2` | **Hệ Thống Năng Lượng "Bát Cơm" `⚡` Hybrid (`50/50`)** | `@game-designer`, `@economy-designer`, `@frontend-developer`, `@code-reviewer` | `src/store/useGameStore.ts` (làm nông `0⚡`, mở rộng tốn `⚡`) | `TC-02.2a..b` |
 | **08** | `M02.3` | **Thời Tiết Động 3 Miền (`☀️ Nắng / 🌧️ Mưa / 🌙 Đom Đóm`)** | `@game-designer`, `@technical-artist`, `@codeart2d`, `@frontend-developer`, `@code-reviewer` | `src/game/scenes/FarmScene.ts`, `cycleWeather` trong Store | `TC-02.3a..b` |
 | **09** | `M02.4` | **Khai Hoang Mở Rộng 25 Phân Khu (`-5⚡`, `-500🪙`)** | `@level-designer`, `@economy-designer`, `@generate2dmap`, `@frontend-developer`, `@code-reviewer` | `expandWildLand` trong `src/store/useGameStore.ts` | `TC-02.4a` |
-| **10** | `M03.1` | **Khay Chọn Giống 6 Nhóm (81 Loài) & Gieo Hạt Trên Ruộng** | `@game-designer`, `@generate2dsprite`, `@codeart2d`, `@ui-designer`, `@frontend-developer`, `@code-reviewer` | `Collapsible Seed Drawer` trong `App.tsx`, `interactTile` | `TC-03.1a..b` |
+| **10** | `M03.1` | **Khay Chọn Giống 6 Nhóm & Cơ Chế Mở Khóa 5 Đợt Theo Gia Phả (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 Loài`)** | `@game-designer`, `@generate2dsprite`, `@codeart2d`, `@ui-designer`, `@frontend-developer`, `@code-reviewer` | `Collapsible Seed Drawer` trong `App.tsx`, `interactTile` (`unlockStage + unlockChapter`) | `TC-03.1a..b` |
 | **11** | `M03.2` | **Tưới Nước Giếng Làng (`-15%` Thời Gian, Miễn Phí `0⚡`)** | `@game-designer`, `@technical-artist`, `@game-audio-engineer`, `@frontend-developer`, `@code-reviewer` | `interactTile` (`!tile.watered`), `playWaterSplash()` | `TC-03.2a` |
 | **12** | `M03.3` | **Nuôi Thủy Sản Ao, Tích Lũy Độ Bùn (`0/10`) & Vét Bùn Ao (`-3⚡`)** | `@game-designer`, `@economy-designer`, `@generate2dsprite`, `@frontend-developer`, `@code-reviewer` | `dredgePondMud` & thu hoạch `AQUA` trong `useGameStore.ts` | `TC-03.3a` |
 | **13** | `M03.4` | **Bón Bùn Phù Sa & Nổ Nông Sản Hoàng Kim `⭐` (`x3 Giá Bán`)** | `@economy-designer`, `@technical-artist`, `@game-audio-engineer`, `@frontend-developer`, `@code-reviewer` | `interactTile` (`ITEM_BUN_PHU_SA` & `isGolden`), `playHarvestCoin()` | `TC-03.4a` |
@@ -161,19 +168,21 @@ flowchart TD
 
 ---
 
-## PHẦN 4: BỘ CÂU LỆNH (PROMPT TEMPLATES) COPY-PASTE ĐỂ ĐIỀU KHIỂN AI KÈM TỰ NHẬN DIỆN SKILL
+## PHẦN 4: BỘ CÂU LỆNH (PROMPT TEMPLATES) COPY-PASTE ĐỂ ĐIỀU KHIỂN AI KÈM TỰ NHẬN DIỆN SKILL & KIỂM TOÁN `RULE D0 + RULE D1`
 
-### 📋 Mẫu Prompt 1: Khởi động AI vào chế độ "Tự Nhận Diện Skill & Dựng Từng Tính Năng Khép Kín"
+### 📋 Mẫu Prompt 1: Khởi động AI vào chế độ "Tự Nhận Diện Skill, Kiểm Toán `RULE D0/D1` & Dựng Từng Tính Năng Khép Kín"
 ```text
-Hãy đọc file `00_MASTER_BIBLE_Tong_Hop_Tai_Lieu_Chuan_Trien_Khai_PO_Dev_Art_UI_QC.md` và `10_MASTER_AI_PLAYBOOK_Quy_Trinh_AI_Tu_Dong_Dung_Tung_Tinh_Nang.md`.
-Từ bây giờ, mỗi khi tôi giao một tính năng (từ M01.0 đến M11.6), bạn BẮT BUỘC:
+Hãy đọc file `AGENTS.md`, `00_MASTER_BIBLE_Tong_Hop_Tai_Lieu_Chuan_Trien_Khai_PO_Dev_Art_UI_QC.md` và `10_MASTER_AI_PLAYBOOK_Quy_Trinh_AI_Tu_Dong_Dung_Tung_Tinh_Nang.md`.
+Từ bây giờ, mỗi khi tôi giao một tính năng (từ M01.0 đến M11.6 hoặc tính năng mới), bạn BẮT BUỘC:
 - Bước 0: Tự động nhận diện và kích hoạt các Skill chuyên môn liên quan (`@game-designer`, `@economy-designer`, `@narrative-designer`, `@level-designer`, `@godot-multiplayer-engineer`, `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`, `@technical-artist`, `@game-audio-engineer`, `@backend-architect`, `@ui-designer`, `@frontend-developer`, `@code-reviewer`, `@growth-hacker`).
-- Thực hiện tuần tự 6 Bước Khép Kín: Bước 1 (Chốt thiết kế & công thức) -> Bước 2 (Tạo Asset/VFX/SFX) -> Bước 3 (Code Backend SQL/RPC, Multiplayer Sync & Zustand Store) -> Bước 4 (Code UI 2-Thumb Landscape, Phaser Scene & Cartridge SDK) -> Bước 5 (Kiểm toán bằng `@code-reviewer`, chạy `npx tsc --noEmit` 0 lỗi & chạy Test Case tự động trong `qcTestRunner.ts`) -> Bước 6 (Xuất Phiếu Nghiệm Thu ghi rõ các Skill đã dùng và DỪNG CHỜ TÔI DUYỆT).
-Hãy bắt đầu ngay với Module: [NHẬP MÃ MODULE, VD: M11.1, M11.2, M11.3, M11.4, M11.5 hoặc M11.6].
+- Thực hiện tuần tự 6 Bước Khép Kín:
+  + Bước 1: Kiểm toán `RULE D0` (không trùng lặp) + Xuất bảng `[🔍 ĐÁNH GIÁ TÁC ĐỘNG CHÉO - RULE D1 IMPACT REPORT]` (kiểm tra tính nhất quán Art Style, Code, bảo toàn Database Additive-Only và ảnh hưởng tới Core Gameplay / tính năng khác). NẾU CÓ ẢNH HƯỞNG TỚI TÍNH NĂNG KHÁC HOẶC CORE GAMEPLAY, PHẢI THÔNG BÁO NGAY TẠI BƯỚC 1 VÀ CHỜ TÔI DUYỆT KẾ HOẠCH TRƯỚC KHI CODE!
+  + Bước 2 (Tạo Asset/VFX/SFX nhất quán) -> Bước 3 (Code Backend SQL/RPC Additive-Only, Multiplayer Sync & Zustand Store) -> Bước 4 (Code UI 2-Thumb Landscape, Phaser Scene & Cartridge SDK cô lập) -> Bước 5 (Kiểm toán hồi quy bằng `@code-reviewer`, chạy `npx tsc --noEmit` 0 lỗi & chạy đủ 37 Test Cases trong `qcTestRunner.ts`) -> Bước 6 (Xuất Phiếu Nghiệm Thu ghi rõ các Skill đã dùng + xác nhận `RULE D0/D1` và DỪNG CHỜ TÔI DUYỆT).
+Hãy bắt đầu ngay với Module: [NHẬP MÃ MODULE, VD: M03.1, M11.1, M11.2, M11.3, M11.4, M11.5 hoặc M11.6].
 ```
 
 ### 📋 Mẫu Prompt 2: Khi anh muốn AI dựng thêm 1 trò chơi Hyper-Casual mới bất kỳ trong tương lai chỉ trong 1 bước
 ```text
 Hãy kích hoạt `@game-designer`, `@economy-designer`, `@codeart2d`, `@frontend-developer` và `@code-reviewer`.
-Dựa trên chuẩn giao diện `IHyperCasualCartridge` của Module `M11.6` trong `03_MASTER_TECH` và `10_MASTER_AI_PLAYBOOK`, hãy tạo một băng trò chơi Hyper-Casual 30 giây mới có tên: "[TÊN TRÒ CHƠI DÂN GIAN MỚI, VD: Đập Niêu Bịt Mắt 30s / Đi Cà Kheo Bắt Cá]" tại `src/game/minigames/`, đăng ký vào `MinigameHostScene.ts`, đảm bảo tuân thủ khóa trần thưởng `1,500 🪙/ngày` và kiểm thử `tsc --noEmit` 0 lỗi.
+Tuân thủ nghiêm ngặt `RULE D0` và `RULE D1` (cô lập 100% trong chuẩn `IHyperCasualCartridge` của Module `M11.6`, không ảnh hưởng tới `FarmScene` hay Database cũ), hãy tạo một băng trò chơi Hyper-Casual 30 giây mới có tên: "[TÊN TRÒ CHƠI DÂN GIAN MỚI, VD: Đập Niêu Bịt Mắt 30s / Đi Cà Kheo Bắt Cá]" tại `src/game/minigames/`, đăng ký vào `MinigameHostScene.ts`, đảm bảo tuân thủ khóa trần thưởng `1,500 🪙/ngày` và kiểm thử `tsc --noEmit` 0 lỗi.
 ```

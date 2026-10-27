@@ -52,8 +52,9 @@ flowchart TD
 ### 2.2. Màn Hình 0B: Cổng Làng Xác Thực Đa Tầng (`Login / Register +500🪙 / Guest / Forgot Password OTP`)
 * Tích hợp 4 Tabs rõ ràng: **🔑 Đăng Nhập**, **📝 Đăng Ký Mới (`+500 🪙`)**, **⚡ Chơi Khách Ngay (1 Chạm)** và **🔓 Quên Mật Khẩu OTP 2 Bước**, kèm nút **🔐 Liên Kết Tài Khoản Chính Thức (`+50 💎` & `+1,000 🪙`)** ngay trên Top HUD cho người chơi Khách.
 
-### 2.3. Màn Hình 2: Giao Diện Chính Nông Trại (`Main HUD 2-Thumb Landscape`)
+### 2.3. Màn Hình 2: Giao Diện Chính Nông Trại (`Main HUD 2-Thumb Landscape & Khay Giống Mở Khóa 5 Đợt`)
 * Giữ trống **82%–85% diện tích trung tâm** cho bản đồ nông trại Phaser 3; thanh công cụ dưới đáy (`Bottom Dock`) bổ sung nút nổi bật **`[⛩️ Sảnh Đình & PK]`** để người chơi chuyển ngay sang Sảnh Chung bất cứ lúc nào.
+* **Khay Chọn Giống 6 Nhóm (`Collapsible Seed Drawer`)** tích hợp bộ lọc **Khóa Mở Khóa 3 Tầng (`Giai Đoạn Update + Chương Gia Phả + Level`)**: hiển thị rõ các giống thuộc Đợt hiện tại (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`) và gắn huy hiệu **`[🔒 Mở tại Giai đoạn X - Trang Gia Phả #Y]`** cho các giống của giai đoạn sau để kích thích tò mò khám phá cốt truyện mà không làm rối mắt người chơi mới.
 
 ### 2.4. Màn Hình 3: Giao Diện "Lán Thợ Đồng Quê & Quản Lý 6 Gia Nhân" (`WORKERS Modal`)
 * Quản lý 6 Gia nhân (`WORK_01..06`), **Bàn Ăn Chung Lán Thợ**, **4 Bộ Đồ Bảo Hộ 72 Giờ**, **Giỏ Kho Thợ (`120 ô`)** và nút **`🌙 Giả Lập Offline 4h (Lazy-Tick)`**.

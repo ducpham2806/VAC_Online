@@ -323,9 +323,13 @@ export const App: React.FC = () => {
             ⚡ {stamina}/{maxStamina}
           </span>
           <button
-            onClick={cycleWeather}
+            onClick={() => {
+              cycleWeather();
+              const nextWeather = useGameStore.getState().weather;
+              soundFX.syncWithWeather(nextWeather);
+            }}
             className="touch-btn bg-[#2e8b8d] text-white text-[11px] font-bold px-2 py-0.5 rounded-full cursor-pointer"
-            title="Bấm thử đổi Thời tiết 3 miền"
+            title="Bấm thử đổi Thời tiết 3 miền (Tự động chuyển âm thanh thiên nhiên)"
           >
             {weatherBadge}
           </button>
@@ -337,14 +341,17 @@ export const App: React.FC = () => {
             📢 <b>LOA:</b> {loaPhuongText}
           </span>
           <button
-            onClick={claimLoaPhuongLucky}
+            onClick={() => {
+              soundFX.playGoldenSparkle();
+              claimLoaPhuongLucky();
+            }}
             className="touch-btn bg-[#f5b82e] text-[#2a180c] font-extrabold px-2 py-0.5 rounded-full text-[11px] cursor-pointer shrink-0"
           >
             🧧 Xin Vía ({luckyPacketsLeft})
           </button>
         </div>
 
-        {/* Cụm Phải: Vàng, Ngọc, Tua x60, Fullscreen PWA & Supabase Realtime */}
+        {/* Cụm Phải: Vàng, Ngọc, Nhạc Nền 4 Chế Độ, Tua x60, Fullscreen PWA & Supabase Realtime */}
         <div className="pointer-events-auto flex items-center gap-1 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 text-[#fff8eb] shadow-lg">
           <span className="bg-[#3e2723] border border-[#f5b82e] px-2 py-0.5 rounded-full text-xs font-extrabold">
             🪙 {gold.toLocaleString()}
@@ -356,9 +363,10 @@ export const App: React.FC = () => {
             onClick={() => {
               const playing = soundFX.toggleFolkBgm();
               setIsBgmPlaying(playing);
+              const meta = soundFX.getCurrentTrackMeta();
               setToast(
                 playing
-                  ? '🎵 Đã bật Nhạc Nền Ngũ Cung Đồng Quê (Sáo Trúc & Đàn Tranh)!'
+                  ? `🎵 Đang phát: ${meta.name} — ${meta.description}`
                   : '🔇 Đã tắt Nhạc Nền Đồng Quê.'
               );
             }}
@@ -369,7 +377,18 @@ export const App: React.FC = () => {
             }`}
             title="Bật / Tắt Nhạc Nền Ngũ Cung Đồng Quê"
           >
-            {isBgmPlaying ? '🎵 Nhạc: BẬT' : '🎵 Nhạc Quê'}
+            {isBgmPlaying ? `🎵 ${soundFX.getCurrentTrackMeta().shortLabel}` : '🎵 Nhạc Quê'}
+          </button>
+          <button
+            onClick={() => {
+              const nextMeta = soundFX.cycleBgmTrack();
+              setIsBgmPlaying(true);
+              setToast(`🎶 Đổi giai điệu: ${nextMeta.name} — ${nextMeta.description}`);
+            }}
+            className="touch-btn bg-[#6e4121] border border-[#f5b82e] text-[#fff8eb] text-[11px] font-bold px-2 py-0.5 rounded-full cursor-pointer"
+            title="Đổi qua 4 Bản Nhạc Nền Đồng Quê (Bình Minh / Trưa Hè / Đêm Trăng / Hội Làng)"
+          >
+            🎼 Đổi Nhạc
           </button>
           <button
             onClick={fastForwardTime}

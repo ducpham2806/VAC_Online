@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bản Đồ Lộ Trình 5 Giai Đoạn - Hương Đồng Gió Nội (Facebook Player Roadmap)</title>
+  <title>Bản Đồ Lộ Trình 6 Giai Đoạn & Kịch Bản Mở Đầu Giai Đoạn 1 - Hương Đồng Gió Nội (Facebook Kit)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
     body {
@@ -14,39 +14,45 @@
       align-items: center;
       padding: 20px;
       min-height: 100vh;
+      gap: 20px;
     }
     .toolbar {
       display: flex;
       gap: 14px;
       align-items: center;
       justify-content: space-between;
-      max-width: 1280px;
+      max-width: 1320px;
       width: 100%;
       background: linear-gradient(90deg, #3e2413, #5c351b);
       border: 3px solid #f5b82e;
       border-radius: 14px;
-      padding: 12px 20px;
-      margin-bottom: 18px;
+      padding: 14px 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.6);
       flex-wrap: wrap;
     }
     .toolbar h1 {
-      font-size: 1.1rem;
+      font-size: 1.12rem;
       color: #ffdf7e;
       font-weight: 800;
     }
     .toolbar p {
       font-size: 0.84rem;
       color: #ffe8c2;
+      margin-top: 2px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .btn-download {
       background: linear-gradient(180deg, #f5b82e, #d98a16);
       color: #2a1405;
       border: 2px solid #fff6c2;
-      padding: 10px 20px;
+      padding: 10px 18px;
       border-radius: 10px;
       font-weight: 900;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       transition: transform 0.15s ease, filter 0.15s ease;
@@ -56,7 +62,7 @@
       filter: brightness(1.08);
     }
     .canvas-wrap {
-      max-width: 1280px;
+      max-width: 1320px;
       width: 100%;
       border: 5px solid #8c5528;
       border-radius: 18px;
@@ -69,20 +75,84 @@
       height: auto;
       display: block;
     }
+    .fb-post-box {
+      max-width: 1320px;
+      width: 100%;
+      background: #24160c;
+      border: 3px solid #c88a4b;
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+    }
+    .fb-post-box h2 {
+      color: #f5b82e;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .fb-copy-content {
+      background: #fff9ed;
+      color: #2a180c;
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 2px solid #8c5528;
+      line-height: 1.65;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
 
   <div class="toolbar">
     <div>
-      <h1>🌾 BẢN ĐỒ LỘ TRÌNH 5 GIAI ĐOẠN CÔNG BỐ NGƯỜI CHƠI — HƯƠNG ĐỒNG GIÓ NỘI</h1>
-      <p>Thiết kế 5 cột mốc trải nghiệm dành riêng cho cộng đồng người chơi (Full HD 1920x1080, không thuật ngữ kỹ thuật, không trùng lặp)</p>
+      <h1>🌾 BỘ KIT TRUYỀN THÔNG FACEBOOK: BẢN ĐỒ LỘ TRÌNH 6 GIAI ĐOẠN & CÂU CHUYỆN MỞ ĐẦU GIAI ĐOẠN 1</h1>
+      <p>Đã đồng bộ Giai đoạn 6 (Sảnh Chung Chợ Đình, Võ Đài PK Dân Gian & Vũ Trụ Hyper-Casual) cùng Kịch bản Mở đầu Giai đoạn 1 chuẩn đăng Fanpage</p>
     </div>
-    <button class="btn-download" onclick="downloadPoster()">📥 Tải Hình Ảnh Lộ Trình 5 Giai Đoạn (.PNG Chuẩn Facebook)</button>
+    <div class="btn-group">
+      <button class="btn-download" onclick="downloadPoster()">📥 Tải Ảnh Lộ Trình 6 Giai Đoạn (.PNG 1920x1080)</button>
+      <button class="btn-download" style="background:linear-gradient(180deg,#8fd14f,#4e8222);color:#fff;" onclick="copyFbPost()">📋 Sao Chép Bài Viết Facebook Giai Đoạn 1</button>
+    </div>
   </div>
 
   <div class="canvas-wrap">
     <canvas id="roadmapCanvas" width="1920" height="1080"></canvas>
+  </div>
+
+  <div class="fb-post-box">
+    <h2>
+      <span>📜 CÂU CHUYỆN KHỞI ĐẦU GIAI ĐOẠN 1 (BÀI ĐĂNG FACEBOOK CHÍNH THỨC — @narrative-designer & @content-creator)</span>
+      <span id="copy-status" style="font-size:0.84rem;color:#8fd14f;"></span>
+    </h2>
+    <div class="fb-copy-content" id="fb-post-text">🌾 [CÂU CHUYỆN MỞ ĐẦU GIAI ĐOẠN 1: VỀ QUÊ LẬP NGHIỆP — BỨC THƯ TRONG CHIẾC TRÁP GỖ LIM] 🌾
+
+Chiều cuối thu, chuyến xe khách cuối cùng thả bạn xuống trước cổng làng rêu phong.
+Sau những năm tháng chen chúc giữa khói bụi, deadline và tiếng còi xe nơi phố thị, thứ đón bạn trở về là mùi khói rơm đốt đồng thơm ngai ngái, tiếng gáo nước dừa chạm thành giếng đá ong trong vắt và tiếng chú Chó Xoáy Phú Quốc sủa vang mừng chủ cũ.
+
+Trên thềm ngôi nhà ngói đỏ 3 gian của Ông Nội để lại, Bác Trưởng Thôn Bảy trao tận tay bạn một chiếc Tráp Gỗ Lim khóa đồng đã nhuốm màu thời gian.
+Mở nắp tráp ra, bên trong chỉ có:
+📖 "Cuốn Sổ Gia Phả Nông Nghiệp Ba Miền" đã bị thất lạc mất 9 trang bí truyền...
+🌾 Một túi hạt giống Lúa Nước cổ truyền của quê mẹ...
+📜 Và một tờ khế ước thế chấp mảnh vườn trị giá 50,000 Xu Vàng đứng tên Thương Nhân Bá Kiến!
+
+Ngay lúc ấy, chiếc xe hơi bóng loáng của Bá Kiến dừng trước cổng rào tre. Ông ta phe phẩy chiếc quạt, cười sắc lạnh:
+— "Đất này bán đứt cho ta phân lô thì cầm ngay 2,000 Xu tiêu xài, tội gì phải chân lấm tay bùn trả món nợ 50,000 Xu của ông nội ngươi?"
+
+Bác Trưởng Thôn Bảy đặt bàn tay chai sần lên vai bạn, ánh mắt ấm áp:
+— "Đất có công, cây không phụ lòng người đâu cháu ạ. Nắng tốt dưa, mưa tốt lúa... Cháu định giữ lại mảnh vườn bờ ao của ông bà, hay ký giấy bán đi?"
+
+🔥 BẠN SẼ CHỌN CON ĐƯỜNG NÀO TRONG GIAI ĐOẠN 1: VỀ QUÊ LẬP NGHIỆP?
+🌱 Chọn 1 trong 3 vùng quê hương khởi nghiệp: Đồng Bằng Bắc Bộ (Đất Phù Sa Cổ) • Cao Nguyên Trung Bộ (Nắng Gió Bazan) • Miệt Vườn Nam Bộ (Mùa Nước Nổi).
+🪣 Tự tay gieo từng hạt lúa, múc nước Giếng Làng tưới mát ruộng rau hoàn toàn MIỄN PHÍ Năng lượng (0⚡), vét bùn đáy ao lấy Phù Sa kích nổ Nông Sản Hoàng Kim ⭐ đắt giá gấp 3 lần!
+🐕 Nhận ngay chú Chó Phú Quốc Giữ Nhà SSR cùng 500 Xu Vàng Lộc Khởi Nghiệp khi ghi danh vào Sổ Định Danh Làng!
+
+👇 Bình luận ngay vùng quê hương (BẮC / TRUNG / NAM) mà bạn muốn về lập nghiệp đầu tiên để nhận gói "Hạt Giống Tổ Tiên" ngày ra mắt nhé!
+
+#HuongDongGioNoi #VACOnline #NongTrai3Mien #BoPhoVeQue #GameVietNam #PixelArt</div>
   </div>
 
   <script>
@@ -95,84 +165,89 @@
         title: 'VỀ QUÊ LẬP NGHIỆP',
         subtitle: 'Khởi Tạo 3 Miền & Sinh Thái V-A-C',
         badgeColor: '#2e7d32',
-        accent: '#81c784',
         icon: '🌾🐃🐟',
-        x: 205,
-        y: 590,
+        col: 0, row: 0,
         features: [
+          '• Mở chiếc Tráp Gỗ Lim & giữ đất tổ tiên trước Bá Kiến',
           '• Chọn quê hương Bắc – Trung – Nam & thời tiết 4 mùa',
           '• Gây dựng Vườn – Ao – Chuồng tuần hoàn (81 loài)',
-          '• Trồng lúa, rau màu, cây ăn trái & nuôi gà, vịt, heo, bò',
-          '• Thả cá tôm, vét Bùn Phù Sa kích nổ Nông Sản Hoàng Kim ⭐',
-          '• Mở đầu cốt truyện Bức Thư Ông Ngoại & khai hoang đất'
+          '• Tưới nước Giếng Làng miễn phí 0⚡ (-15% thời gian chín)',
+          '• Vét Bùn Phù Sa đáy ao kích nổ Nông Sản Hoàng Kim ⭐ (x3)'
         ]
       },
       {
         num: 'GIAI ĐOẠN 2',
         title: 'BẾP QUÊ & LÁN THỢ',
-        subtitle: 'Ẩm Thực 3 Miền & Thuê Gia Nhân',
+        subtitle: 'Đố Ca Dao Ẩm Thực & 6 Gia Nhân',
         badgeColor: '#c62828',
-        accent: '#ffb74d',
-        icon: '🍲🧵👨‍🌾',
-        x: 580,
-        y: 350,
+        icon: '🍲🥢👨‍🌾',
+        col: 1, row: 0,
         features: [
-          '• Mở 8 Xưởng Làng Nghề: Bếp củi, Lò đậu, Bún phở, Dệt lụa',
-          '• Thử tài Nồi Đất Phối Món Tự Do theo gợi ý Ca dao',
-          '• Khám phá 27+ món đặc sản (Phở bò, Bún bò, Cá kho Vũ Đại)',
-          '• Xây Lán Thợ Đồng Quê: Thuê 6 Gia Nhân phụ việc tự động',
-          '• Dọn mâm cơm nuôi thợ, may nón lá & áo tơi bảo hộ'
+          '• Xây 8 Xưởng Làng Nghề: Bếp củi, Lò đậu, Bún phở, Dệt lụa',
+          '• Nồi Đất Phối Món Tự Do & khám phá 27 đặc sản 3 miền',
+          '• Giải đố Ca Dao Ẩm Thực cùng Thực Khách Bí Ẩn Cụ Đồ Vũ Bằng',
+          '• Mở Lán Thợ Đồng Quê: Thuê 6 Gia Nhân phụ việc tự động',
+          '• Dọn mâm cơm bàn chung, may nón lá & áo tơi bảo hộ 72h'
         ]
       },
       {
         num: 'GIAI ĐOẠN 3',
         title: 'CHỢ PHIÊN & HÀNG XÓM',
-        subtitle: 'Giao Thương Liên Vùng & Đi Trộm Vui Nhộn',
+        subtitle: 'Thương Đội 3 Miền & Đi Trộm Vui Nhộn',
         badgeColor: '#1565c0',
-        accent: '#64b5f6',
-        icon: '🚂📰🐕',
-        x: 960,
-        y: 620,
+        icon: '🚂🛶🐕',
+        col: 2, row: 0,
         features: [
-          '• Mở Báo Chợ Phiên 3 Miền & Bảng đơn Hợp Tác Xã',
-          '• Đóng thùng Tàu Hỏa Bắc – Nam đổi thú cưng Trâu Đen',
+          '• Báo Chợ Phiên P2P 3 Miền, Đơn HTX & Tàu Hỏa Bắc – Nam',
+          '• Lập Thương Đội Liên Gia (Bắc-Trung-Nam) nhận giống giao thoa',
           '• Săn Thương Lái Đột Xuất thu mua đặc sản giá sốt x3',
-          '• Sang thăm nhà bạn, ký Sổ Lưu Bút & dựng giúp giàn cây',
-          '• Hái trộm vườn / câu trộm cá & né Chó Phú Quốc rượt!'
+          '• Thăm nhà bạn, ký Sổ Lưu Bút & dựng giúp giàn cây sau bão',
+          '• Hái trộm vườn / câu trộm cá & né Chó Phú Quốc rượt rớt dép!'
         ]
       },
       {
         num: 'GIAI ĐOẠN 4',
         title: 'HỘI LÀNG & THỜI TRANG',
-        subtitle: 'Đình Làng, Đột Biến & Lụa Là Gấm Vóc',
+        subtitle: 'Đình Làng, Kỷ Vật 8x–9x & Đua Trâu',
         badgeColor: '#6a1b9a',
-        accent: '#ce93d8',
-        icon: '🏮🪷👘',
-        x: 1340,
-        y: 350,
+        icon: '🏮📻🐃',
+        col: 0, row: 1,
         features: [
-          '• Chung tay Trùng Tu Đình Làng & xin quẻ Miếu Thần Nông',
-          '• Phát thanh Loa Phường toàn máy chủ & nhận lộc Xin Vía',
-          '• Vườn Ươm Chiết Cành Đột Biến (Lúa Tím, Sen Nghìn Cánh)',
-          '• Diện Tủ Đồ 12 Ô Thời Trang, Khâu ghép 3➔1 & Thi Duyên Dáng',
-          '• Hội Đua Thuyền Rồng, Đập Niêu Đất, Lịch Bloc & Xổ Số 18h'
+          '• Trùng Tu Đình Làng 3 cấp, rút quẻ Miếu Thần Nông & Loa Phường',
+          '• Vườn Ươm Chiết Cành Đột Biến (Bảo hiểm Pity trúng 100%)',
+          '• Sưu tầm & Đổi 1-1 bộ 12 Kỷ Vật Tuổi Thơ 8x–9x (Bi ve, Cassette)',
+          '• Hội Thi Trâu Vàng Cày Giỏi, Đua Thuyền Rồng & Bánh Trung Thu',
+          '• Diện 12 Ô Thời Trang, Khâu ghép 3➔1, Lịch Bloc & Xổ Số 18h'
         ]
       },
       {
         num: 'GIAI ĐOẠN 5',
         title: 'LỄ CƯỚI & HOMESTAY',
-        subtitle: 'Hạnh Phúc Trăm Năm & Điền Trang Nghỉ Dưỡng',
+        subtitle: 'Bánh Chưng Tết, Kết Hôn & Nghỉ Dưỡng',
         badgeColor: '#ad1457',
-        accent: '#f48fb1',
-        icon: '💍👶🏡',
-        x: 1715,
-        y: 590,
+        icon: '💍🔥🏡',
+        col: 1, row: 1,
         features: [
-          '• Tặng quà hẹn hò 10 Tim ❤️ cùng tri kỷ thôn quê',
-          '• Tổ chức Lễ Cưới Làng Quê tưng bừng rước dâu toàn server',
+          '• Tặng quà hẹn hò 10 Tim ❤️ & tổ chức Lễ Cưới Làng Quê',
           '• Đón Bé Tiểu Đồng chào đời phụ thu hoạch & cơm sáng mỗi ngày',
-          '• Mở Khu Du Lịch Sinh Thái Homestay (Nhà sàn & Đầm sen)',
-          '• Đón đoàn khách phố thị nghỉ dưỡng & đãi Đại Tiệc Tiến Vua'
+          '• Sự kiện Canh Nồi Bánh Chưng Xuyên Đêm (Bạn tiếp củi 0⚡ nhận Lì xì)',
+          '• Mở Khu Du Lịch Sinh Thái Homestay (Nhà sàn & Biệt thự đầm sen)',
+          '• Xuất ảnh Bằng Khen Điền Chủ Mẫu Mực & phát hành iOS / Android'
+        ]
+      },
+      {
+        num: 'GIAI ĐOẠN 6',
+        title: 'SẢNH ĐÌNH & VÕ ĐÀI PK',
+        subtitle: 'Tụ Hội Đa Người Chơi & Hyper-Casual Siêu Tốc',
+        badgeColor: '#e65100',
+        icon: '⛩️🥊🕹️',
+        col: 2, row: 1,
+        features: [
+          '• Sảnh Chung "Chợ Đình 3 Miền": Điều khiển nhân vật, Múa Lân, Chat',
+          '• Võ Đài PK 1v1 (45s): Đi Cầu Tre Đấu Gậy Bông, Đấu Vật & Ném Dép',
+          '• Đấu Tổ Đội 2v2 / 3v3: Cướp Cờ Bông Lúa Vàng & Kéo Co Đồng Tâm',
+          '• Loạn Chiến 8–12 Người: Ao Làng Đại Náo Bắt Vịt Vàng & Truyền Pháo',
+          '• Lều Máy Thùng Hyper-Casual Đơn 30s (Chẻ Tre, Nhảy Lá Sen, Bắn Bi)'
         ]
       }
     ];
@@ -192,82 +267,74 @@
     }
 
     function drawPoster() {
-      // 1. Sky & Countryside Meadow Background
       const skyGrad = ctx.createLinearGradient(0, 0, 0, 1080);
-      skyGrad.addColorStop(0, '#1e3c1a');
-      skyGrad.addColorStop(0.35, '#2f5d26');
-      skyGrad.addColorStop(0.75, '#3b6e2c');
-      skyGrad.addColorStop(1, '#24471c');
+      skyGrad.addColorStop(0, '#1b3717');
+      skyGrad.addColorStop(0.45, '#2d5a25');
+      skyGrad.addColorStop(1, '#1e3d18');
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, 1920, 1080);
 
-      // Decorative Sunburst Glow
-      const sunGrad = ctx.createRadialGradient(960, 140, 40, 960, 140, 750);
-      sunGrad.addColorStop(0, 'rgba(255, 224, 130, 0.28)');
-      sunGrad.addColorStop(1, 'rgba(255, 224, 130, 0)');
-      ctx.fillStyle = sunGrad;
-      ctx.fillRect(0, 0, 1920, 1080);
-
-      // Soft River & Countryside Winding Road connecting the 5 stages
+      // Connecting Winding Path across Row 1 (1->2->3) and Row 2 (4->5->6)
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(120, 620);
-      ctx.bezierCurveTo(380, 620, 410, 380, 580, 380);
-      ctx.bezierCurveTo(750, 380, 790, 650, 960, 650);
-      ctx.bezierCurveTo(1130, 650, 1170, 380, 1340, 380);
-      ctx.bezierCurveTo(1510, 380, 1550, 620, 1800, 620);
-      ctx.lineWidth = 46;
+      ctx.moveTo(340, 360);
+      ctx.lineTo(960, 360);
+      ctx.lineTo(1580, 360);
+      ctx.bezierCurveTo(1820, 360, 1820, 760, 1580, 760);
+      ctx.lineTo(340, 760);
+      ctx.lineWidth = 38;
       ctx.strokeStyle = '#8d5b32';
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      ctx.lineWidth = 34;
+      ctx.lineWidth = 26;
       ctx.strokeStyle = '#e0ab5b';
       ctx.stroke();
 
-      ctx.setLineDash([18, 16]);
-      ctx.lineWidth = 5;
+      ctx.setLineDash([16, 14]);
+      ctx.lineWidth = 4;
       ctx.strokeStyle = '#fff5cc';
       ctx.stroke();
       ctx.restore();
 
-      // 2. Top Wooden Banner Header
+      // Top Header Banner
       ctx.save();
-      roundRect(ctx, 210, 24, 1500, 128, 22);
-      const woodGrad = ctx.createLinearGradient(0, 24, 0, 152);
+      roundRect(ctx, 140, 20, 1640, 118, 20);
+      const woodGrad = ctx.createLinearGradient(0, 20, 0, 138);
       woodGrad.addColorStop(0, '#5a3216');
       woodGrad.addColorStop(1, '#3b1f0c');
       ctx.fillStyle = woodGrad;
       ctx.fill();
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 5;
       ctx.strokeStyle = '#f5b82e';
       ctx.stroke();
 
       ctx.fillStyle = '#ffdf7e';
-      ctx.font = '900 38px "Segoe UI", sans-serif';
+      ctx.font = '900 35px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🌾 BẢN ĐỒ LỘ TRÌNH PHÁT TRIỂN: HƯƠNG ĐỒNG GIÓ NỘI (NÔNG TRẠI 3 MIỀN) 🐃', 960, 78);
+      ctx.fillText('🌾 BẢN ĐỒ LỘ TRÌNH 6 GIAI ĐOẠN: HƯƠNG ĐỒNG GIÓ NỘI (VAC ONLINE) ⛩️', 960, 70);
 
       ctx.fillStyle = '#ffe8c2';
-      ctx.font = '700 21px "Segoe UI", sans-serif';
-      ctx.fillText('5 Cột Mốc Trải Nghiệm Từ Về Quê Lập Nghiệp Đến Đại Điền Trang Nghỉ Dưỡng Ba Miền Bắc – Trung – Nam', 960, 122);
+      ctx.font = '700 20px "Segoe UI", sans-serif';
+      ctx.fillText('Từ Mảnh Vườn Bờ Ao Quê Mẹ Đến Sảnh Chung Chợ Đình, Võ Đài PK Dân Gian & Vũ Trụ Hyper-Casual Ba Miền', 960, 112);
       ctx.restore();
 
-      // 3. Draw 5 Stage Cards
-      const cardW = 350;
-      const cardH = 385;
+      // Draw 6 Stage Cards (3 columns x 2 rows)
+      const cardW = 550;
+      const cardH = 380;
+      const startX = 95;
+      const gapX = 40;
+      const rowY = [172, 588];
 
-      stages.forEach((st, idx) => {
-        const cx = st.x - cardW / 2;
-        const cy = st.y - cardH / 2 + 40;
+      stages.forEach((st) => {
+        const cx = startX + st.col * (cardW + gapX);
+        const cy = rowY[st.row];
 
-        // Shadow
         ctx.save();
-        roundRect(ctx, cx + 6, cy + 10, cardW, cardH, 18);
+        roundRect(ctx, cx + 6, cy + 8, cardW, cardH, 18);
         ctx.fillStyle = 'rgba(0,0,0,0.45)';
         ctx.fill();
 
-        // Card Body (Warm Parchment)
         roundRect(ctx, cx, cy, cardW, cardH, 18);
         ctx.fillStyle = '#fff9ed';
         ctx.fill();
@@ -275,13 +342,11 @@
         ctx.strokeStyle = '#6e4121';
         ctx.stroke();
 
-        // Top Stage Header Ribbon
-        roundRect(ctx, cx, cy, cardW, 86, 15);
+        roundRect(ctx, cx, cy, cardW, 82, 15);
         ctx.fillStyle = st.badgeColor;
         ctx.fill();
 
-        // Stage Number Pill
-        roundRect(ctx, cx + 16, cy - 18, 148, 32, 10);
+        roundRect(ctx, cx + 18, cy - 16, 152, 30, 9);
         ctx.fillStyle = '#f5b82e';
         ctx.fill();
         ctx.lineWidth = 2.5;
@@ -289,56 +354,52 @@
         ctx.stroke();
 
         ctx.fillStyle = '#2a1405';
-        ctx.font = '900 16px "Segoe UI", sans-serif';
+        ctx.font = '900 15.5px "Segoe UI", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(st.num, cx + 90, cy + 4);
+        ctx.fillText(st.num, cx + 94, cy + 5);
 
-        // Icons on Right of Header
-        ctx.font = '24px "Segoe UI Emoji", sans-serif';
+        ctx.font = '26px "Segoe UI Emoji", sans-serif';
         ctx.textAlign = 'right';
-        ctx.fillText(st.icon, cx + cardW - 14, cy + 32);
+        ctx.fillText(st.icon, cx + cardW - 18, cy + 34);
 
-        // Stage Main Title & Subtitle
         ctx.textAlign = 'left';
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 22px "Segoe UI", sans-serif';
-        ctx.fillText(st.title, cx + 16, cy + 46);
+        ctx.fillText(st.title, cx + 18, cy + 44);
 
         ctx.fillStyle = '#ffecb3';
-        ctx.font = '700 14.5px "Segoe UI", sans-serif';
-        ctx.fillText(st.subtitle, cx + 16, cy + 72);
+        ctx.font = '700 15px "Segoe UI", sans-serif';
+        ctx.fillText(st.subtitle, cx + 18, cy + 69);
 
-        // Features List (Wrapped cleanly)
         ctx.fillStyle = '#2b190c';
-        ctx.font = '600 15.5px "Segoe UI", sans-serif';
-        let textY = cy + 116;
-        const maxWidth = cardW - 28;
+        ctx.font = '600 16px "Segoe UI", sans-serif';
+        let textY = cy + 114;
+        const maxWidth = cardW - 34;
 
         st.features.forEach(line => {
           const words = line.split(' ');
           let currentLine = '';
           for (let n = 0; n < words.length; n++) {
             const testLine = currentLine + words[n] + ' ';
-            const metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth && n > 0) {
-              ctx.fillText(currentLine.trim(), cx + 14, textY);
+            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+              ctx.fillText(currentLine.trim(), cx + 18, textY);
               currentLine = '   ' + words[n] + ' ';
-              textY += 22;
+              textY += 23;
             } else {
               currentLine = testLine;
             }
           }
-          ctx.fillText(currentLine.trim(), cx + 14, textY);
-          textY += 30;
+          ctx.fillText(currentLine.trim(), cx + 18, textY);
+          textY += 32;
         });
 
         ctx.restore();
       });
 
-      // 4. Footer Community Callout Bar
+      // Footer
       ctx.save();
-      roundRect(ctx, 260, 1004, 1400, 54, 14);
-      ctx.fillStyle = 'rgba(42, 22, 9, 0.92)';
+      roundRect(ctx, 210, 1002, 1500, 54, 14);
+      ctx.fillStyle = 'rgba(42, 22, 9, 0.94)';
       ctx.fill();
       ctx.lineWidth = 3;
       ctx.strokeStyle = '#f5b82e';
@@ -347,7 +408,7 @@
       ctx.fillStyle = '#ffdf7e';
       ctx.font = '800 20px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🌟 HƯƠNG ĐỒNG GIÓ NỘI — Bỏ Phố Về Quê, Gây Dựng Cơ Đồ Từ Mảnh Vườn Bờ Ao Quê Mẹ! 🌟', 960, 1038);
+      ctx.fillText('🌟 HƯƠNG ĐỒNG GIÓ NỘI — Bỏ Phố Về Quê, Khôi Phục Gia Phả Ba Miền & Tranh Tài Hội Đình! 🌟', 960, 1036);
       ctx.restore();
     }
 
@@ -355,9 +416,15 @@
 
     function downloadPoster() {
       const link = document.createElement('a');
-      link.download = 'Lo_Trinh_5_Giai_Doan_Huong_Dong_Gio_Noi_Facebook.png';
+      link.download = 'Lo_Trinh_6_Giai_Doan_Huong_Dong_Gio_Noi_Facebook.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
+    }
+
+    function copyFbPost() {
+      const text = document.getElementById('fb-post-text').innerText;
+      navigator.clipboard.writeText(text);
+      document.getElementById('copy-status').innerText = '✅ Đã sao chép bài viết vào Clipboard!';
     }
   </script>
 </body>
