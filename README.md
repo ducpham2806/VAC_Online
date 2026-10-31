@@ -22,7 +22,8 @@ Không cần Supabase vẫn chơi được bằng **Chơi Khách** (offline). Đ
 
 ```bash
 npm run typecheck   # tsc cho app + test
-npm test            # vitest: catalog, luật chợ, auth, 25 QC test case, seed catalog
+npm test            # vitest: luật domain, catalog & 5 Đợt, store, auth, 25 QC test case, seed
+npm run test:sql    # test migration + RPC trên Postgres tạm (cần Postgres 16 cục bộ hoặc PGHOST)
 npm run build       # bản production (ẩn công cụ debug)
 ```
 
@@ -34,13 +35,28 @@ npm run build       # bản production (ẩn công cụ debug)
    1. `supabase/migrations/0001_init_huong_dong_gio_noi.sql`
    2. `supabase/migrations/0002_seed_full_master_data.sql`
    3. `supabase/migrations/0003_security_hardening.sql`
-   4. `supabase/seed/master_catalog_seed.sql` (danh mục thực thể; sinh lại bằng `npm run seed:catalog`
-      mỗi khi sửa `src/data/masterData.ts`)
+   4. `supabase/migrations/0004_farm_core.sql` (vòng chơi GĐ1 trên server)
+   5. `supabase/seed/master_catalog_seed.sql` và `supabase/seed/quest_catalog_seed.sql`. Sinh lại 2 file này bằng
+      `npm run seed:catalog` mỗi khi sửa `src/data/masterData.ts` hoặc `src/data/quests.ts`.
+
+   Có thể chạy tự động qua Management API: đặt biến `SUPABASE_ACCESS_TOKEN` (Personal Access Token, **không commit**) rồi chạy
+   ```bash
+   npm run supabase -- status
+   npm run supabase -- apply supabase/migrations/0003_security_hardening.sql supabase/migrations/0004_farm_core.sql \
+     supabase/seed/master_catalog_seed.sql supabase/seed/quest_catalog_seed.sql
+   npm run supabase -- auth-config --apply   # bật Anonymous Sign-ins + email OTP
+   npm run supabase -- smoke                 # chơi thử như Khách thật
+   ```
 3. Trong Supabase Dashboard → **Authentication**:
    - Bật **Anonymous Sign-ins** (để người Chơi Khách có `auth.uid()` khi dùng Chợ / Lưu bút).
    - Email Templates → **Reset Password**: thêm mã `{{ .Token }}` vào nội dung (game dùng OTP 6 số).
 
 Mọi migration là **Additive-Only** (RULE D1): không `DROP TABLE` / `DROP COLUMN`, chạy lại an toàn.
+
+## Giai đoạn phát hành
+
+`VITE_GAME_STAGE` (1–6) quyết định tính năng và Đợt V-A-C nào được hiện. Production mặc định là `1`, còn `npm run dev` mặc định là `6`.
+Khi mở giai đoạn mới, cần nâng cả `VITE_GAME_STAGE` lẫn hàm SQL `public.app_game_stage()`.
 
 ## Đóng gói Mobile
 

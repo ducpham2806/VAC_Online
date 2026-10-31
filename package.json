@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "seed:catalog": "tsx scripts/generate-catalog-seed.ts",
-    "test:sql": "bash scripts/test-sql.sh"
+    "test:sql": "bash scripts/test-sql.sh",
+    "supabase": "tsx scripts/supabase-admin.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

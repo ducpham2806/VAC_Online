@@ -1,7 +1,7 @@
 # 17 — Kiểm toán dự án & Kế hoạch tái cấu trúc (Project Audit & Re-plan)
 
 **Dự án:** VAC Online — Hương Đồng Gió Nội
-**Phiên bản:** 1.1 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0)
+**Phiên bản:** 1.2 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0) và S1 (mục C1)
 **Phạm vi:** Toàn bộ tài liệu `00 → 16`, `AGENTS.md`, `src/`, `supabase/migrations/`, `public/`, cấu hình build.
 **Vai trò của file này (RULE D0):** Đây là nguồn chân lý duy nhất về **hiện trạng thực tế** của code so với tài liệu thiết kế, và về **kế hoạch tái cấu trúc + cách dùng agent/skill thật**. Các file `00 → 16` vẫn là nguồn chân lý về *thiết kế đích*; chỗ nào lệch thì file này ghi rõ.
 **Bối cảnh team:** 1 người (PO kiêm dev) + AI agents.
@@ -128,6 +128,37 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 
 ---
 
+### C1. Kết quả Sprint S1 — vòng chơi GĐ1 lên server (đã xong phần code)
+**Quyết định PO (S1):** thu hoạch đi vào Kho, tiền đến từ việc bán cho HTX theo giá gốc. Hoàng Kim ⭐ cho ×3 sản lượng. Người chơi mới bắt đầu ở Lv.1 với 2.500🪙 và 50💎.
+
+| Hạng mục | Trạng thái | Ghi chú |
+|---|---|---|
+| Luật chơi dạng hàm thuần | ✅ | `src/domain/farm.ts`, `progression.ts`, `stamina.ts`, có test cho mọi nhánh. Gồm thêm 2 luật GDD 2.1 trước đây chưa làm: đặc sản chỉ trồng ở đúng miền, và miền Nam được +1 sản lượng thủy sản |
+| Đường cong cấp độ | ✅ | XP lên cấp = `round(60 × L^1.5)` (Lv1→2: 60, Lv5→6: 671, Lv10→11: 1.897), tối đa Lv.60. Docs cũ chưa có công thức này, cần PO duyệt lại khi có số liệu beta |
+| Server làm trọng tài | ✅ code / ⏳ chưa chạy trên DB thật | `0004_farm_core.sql`: 12 RPC (gieo, tưới, bón bùn, thu hoạch, bán HTX, vét ao, khai hoang, nhiệm vụ, quà 7 ngày, thưởng tài khoản, đặt quê, lấy nông trại). Đã chạy thử trên Postgres 16 bằng `npm run test:sql` (khoảng 60 assertion); CI có job `sql` |
+| 2 chế độ chơi | ✅ | **Online:** có phiên Supabase (kể cả Khách ẩn danh) và có RPC, mọi thao tác kinh tế đi qua server. **Offline:** Khách không có máy chủ, dùng cùng luật domain và lưu localStorage (`vac_online_save_v1`). Không bao giờ đẩy save cục bộ lên server. Khách đã chơi offline có tiến trình thì vẫn ở offline |
+| Khoá theo Giai đoạn | ✅ | `src/config/features.ts`: `VITE_GAME_STAGE`, production mặc định là 1. Ẩn tính năng GĐ2–6; khay giống chỉ hiện Đợt 1 của miền mình (21 loài/miền, 23 loài nếu tính cả 3 miền) |
+| UI | ✅ | Modal Kho & Bán HTX, thanh XP, năng lượng hồi kèm đếm ngược, header giữ 1 hàng (ở 1280 và 844px) |
+| Sửa lỗi | ✅ | Thu hoạch cộng tiền 2 lần. Bấm nút HTML lại kích hoạt ô đất bên dưới (Phaser nghe mouseup trên window). Rò listener trong `FarmScene`. Đăng chợ nhận tiền ngay. Mua 1 sạp được nhiều lần. Quà 7 ngày nhận nhiều lần trong ngày. Nhiệm vụ không kiểm cấp |
+| Kiểm thử | ✅ | Vitest 73 test. Playwright trên bản production: khách mới → gieo → tưới → thu hoạch → bán → tải lại trang vẫn giữ tiến trình |
+
+**Trạng thái Supabase thật** (kiểm bằng publishable key ngày 2026-10-31):
+- `0001`/`0002` đã chạy; `master_catalog` có 166 dòng.
+- **`0003` và `0004` CHƯA chạy.** Lỗ hổng khách nặc danh ghi đè giá qua `rpc_sync_master_catalog` vẫn mở.
+- Cách chạy:
+  - Thêm biến `SUPABASE_ACCESS_TOKEN` vào môi trường rồi gõ `npm run supabase -- apply …`.
+  - Hoặc dán từng file vào SQL Editor theo thứ tự trong README.
+- Trong lúc chờ, app tự chạy chế độ offline (RPC trả `PGRST202`).
+
+**Còn mở, chuyển sang S2:**
+- Tách `useGameStore` thành slice và tách `App.tsx`.
+- Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm.
+- Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp).
+- Atlas sprite thật cho 23 loài Đợt 1.
+- Analytics.
+
+---
+
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
 
 ### D1. Ánh xạ "17 Skills" sang công cụ có thật trong Claude Code
@@ -213,30 +244,30 @@ Thêm SessionStart hook chạy `npm ci` để session cloud luôn chạy đượ
 
 ---
 
-## Phụ lục 1 — Trạng thái thực thi 52 Module (cập nhật sau Sprint S0)
+## Phụ lục 1 — Trạng thái thực thi 52 Module (cập nhật sau Sprint S1)
 Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sai phần quan trọng; **Stub** = 1 nút thưởng cố định, chưa có cơ chế; **Missing** = chưa có.
 
 | Epic | Module | Trạng thái | Ghi chú |
 |---|---|---|---|
-| 01 | M01.0 Splash + Auth 4 tab | Partial | Auth thật qua Supabase (S0); chưa lưu tiến trình |
+| 01 | M01.0 Splash + Auth 4 tab | Done | Auth Supabase (S0); lưu tiến trình online/offline (S1) |
 | 01 | M01.1 Viewport 2-Thumb Landscape | Partial | Có cảnh báo dọc, fullscreen |
 | 01 | M01.2 Pan/Zoom, Tap vs Drag | Partial | Có drag; leak subscription |
 | 01 | M01.3 Catalog + Supabase sync | Done | 166 mục, có `unlockWave`; seed phía server, client không ghi được (S0) |
 | 01 | M01.4 Realtime hub | Partial | Chat/presence chạy; payload không xác thực |
 | 02 | M02.1 Đăng ký + chọn miền | Partial | Chỉ buff miền Bắc |
-| 02 | M02.2 Năng lượng Hybrid | Partial | Không tự hồi theo thời gian |
+| 02 | M02.2 Năng lượng Hybrid | Done | Hồi +1⚡/3 phút, tính trên server (S1) |
 | 02 | M02.3 Thời tiết động | Partial | Chu kỳ thủ công |
-| 02 | M02.4 Khai hoang 25 khu | Partial | Có trần 25 (S0); vẫn tính ở client |
-| 03 | M03.1 Khay giống + khóa 5 Đợt | Partial | Dữ liệu `unlockWave` có (S0); UI chưa khóa theo Đợt (S1) |
-| 03 | M03.2 Tưới giếng −15% | Partial | Client-side |
-| 03 | M03.3 Ao + vét bùn | Partial | Client-side |
-| 03 | M03.4 Phù sa + Hoàng Kim x3 | Partial | Thu hoạch cộng tiền 2 lần |
-| 03 | M03.5 Chương 1–2 + quà 7 ngày | Partial | Không lưu tiến trình |
+| 02 | M02.4 Khai hoang 25 khu | Partial | Server (S1), trần 25; lưới hiển thị vẫn 12 ô |
+| 03 | M03.1 Khay giống + khóa 5 Đợt | Done | Khoá theo Đợt/cấp/miền ở client và server (S1) |
+| 03 | M03.2 Tưới giếng −15% | Done | Server (S1) |
+| 03 | M03.3 Ao + vét bùn | Done | Server (S1) |
+| 03 | M03.4 Phù sa + Hoàng Kim x3 | Done | Thu hoạch vào Kho ×3, bán HTX (S1) |
+| 03 | M03.5 Chương 1–2 + quà 7 ngày | Partial | Server, 1 lần/ngày, kiểm cấp (S1); chưa kiểm mục tiêu nhiệm vụ |
 | 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | Stub | Bếp luôn ra `PROD_22` |
 | 04 | M04.5 Đố Ca Dao (FEAT_02) | Missing | |
 | 05 | M05.1–M05.5 Lán Thợ, Bàn ăn, Đồ bảo hộ, Giỏ 120, Lazy-tick | Partial | Phần tốt nhất của code; vẫn client-side |
 | 06 | M06.1 Đơn HTX | Partial | |
-| 06 | M06.2 Báo Chợ P2P | Partial | Sai logic tiền (B8) |
+| 06 | M06.2 Báo Chợ P2P | Partial | Không còn nhận tiền ngay (S1); escrow server ở S6 |
 | 06 | M06.3 Tàu Bắc – Nam | Stub | |
 | 06 | M06.4 Thương lái | Stub | RPC có nhưng không được gọi, bảng không có dữ liệu |
 | 06 | M06.5 Thương Đội (FEAT_01) | Missing | |

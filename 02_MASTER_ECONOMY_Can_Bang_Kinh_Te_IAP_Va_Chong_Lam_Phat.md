@@ -32,6 +32,13 @@
 
 ---
 
+> **Ghi chú S1 (2026-10-31, PO duyệt):**
+> - **Thu hoạch:** nông sản đi vào Kho; tiền chỉ đến khi bán cho HTX theo giá gốc (`Base_Sell_Gold`). Hoàng Kim ⭐ cho ×3 sản lượng.
+> - **Đường cong XP:** XP để lên cấp = `round(60 × L^1.5)`, tối đa Lv.60.
+> - **Người chơi mới:** Lv.1, 2.500🪙, 50💎.
+> - **Năng lượng:** hồi +1⚡/3 phút.
+> - Nguồn mã: `src/domain/progression.ts`, `src/domain/farm.ts` và `supabase/migrations/0004_farm_core.sql`. Khi đổi số ở file này thì phải đổi cả 3 nơi đó.
+
 ## PHẦN 3: TOÁN HỌC CÂN BẰNG KINH TẾ THEO 5 ĐỢT MỞ KHÓA THỰC THỂ & LÁN THỢ GIA NHÂN
 
 ### 3.1. Bảng Nhịp Độ Mở Khóa Kinh Tế 5 Đợt (`5-Wave Economic Progression Curve`)
