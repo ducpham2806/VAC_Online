@@ -1,4 +1,6 @@
-const CACHE_NAME = 'vac-online-pwa-v2';
+// Service Worker PWA — chỉ cache tài nguyên tĩnh CÙNG ORIGIN.
+// Không cache API Supabase / dịch vụ bên ngoài (dữ liệu game phải luôn mới).
+const CACHE_NAME = 'vac-online-pwa-v3';
 const CORE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg'];
 
 self.addEventListener('install', (event) => {
@@ -17,14 +19,20 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return; // để trình duyệt tự xử lý (Supabase, CDN...)
+
   event.respondWith(
-    fetch(event.request)
+    fetch(request)
       .then((res) => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        if (res.ok && res.type === 'basic') {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        }
         return res;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(request))
   );
 });

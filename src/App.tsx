@@ -14,6 +14,9 @@ import { exportAchievementCertificate } from './services/certificateExporter';
 import { AuthTabMode, SplashAndAuthGate } from './components/SplashAndAuthGate';
 import { getSavedAuthSession } from './services/authService';
 
+/** Công cụ debug (tua nhanh, QC, cấu hình Supabase) chỉ hiện khi chạy `npm run dev`. */
+const IS_DEV = import.meta.env.DEV;
+
 export const App: React.FC = () => {
   const {
     playerName,
@@ -390,13 +393,15 @@ export const App: React.FC = () => {
           >
             🎼 Đổi Nhạc
           </button>
-          <button
-            onClick={fastForwardTime}
-            className="touch-btn bg-[#b83224] border border-[#ffeb3b] text-white text-[11px] font-bold px-2 py-0.5 rounded-full cursor-pointer"
-            title="Tua nhanh x60"
-          >
-            ⏩ x60
-          </button>
+          {IS_DEV && (
+            <button
+              onClick={fastForwardTime}
+              className="touch-btn bg-[#b83224] border border-[#ffeb3b] text-white text-[11px] font-bold px-2 py-0.5 rounded-full cursor-pointer"
+              title="Tua nhanh x60"
+            >
+              ⏩ x60
+            </button>
+          )}
           <button
             onClick={toggleFullScreenPWA}
             className="touch-btn bg-[#4e8222] text-white text-[11px] font-bold px-2 py-0.5 rounded-full cursor-pointer"
@@ -624,16 +629,18 @@ export const App: React.FC = () => {
           >
             ⛩️ Cổng Đăng Nhập
           </button>
-          <button
-            onClick={() => {
-              const results = runFullQCTestSuite();
-              setQcResults(results);
-              setActiveModal('QC_REPORT');
-            }}
-            className="touch-btn bg-[#0f766e] border border-[#5eead4] text-white text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
-          >
-            🧪 QC Test (25 TC)
-          </button>
+          {IS_DEV && (
+            <button
+              onClick={() => {
+                const results = runFullQCTestSuite();
+                setQcResults(results);
+                setActiveModal('QC_REPORT');
+              }}
+              className="touch-btn bg-[#0f766e] border border-[#5eead4] text-white text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
+            >
+              🧪 QC Test (DEV)
+            </button>
+          )}
         </div>
       </footer>
 
@@ -650,12 +657,14 @@ export const App: React.FC = () => {
                 📖 ĐẠI TỪ ĐIỂN BÁCH KHOA TOÀN THƯ VAC ONLINE ({filteredEncyclopedia.length}/{GAME_CATALOG.length} THỰC THỂ ĐÃ NẠP)
               </span>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={syncCatalogToSupabaseCloud}
-                  className="touch-btn bg-[#2e8b8d] border border-[#80deea] text-white px-3 py-1 rounded-lg text-xs font-extrabold cursor-pointer"
-                >
-                  ☁️ Đẩy 155 Thực Thể Lên Supabase
-                </button>
+                {IS_DEV && (
+                  <button
+                    onClick={syncCatalogToSupabaseCloud}
+                    className="touch-btn bg-[#2e8b8d] border border-[#80deea] text-white px-3 py-1 rounded-lg text-xs font-extrabold cursor-pointer"
+                  >
+                    ☁️ Đẩy Catalog (DEV)
+                  </button>
+                )}
                 <button
                   onClick={() => setActiveModal(null)}
                   className="touch-btn bg-[#b83224] text-white px-3 py-1 rounded-lg text-xs cursor-pointer"
@@ -1859,42 +1868,46 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            <button
-              onClick={syncCatalogToSupabaseCloud}
-              className="touch-btn w-full bg-[#2e8b8d] border-2 border-[#80deea] text-white font-extrabold py-2 rounded-xl cursor-pointer"
-            >
-              ☁️ Đồng Bộ Trọn Bộ 155 Thực Thể &amp; 8 Sạp Chợ Lên Supabase Cloud
-            </button>
-
-            <div className="space-y-1.5">
-              <label className="font-bold block">Supabase Project URL:</label>
-              <input
-                type="text"
-                value={sbUrl}
-                onChange={(e) => setSbUrl(e.target.value)}
-                placeholder="https://znabynzbcimpesrxxxsz.supabase.co"
-                className="w-full border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 bg-white font-mono text-[11px]"
-              />
-              <label className="font-bold block mt-2">Supabase Publishable / Anon Key:</label>
-              <input
-                type="text"
-                value={sbKey}
-                onChange={(e) => setSbKey(e.target.value)}
-                placeholder="sb_publishable_..."
-                className="w-full border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 bg-white font-mono text-[11px]"
-              />
-            </div>
-
-            <button
-              onClick={() => {
-                saveSupabaseCredentials(sbUrl, sbKey);
-                setToast('✅ Đã lưu cấu hình Supabase! Đang tải lại để đồng bộ Realtime...');
-                setTimeout(() => window.location.reload(), 800);
-              }}
-              className="touch-btn w-full bg-[#4e8222] text-white font-extrabold py-2 rounded-xl cursor-pointer"
-            >
-              💾 Lưu Cấu Hình &amp; Kết Nối Lại
-            </button>
+            {IS_DEV && (
+              <>
+              <button
+                onClick={syncCatalogToSupabaseCloud}
+                className="touch-btn w-full bg-[#2e8b8d] border-2 border-[#80deea] text-white font-extrabold py-2 rounded-xl cursor-pointer"
+              >
+                ☁️ Đồng Bộ Trọn Bộ 155 Thực Thể &amp; 8 Sạp Chợ Lên Supabase Cloud
+              </button>
+  
+              <div className="space-y-1.5">
+                <label className="font-bold block">Supabase Project URL:</label>
+                <input
+                  type="text"
+                  value={sbUrl}
+                  onChange={(e) => setSbUrl(e.target.value)}
+                  placeholder="https://znabynzbcimpesrxxxsz.supabase.co"
+                  className="w-full border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 bg-white font-mono text-[11px]"
+                />
+                <label className="font-bold block mt-2">Supabase Publishable / Anon Key:</label>
+                <input
+                  type="text"
+                  value={sbKey}
+                  onChange={(e) => setSbKey(e.target.value)}
+                  placeholder="sb_publishable_..."
+                  className="w-full border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 bg-white font-mono text-[11px]"
+                />
+              </div>
+  
+              <button
+                onClick={() => {
+                  saveSupabaseCredentials(sbUrl, sbKey);
+                  setToast('✅ Đã lưu cấu hình Supabase! Đang tải lại để đồng bộ Realtime...');
+                  setTimeout(() => window.location.reload(), 800);
+                }}
+                className="touch-btn w-full bg-[#4e8222] text-white font-extrabold py-2 rounded-xl cursor-pointer"
+              >
+                💾 Lưu Cấu Hình &amp; Kết Nối Lại
+              </button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -1937,7 +1950,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {activeModal === 'QC_REPORT' && (
+      {IS_DEV && activeModal === 'QC_REPORT' && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
           <div className="bg-[#fff8eb] border-4 border-[#0f766e] rounded-2xl max-w-4xl w-full max-h-[88vh] flex flex-col p-4 space-y-3 text-xs shadow-2xl">
             <div className="bg-[#0f766e] text-white px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-sm">
