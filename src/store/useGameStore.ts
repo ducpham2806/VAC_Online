@@ -51,6 +51,7 @@ export type ActiveModalType =
   | 'AUTH_GATE'
   | 'REGISTER'
   | 'COOP_QUESTS'
+  | 'WAREHOUSE'
   | 'WORKERS'
   | 'COOKING'
   | 'BENCHMARK'

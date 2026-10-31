@@ -4,6 +4,7 @@ import { GAME_CATALOG } from '../../data/masterData';
 import { EventBus } from '../EventBus';
 import { triggerHaptic } from '../../services/nativePlatform';
 import { soundFX } from '../../services/soundEffects';
+import { isStageOpen } from '../../config/features';
 
 interface TileVisualGroup {
   tileId: string;
@@ -33,6 +34,8 @@ export class FarmScene extends Phaser.Scene {
   private isDragging = false;
   private dragStartX = 0;
   private dragStartY = 0;
+  /** Hàm hủy đăng ký store / EventBus — gọi khi scene tắt để không rò listener. */
+  private teardown: Array<() => void> = [];
 
   constructor() {
     super('FarmScene');
@@ -64,8 +67,12 @@ export class FarmScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(19);
 
-    this.trainSprite.on('pointerup', () => {
-      if (this.isDragging) return;
+    // Tàu Thống Nhất thuộc GĐ3 (Chợ Phiên & Hàng Xóm).
+    this.trainSprite.setVisible(isStageOpen(3));
+    this.trainLabel.setVisible(isStageOpen(3));
+
+    this.trainSprite.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+      if (this.isDragging || !this.pressedOnCanvas(pointer)) return;
       soundFX.playTrainWhistle();
       useGameStore.getState().setActiveModal('COOP_QUESTS');
     });
@@ -77,7 +84,7 @@ export class FarmScene extends Phaser.Scene {
     this.createVACGrid(width, height);
 
     // 4. Khởi tạo 6 Nhân công Lán Thợ & Chó Phú Quốc đi tuần tự động (Seamless Loop)
-    this.createAnimatedWorkers(width, height);
+    if (isStageOpen(2)) this.createAnimatedWorkers(width, height);
 
     // 5. Hiệu ứng sóng nước Ao Cá & Màn sương Thời Tiết Động (Mưa Rào / Đêm Đom Đóm)
     this.waterWaveGraphics = this.add.graphics();
@@ -89,10 +96,19 @@ export class FarmScene extends Phaser.Scene {
     // 6. Cử chỉ Kéo Bản Đồ (Touch Drag-to-Pan) & Zoom (+/-) cho Mobile / iPad
     this.setupMobileTouchCamera();
 
-    useGameStore.subscribe(() => {
-      this.refreshTileVisuals();
-    });
+    this.teardown.push(
+      useGameStore.subscribe(() => {
+        this.refreshTileVisuals();
+      })
+    );
     this.refreshTileVisuals();
+
+    // Cập nhật đồng hồ đếm ngược / trạng thái "chín" mỗi giây (không phụ thuộc store đổi).
+    const ticker = this.time.addEvent({ delay: 1000, loop: true, callback: () => this.refreshTileVisuals() });
+    this.teardown.push(() => ticker.remove(false));
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.runTeardown());
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.runTeardown());
   }
 
   private createWeatherParticles(width: number, height: number): void {
@@ -127,15 +143,35 @@ export class FarmScene extends Phaser.Scene {
       }
     });
 
-    EventBus.on('camera-zoom', (delta: number) => {
+    const onZoom = (delta: number) => {
       const nextZoom = Phaser.Math.Clamp(this.cameras.main.zoom + delta, 0.75, 1.45);
       this.cameras.main.zoomTo(nextZoom, 180);
-    });
-
-    EventBus.on('camera-center', () => {
+    };
+    const onCenter = () => {
       this.cameras.main.pan(this.scale.width / 2, this.scale.height / 2, 220);
       this.cameras.main.zoomTo(1, 220);
+    };
+    EventBus.on('camera-zoom', onZoom);
+    EventBus.on('camera-center', onCenter);
+    this.teardown.push(() => {
+      EventBus.off('camera-zoom', onZoom);
+      EventBus.off('camera-center', onCenter);
     });
+  }
+
+  /**
+   * Phaser nghe mouseup trên cả window: bấm nút HUD / modal HTML nằm đè lên canvas vẫn kích hoạt
+   * pointerup của ô đất bên dưới. Chỉ xử lý khi cú bấm bắt đầu VÀ kết thúc trên canvas.
+   */
+  private pressedOnCanvas(pointer: Phaser.Input.Pointer): boolean {
+    const canvas = this.sys.game.canvas;
+    return pointer.downElement === canvas && pointer.upElement === canvas;
+  }
+
+  private runTeardown(): void {
+    const fns = this.teardown;
+    this.teardown = [];
+    fns.forEach((fn) => fn());
   }
 
   private createVillageLandmarks(width: number): void {
@@ -145,8 +181,9 @@ export class FarmScene extends Phaser.Scene {
         y: 68,
         tex: 'bldg_house',
         title: '🏠 NHÀ CHÍNH 3 GIAN',
-        sub: '🍲 Bếp Quê Ngẫu Nhiên',
-        onClick: () => useGameStore.getState().setActiveModal('COOKING'),
+        sub: isStageOpen(2) ? '🍲 Bếp Quê Ngẫu Nhiên' : '🧺 Kho & Bán HTX',
+        stage: 1,
+        onClick: () => useGameStore.getState().setActiveModal(isStageOpen(2) ? 'COOKING' : 'WAREHOUSE'),
       },
       {
         x: width * 0.39,
@@ -154,6 +191,7 @@ export class FarmScene extends Phaser.Scene {
         tex: 'bldg_lodge',
         title: '🛖 LÁN THỢ GIA NHÂN',
         sub: '👨‍🌾 6 Thợ: Lương & Cơm',
+        stage: 2,
         onClick: () => useGameStore.getState().setActiveModal('WORKERS'),
       },
       {
@@ -162,6 +200,7 @@ export class FarmScene extends Phaser.Scene {
         tex: 'bldg_dinh',
         title: '⛩️ ĐÌNH LÀNG & ĐỘT BIẾN',
         sub: '🧬 Lai Tạo, Ông Địa & Rừng Trúc',
+        stage: 4,
         onClick: () => useGameStore.getState().setActiveModal('BENCHMARK'),
       },
       {
@@ -170,6 +209,7 @@ export class FarmScene extends Phaser.Scene {
         tex: 'bldg_market',
         title: '📰 BÁO CHỢ & ĐI TRỘM',
         sub: '🐕 Chó Phú Quốc Canh Gác',
+        stage: 3,
         onClick: () => useGameStore.getState().setActiveModal('MARKET_STEAL'),
       },
     ];
@@ -185,8 +225,9 @@ export class FarmScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
 
+      const open = isStageOpen(lm.stage);
       this.add
-        .text(lm.x, lm.y + 12, lm.sub, {
+        .text(lm.x, lm.y + 12, open ? lm.sub : `🔒 Sắp mở (Giai đoạn ${lm.stage})`, {
           fontSize: '11px',
           fontStyle: 'bold',
           color: '#2a180c',
@@ -195,8 +236,8 @@ export class FarmScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
 
-      sprite.on('pointerup', () => {
-        if (this.isDragging) return;
+      sprite.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (this.isDragging || !this.pressedOnCanvas(pointer)) return;
         triggerHaptic('light');
         soundFX.playHarvestCoin();
         this.tweens.add({
@@ -206,7 +247,8 @@ export class FarmScene extends Phaser.Scene {
           duration: 85,
           yoyo: true,
         });
-        lm.onClick();
+        if (open) lm.onClick();
+        else useGameStore.getState().setToast(`🔒 ${lm.title} sẽ mở ở Giai đoạn ${lm.stage} — hãy chăm vườn trước nhé!`);
       });
     });
   }
@@ -257,12 +299,12 @@ export class FarmScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
 
-      tileSprite.on('pointerup', () => {
-        if (this.isDragging) return;
+      tileSprite.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (this.isDragging || !this.pressedOnCanvas(pointer)) return;
         triggerHaptic('light');
         const latestState = useGameStore.getState();
         const currentTile = latestState.tiles.find((t) => t.id === tile.id) ?? tile;
-        const nowMs = Date.now();
+        const nowMs = Date.now() + latestState.clockOffsetMs;
         const isRipeNow = currentTile.matureAt !== null && nowMs >= currentTile.matureAt;
 
         if (!currentTile.itemId) {
@@ -404,7 +446,7 @@ export class FarmScene extends Phaser.Scene {
 
   private refreshTileVisuals(): void {
     const state = useGameStore.getState();
-    const now = Date.now();
+    const now = Date.now() + state.clockOffsetMs;
 
     // Cập nhật hiệu ứng nền Thời Tiết Động
     if (this.weatherOverlay) {

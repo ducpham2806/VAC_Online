@@ -13,6 +13,11 @@ import { soundFX } from './services/soundEffects';
 import { exportAchievementCertificate } from './services/certificateExporter';
 import { AuthTabMode, SplashAndAuthGate } from './components/SplashAndAuthGate';
 import { getSavedAuthSession } from './services/authService';
+import { GAME_STAGE, isStageOpen } from './config/features';
+import { canPlant, maxUnlockedWave } from './domain/progression';
+import { StaminaBadge } from './ui/hud/StaminaBadge';
+import { XpBar } from './ui/hud/XpBar';
+import { WarehouseModal } from './ui/modals/WarehouseModal';
 
 /** Công cụ debug (tua nhanh, QC, cấu hình Supabase) chỉ hiện khi chạy `npm run dev`. */
 const IS_DEV = import.meta.env.DEV;
@@ -163,14 +168,23 @@ export const App: React.FC = () => {
     checkOrientation();
     window.addEventListener('resize', checkOrientation);
 
-    // Vòng lặp tự động hóa của 6 Nhân công Lán Thợ mỗi 10 giây
-    const workerTimer = window.setInterval(() => {
-      useGameStore.getState().tickWorkerAutomation();
-    }, 10_000);
+    // Vòng lặp tự động hóa của 6 Nhân công Lán Thợ mỗi 10 giây — chỉ từ GĐ2 (Lán Thợ).
+    const workerTimer = isStageOpen(2)
+      ? window.setInterval(() => {
+          useGameStore.getState().tickWorkerAutomation();
+        }, 10_000)
+      : undefined;
+
+    // Quay lại tab: đồng bộ lại nông trại từ server (chế độ online).
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void useGameStore.getState().syncFarmFromServer();
+    };
+    document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       window.removeEventListener('resize', checkOrientation);
-      window.clearInterval(workerTimer);
+      document.removeEventListener('visibilitychange', onVisible);
+      if (workerTimer !== undefined) window.clearInterval(workerTimer);
     };
   }, [initSupabaseRealtimeSync]);
 
@@ -199,7 +213,12 @@ export const App: React.FC = () => {
       c.category === 'MUTANT_CROP'
   );
 
-  const filteredPlantableCatalog = allPlantableCatalog.filter((item) => {
+  // Khay giống theo Đợt đang mở + cấp + miền (src/domain/progression.ts canPlant)
+  const openWave = maxUnlockedWave(GAME_STAGE);
+  const seedTrayCatalog = allPlantableCatalog
+    .filter((item) => (item.unlockWave ?? 99) <= openWave && (item.region === 'ALL' || item.region === region))
+    .sort((a, b) => a.unlockLevel - b.unlockLevel || a.buyCostGold - b.buyCostGold);
+  const filteredPlantableCatalog = seedTrayCatalog.filter((item) => {
     if (seedFilterGroup === 'ALL') return true;
     if (seedFilterGroup === 'CROP_COMMON') return item.subGroup === 'Crop_Common';
     if (seedFilterGroup === 'TREE_COMMON') return item.subGroup === 'Crop_Tree_Common';
@@ -298,12 +317,12 @@ export const App: React.FC = () => {
       {/* =================================================================== */}
       {/* 1. FLOATING TOP HUD BAR (GỌN GÀNG, TRÁNH TAI THỎ / DYNAMIC ISLAND)  */}
       {/* =================================================================== */}
-      <header className="fixed top-0 left-0 right-0 z-20 safe-top safe-left safe-right pointer-events-none flex flex-wrap items-center justify-between gap-1.5 px-2 py-1">
+      <header className="fixed top-0 left-0 right-0 z-20 safe-top safe-left safe-right pointer-events-none flex flex-nowrap items-center justify-between gap-1.5 px-2 py-1">
         {/* Cụm Trái: Hồ sơ Điền chủ + Năng lượng ⚡ + Thời tiết */}
-        <div className="pointer-events-auto flex items-center gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg backdrop-blur-xs">
+        <div className="pointer-events-auto min-w-0 overflow-x-auto flex items-center [&>*]:shrink-0 gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg backdrop-blur-xs">
           <button
             onClick={() => setActiveModal('REGISTER')}
-            className="touch-btn bg-[#c88a4b] text-[#2a180c] font-extrabold px-2.5 py-0.5 rounded-full text-xs cursor-pointer"
+            className="touch-btn bg-[#c88a4b] text-[#2a180c] font-extrabold px-2.5 py-0.5 rounded-full text-xs cursor-pointer shrink-0 max-w-[220px] truncate"
             title="Đổi Tên & Quê Hương 3 Miền"
           >
             {gender === 'FEMALE' ? '👧' : '👦'} {playerName} (Lv.{level}) • {REGION_INFO[region].shortName}
@@ -320,11 +339,10 @@ export const App: React.FC = () => {
             }`}
             title="Mở Cổng Tài Khoản: Đăng Nhập / Đăng Ký / Chơi Khách / Quên Mật Khẩu"
           >
-            {accountType === 'GUEST' ? '👤 Khách [🔗 Liên Kết +50💎]' : '🛡️ Tài Khoản'}
+            {accountType === 'GUEST' ? '👤 Khách 🔗+50💎' : '🛡️ Tài Khoản'}
           </button>
-          <span className="text-xs font-extrabold text-[#b8f272] px-1">
-            ⚡ {stamina}/{maxStamina}
-          </span>
+          <XpBar />
+          <StaminaBadge />
           <button
             onClick={() => {
               cycleWeather();
@@ -339,10 +357,11 @@ export const App: React.FC = () => {
         </div>
 
         {/* Cụm Giữa: Loa Phường Toàn Server Realtime + Xin Vía */}
-        <div className="pointer-events-auto bg-gradient-to-r from-[#8b1e1e]/95 to-[#b82828]/95 border-2 border-[#f5b82e] px-3 py-1 rounded-full text-[11px] md:text-xs text-white flex items-center gap-2 shadow-lg">
-          <span className="truncate max-w-[170px] sm:max-w-[270px] md:max-w-none">
+        <div className="pointer-events-auto min-w-0 flex-1 hidden lg:flex bg-gradient-to-r from-[#8b1e1e]/95 to-[#b82828]/95 border-2 border-[#f5b82e] px-3 py-1 rounded-full text-[11px] md:text-xs text-white items-center gap-2 shadow-lg">
+          <span className="truncate min-w-0">
             📢 <b>LOA:</b> {loaPhuongText}
           </span>
+          {isStageOpen(4) && (
           <button
             onClick={() => {
               soundFX.playGoldenSparkle();
@@ -352,10 +371,11 @@ export const App: React.FC = () => {
           >
             🧧 Xin Vía ({luckyPacketsLeft})
           </button>
+          )}
         </div>
 
         {/* Cụm Phải: Vàng, Ngọc, Nhạc Nền 4 Chế Độ, Tua x60, Fullscreen PWA & Supabase Realtime */}
-        <div className="pointer-events-auto flex items-center gap-1 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 text-[#fff8eb] shadow-lg">
+        <div className="pointer-events-auto shrink-0 flex items-center gap-1 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 text-[#fff8eb] shadow-lg">
           <span className="bg-[#3e2723] border border-[#f5b82e] px-2 py-0.5 rounded-full text-xs font-extrabold">
             🪙 {gold.toLocaleString()}
           </span>
@@ -427,15 +447,18 @@ export const App: React.FC = () => {
             onClick={() => setIsSeedDrawerOpen(!isSeedDrawerOpen)}
             className="touch-btn bg-[#321b0d]/95 border-2 border-[#f5b82e] text-[#fff8eb] font-extrabold px-3 py-1 rounded-r-xl text-xs shadow-lg cursor-pointer"
           >
-            🌱 Đang chọn: {selectedSeedObj.emoji} {selectedSeedObj.name} ({allPlantableCatalog.length} loài) {isSeedDrawerOpen ? '◀' : '▶'}
+            🌱 Đang chọn: {selectedSeedObj.emoji} {selectedSeedObj.name} (
+            {seedTrayCatalog.filter((i) => canPlant(i, level, GAME_STAGE, region).ok).length}/{seedTrayCatalog.length} loài) {isSeedDrawerOpen ? '◀' : '▶'}
           </button>
 
+          {isStageOpen(2) && (
           <button
             onClick={claimWorkerPantry}
             className="touch-btn bg-[#f5b82e] border-2 border-[#6e4121] text-[#2a180c] font-extrabold px-2.5 py-1 rounded-xl text-xs shadow-lg cursor-pointer"
           >
             🧺 Giỏ Thợ: {workerPantryCount}/120
           </button>
+          )}
 
           <button
             onClick={dredgePondMud}
@@ -466,13 +489,13 @@ export const App: React.FC = () => {
             {/* Thanh lọc nhanh 81 giống Vườn - Ao - Chuồng */}
             <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-[11px]">
               {[
-                { id: 'ALL', label: `🌾 Tất cả (${allPlantableCatalog.length})` },
-                { id: 'CROP_COMMON', label: '🌱 22 Cây Ruộng' },
-                { id: 'TREE_COMMON', label: '🌳 8 Cây Lâu Năm' },
-                { id: 'REGIONAL', label: '🌸 15 Đặc Sản 3 Miền' },
-                { id: 'MUTANT', label: '🧬 3 Đột Biến' },
-                { id: 'ANIMAL', label: '🐄 14 Vật Nuôi Chuồng' },
-                { id: 'AQUA', label: '🐟 19 Thủy Sản Ao' },
+                { id: 'ALL', label: `🌾 Tất cả (${seedTrayCatalog.length})` },
+                { id: 'CROP_COMMON', label: '🌱 Cây Ruộng' },
+                { id: 'TREE_COMMON', label: '🌳 Cây Lâu Năm' },
+                { id: 'REGIONAL', label: '🌸 Đặc Sản Miền' },
+                { id: 'MUTANT', label: '🧬 Đột Biến' },
+                { id: 'ANIMAL', label: '🐄 Vật Nuôi' },
+                { id: 'AQUA', label: '🐟 Thủy Sản' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -489,19 +512,27 @@ export const App: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
-              {filteredPlantableCatalog.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedSeed(item.id)}
-                  className={`touch-btn px-2.5 py-1 rounded-lg font-bold border text-xs shrink-0 cursor-pointer ${
-                    selectedSeedId === item.id
-                      ? 'bg-[#4e8222] text-white border-[#2a180c] shadow-inner'
-                      : 'bg-white text-[#2a180c] border-[#c88a4b]'
-                  }`}
-                >
-                  {item.emoji} {item.name} ({item.buyCostGold}🪙 • Lv.{item.unlockLevel})
-                </button>
-              ))}
+              {filteredPlantableCatalog.map((item) => {
+                const locked = !canPlant(item, level, GAME_STAGE, region).ok;
+                return (
+                  <button
+                    key={item.id}
+                    disabled={locked}
+                    onClick={() => setSelectedSeed(item.id)}
+                    title={locked ? `Mở ở Lv.${item.unlockLevel}` : undefined}
+                    className={`touch-btn px-2.5 py-1 rounded-lg font-bold border text-xs shrink-0 ${
+                      locked
+                        ? 'bg-[#efe6d6] text-[#9a8a76] border-[#d8c8a8] cursor-not-allowed'
+                        : selectedSeedId === item.id
+                        ? 'bg-[#4e8222] text-white border-[#2a180c] shadow-inner cursor-pointer'
+                        : 'bg-white text-[#2a180c] border-[#c88a4b] cursor-pointer'
+                    }`}
+                  >
+                    {locked ? '🔒 ' : ''}
+                    {item.emoji} {item.name} ({item.buyCostGold}🪙 • Lv.{item.unlockLevel})
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -582,44 +613,62 @@ export const App: React.FC = () => {
             onClick={() => setActiveModal('COOP_QUESTS')}
             className="touch-btn bg-[#4e8222] border border-[#b8f272] text-white text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
-            🚂 Tàu Hỏa &amp; HTX
+            {isStageOpen(3) ? '🚂 Tàu Hỏa & HTX' : '📜 Gia Phả & Quà'}
           </button>
+          <button
+            onClick={() => setActiveModal('WAREHOUSE')}
+            className="touch-btn bg-[#6e4121] border border-[#f5b82e] text-[#fff8eb] text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
+          >
+            🧺 Kho &amp; Bán HTX
+          </button>
+          {isStageOpen(2) && (
           <button
             onClick={() => setActiveModal('WORKERS')}
             className="touch-btn bg-[#b83224] border border-[#ffeb3b] text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             🛖 Lán Thợ ({workerAutoTickEnabled ? '🟢Auto' : '⏸️'})
           </button>
+          )}
+          {isStageOpen(4) && (
           <button
             onClick={() => setActiveModal('BENCHMARK')}
             className="touch-btn bg-[#f5b82e] text-[#2a180c] text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             ⛩️ Đình Làng &amp; Lễ Cưới
           </button>
+          )}
+          {isStageOpen(2) && (
           <button
             onClick={() => setActiveModal('COOKING')}
             className="touch-btn bg-[#388e3c] text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             🍲 8 Xưởng &amp; Bếp
           </button>
+          )}
+          {isStageOpen(3) && (
           <button
             onClick={() => setActiveModal('MARKET_STEAL')}
             className="touch-btn bg-[#2e8b8d] text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             📰 Chợ &amp; Lưu Bút
           </button>
+          )}
+          {isStageOpen(4) && (
           <button
             onClick={() => setActiveModal('LIVEOPS')}
             className="touch-btn bg-[#9b5de5] text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             🏮 Lịch, Vé Số &amp; IAP
           </button>
+          )}
+          {isStageOpen(4) && (
           <button
             onClick={() => setActiveModal('FASHION')}
             className="touch-btn bg-[#6e4121] border border-[#c88a4b] text-[#fff8eb] text-xs font-bold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
             🪞 12 Slots
           </button>
+          )}
           <button
             onClick={() => {
               setAuthModalTab('LOGIN');
@@ -820,6 +869,8 @@ export const App: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              {isStageOpen(3) && (
+              <>
               {/* Cột 1: Ga Tàu Thống Nhất Bắc - Nam */}
               <div className="bg-white border-2 border-[#c88a4b] rounded-xl p-3 space-y-2">
                 <div className="flex justify-between items-center">
@@ -884,12 +935,15 @@ export const App: React.FC = () => {
                 ))}
               </div>
 
+              </>
+              )}
+
               {/* Cột 3: Biên Niên Sử Cốt Truyện 10 Chương & Đối Thoại Phân Nhánh */}
               <div className="bg-white border-2 border-[#c88a4b] rounded-xl p-3 space-y-2 max-h-[65dvh] overflow-y-auto">
                 <h4 className="font-extrabold text-sm text-[#6e4121] sticky top-0 bg-white pb-1 border-b border-[#e0d4c0]">
                   📜 3. Gia Phả 10 Chương ({storyQuests.filter((q) => q.completed).length}/10)
                 </h4>
-                {storyQuests.map((q) => (
+                {storyQuests.filter((q) => isStageOpen(q.unlockStage)).map((q) => (
                   <div key={q.id} className="p-2.5 rounded-lg border border-[#c88a4b] bg-[#fff3e0] space-y-1.5">
                     <div className="font-extrabold text-[#b83224]">{q.chapter}</div>
                     <div className="font-bold text-[#2a180c]">{q.title}</div>
@@ -930,18 +984,10 @@ export const App: React.FC = () => {
                   🎁 4. Quà 7 Ngày Tân Thủ ({rookieDaysClaimed}/7)
                 </h4>
                 <p className="text-[11px] text-[#664930]">
-                  Điểm danh đủ 7 ngày nhận miễn phí <b>🐕 Chó Phú Quốc Giữ Nhà (Bắt trộm 70%)</b> &amp; <b>Áo Bà Ba Lụa Hà Đông</b>!
+                  Mỗi ngày đăng nhập nhận <b>+1.000 🪙 &amp; +20 💎</b> (tối đa 7 ngày, mỗi ngày 1 lần).
                 </p>
                 <div className="grid grid-cols-1 gap-1 text-[11px]">
-                  {[
-                    'Ngày 1: +500 🪙 & Giống Lúa',
-                    'Ngày 2: +20 💎 & Giống Sen',
-                    'Ngày 3: Áo Bà Ba Lụa Đỏ',
-                    'Ngày 4: +1,000 🪙 & Bùn Ao',
-                    'Ngày 5: Nón Lá Bài Thơ',
-                    'Ngày 6: +50 💎 & Vé Đập Niêu',
-                    'Ngày 7: 🐕 Chó Phú Quốc SSR!',
-                  ].map((label, idx) => (
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => `Ngày ${d}: +1.000 🪙 & +20 💎`).map((label, idx) => (
                     <div
                       key={idx}
                       className={`p-1.5 rounded border font-bold ${
@@ -965,6 +1011,8 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {activeModal === 'WAREHOUSE' && <WarehouseModal />}
 
       {/* MODAL 1: LÁN THỢ ĐỒNG QUÊ & QUẢN LÝ 6 GIA NHÂN (CÓ WORKER STATE MACHINE AUTO-TICK) */}
       {activeModal === 'WORKERS' && (
