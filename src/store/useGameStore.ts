@@ -13,6 +13,10 @@ import {
   INITIAL_WORKERS,
 } from '../data/masterData';
 import { GuestbookEntry, vacRealtime } from '../services/realtimeService';
+import { quoteMarketListing } from '../domain/market';
+
+/** Trần khai hoang theo GDD 01 (M02.4): tối đa 25 Phân khu. */
+export const MAX_WILD_PLOTS = 25;
 
 export type ActiveModalType =
   | null
@@ -632,9 +636,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       return;
     }
 
-    const minPrice = Math.max(1, Math.floor(spec.baseSellGold * 0.8));
-    const maxPrice = Math.max(minPrice + 2, spec.baseSellGold * 2);
-    const clampedPrice = Math.min(maxPrice, Math.max(minPrice, unitPrice));
+    const { clampedPrice, netRevenueAfterTax } = quoteMarketListing(spec.baseSellGold, qty, unitPrice);
 
     const createdListing = await vacRealtime.postMarketListingToCloud(
       state.playerName,
@@ -645,7 +647,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       clampedPrice
     );
 
-    const netRevenueAfterTax = Math.floor(clampedPrice * qty * 0.9);
     set((st) => ({
       gold: st.gold + netRevenueAfterTax,
       inventory: {
@@ -1083,6 +1084,10 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   expandWildLand: () => {
     const state = get();
+    if (state.wildPlotsUnlocked >= MAX_WILD_PLOTS) {
+      set({ toastMessage: `🌾 Đã khai hoang tối đa ${MAX_WILD_PLOTS}/${MAX_WILD_PLOTS} Phân khu VAC!` });
+      return;
+    }
     if (state.stamina < 5 || state.gold < 500) {
       set({ toastMessage: '⚠️ Cần 5 ⚡ Năng lượng và 500 🪙 Xu Vàng để phát cỏ, đập đá khai hoang vùng đất mới!' });
       return;
@@ -1093,7 +1098,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       xp: state.xp + 45,
       wildPlotsUnlocked: state.wildPlotsUnlocked + 1,
       fengShuiScore: state.fengShuiScore + 25,
-      toastMessage: `🪓 Khai hoang thành công (-5 ⚡, -500 🪙)! Đã mở rộng lên ${state.wildPlotsUnlocked + 1}/25 Phân khu VAC, nhận +45 XP & +25 Phong Thủy!`,
+      toastMessage: `🪓 Khai hoang thành công (-5 ⚡, -500 🪙)! Đã mở rộng lên ${state.wildPlotsUnlocked + 1}/${MAX_WILD_PLOTS} Phân khu VAC, nhận +45 XP & +25 Phong Thủy!`,
     });
   },
 

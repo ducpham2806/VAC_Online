@@ -1,5 +1,6 @@
 import { useGameStore } from '../store/useGameStore';
 import { GAME_CATALOG } from '../data/masterData';
+import { quoteMarketListing } from '../domain/market';
 import {
   confirmPasswordResetWithOtp,
   createGuestSession,
@@ -193,17 +194,18 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 5. EPIC 01: Toàn vẹn 155 Thực thể Master Data
-  runCase('TC-01.3a', 'EPIC 01', 'Toàn vẹn Danh mục 155 Thực thể & Không trùng lặp ID', () => {
+  // 5. EPIC 01: Toàn vẹn Master Data (GAME_CATALOG là nguồn chuẩn — xem 17_PROJECT_AUDIT mục A1)
+  runCase('TC-01.3a', 'EPIC 01', 'Toàn vẹn Danh mục Thực thể: ID duy nhất, đủ 81 loài V-A-C & không có giá NaN', () => {
     const total = GAME_CATALOG.length;
     const uniqueIds = new Set(GAME_CATALOG.map((item) => item.id)).size;
+    const vacSpecies = GAME_CATALOG.filter((item) => /^(CROP|ANI|AQUA)_/.test(item.id)).length;
     const hasInvalidPrice = GAME_CATALOG.some(
       (item) => Number.isNaN(item.buyCostGold) || Number.isNaN(item.baseSellGold)
     );
     return {
-      passed: total === 155 && uniqueIds === 155 && !hasInvalidPrice,
-      expected: '155 thực thể duy nhất, không có giá NaN',
-      actual: `${total} thực thể (${uniqueIds} ID duy nhất), Lỗi giá: ${hasInvalidPrice}`,
+      passed: uniqueIds === total && vacSpecies === 81 && !hasInvalidPrice,
+      expected: 'Mọi ID duy nhất, 81 loài V-A-C, không có giá NaN',
+      actual: `${total} thực thể (${uniqueIds} ID duy nhất), ${vacSpecies} loài V-A-C, Lỗi giá: ${hasInvalidPrice}`,
     };
   });
 
@@ -336,7 +338,8 @@ export function runFullQCTestSuite(): QCTestResult[] {
     });
     store.getState().interactTile('TILE_1');
     const goldEarned = store.getState().gold - 1000;
-    const expectedGold = spec.baseSellGold * 5 * 3;
+    // Sản lượng lấy từ dữ liệu (RULE C2 Data-Driven), không cố định 5
+    const expectedGold = spec.baseSellGold * (spec.yieldCount ?? 2) * 3;
     return {
       passed: goldEarned === expectedGold,
       expected: `Nhận x3 giá trị = +${expectedGold} 🪙`,
@@ -410,13 +413,19 @@ export function runFullQCTestSuite(): QCTestResult[] {
       gold: 1000,
       inventory: { ...store.getState().inventory, CROP_01: 10 },
     });
-    store.getState().postItemToMarket('CROP_01', 5, 999);
-    const netGain = store.getState().gold - 1000;
+    // postItemToMarket là async (chờ Cloud) nên phần cộng tiền không kiểm được đồng bộ.
+    // Kiểm (1) luật giá dùng chung trong src/domain/market.ts và (2) nhánh chặn đồng bộ khi thiếu hàng.
+    const quote = quoteMarketListing(spec.baseSellGold, 5, 999);
     const expectedNet = Math.floor(spec.baseSellGold * 2 * 5 * 0.9);
+    void store.getState().postItemToMarket('CROP_01', 50, 999);
+    const goldAfterReject = store.getState().gold;
     return {
-      passed: netGain === expectedNet,
-      expected: `Kẹp giá trần 2.0x & trừ 10% thuế = +${expectedNet} 🪙`,
-      actual: `Thực nhận = +${netGain} 🪙`,
+      passed:
+        quote.clampedPrice === spec.baseSellGold * 2 &&
+        quote.netRevenueAfterTax === expectedNet &&
+        goldAfterReject === 1000,
+      expected: `Kẹp giá trần 2.0x & trừ 10% thuế = +${expectedNet} 🪙; đăng 50 khi kho có 10 bị chặn (Gold giữ 1000)`,
+      actual: `Giá kẹp = ${quote.clampedPrice}, thực nhận = +${quote.netRevenueAfterTax} 🪙; Gold sau khi bị chặn = ${goldAfterReject}`,
     };
   });
 
