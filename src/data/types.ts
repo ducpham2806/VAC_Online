@@ -1,5 +1,7 @@
 export type RegionType = 'NORTH' | 'CENTRAL' | 'SOUTH';
 export type GenderType = 'MALE' | 'FEMALE';
+export type UnlockWave = 1 | 2 | 3 | 4 | 5;
+
 export type EntityCategory =
   | 'CROP'
   | 'TREE'
@@ -23,6 +25,8 @@ export interface CatalogItem {
   name: string;
   region: 'ALL' | RegionType;
   unlockLevel: number;
+  /** Đợt mở khóa V-A-C (GDD 01 mục 3.2): 1..5. Không có = không gắn với Đợt (tính năng, IAP, thời trang...). */
+  unlockWave?: UnlockWave;
   buyCostGold: number;
   baseSellGold: number;
   maxMarketGold?: number;
