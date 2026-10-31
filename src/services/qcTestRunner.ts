@@ -2,8 +2,10 @@ import { useGameStore } from '../store/useGameStore';
 import { GAME_CATALOG } from '../data/masterData';
 import { quoteMarketListing } from '../domain/market';
 import {
+  LEGACY_PASSWORD_STORAGE_KEYS,
   confirmPasswordResetWithOtp,
   createGuestSession,
+  purgeLegacyLocalAuthData,
   registerNewAccount,
   requestPasswordReset,
   upgradeGuestToRegistered,
@@ -173,24 +175,23 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 4. EPIC 01: Quên mật khẩu OTP 2 Bước (Chặn OTP sai & Cho phép đổi khi đúng OTP)
-  runCase('TC-01.0d', 'EPIC 01', 'Quên mật khẩu OTP 6 số chặn mã sai và đổi mật khẩu khi mã đúng', () => {
+  // 4. EPIC 01: Không lưu mật khẩu / OTP ở client (Auth thật qua Supabase — 17_PROJECT_AUDIT B5)
+  runCase('TC-01.0d', 'EPIC 01', 'Không lưu mật khẩu/OTP ở client: dọn kho cũ & phiên Khách không chứa mật khẩu', () => {
+    let legacyRemoved = true;
+    let sessionClean = true;
     if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        'vac_online_auth_otp_v1',
-        JSON.stringify({
-          email: 'tuhau@vaconline.vn',
-          otpCode: '686868',
-          expiresAt: Date.now() + 300_000,
-        })
-      );
+      localStorage.setItem(LEGACY_PASSWORD_STORAGE_KEYS[0], JSON.stringify([{ passwordHash: 'plain' }]));
+      localStorage.setItem(LEGACY_PASSWORD_STORAGE_KEYS[1], JSON.stringify({ otpCode: '686868' }));
+      purgeLegacyLocalAuthData();
+      legacyRemoved = LEGACY_PASSWORD_STORAGE_KEYS.every((key) => localStorage.getItem(key) === null);
+      createGuestSession('Khách Kiểm Thử');
+      const raw = JSON.stringify(localStorage);
+      sessionClean = !raw.includes('passwordHash') && !raw.includes('otpCode');
     }
-    const wrongTry = confirmPasswordResetWithOtp('tuhau@vaconline.vn', '000000', 'newpass123');
-    const rightTry = confirmPasswordResetWithOtp('tuhau@vaconline.vn', '686868', '123456');
     return {
-      passed: !wrongTry.success && rightTry.success,
-      expected: 'Chặn OTP sai (000000) & Thành công với OTP đúng (686868)',
-      actual: `WrongOTP_Blocked=${!wrongTry.success}, RightOTP_Passed=${rightTry.success}`,
+      passed: legacyRemoved && sessionClean,
+      expected: 'Kho mật khẩu/OTP cũ bị xóa & localStorage không còn passwordHash/otpCode',
+      actual: `LegacyRemoved=${legacyRemoved}, StorageClean=${sessionClean}`,
     };
   });
 
@@ -551,6 +552,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
   void registerNewAccount;
   void upgradeGuestToRegistered;
   void requestPasswordReset;
+  void confirmPasswordResetWithOtp;
 
   return results;
 }

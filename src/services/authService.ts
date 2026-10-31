@@ -1,13 +1,21 @@
 import { getSupabaseClient } from './supabaseClient';
 import { GenderType, RegionType } from '../data/types';
 
+/**
+ * Dịch vụ xác thực — Supabase Auth là nguồn xác thực duy nhất (Sprint S0, 17_PROJECT_AUDIT B5).
+ *
+ * - KHÔNG lưu mật khẩu ở client dưới bất kỳ dạng nào.
+ * - Mã OTP khôi phục do Supabase gửi qua email (template "Reset Password" phải có {{ .Token }}).
+ * - Chế độ Khách chạy offline được; nếu có Supabase sẽ mở thêm phiên ẩn danh
+ *   (Anonymous Sign-in) để có auth.uid() khi dùng Chợ / Lưu bút.
+ */
+
 export type AccountType = 'GUEST' | 'REGISTERED';
 
 export interface UserAuthAccount {
   id: string;
   email: string;
   playerName: string;
-  passwordHash: string;
   accountType: AccountType;
   gender: GenderType;
   region: RegionType;
@@ -19,59 +27,67 @@ export interface AuthActionResult {
   success: boolean;
   message: string;
   account?: UserAuthAccount;
-  otpCode?: string;
 }
 
-const USERS_STORAGE_KEY = 'vac_online_auth_users_v1';
 const SESSION_STORAGE_KEY = 'vac_online_auth_session_v1';
-const OTP_STORAGE_KEY = 'vac_online_auth_otp_v1';
+/** Các key cũ từng lưu mật khẩu/OTP dạng thô — bị xóa khi khởi động. */
+export const LEGACY_PASSWORD_STORAGE_KEYS = ['vac_online_auth_users_v1', 'vac_online_auth_otp_v1'] as const;
 
-const DEFAULT_DEMO_ACCOUNT: UserAuthAccount = {
-  id: 'USR_DEMO_01',
-  email: 'tuhau@vaconline.vn',
-  playerName: 'Tư Hậu Lập Nghiệp',
-  passwordHash: '123456',
-  accountType: 'REGISTERED',
-  gender: 'FEMALE',
-  region: 'NORTH',
-  createdAt: '2026-10-24T08:00:00.000Z',
-  isCloudSynced: true,
-};
+const MIN_PASSWORD_LENGTH = 6;
+const SERVER_UNAVAILABLE_MESSAGE =
+  '⚠️ Máy chủ đăng nhập chưa sẵn sàng. Bạn có thể bấm [Chơi Khách] để vào ruộng ngay!';
 
 function sanitizeText(raw: string): string {
   return raw.replace(/[<>]/g, '').trim();
 }
 
-function loadUsersVault(): UserAuthAccount[] {
-  if (typeof window === 'undefined') return [DEFAULT_DEMO_ACCOUNT];
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function asGender(value: unknown): GenderType {
+  return value === 'MALE' ? 'MALE' : 'FEMALE';
+}
+
+function asRegion(value: unknown): RegionType {
+  return value === 'CENTRAL' || value === 'SOUTH' ? value : 'NORTH';
+}
+
+/** Xóa dữ liệu đăng nhập cũ có chứa mật khẩu thô (vault + OTP) khỏi localStorage. */
+export function purgeLegacyLocalAuthData(): void {
+  if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem(USERS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify([DEFAULT_DEMO_ACCOUNT]));
-      return [DEFAULT_DEMO_ACCOUNT];
+    for (const key of LEGACY_PASSWORD_STORAGE_KEYS) localStorage.removeItem(key);
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (raw && raw.includes('passwordHash')) {
+      const parsed = JSON.parse(raw) as Record<string, unknown>;
+      delete parsed.passwordHash;
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(parsed));
     }
-    const parsed = JSON.parse(raw) as UserAuthAccount[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : [DEFAULT_DEMO_ACCOUNT];
   } catch {
-    return [DEFAULT_DEMO_ACCOUNT];
+    // Bỏ qua lỗi storage (chế độ riêng tư, hết dung lượng...)
   }
 }
 
-function saveUsersVault(users: UserAuthAccount[]): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  } catch {
-    // Ignore storage quota errors
-  }
-}
+purgeLegacyLocalAuthData();
 
 export function getSavedAuthSession(): UserAuthAccount | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as UserAuthAccount;
+    const parsed = JSON.parse(raw) as Partial<UserAuthAccount> & { passwordHash?: unknown };
+    if (!parsed.id || !parsed.playerName) return null;
+    return {
+      id: String(parsed.id),
+      email: String(parsed.email ?? ''),
+      playerName: String(parsed.playerName),
+      accountType: parsed.accountType === 'REGISTERED' ? 'REGISTERED' : 'GUEST',
+      gender: asGender(parsed.gender),
+      region: asRegion(parsed.region),
+      createdAt: String(parsed.createdAt ?? new Date().toISOString()),
+      isCloudSynced: Boolean(parsed.isCloudSynced),
+    };
   } catch {
     return null;
   }
@@ -86,12 +102,43 @@ export function saveAuthSession(account: UserAuthAccount | null): void {
       localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(account));
     }
   } catch {
-    // Ignore storage errors
+    // Bỏ qua lỗi storage
   }
 }
 
+interface SupabaseUserLike {
+  id: string;
+  email?: string;
+  created_at: string;
+  user_metadata?: Record<string, unknown>;
+}
+
+function accountFromSupabaseUser(
+  user: SupabaseUserLike,
+  fallbackName: string,
+  fallbackGender: GenderType,
+  fallbackRegion: RegionType
+): UserAuthAccount {
+  const meta = user.user_metadata ?? {};
+  const email = user.email ?? '';
+  return {
+    id: user.id,
+    email,
+    playerName:
+      sanitizeText(typeof meta.player_name === 'string' ? meta.player_name : '') ||
+      fallbackName ||
+      email.split('@')[0] ||
+      'Điền Chủ',
+    accountType: 'REGISTERED',
+    gender: meta.gender === undefined ? fallbackGender : asGender(meta.gender),
+    region: meta.region === undefined ? fallbackRegion : asRegion(meta.region),
+    createdAt: user.created_at,
+    isCloudSynced: true,
+  };
+}
+
 /**
- * 1. Đăng Ký Tài Khoản Mới (Đồng bộ kép Supabase Auth + Local Vault)
+ * 1. Đăng Ký Tài Khoản Mới (Supabase Auth)
  */
 export async function registerNewAccount(
   playerName: string,
@@ -104,150 +151,84 @@ export async function registerNewAccount(
   const cleanName = sanitizeText(playerName) || 'Điền Chủ Mới';
   const cleanEmail = sanitizeText(email).toLowerCase();
 
-  if (!cleanEmail || !cleanEmail.includes('@')) {
-    return {
-      success: false,
-      message: '⚠️ Vui lòng nhập địa chỉ Email hợp lệ (ví dụ: nongdan@vaconline.vn)!',
-    };
+  if (!isValidEmail(cleanEmail)) {
+    return { success: false, message: '⚠️ Vui lòng nhập địa chỉ Email hợp lệ (ví dụ: nongdan@vaconline.vn)!' };
   }
-  if (password.length < 6) {
-    return {
-      success: false,
-      message: '⚠️ Mật khẩu bảo vệ nông trại phải có ít nhất 6 ký tự!',
-    };
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { success: false, message: '⚠️ Mật khẩu bảo vệ nông trại phải có ít nhất 6 ký tự!' };
   }
   if (password !== confirmPassword) {
-    return {
-      success: false,
-      message: '⚠️ Mật khẩu xác nhận không khớp với mật khẩu đã nhập!',
-    };
+    return { success: false, message: '⚠️ Mật khẩu xác nhận không khớp với mật khẩu đã nhập!' };
   }
 
-  const users = loadUsersVault();
-  if (users.some((u) => u.email.toLowerCase() === cleanEmail)) {
-    return {
-      success: false,
-      message: '⚠️ Email này đã được đăng ký! Bạn hãy chuyển sang tab Đăng Nhập hoặc Quên Mật Khẩu nhé.',
-    };
-  }
-
-  let cloudSynced = false;
   const sb = getSupabaseClient();
-  if (sb) {
-    try {
-      const { error } = await sb.auth.signUp({
-        email: cleanEmail,
-        password,
-        options: {
-          data: { player_name: cleanName, gender, region },
-        },
-      });
-      if (!error) cloudSynced = true;
-    } catch {
-      // Fallback to local vault if offline
+  if (!sb) return { success: false, message: SERVER_UNAVAILABLE_MESSAGE };
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email: cleanEmail,
+      password,
+      options: { data: { player_name: cleanName, gender, region } },
+    });
+    if (error) return { success: false, message: `⚠️ Không thể đăng ký: ${error.message}` };
+    if (!data.user) return { success: false, message: '⚠️ Không thể đăng ký lúc này, vui lòng thử lại!' };
+    if (!data.session) {
+      return {
+        success: false,
+        message: `📩 Đã gửi email xác nhận tới [${cleanEmail}]. Hãy mở email, bấm xác nhận rồi quay lại tab Đăng Nhập nhé!`,
+      };
     }
+    const account = accountFromSupabaseUser(data.user, cleanName, gender, region);
+    saveAuthSession(account);
+    return {
+      success: true,
+      account,
+      message: `🎉 Đăng ký tài khoản [${account.playerName}] thành công! Tặng ngay +500 🪙 Xu Vàng Khởi Nghiệp & mở Sổ Đăng Ký Quê Hương 3 Miền!`,
+    };
+  } catch {
+    return { success: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại hoặc Chơi Khách!' };
   }
-
-  const newAccount: UserAuthAccount = {
-    id: `USR_${Date.now()}`,
-    email: cleanEmail,
-    playerName: cleanName,
-    passwordHash: password,
-    accountType: 'REGISTERED',
-    gender,
-    region,
-    createdAt: new Date().toISOString(),
-    isCloudSynced: cloudSynced,
-  };
-
-  users.push(newAccount);
-  saveUsersVault(users);
-  saveAuthSession(newAccount);
-
-  return {
-    success: true,
-    account: newAccount,
-    message: `🎉 Đăng ký tài khoản [${cleanName}] thành công! Tặng ngay +500 🪙 Xu Vàng Khởi Nghiệp & mở Sổ Đăng Ký Quê Hương 3 Miền!`,
-  };
 }
 
 /**
- * 2. Đăng Nhập Tài Khoản (Hỗ trợ cả Email hoặc Tên Điền Chủ + Tài khoản Demo sẵn có)
+ * 2. Đăng Nhập bằng Email + Mật khẩu (Supabase Auth)
  */
 export async function loginWithCredentials(
-  emailOrName: string,
+  email: string,
   password: string,
   rememberMe = true
 ): Promise<AuthActionResult> {
-  const cleanId = sanitizeText(emailOrName).toLowerCase();
-  if (!cleanId || !password) {
-    return {
-      success: false,
-      message: '⚠️ Vui lòng nhập đầy đủ Email/Tên tài khoản và Mật khẩu!',
-    };
+  const cleanEmail = sanitizeText(email).toLowerCase();
+  if (!cleanEmail || !password) {
+    return { success: false, message: '⚠️ Vui lòng nhập đầy đủ Email và Mật khẩu!' };
+  }
+  if (!isValidEmail(cleanEmail)) {
+    return { success: false, message: '⚠️ Vui lòng đăng nhập bằng địa chỉ Email đã đăng ký!' };
   }
 
-  const users = loadUsersVault();
-  const matched = users.find(
-    (u) =>
-      u.email.toLowerCase() === cleanId ||
-      u.playerName.toLowerCase() === cleanId
-  );
+  const sb = getSupabaseClient();
+  if (!sb) return { success: false, message: SERVER_UNAVAILABLE_MESSAGE };
 
-  if (matched && matched.passwordHash === password) {
-    if (rememberMe) saveAuthSession(matched);
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email: cleanEmail, password });
+    if (error || !data.user) {
+      return { success: false, message: '❌ Sai Email hoặc Mật khẩu!' };
+    }
+    const account = accountFromSupabaseUser(data.user, '', 'FEMALE', 'NORTH');
+    if (rememberMe) saveAuthSession(account);
     return {
       success: true,
-      account: matched,
-      message: `🌾 Chào mừng Điền chủ [${matched.playerName}] trở về quê hương!`,
+      account,
+      message: `🌾 Chào mừng Điền chủ [${account.playerName}] trở về quê hương!`,
     };
+  } catch {
+    return { success: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại hoặc Chơi Khách!' };
   }
-
-  // Thử xác thực qua Supabase Cloud nếu tài khoản tạo trên thiết bị khác
-  const sb = getSupabaseClient();
-  if (sb && cleanId.includes('@')) {
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({
-        email: cleanId,
-        password,
-      });
-      if (!error && data.user) {
-        const cloudAcc: UserAuthAccount = {
-          id: data.user.id,
-          email: cleanId,
-          playerName:
-            (data.user.user_metadata?.player_name as string) ||
-            cleanId.split('@')[0],
-          passwordHash: password,
-          accountType: 'REGISTERED',
-          gender: (data.user.user_metadata?.gender as GenderType) || 'FEMALE',
-          region: (data.user.user_metadata?.region as RegionType) || 'NORTH',
-          createdAt: data.user.created_at,
-          isCloudSynced: true,
-        };
-        users.push(cloudAcc);
-        saveUsersVault(users);
-        if (rememberMe) saveAuthSession(cloudAcc);
-        return {
-          success: true,
-          account: cloudAcc,
-          message: `☁️ Đã đồng bộ hồ sơ Cloud của Điền chủ [${cloudAcc.playerName}]!`,
-        };
-      }
-    } catch {
-      // Offline fallback
-    }
-  }
-
-  return {
-    success: false,
-    message:
-      '❌ Sai thông tin Email/Tên tài khoản hoặc Mật khẩu! (Gợi ý Demo: tuhau@vaconline.vn / Mật khẩu: 123456)',
-  };
 }
 
 /**
- * 3. Chơi Khách 1 Chạm (Guest Mode - Không cần mật khẩu, cho phép Liên Kết sau)
+ * 3. Chơi Khách 1 Chạm (offline được, không mật khẩu). Gọi thêm ensureCloudGuestSession()
+ *    để có phiên ẩn danh trên Supabase khi máy chủ sẵn sàng.
  */
 export function createGuestSession(customGuestName?: string): AuthActionResult {
   const randomSuffix = Math.floor(1000 + Math.random() * 9000);
@@ -255,9 +236,8 @@ export function createGuestSession(customGuestName?: string): AuthActionResult {
 
   const guestAccount: UserAuthAccount = {
     id: `GUEST_${randomSuffix}`,
-    email: `guest_${randomSuffix}@local.vaconline`,
+    email: '',
     playerName: guestName,
-    passwordHash: '',
     accountType: 'GUEST',
     gender: 'FEMALE',
     region: 'NORTH',
@@ -273,8 +253,25 @@ export function createGuestSession(customGuestName?: string): AuthActionResult {
   };
 }
 
+/** Mở phiên ẩn danh Supabase cho Khách (cần bật Anonymous Sign-ins trên dashboard). */
+export async function ensureCloudGuestSession(guestName: string): Promise<boolean> {
+  const sb = getSupabaseClient();
+  if (!sb) return false;
+  try {
+    const { data: existing } = await sb.auth.getSession();
+    if (existing.session) return true;
+    const { error } = await sb.auth.signInAnonymously({
+      options: { data: { player_name: sanitizeText(guestName) } },
+    });
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * 4. Liên Kết Tài Khoản Khách Lên Chính Thức (Giữ nguyên 100% tiến trình + Thưởng +50 💎 & +1,000 🪙)
+ * 4. Liên Kết Tài Khoản Khách lên Chính thức. Nếu Khách đang có phiên ẩn danh Supabase thì gắn
+ *    email/mật khẩu vào chính user đó (giữ nguyên auth.uid()); nếu không thì đăng ký mới.
  */
 export async function upgradeGuestToRegistered(
   currentGuestName: string,
@@ -287,175 +284,113 @@ export async function upgradeGuestToRegistered(
   const cleanEmail = sanitizeText(email).toLowerCase();
   const cleanName = sanitizeText(newPlayerName || currentGuestName) || 'Điền Chủ Chính Thức';
 
-  if (!cleanEmail || !cleanEmail.includes('@')) {
-    return {
-      success: false,
-      message: '⚠️ Vui lòng nhập Email hợp lệ để liên kết bảo hộ trang trại!',
-    };
+  if (!isValidEmail(cleanEmail)) {
+    return { success: false, message: '⚠️ Vui lòng nhập Email hợp lệ để liên kết bảo hộ trang trại!' };
   }
-  if (password.length < 6) {
-    return {
-      success: false,
-      message: '⚠️ Mật khẩu liên kết phải có từ 6 ký tự trở lên!',
-    };
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { success: false, message: '⚠️ Mật khẩu liên kết phải có từ 6 ký tự trở lên!' };
   }
 
-  const users = loadUsersVault();
-  if (users.some((u) => u.email.toLowerCase() === cleanEmail)) {
-    return {
-      success: false,
-      message: '⚠️ Email này đã được liên kết với một trang trại khác!',
-    };
-  }
-
-  let cloudSynced = false;
   const sb = getSupabaseClient();
-  if (sb) {
-    try {
-      const { error } = await sb.auth.signUp({
+  if (!sb) return { success: false, message: SERVER_UNAVAILABLE_MESSAGE };
+
+  try {
+    const { data: sessionData } = await sb.auth.getSession();
+    const isAnonymous = Boolean(sessionData.session?.user.is_anonymous);
+
+    if (isAnonymous) {
+      const { data, error } = await sb.auth.updateUser({
         email: cleanEmail,
         password,
-        options: { data: { player_name: cleanName, gender, region } },
+        data: { player_name: cleanName, gender, region },
       });
-      if (!error) cloudSynced = true;
-    } catch {
-      // Offline fallback
+      if (error || !data.user) {
+        return { success: false, message: `⚠️ Không thể liên kết: ${error?.message ?? 'thử lại sau'}` };
+      }
+      const account = { ...accountFromSupabaseUser(data.user, cleanName, gender, region), email: cleanEmail };
+      saveAuthSession(account);
+      return {
+        success: true,
+        account,
+        message: `🛡️ LIÊN KẾT THÀNH CÔNG! Hãy mở email [${cleanEmail}] để xác nhận. Nhận thưởng nóng +50 💎 Ngọc & +1,000 🪙 Xu Vàng!`,
+      };
     }
+
+    const signUp = await registerNewAccount(cleanName, cleanEmail, password, password, gender, region);
+    if (!signUp.success || !signUp.account) return signUp;
+    return {
+      success: true,
+      account: signUp.account,
+      message: `🛡️ LIÊN KẾT THÀNH CÔNG! Trang trại của [${cleanName}] đã được bảo hộ! Nhận thưởng nóng +50 💎 Ngọc & +1,000 🪙 Xu Vàng!`,
+    };
+  } catch {
+    return { success: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại!' };
   }
-
-  const upgradedAccount: UserAuthAccount = {
-    id: `USR_LINKED_${Date.now()}`,
-    email: cleanEmail,
-    playerName: cleanName,
-    passwordHash: password,
-    accountType: 'REGISTERED',
-    gender,
-    region,
-    createdAt: new Date().toISOString(),
-    isCloudSynced: cloudSynced,
-  };
-
-  users.push(upgradedAccount);
-  saveUsersVault(users);
-  saveAuthSession(upgradedAccount);
-
-  return {
-    success: true,
-    account: upgradedAccount,
-    message: `🛡️ LIÊN KẾT THÀNH CÔNG! Trang trại của [${cleanName}] đã được bảo hộ vĩnh viễn! Nhận thưởng nóng +50 💎 Ngọc & +1,000 🪙 Xu Vàng!`,
-  };
 }
 
 /**
- * 5. Quên Mật Khẩu — Bước 1: Yêu cầu gửi Mã Khôi Phục OTP (6 chữ số)
+ * 5. Quên Mật Khẩu — Bước 1: Supabase gửi Mã Khôi Phục OTP 6 số qua email.
  */
 export async function requestPasswordReset(email: string): Promise<AuthActionResult> {
   const cleanEmail = sanitizeText(email).toLowerCase();
-  if (!cleanEmail || !cleanEmail.includes('@')) {
-    return {
-      success: false,
-      message: '⚠️ Vui lòng nhập đúng địa chỉ Email đã đăng ký tài khoản!',
-    };
+  if (!isValidEmail(cleanEmail)) {
+    return { success: false, message: '⚠️ Vui lòng nhập đúng địa chỉ Email đã đăng ký tài khoản!' };
   }
 
-  const users = loadUsersVault();
-  const target = users.find((u) => u.email.toLowerCase() === cleanEmail);
-  if (!target) {
-    return {
-      success: false,
-      message: `⚠️ Không tìm thấy tài khoản nào đăng ký với Email [${cleanEmail}]! (Gợi ý tài khoản mẫu: tuhau@vaconline.vn)`,
-    };
-  }
-
-  // Gửi email reset qua Supabase Cloud nếu có kết nối
   const sb = getSupabaseClient();
-  if (sb) {
-    try {
-      await sb.auth.resetPasswordForEmail(cleanEmail);
-    } catch {
-      // Ignore network error in offline mode
-    }
+  if (!sb) return { success: false, message: SERVER_UNAVAILABLE_MESSAGE };
+
+  try {
+    const { error } = await sb.auth.resetPasswordForEmail(cleanEmail);
+    if (error) return { success: false, message: `⚠️ Không gửi được mã: ${error.message}` };
+  } catch {
+    return { success: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại!' };
   }
 
-  const otpCode = String(Math.floor(100000 + Math.random() * 900000));
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.setItem(
-        OTP_STORAGE_KEY,
-        JSON.stringify({ email: cleanEmail, otpCode, expiresAt: Date.now() + 10 * 60_000 })
-      );
-    } catch {
-      // Ignore storage error
-    }
-  }
-
+  // Không tiết lộ email có tồn tại hay không.
   return {
     success: true,
-    otpCode,
-    message: `📩 Đã gửi Mã Khôi Phục OTP 6 số tới [${cleanEmail}]! (Mã OTP của bạn là: ${otpCode})`,
+    message: `📩 Nếu [${cleanEmail}] đã đăng ký, Mã Khôi Phục OTP 6 số vừa được gửi vào hộp thư. Mã có hiệu lực trong thời gian ngắn!`,
   };
 }
 
 /**
- * 6. Quên Mật Khẩu — Bước 2: Xác nhận Mã OTP & Đặt lại Mật khẩu mới
+ * 6. Quên Mật Khẩu — Bước 2: Xác nhận OTP với Supabase và đặt mật khẩu mới.
  */
-export function confirmPasswordResetWithOtp(
+export async function confirmPasswordResetWithOtp(
   email: string,
   otpInput: string,
   newPassword: string
-): AuthActionResult {
+): Promise<AuthActionResult> {
   const cleanEmail = sanitizeText(email).toLowerCase();
-  if (newPassword.length < 6) {
-    return {
-      success: false,
-      message: '⚠️ Mật khẩu mới phải có ít nhất 6 ký tự!',
-    };
+  const token = otpInput.trim();
+  if (newPassword.length < MIN_PASSWORD_LENGTH) {
+    return { success: false, message: '⚠️ Mật khẩu mới phải có ít nhất 6 ký tự!' };
+  }
+  if (!isValidEmail(cleanEmail) || !/^\d{6}$/.test(token)) {
+    return { success: false, message: '❌ Mã xác thực OTP 6 số không chính xác hoặc đã hết hạn!' };
   }
 
-  let savedOtpData: { email: string; otpCode: string; expiresAt: number } | null = null;
-  if (typeof window !== 'undefined') {
-    try {
-      const raw = localStorage.getItem(OTP_STORAGE_KEY);
-      if (raw) savedOtpData = JSON.parse(raw);
-    } catch {
-      savedOtpData = null;
+  const sb = getSupabaseClient();
+  if (!sb) return { success: false, message: SERVER_UNAVAILABLE_MESSAGE };
+
+  try {
+    const { data, error } = await sb.auth.verifyOtp({ email: cleanEmail, token, type: 'recovery' });
+    if (error || !data.user) {
+      return { success: false, message: '❌ Mã xác thực OTP 6 số không chính xác hoặc đã hết hạn!' };
     }
-  }
-
-  if (
-    !savedOtpData ||
-    savedOtpData.email !== cleanEmail ||
-    savedOtpData.otpCode !== otpInput.trim()
-  ) {
+    const { data: updated, error: updateError } = await sb.auth.updateUser({ password: newPassword });
+    if (updateError || !updated.user) {
+      return { success: false, message: `⚠️ Không đặt được mật khẩu mới: ${updateError?.message ?? 'thử lại sau'}` };
+    }
+    const account = accountFromSupabaseUser(updated.user, '', 'FEMALE', 'NORTH');
+    saveAuthSession(account);
     return {
-      success: false,
-      message: '❌ Mã xác thực OTP 6 số không chính xác hoặc đã hết hạn!',
+      success: true,
+      account,
+      message: `✅ Đã đặt lại mật khẩu mới thành công cho tài khoản [${cleanEmail}]! Tự động đăng nhập vào nông trại...`,
     };
+  } catch {
+    return { success: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại!' };
   }
-
-  const users = loadUsersVault();
-  const idx = users.findIndex((u) => u.email.toLowerCase() === cleanEmail);
-  if (idx === -1) {
-    return {
-      success: false,
-      message: '⚠️ Không tìm thấy tài khoản cần đặt lại mật khẩu!',
-    };
-  }
-
-  users[idx] = {
-    ...users[idx],
-    passwordHash: newPassword,
-  };
-  saveUsersVault(users);
-  saveAuthSession(users[idx]);
-
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(OTP_STORAGE_KEY);
-  }
-
-  return {
-    success: true,
-    account: users[idx],
-    message: `✅ Đã đặt lại mật khẩu mới thành công cho tài khoản [${cleanEmail}]! Tự động đăng nhập vào nông trại...`,
-  };
 }
