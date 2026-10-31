@@ -248,7 +248,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
 
   // 8. EPIC 02: Chặn âm Năng lượng khi Vét Ao / Khai Hoang
   runCase('TC-02.2b', 'EPIC 02', 'Chặn âm Năng lượng (Stamina) khi Vét Ao lúc ⚡ < 3', () => {
-    store.setState({ stamina: 2 });
+    store.setState({ stamina: 2, staminaUpdatedAt: Date.now() });
     store.getState().dredgePondMud();
     const afterStamina = store.getState().stamina;
     return {
@@ -314,7 +314,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
   });
 
   // 12. EPIC 03: Bón Bùn Phù Sa & Nhân 3 Giá Trị Nông Sản Hoàng Kim ⭐
-  runCase('TC-03.4a', 'EPIC 03', 'Thu hoạch Nông sản Hoàng Kim ⭐ nhận gấp 3 lần giá trị Xu Vàng', () => {
+  runCase('TC-03.4a', 'EPIC 03', 'Thu hoạch Nông sản Hoàng Kim ⭐ vào Kho gấp 3 sản lượng (không cộng vàng — bán ở HTX)', () => {
     const now = Date.now();
     const spec = GAME_CATALOG.find((c) => c.id === 'CROP_01')!;
     store.setState({
@@ -337,14 +337,16 @@ export function runFullQCTestSuite(): QCTestResult[] {
           : t
       ),
     });
+    const stockBefore = store.getState().inventory.CROP_01 ?? 0;
     store.getState().interactTile('TILE_1');
-    const goldEarned = store.getState().gold - 1000;
-    // Sản lượng lấy từ dữ liệu (RULE C2 Data-Driven), không cố định 5
-    const expectedGold = spec.baseSellGold * (spec.yieldCount ?? 2) * 3;
+    const goldAfter = store.getState().gold;
+    const stockGained = (store.getState().inventory.CROP_01 ?? 0) - stockBefore;
+    // Quyết định PO (S1): thu hoạch vào Kho; sản lượng lấy từ dữ liệu (RULE C2), Hoàng Kim ×3
+    const expectedQty = (spec.yieldCount ?? 2) * 3;
     return {
-      passed: goldEarned === expectedGold,
-      expected: `Nhận x3 giá trị = +${expectedGold} 🪙`,
-      actual: `Thực nhận = +${goldEarned} 🪙`,
+      passed: stockGained === expectedQty && goldAfter === 1000,
+      expected: `Kho +${expectedQty} ${spec.name}, Vàng giữ nguyên 1000`,
+      actual: `Kho +${stockGained}, Vàng = ${goldAfter}`,
     };
   });
 

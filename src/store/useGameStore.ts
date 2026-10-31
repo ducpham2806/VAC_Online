@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import {
   ChatMessage,
   FarmTileEntity,
@@ -14,12 +15,36 @@ import {
 } from '../data/masterData';
 import { GuestbookEntry, vacRealtime } from '../services/realtimeService';
 import { quoteMarketListing } from '../domain/market';
-import { STORY_QUESTS, StoryQuest } from '../data/quests';
+import { QUEST_BRANCH_REWARDS, QUEST_XP_REWARD, STORY_QUESTS, StoryQuest } from '../data/quests';
+import {
+  FarmResult,
+  FarmSave,
+  MAX_WILD_PLOTS,
+  MUD_ITEM_ID,
+  applyMud,
+  dredgePond,
+  expandLand,
+  findItem,
+  harvest,
+  nextTileAction,
+  plant,
+  sellToHtx as sellToHtxRule,
+  water,
+} from '../domain/farm';
+import { applyXp } from '../domain/progression';
+import { GAME_STAGE, isStageOpen } from '../config/features';
+import {
+  FarmMode,
+  FarmRpcName,
+  FarmSnapshot,
+  callFarmRpc,
+  createEmptyTiles,
+  hasCloudSession,
+  tilesFromSnapshot,
+} from '../services/farmGateway';
 
 export type { StoryQuest };
-
-/** Trần khai hoang theo GDD 01 (M02.4): tối đa 25 Phân khu. */
-export const MAX_WILD_PLOTS = 25;
+export { MAX_WILD_PLOTS };
 
 export type ActiveModalType =
   | null
@@ -117,6 +142,17 @@ interface GameState {
   storyQuests: StoryQuest[];
   chatMessages: ChatMessage[];
 
+  /** Mốc thời gian (ms) để tính hồi năng lượng +1⚡/3 phút. */
+  staminaUpdatedAt: number;
+  /** Ngày nhận Quà Tân Thủ gần nhất (YYYY-MM-DD, giờ Việt Nam). */
+  rookieLastClaimOn: string | null;
+  /** 'cloud' = mọi thao tác kinh tế đi qua RPC server; 'local' = chơi offline lưu localStorage. */
+  farmMode: FarmMode;
+  /** Đang chờ RPC trả về (chặn bấm liên tục). */
+  farmBusy: boolean;
+  /** Chênh lệch đồng hồ server − client (ms). */
+  clockOffsetMs: number;
+
   // Actions
   initSupabaseRealtimeSync: () => void;
   syncCatalogToSupabaseCloud: () => Promise<void>;
@@ -178,9 +214,16 @@ interface GameState {
   simulateOfflineWorkerProgress: (hoursOffline: number) => void;
   sendChatMessage: (content: string) => void;
   fastForwardTime: () => void;
+  sellToHtx: (itemId: string, qty: number) => void;
+  syncFarmFromServer: () => Promise<void>;
 }
 
-const createInitialTiles = (): FarmTileEntity[] => {
+/** Phần dữ liệu (không gồm action) của state. */
+type GameData = {
+  [K in keyof GameState as GameState[K] extends (...args: never[]) => unknown ? never : K]: GameState[K];
+};
+
+const createDemoTiles = (): FarmTileEntity[] => {
   const list: FarmTileEntity[] = [];
   const now = Date.now();
   const presetItems = [
@@ -213,222 +256,409 @@ const createInitialTiles = (): FarmTileEntity[] => {
   return list;
 };
 
-export const useGameStore = create<GameState>((set, get) => ({
-  playerName: 'Tư Hậu Lập Nghiệp',
-  accountType: 'REGISTERED',
-  userEmail: 'tuhau@vaconline.vn',
-  gender: 'FEMALE',
-  region: 'NORTH',
-  level: 20,
-  xp: 1450,
-  gold: 28500,
-  gems: 310,
-  stamina: 42,
-  maxStamina: 50,
-  styleScore: 1420,
-  fengShuiScore: 520,
-  neighborPoints: 18,
-  trainVouchers: 4,
-  dragonBoatMeters: 450,
-  npcHearts: 7,
-  isMarried: false,
-  homestayLevel: 1,
-  lodgeDiningTableMeals: 6,
-  workerAutoTickEnabled: true,
-  workerPantryCount: 68,
-  pondMudCounter: 8,
-  wildPlotsUnlocked: 12,
-  weather: 'SUNNY',
-  dinhLangStage: 1,
-  mutantPityCount: 2,
-  activeTotemBuff: 'Quẻ Đại Cát (+20% Tỷ lệ Nông sản Hoàng Kim ⭐)',
-  loaPhuongText: '[Minh Râu] trúng Độc Đắc 18h nhận 50,000 🪙!',
-  luckyPacketsLeft: 32,
-  onlineFarmersCount: 1,
-  dbTablesStatus: 'Đang kiểm tra & đồng bộ 155 thực thể lên Supabase Cloud...',
-  blocCalendarCheckedToday: false,
-  rookieDaysClaimed: 2,
-  lotteryTickets: ['168', '688'],
-  transmogItemId: 'FASH_03',
-  fashionContestEntered: false,
-  toastMessage: `🌾 VAC Online v2.0 Complete: Đã bật Tự Động Hóa 6 Nhân Công, Ga Tàu Thống Nhất, Đua Thuyền Rồng, Homestay & Lễ Cưới Quê!`,
-  activeModal: null,
-  visitingFriendName: null,
-  selectedSeedId: 'CROP_01',
+/** Save demo Lv.20 (prototype đủ tính năng) — chỉ dùng khi `npm run dev` / test. */
+function createDemoState(): GameData {
+  return {
+    playerName: 'Tư Hậu Lập Nghiệp',
+    accountType: 'REGISTERED',
+    userEmail: 'tuhau@vaconline.vn',
+    gender: 'FEMALE',
+    region: 'NORTH',
+    level: 20,
+    xp: 1450,
+    gold: 28500,
+    gems: 310,
+    stamina: 42,
+    maxStamina: 50,
+    styleScore: 1420,
+    fengShuiScore: 520,
+    neighborPoints: 18,
+    trainVouchers: 4,
+    dragonBoatMeters: 450,
+    npcHearts: 7,
+    isMarried: false,
+    homestayLevel: 1,
+    lodgeDiningTableMeals: 6,
+    workerAutoTickEnabled: true,
+    workerPantryCount: 68,
+    pondMudCounter: 8,
+    wildPlotsUnlocked: 12,
+    weather: 'SUNNY',
+    dinhLangStage: 1,
+    mutantPityCount: 2,
+    activeTotemBuff: 'Quẻ Đại Cát (+20% Tỷ lệ Nông sản Hoàng Kim ⭐)',
+    loaPhuongText: '[Minh Râu] trúng Độc Đắc 18h nhận 50,000 🪙!',
+    luckyPacketsLeft: 32,
+    onlineFarmersCount: 1,
+    dbTablesStatus: 'Đang kiểm tra & đồng bộ 155 thực thể lên Supabase Cloud...',
+    blocCalendarCheckedToday: false,
+    rookieDaysClaimed: 2,
+    lotteryTickets: ['168', '688'],
+    transmogItemId: 'FASH_03',
+    fashionContestEntered: false,
+    toastMessage: `🌾 VAC Online v2.0 Complete: Đã bật Tự Động Hóa 6 Nhân Công, Ga Tàu Thống Nhất, Đua Thuyền Rồng, Homestay & Lễ Cưới Quê!`,
+    activeModal: null,
+    visitingFriendName: null,
+    selectedSeedId: 'CROP_01',
 
-  inventory: {
-    CROP_01: 24,
-    CROP_02: 15,
-    CROP_03: 12,
-    CROP_05: 10,
-    CROP_07: 9,
-    CROP_09: 8,
-    CROP_15: 8,
-    CROP_19: 6,
-    CROP_24: 5,
-    CROP_29: 6,
-    CROP_30: 10,
-    CROP_N01: 8,
-    CROP_C01: 8,
-    CROP_S01: 8,
-    CROP_N03: 6,
-    CROP_C05: 5,
-    CROP_S05: 4,
-    ANI_01: 10,
-    ANI_05: 5,
-    ANI_06: 7,
-    ANI_07: 4,
-    ANI_N01: 3,
-    AQUA_01: 11,
-    AQUA_03: 6,
-    AQUA_08: 3,
-    AQUA_N01: 4,
-    PROD_01: 8,
-    PROD_03: 6,
-    PROD_13: 3,
-    PROD_22: 2,
-    CRAFT_01: 4,
-    CRAFT_02: 3,
-    CRAFT_03: 3,
-    CRAFT_04: 1,
-    MAC_01: 1,
-    MAC_02: 1,
-    MAC_03: 1,
-    MAC_04: 1,
-    MAC_07: 1,
-    MAC_08: 1,
-    ITEM_BUN_PHU_SA: 6,
-    ITEM_DEP_TO_ONG: 2,
-  },
+    inventory: {
+      CROP_01: 24,
+      CROP_02: 15,
+      CROP_03: 12,
+      CROP_05: 10,
+      CROP_07: 9,
+      CROP_09: 8,
+      CROP_15: 8,
+      CROP_19: 6,
+      CROP_24: 5,
+      CROP_29: 6,
+      CROP_30: 10,
+      CROP_N01: 8,
+      CROP_C01: 8,
+      CROP_S01: 8,
+      CROP_N03: 6,
+      CROP_C05: 5,
+      CROP_S05: 4,
+      ANI_01: 10,
+      ANI_05: 5,
+      ANI_06: 7,
+      ANI_07: 4,
+      ANI_N01: 3,
+      AQUA_01: 11,
+      AQUA_03: 6,
+      AQUA_08: 3,
+      AQUA_N01: 4,
+      PROD_01: 8,
+      PROD_03: 6,
+      PROD_13: 3,
+      PROD_22: 2,
+      CRAFT_01: 4,
+      CRAFT_02: 3,
+      CRAFT_03: 3,
+      CRAFT_04: 1,
+      MAC_01: 1,
+      MAC_02: 1,
+      MAC_03: 1,
+      MAC_04: 1,
+      MAC_07: 1,
+      MAC_08: 1,
+      ITEM_BUN_PHU_SA: 6,
+      ITEM_DEP_TO_ONG: 2,
+    },
 
-  tiles: createInitialTiles(),
-  workers: INITIAL_WORKERS,
-  marketListings: INITIAL_MARKET_LISTINGS,
+    tiles: createDemoTiles(),
+    workers: INITIAL_WORKERS,
+    marketListings: INITIAL_MARKET_LISTINGS,
 
-  guestbookEntries: [
-    {
-      id: 'GB_1',
-      hostName: 'Tư Hậu Lập Nghiệp',
-      visitorName: 'Út Nhỏ Miền Tây',
-      message: 'Vườn vải thiều và đầm sen nhà bạn đẹp quá, mình ghé chụp ảnh check-in tặng +10 Mỹ Quan nè!',
-      timestamp: '09:15',
-    },
-    {
-      id: 'GB_2',
-      hostName: 'Tư Hậu Lập Nghiệp',
-      visitorName: 'Lý Trưởng Kinh Bắc',
-      message: 'Đã sang dựng giúp giàn bầu sau cơn mưa rào, chúc điền chủ vụ mùa bội thu!',
-      timestamp: '09:30',
-    },
-  ],
+    guestbookEntries: [
+      {
+        id: 'GB_1',
+        hostName: 'Tư Hậu Lập Nghiệp',
+        visitorName: 'Út Nhỏ Miền Tây',
+        message: 'Vườn vải thiều và đầm sen nhà bạn đẹp quá, mình ghé chụp ảnh check-in tặng +10 Mỹ Quan nè!',
+        timestamp: '09:15',
+      },
+      {
+        id: 'GB_2',
+        hostName: 'Tư Hậu Lập Nghiệp',
+        visitorName: 'Lý Trưởng Kinh Bắc',
+        message: 'Đã sang dựng giúp giàn bầu sau cơn mưa rào, chúc điền chủ vụ mùa bội thu!',
+        timestamp: '09:30',
+      },
+    ],
 
-  coopOrders: [
-    {
-      id: 'ORD_01',
-      title: 'Đơn Bếp Ăn Trường Làng',
-      requester: 'Cô Giáo Hương',
-      itemId: 'CROP_01',
-      itemName: 'Lúa Nước (Tẻ Thơm)',
-      emoji: '🌾',
-      requiredQty: 5,
-      rewardGold: 220,
-      rewardXp: 35,
-      completed: false,
-    },
-    {
-      id: 'ORD_02',
-      title: 'Đơn Chợ Quê Đầu Tuần',
-      requester: 'Bác Trưởng Thôn Bảy',
-      itemId: 'CROP_02',
-      itemName: 'Rau Muống Nước',
-      emoji: '🥬',
-      requiredQty: 4,
-      rewardGold: 195,
-      rewardXp: 30,
-      completed: false,
-    },
-    {
-      id: 'ORD_03',
-      title: 'Đơn Đặc Sản Tiến Vua',
-      requester: 'Thương Nhân Phố Cổ',
-      itemId: 'CROP_N03',
-      itemName: 'Vải Thiều Thanh Hà (Bắc Bậc 3)',
-      emoji: '🍒',
-      requiredQty: 2,
-      rewardGold: 520,
-      rewardXp: 65,
-      completed: false,
-    },
-    {
-      id: 'ORD_04',
-      title: 'Đơn Đại Tiệc Làng Vũ Đại',
-      requester: 'Cụ Bá Kiến',
-      itemId: 'PROD_22',
-      itemName: 'Cá Kho Tộ Vũ Đại (Giao Thoa 3 Miền)',
-      emoji: '🥘',
-      requiredQty: 1,
-      rewardGold: 680,
-      rewardXp: 90,
-      completed: false,
-    },
-  ],
+    coopOrders: [
+      {
+        id: 'ORD_01',
+        title: 'Đơn Bếp Ăn Trường Làng',
+        requester: 'Cô Giáo Hương',
+        itemId: 'CROP_01',
+        itemName: 'Lúa Nước (Tẻ Thơm)',
+        emoji: '🌾',
+        requiredQty: 5,
+        rewardGold: 220,
+        rewardXp: 35,
+        completed: false,
+      },
+      {
+        id: 'ORD_02',
+        title: 'Đơn Chợ Quê Đầu Tuần',
+        requester: 'Bác Trưởng Thôn Bảy',
+        itemId: 'CROP_02',
+        itemName: 'Rau Muống Nước',
+        emoji: '🥬',
+        requiredQty: 4,
+        rewardGold: 195,
+        rewardXp: 30,
+        completed: false,
+      },
+      {
+        id: 'ORD_03',
+        title: 'Đơn Đặc Sản Tiến Vua',
+        requester: 'Thương Nhân Phố Cổ',
+        itemId: 'CROP_N03',
+        itemName: 'Vải Thiều Thanh Hà (Bắc Bậc 3)',
+        emoji: '🍒',
+        requiredQty: 2,
+        rewardGold: 520,
+        rewardXp: 65,
+        completed: false,
+      },
+      {
+        id: 'ORD_04',
+        title: 'Đơn Đại Tiệc Làng Vũ Đại',
+        requester: 'Cụ Bá Kiến',
+        itemId: 'PROD_22',
+        itemName: 'Cá Kho Tộ Vũ Đại (Giao Thoa 3 Miền)',
+        emoji: '🥘',
+        requiredQty: 1,
+        rewardGold: 680,
+        rewardXp: 90,
+        completed: false,
+      },
+    ],
 
-  trainCrates: [
-    {
-      id: 'TR_01',
-      carriageName: 'Toa 1 (Hà Nội ➔ Huế)',
-      itemId: 'CROP_N01',
-      itemName: 'Cải Cúc & Su Hào (Bắc)',
-      emoji: '🥬',
-      requiredQty: 3,
-      rewardGold: 360,
-      rewardVoucher: 1,
-      filled: false,
-    },
-    {
-      id: 'TR_02',
-      carriageName: 'Toa 2 (Huế ➔ Đà Nẵng)',
-      itemId: 'CROP_C05',
-      itemName: 'Cà Phê Buôn Ma Thuột (Trung)',
-      emoji: '☕',
-      requiredQty: 2,
-      rewardGold: 540,
-      rewardVoucher: 2,
-      filled: false,
-    },
-    {
-      id: 'TR_03',
-      carriageName: 'Toa 3 (Đà Nẵng ➔ Sài Gòn)',
-      itemId: 'CROP_S05',
-      itemName: 'Sầu Riêng Ri6 & Dừa Sáp (Nam)',
-      emoji: '🥭',
-      requiredQty: 2,
-      rewardGold: 620,
-      rewardVoucher: 2,
-      filled: false,
-    },
-  ],
+    trainCrates: [
+      {
+        id: 'TR_01',
+        carriageName: 'Toa 1 (Hà Nội ➔ Huế)',
+        itemId: 'CROP_N01',
+        itemName: 'Cải Cúc & Su Hào (Bắc)',
+        emoji: '🥬',
+        requiredQty: 3,
+        rewardGold: 360,
+        rewardVoucher: 1,
+        filled: false,
+      },
+      {
+        id: 'TR_02',
+        carriageName: 'Toa 2 (Huế ➔ Đà Nẵng)',
+        itemId: 'CROP_C05',
+        itemName: 'Cà Phê Buôn Ma Thuột (Trung)',
+        emoji: '☕',
+        requiredQty: 2,
+        rewardGold: 540,
+        rewardVoucher: 2,
+        filled: false,
+      },
+      {
+        id: 'TR_03',
+        carriageName: 'Toa 3 (Đà Nẵng ➔ Sài Gòn)',
+        itemId: 'CROP_S05',
+        itemName: 'Sầu Riêng Ri6 & Dừa Sáp (Nam)',
+        emoji: '🥭',
+        requiredQty: 2,
+        rewardGold: 620,
+        rewardVoucher: 2,
+        filled: false,
+      },
+    ],
 
-  storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
+    storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
 
-  chatMessages: [
-    {
-      id: 'MSG_1',
-      channel: 'WORLD',
-      sender: 'Út Nhỏ Miền Tây',
-      region: 'SOUTH',
-      content: 'Thương lái nhà mình đang thu mua Sầu Riêng giá x2.5 nè bà con ơi, qua bán ké nhận lộc!',
-      timestamp: '09:00',
-    },
-    {
-      id: 'MSG_2',
-      channel: 'COOP',
-      sender: 'Lý Trưởng Bắc Bộ',
-      region: 'NORTH',
-      content: 'Tối nay 20:00 anh em Hợp Tác Xã nhớ lên gõ trống Đua Thuyền Rồng x2 tốc độ nhé!',
-      timestamp: '09:02',
-    },
-  ],
+    chatMessages: [
+      {
+        id: 'MSG_1',
+        channel: 'WORLD',
+        sender: 'Út Nhỏ Miền Tây',
+        region: 'SOUTH',
+        content: 'Thương lái nhà mình đang thu mua Sầu Riêng giá x2.5 nè bà con ơi, qua bán ké nhận lộc!',
+        timestamp: '09:00',
+      },
+      {
+        id: 'MSG_2',
+        channel: 'COOP',
+        sender: 'Lý Trưởng Bắc Bộ',
+        region: 'NORTH',
+        content: 'Tối nay 20:00 anh em Hợp Tác Xã nhớ lên gõ trống Đua Thuyền Rồng x2 tốc độ nhé!',
+        timestamp: '09:02',
+      },
+    ],
+
+    staminaUpdatedAt: Date.now(),
+    rookieLastClaimOn: null,
+    farmMode: 'local',
+    farmBusy: false,
+    clockOffsetMs: 0,
+  };
+}
+
+/** Người chơi mới thật sự (production): Lv.1, 2.500 🪙, Đợt 1 — khớp mặc định bảng profiles. */
+export function createFreshState(): GameData {
+  const demo = createDemoState();
+  return {
+    ...demo,
+    playerName: 'Điền Chủ Mới',
+    accountType: 'GUEST',
+    userEmail: '',
+    level: 1,
+    xp: 0,
+    gold: 2500,
+    gems: 50,
+    stamina: 50,
+    maxStamina: 50,
+    styleScore: 0,
+    fengShuiScore: 0,
+    neighborPoints: 0,
+    trainVouchers: 0,
+    dragonBoatMeters: 0,
+    npcHearts: 0,
+    pondMudCounter: 0,
+    wildPlotsUnlocked: 12,
+    dinhLangStage: 0,
+    mutantPityCount: 0,
+    activeTotemBuff: null,
+    loaPhuongText: 'Chào mừng bà con về quê lập nghiệp! 🌾',
+    rookieDaysClaimed: 0,
+    lotteryTickets: [],
+    transmogItemId: null,
+    toastMessage: '🌾 Chào mừng về quê! Chọn giống trên Khay Giống rồi chạm ô đất trống để gieo vụ đầu tiên.',
+    inventory: {},
+    tiles: createEmptyTiles(),
+    storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
+  };
+}
+
+const USE_DEMO_SAVE = import.meta.env.DEV;
+
+function toFarmSave(s: GameData): FarmSave {
+  return {
+    region: s.region,
+    level: s.level,
+    xp: s.xp,
+    gold: s.gold,
+    gems: s.gems,
+    stamina: s.stamina,
+    maxStamina: s.maxStamina,
+    staminaUpdatedAt: s.staminaUpdatedAt,
+    fengShuiScore: s.fengShuiScore,
+    wildPlotsUnlocked: s.wildPlotsUnlocked,
+    pondMudCounter: s.pondMudCounter,
+    inventory: s.inventory,
+    tiles: s.tiles,
+  };
+}
+
+function fromFarmSave(save: FarmSave): Partial<GameData> {
+  return {
+    level: save.level,
+    xp: save.xp,
+    gold: save.gold,
+    gems: save.gems,
+    stamina: save.stamina,
+    maxStamina: save.maxStamina,
+    staminaUpdatedAt: save.staminaUpdatedAt,
+    fengShuiScore: save.fengShuiScore,
+    wildPlotsUnlocked: save.wildPlotsUnlocked,
+    pondMudCounter: save.pondMudCounter,
+    inventory: save.inventory,
+    tiles: save.tiles,
+  };
+}
+
+function hasLocalProgress(s: GameData): boolean {
+  return (
+    s.level > 1 ||
+    s.xp > 0 ||
+    Object.values(s.inventory).some((q) => q > 0) ||
+    s.tiles.some((t) => t.itemId !== null)
+  );
+}
+
+export function todayInVietnam(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
+}
+
+/** Ảnh chụp từ server → state client (server là nguồn chân lý ở chế độ online). */
+function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
+  const p = snap.profile;
+  return {
+    playerName: p.username,
+    gender: p.gender,
+    region: p.region,
+    level: p.level,
+    xp: p.xp,
+    gold: p.gold,
+    gems: p.gems,
+    stamina: p.stamina,
+    maxStamina: p.max_stamina,
+    staminaUpdatedAt: p.stamina_updated_at,
+    fengShuiScore: p.feng_shui_score,
+    neighborPoints: p.neighbor_points,
+    wildPlotsUnlocked: p.wild_plots_unlocked,
+    pondMudCounter: p.pond_mud_counter,
+    rookieDaysClaimed: p.rookie_days_claimed,
+    rookieLastClaimOn: p.rookie_claimed_today ? todayInVietnam() : null,
+    inventory: snap.inventory,
+    tiles: tilesFromSnapshot(snap),
+    storyQuests: prev.storyQuests.map((q) => {
+      const choice = snap.quests[q.id];
+      return choice ? { ...q, completed: true, selectedChoice: choice } : { ...q, completed: false };
+    }),
+    clockOffsetMs: snap.server_now - Date.now(),
+  };
+}
+
+/** Trường được lưu vào localStorage ở chế độ offline (không lưu UI / dữ liệu demo GĐ2+). */
+const PERSISTED_KEYS = [
+  'playerName',
+  'accountType',
+  'userEmail',
+  'gender',
+  'region',
+  'level',
+  'xp',
+  'gold',
+  'gems',
+  'stamina',
+  'maxStamina',
+  'staminaUpdatedAt',
+  'fengShuiScore',
+  'neighborPoints',
+  'wildPlotsUnlocked',
+  'pondMudCounter',
+  'rookieDaysClaimed',
+  'rookieLastClaimOn',
+  'inventory',
+  'tiles',
+  'storyQuests',
+  'selectedSeedId',
+  'farmMode',
+] as const satisfies ReadonlyArray<keyof GameData>;
+
+type PersistedSave = Partial<Pick<GameData, (typeof PERSISTED_KEYS)[number]>>;
+
+export const SAVE_STORAGE_KEY = 'vac_online_save_v1';
+
+export const useGameStore = create<GameState>()(
+  persist(
+    (set, get) => {
+      /** Gọi RPC nông trại, áp ảnh chụp server vào state và hiện thông báo. */
+      const runCloud = async (
+        name: FarmRpcName,
+        args: Record<string, unknown>,
+        message: (snap: FarmSnapshot, prev: GameData) => string
+      ): Promise<boolean> => {
+        if (get().farmBusy) return false;
+        set({ farmBusy: true });
+        const prev = get();
+        const r = await callFarmRpc(name, args);
+        if (r.ok) {
+          set({ ...snapshotToState(r.snapshot, get()), farmBusy: false, toastMessage: message(r.snapshot, prev) });
+          return true;
+        }
+        set({ farmBusy: false, toastMessage: r.message });
+        return false;
+      };
+
+      /** Áp kết quả luật domain (chế độ offline). */
+      const applyLocal = (result: FarmResult): void => {
+        if (result.ok) set({ ...fromFarmSave(result.save), toastMessage: result.message });
+        else set({ toastMessage: result.message });
+      };
+
+      return {
+  ...(USE_DEMO_SAVE ? createDemoState() : createFreshState()),
 
   initSupabaseRealtimeSync: () => {
     vacRealtime.initRealtime(
@@ -505,14 +735,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       clampedPrice
     );
 
+    // Hàng được giữ (trừ khỏi kho) ngay; tiền chỉ về khi có người mua (Sprint S6 — escrow trên server).
     set((st) => ({
-      gold: st.gold + netRevenueAfterTax,
       inventory: {
         ...st.inventory,
-        [itemId]: haveQty - qty,
+        [itemId]: Math.max(0, (st.inventory[itemId] ?? 0) - qty),
       },
       marketListings: [createdListing, ...st.marketListings],
-      toastMessage: `📰 Đã đăng bán ${qty} ${spec.emoji} ${spec.name} lên Báo Chợ 3 Miền Cloud! Tạm ứng +${netRevenueAfterTax} 🪙 (Đã trừ 10% Thuế Chợ)!`,
+      toastMessage: `📰 Đã đăng bán ${qty} ${spec.emoji} ${spec.name} lên Báo Chợ 3 Miền (giá ${clampedPrice} 🪙/đv)! Khi có người mua bạn nhận ${netRevenueAfterTax} 🪙 (đã trừ 10% Thuế Chợ).`,
     }));
   },
 
@@ -748,6 +978,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   setActiveModal: (modal) => set({ activeModal: modal }),
   setProfile: (playerName, gender, region) => {
     const cleanName = playerName.replace(/[<>]/g, '').trim() || 'Điền Chủ';
+    if (get().farmMode === 'cloud') {
+      set({ activeModal: null });
+      void runCloud(
+        'rpc_set_profile_basics',
+        { p_name: cleanName, p_gender: gender, p_region: region },
+        () => `💮 Đã đóng dấu đỏ! Chào mừng Điền chủ ${cleanName} về quê hương ${region}!`
+      );
+      return;
+    }
     set({
       playerName: cleanName,
       gender,
@@ -759,8 +998,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   applyAuthAccount: (account, isNewSignupOrGuest, isGuestUpgrade) => {
     const state = get();
     const cleanName = account.playerName.replace(/[<>]/g, '').trim() || 'Điền Chủ';
-    const bonusGold = isGuestUpgrade ? 1000 : isNewSignupOrGuest && account.accountType === 'REGISTERED' ? 500 : 0;
-    const bonusGems = isGuestUpgrade ? 50 : 0;
+    // Chế độ offline mới cộng thưởng tại chỗ; online thì server cấp qua rpc_claim_account_bonus.
+    const offline = state.farmMode === 'local';
+    const bonusGold = !offline ? 0 : isGuestUpgrade ? 1000 : isNewSignupOrGuest && account.accountType === 'REGISTERED' ? 500 : 0;
+    const bonusGems = offline && isGuestUpgrade ? 50 : 0;
     set({
       playerName: cleanName,
       accountType: account.accountType,
@@ -776,6 +1017,17 @@ export const useGameStore = create<GameState>((set, get) => ({
         ? `🎉 Chào mừng [${cleanName}]! Hãy chọn Giới tính & Quê hương 3 Miền trong Giấy Đăng Ký Về Quê nhé!`
         : `🌾 Chào mừng Điền chủ [${cleanName}] (${account.accountType === 'GUEST' ? 'Chế độ Khách' : account.email}) trở lại nông trại!`,
     });
+    // Có máy chủ: lấy nông trại thật từ server; thưởng tài khoản do server cấp (1 lần).
+    const wantsBonus = isGuestUpgrade || (isNewSignupOrGuest && account.accountType === 'REGISTERED');
+    void get()
+      .syncFarmFromServer()
+      .then(() => {
+        if (wantsBonus && get().farmMode === 'cloud') {
+          void runCloud('rpc_claim_account_bonus', {}, (snap, prev) =>
+            `🎁 Thưởng tài khoản: +${snap.profile.gold - prev.gold} 🪙${snap.profile.gems > prev.gems ? ` & +${snap.profile.gems - prev.gems} 💎` : ''}!`
+          );
+        }
+      });
   },
 
   setSelectedSeed: (seedId) => set({ selectedSeedId: seedId }),
@@ -784,7 +1036,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get();
     const order: WeatherType[] = ['SUNNY', 'RAINY', 'FIREFLY_NIGHT'];
     const next = order[(order.indexOf(state.weather) + 1) % order.length];
-    if (next === 'RAINY') {
+    if (next === 'RAINY' && state.farmMode === 'cloud') {
+      // Online: thời tiết chỉ để ngắm, việc tưới vẫn tính trên server.
+      set({ weather: next, toastMessage: '🌧️ Mưa Rào Quê Hương đổ xuống cánh đồng!' });
+    } else if (next === 'RAINY') {
       set({
         weather: next,
         tiles: state.tiles.map((t) => ({ ...t, watered: true })),
@@ -807,9 +1062,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get();
     const now = Date.now();
     const tile = state.tiles.find((t) => t.id === tileId);
-    if (!tile) return;
+    if (!tile || state.farmBusy) return;
 
-    if (tile.isTiltedByStorm) {
+    // Sự kiện "Lá Lành Đùm Lá Rách" (GĐ3+): dựng giàn sau bão — chỉ có ở chế độ offline/demo.
+    if (tile.isTiltedByStorm && state.farmMode === 'local') {
       set({
         tiles: state.tiles.map((t) =>
           t.id === tileId ? { ...t, isTiltedByStorm: false, isGolden: true } : t
@@ -820,144 +1076,99 @@ export const useGameStore = create<GameState>((set, get) => ({
       return;
     }
 
-    if (!tile.itemId) {
-      const seed = GAME_CATALOG.find((c) => c.id === state.selectedSeedId) ?? GAME_CATALOG[0];
-      if (state.gold < seed.buyCostGold) {
-        set({ toastMessage: '⚠️ Không đủ Xu Vàng để mua giống/vật nuôi này!' });
-        return;
+    const action = nextTileAction(tile, now + state.clockOffsetMs);
+    if (action === 'NONE') {
+      set({ toastMessage: '⏳ Đã tưới & bón bùn rồi, chờ cây chín nhé!' });
+      return;
+    }
+
+    if (state.farmMode === 'cloud') {
+      const xy = { p_x: tile.tileX, p_y: tile.tileY };
+      if (action === 'PLANT') {
+        const seed = findItem(state.selectedSeedId);
+        void runCloud('rpc_plant', { ...xy, p_item_id: state.selectedSeedId }, () =>
+          `🌱 Đã thả/gieo [${seed?.emoji ?? ''} ${seed?.name ?? state.selectedSeedId}] (-${seed?.buyCostGold ?? 0} 🪙, 0 ⚡)`
+        );
+      } else if (action === 'HARVEST') {
+        const itemId = tile.itemId ?? '';
+        const before = state.inventory[itemId] ?? 0;
+        void runCloud('rpc_harvest', xy, (snap, prev) => {
+          const item = findItem(itemId);
+          const gained = (snap.inventory[itemId] ?? 0) - before;
+          const levelUp = snap.profile.level > prev.level ? ` — 🎉 LÊN CẤP ${snap.profile.level}!` : '';
+          return `🧺 Thu hoạch [${item?.emoji ?? ''} ${item?.name ?? itemId}${tile.isGolden ? ' HOÀNG KIM ⭐ ×3' : ''}]: +${gained} vào Kho${levelUp}`;
+        });
+      } else if (action === 'WATER') {
+        void runCloud('rpc_water', xy, () => '💧 Đã tưới Nước Giếng Làng (-15% thời gian chờ)!');
+      } else {
+        void runCloud('rpc_apply_mud', xy, (snap) => {
+          const golden = snap.tiles.find((t) => t.x === tile.tileX && t.y === tile.tileY)?.is_golden;
+          return `🪣 Đã bón Bùn Phù Sa! Chín ngay lập tức${golden ? ' và NỔ ĐỘT BIẾN HOÀNG KIM ⭐!' : '!'}`;
+        });
       }
-      set({
-        gold: state.gold - seed.buyCostGold,
-        tiles: state.tiles.map((t) =>
-          t.id === tileId
-            ? {
-                ...t,
-                itemId: seed.id,
-                plantedAt: now,
-                matureAt:
-                  now +
-                  Math.round(
-                    Math.max(1, seed.growOrCraftMinutes) *
-                      60_000 *
-                      (state.region === 'NORTH' && seed.category === 'CROP' ? 0.9 : 1)
-                  ),
-                watered: state.weather === 'RAINY',
-                mudApplied: false,
-                isGolden: false,
-                totalYield: seed.yieldCount ?? 5,
-                remainingYield: seed.yieldCount ?? 5,
-              }
-            : t
-        ),
-        toastMessage: `🌱 Đã thả/gieo [${seed.emoji} ${seed.name}] (-${seed.buyCostGold} 🪙, 0 ⚡) - Chạm lần nữa để Chăm sóc / Tưới nước!`,
-      });
       return;
     }
 
-    const itemSpec = GAME_CATALOG.find((c) => c.id === tile.itemId);
-    if (!itemSpec) return;
+    const save = toFarmSave(state);
+    const result =
+      action === 'PLANT'
+        ? plant(save, tileId, state.selectedSeedId, GAME_STAGE, now)
+        : action === 'HARVEST'
+        ? harvest(save, tileId, now)
+        : action === 'WATER'
+        ? water(save, tileId, now)
+        : applyMud(save, tileId, now, Math.random);
+    applyLocal(result);
+  },
 
-    if (tile.matureAt && now >= tile.matureAt) {
-      const yieldQty = itemSpec.yieldCount ?? 2;
-      const goldGain = itemSpec.baseSellGold * yieldQty * (tile.isGolden ? 3 : 1);
-      const currentQty = state.inventory[itemSpec.id] ?? 0;
-      const nextMud =
-        tile.zoneType === 'POND' || itemSpec.category === 'AQUA'
-          ? Math.min(10, state.pondMudCounter + 1)
-          : state.pondMudCounter;
-      set({
-        gold: state.gold + goldGain,
-        xp: state.xp + itemSpec.xpReward,
-        pondMudCounter: nextMud,
-        inventory: {
-          ...state.inventory,
-          [itemSpec.id]: currentQty + yieldQty,
-        },
-        tiles: state.tiles.map((t) =>
-          t.id === tileId
-            ? {
-                ...t,
-                itemId: null,
-                plantedAt: null,
-                matureAt: null,
-                watered: false,
-                mudApplied: false,
-                isGolden: false,
-              }
-            : t
-        ),
-        toastMessage: `🧺 Thu hoạch [${itemSpec.emoji} ${itemSpec.name}${tile.isGolden ? ' HOÀNG KIM ⭐ (x3 Giá)' : ''}]: +${yieldQty} vào Kho, +${goldGain} 🪙 & Độ bùn ao: ${nextMud}/10!`,
-      });
+  sellToHtx: (itemId, qty) => {
+    const state = get();
+    if (state.farmMode === 'cloud') {
+      const item = findItem(itemId);
+      void runCloud('rpc_sell_to_htx', { p_item_id: itemId, p_qty: qty }, (snap, prev) =>
+        `🏪 Đã bán ${qty} ${item?.emoji ?? ''} ${item?.name ?? itemId} cho HTX: +${snap.profile.gold - prev.gold} 🪙`
+      );
       return;
     }
+    applyLocal(sellToHtxRule(toFarmSave(state), itemId, qty));
+  },
 
-    if (!tile.watered && tile.matureAt) {
-      const reducedTime = tile.matureAt - Math.floor((tile.matureAt - now) * 0.15);
-      set({
-        tiles: state.tiles.map((t) =>
-          t.id === tileId ? { ...t, watered: true, matureAt: reducedTime } : t
-        ),
-        toastMessage: `💧 Đã tưới Nước Giếng Làng / Chăm sóc [${itemSpec.name}] (-15% thời gian chờ)!`,
-      });
+  syncFarmFromServer: async () => {
+    const state = get();
+    // Khách đã chơi offline có tiến trình thì giữ chế độ offline (không đẩy save cục bộ lên server).
+    if (state.accountType === 'GUEST' && state.farmMode === 'local' && hasLocalProgress(state)) return;
+    if (!(await hasCloudSession())) {
+      set({ farmMode: 'local' });
       return;
     }
-
-    if (!tile.mudApplied) {
-      const mudQty = state.inventory.ITEM_BUN_PHU_SA ?? 0;
-      if (mudQty <= 0) {
-        set({ toastMessage: '🪣 Đã hết Bùn Phù Sa! Hãy bấm nút [🪣 Vét Bùn Ao] hoặc bảo Anh Sáu Kình vét ao nhé!' });
-        return;
-      }
-      const isGoldenRoll = Math.random() < 0.45;
-      set({
-        inventory: { ...state.inventory, ITEM_BUN_PHU_SA: mudQty - 1 },
-        tiles: state.tiles.map((t) =>
-          t.id === tileId ? { ...t, mudApplied: true, isGolden: isGoldenRoll, matureAt: now - 1000 } : t
-        ),
-        toastMessage: `🪣 Đã bón Bùn Phù Sa đáy ao! [${itemSpec.name}] chín ngay lập tức ${isGoldenRoll ? 'và NỔ ĐỘT BIẾN HOÀNG KIM ⭐!' : '!'}`,
-      });
+    const r = await callFarmRpc('rpc_get_my_farm');
+    if (!r.ok) {
+      set({ farmMode: 'local', toastMessage: r.missing ? null : r.message });
+      return;
     }
+    set({ ...snapshotToState(r.snapshot, get()), farmMode: 'cloud' });
   },
 
   dredgePondMud: () => {
     const state = get();
-    if (state.stamina < 3) {
-      set({ toastMessage: '⚡ Cần 3 Năng lượng để Vét Bùn Đáy Ao!' });
+    if (state.farmMode === 'cloud') {
+      void runCloud('rpc_dredge_pond', {}, (snap) =>
+        `🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): +3 Xô Bùn Phù Sa (Đang có: ${snap.inventory[MUD_ITEM_ID] ?? 0} xô) & +20 XP!`
+      );
       return;
     }
-    set({
-      stamina: state.stamina - 3,
-      pondMudCounter: 0,
-      xp: state.xp + 20,
-      inventory: {
-        ...state.inventory,
-        ITEM_BUN_PHU_SA: (state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3,
-      },
-      toastMessage:
-        '🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): Nhận +3 Xô Bùn Phù Sa giàu dinh dưỡng (Đang có: ' +
-        ((state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3) +
-        ' xô) & +20 XP!',
-    });
+    applyLocal(dredgePond(toFarmSave(state), Date.now()));
   },
 
   expandWildLand: () => {
     const state = get();
-    if (state.wildPlotsUnlocked >= MAX_WILD_PLOTS) {
-      set({ toastMessage: `🌾 Đã khai hoang tối đa ${MAX_WILD_PLOTS}/${MAX_WILD_PLOTS} Phân khu VAC!` });
+    if (state.farmMode === 'cloud') {
+      void runCloud('rpc_expand_land', {}, (snap) =>
+        `🪓 Khai hoang thành công (-5 ⚡, -500 🪙)! Đã mở rộng lên ${snap.profile.wild_plots_unlocked}/${MAX_WILD_PLOTS} Phân khu VAC!`
+      );
       return;
     }
-    if (state.stamina < 5 || state.gold < 500) {
-      set({ toastMessage: '⚠️ Cần 5 ⚡ Năng lượng và 500 🪙 Xu Vàng để phát cỏ, đập đá khai hoang vùng đất mới!' });
-      return;
-    }
-    set({
-      stamina: state.stamina - 5,
-      gold: state.gold - 500,
-      xp: state.xp + 45,
-      wildPlotsUnlocked: state.wildPlotsUnlocked + 1,
-      fengShuiScore: state.fengShuiScore + 25,
-      toastMessage: `🪓 Khai hoang thành công (-5 ⚡, -500 🪙)! Đã mở rộng lên ${state.wildPlotsUnlocked + 1}/${MAX_WILD_PLOTS} Phân khu VAC, nhận +45 XP & +25 Phong Thủy!`,
-    });
+    applyLocal(expandLand(toFarmSave(state), Date.now()));
   },
 
   deliverCoopOrder: (orderId) => {
@@ -986,39 +1197,61 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get();
     const q = state.storyQuests.find((item) => item.id === questId);
     if (!q || q.completed) return;
-    const extraGold = branchChoice === 'PRAG' ? 350 : 0;
-    const extraFengShui = branchChoice === 'EMP' ? 30 : 10;
-    const extraNeighbor = branchChoice === 'EMP' ? 3 : 1;
+    if (!isStageOpen(q.unlockStage)) {
+      set({ toastMessage: '🔒 Chương này sẽ mở ở bản cập nhật sau!' });
+      return;
+    }
+    if (state.level < q.minLevel) {
+      set({ toastMessage: `🔒 Cần đạt Lv.${q.minLevel} để nhận [${q.chapter}]!` });
+      return;
+    }
+    const branch = QUEST_BRANCH_REWARDS[branchChoice];
+    const doneMessage =
+      branchChoice === 'EMP'
+        ? `📜 Hoàn thành [${q.chapter}] theo Nhánh Nghĩa Tình: Nhận +${q.rewardGold} 🪙, +${q.rewardGems} 💎, +${branch.fengShui} Phong Thủy & +${branch.neighbor} Nghĩa Xóm!`
+        : `📜 Hoàn thành [${q.chapter}] theo Nhánh Thực Dụng: Nhận +${q.rewardGold + branch.gold} 🪙 (+${branch.gold} 🪙 thưởng nhánh), +${q.rewardGems} 💎 & +${QUEST_XP_REWARD} XP!`;
+
+    if (state.farmMode === 'cloud') {
+      void runCloud('rpc_claim_story_quest', { p_quest_id: questId, p_choice: branchChoice }, () => doneMessage);
+      return;
+    }
+    const progress = applyXp(state.level, state.xp, QUEST_XP_REWARD);
     set({
-      gold: state.gold + q.rewardGold + extraGold,
+      gold: state.gold + q.rewardGold + branch.gold,
       gems: state.gems + q.rewardGems,
-      xp: state.xp + 100,
-      fengShuiScore: state.fengShuiScore + extraFengShui,
-      neighborPoints: state.neighborPoints + extraNeighbor,
+      level: progress.level,
+      xp: progress.xp,
+      fengShuiScore: state.fengShuiScore + branch.fengShui,
+      neighborPoints: state.neighborPoints + branch.neighbor,
       storyQuests: state.storyQuests.map((item) =>
-        item.id === questId
-          ? { ...item, completed: true, selectedChoice: branchChoice }
-          : item
+        item.id === questId ? { ...item, completed: true, selectedChoice: branchChoice } : item
       ),
-      toastMessage:
-        branchChoice === 'EMP'
-          ? `📜 Hoàn thành [${q.chapter}] theo Nhánh Nghĩa Tình: Nhận +${q.rewardGold} 🪙, +${q.rewardGems} 💎, +30 Phong Thủy & +3 Nghĩa Xóm!`
-          : `📜 Hoàn thành [${q.chapter}] theo Nhánh Thực Dụng: Nhận +${q.rewardGold + extraGold} 🪙 (+350 🪙 thưởng nhánh), +${q.rewardGems} 💎 & +100 XP!`,
+      toastMessage: doneMessage,
     });
   },
 
   claimRookieDayReward: () => {
     const state = get();
     if (state.rookieDaysClaimed >= 7) {
-      set({ toastMessage: '🎁 Bạn đã nhận trọn bộ Quà 7 Ngày Tân Thủ (Bao gồm Chó Phú Quốc & Áo Bà Ba Lụa)!' });
+      set({ toastMessage: '🎁 Bạn đã nhận trọn bộ Quà 7 Ngày Tân Thủ!' });
+      return;
+    }
+    if (state.rookieLastClaimOn === todayInVietnam()) {
+      set({ toastMessage: '🎁 Hôm nay đã nhận quà rồi, mai quay lại nhé!' });
       return;
     }
     const nextDay = state.rookieDaysClaimed + 1;
+    const message = `🎁 Nhận quà Ngày ${nextDay}/7 Tân Thủ: +1,000 🪙 & +20 💎 Ngọc!`;
+    if (state.farmMode === 'cloud') {
+      void runCloud('rpc_claim_rookie_day', {}, () => message);
+      return;
+    }
     set({
       rookieDaysClaimed: nextDay,
+      rookieLastClaimOn: todayInVietnam(),
       gold: state.gold + 1000,
       gems: state.gems + 20,
-      toastMessage: `🎁 Nhận quà Ngày ${nextDay}/7 Tân Thủ: +1,000 🪙, +20 💎 Ngọc & Mảnh Ghép Chó Phú Quốc!`,
+      toastMessage: message,
     });
   },
 
@@ -1321,6 +1554,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
     set({
       gold: state.gold - totalCost,
+      marketListings: state.marketListings.filter((l) => l.id !== listing.id),
       visitingFriendName: listing.sellerName,
       inventory: {
         ...state.inventory,
@@ -1537,6 +1771,10 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   fastForwardTime: () => {
     const state = get();
+    if (state.farmMode === 'cloud') {
+      set({ toastMessage: '⏩ Tua nhanh chỉ dùng ở chế độ offline (server tính giờ thật).' });
+      return;
+    }
     const now = Date.now();
     set({
       tiles: state.tiles.map((t) => (t.itemId ? { ...t, matureAt: now - 1000 } : t)),
@@ -1547,4 +1785,18 @@ export const useGameStore = create<GameState>((set, get) => ({
         '⏩ [DEV CHEAT x60]: Toàn bộ cây/cá đã chín rộ, Độ bùn ao đạt 10/10, hồi đầy 50 ⚡ & 6 Nhân công thu +18 Nông sản vào Giỏ Lán Thợ!',
     });
   },
-}));
+      };
+    },
+    {
+      name: SAVE_STORAGE_KEY,
+      version: 1,
+      storage: createJSONStorage(() => localStorage),
+      // Chế độ online: server là nguồn chân lý → chỉ nhớ chế độ, không lưu tiến trình cục bộ.
+      partialize: (state): PersistedSave =>
+        state.farmMode === 'cloud'
+          ? { farmMode: 'cloud' }
+          : (Object.fromEntries(PERSISTED_KEYS.map((k) => [k, state[k]])) as PersistedSave),
+      migrate: (persisted) => persisted as PersistedSave,
+    }
+  )
+);

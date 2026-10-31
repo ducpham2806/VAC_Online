@@ -197,7 +197,9 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
   const handlePlayGuest = () => {
     const res = createGuestSession(guestCustomName);
     if (res.account) {
-      void ensureCloudGuestSession(res.account.playerName);
+      void ensureCloudGuestSession(res.account.playerName).then((ok) => {
+        if (ok) void useGameStore.getState().syncFarmFromServer();
+      });
       soundFX.playHarvestCoin();
       onAuthSuccess(res.account, true, false);
     }

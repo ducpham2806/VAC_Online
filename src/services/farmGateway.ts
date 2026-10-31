@@ -1,0 +1,152 @@
+import { FarmTileEntity, GenderType, RegionType } from '../data/types';
+import { getSupabaseClient } from './supabaseClient';
+
+/**
+ * Cầu nối tới các RPC nông trại (migration 0004). Ở chế độ online, mọi thao tác dính tới
+ * vàng / XP / kho đều đi qua đây và state client chỉ là bản sao ảnh chụp từ server.
+ */
+
+export type FarmMode = 'local' | 'cloud';
+
+export type FarmRpcName =
+  | 'rpc_get_my_farm'
+  | 'rpc_set_profile_basics'
+  | 'rpc_plant'
+  | 'rpc_water'
+  | 'rpc_apply_mud'
+  | 'rpc_harvest'
+  | 'rpc_sell_to_htx'
+  | 'rpc_dredge_pond'
+  | 'rpc_expand_land'
+  | 'rpc_claim_story_quest'
+  | 'rpc_claim_rookie_day'
+  | 'rpc_claim_account_bonus';
+
+interface SnapshotTile {
+  x: number;
+  y: number;
+  item_id: string;
+  planted_at: number;
+  mature_at: number;
+  watered: boolean;
+  mud_applied: boolean;
+  is_golden: boolean;
+  total_yield: number;
+  remaining_yield: number;
+}
+
+export interface FarmSnapshot {
+  server_now: number;
+  game_stage: number;
+  profile: {
+    username: string;
+    gender: GenderType;
+    region: RegionType;
+    level: number;
+    xp: number;
+    gold: number;
+    gems: number;
+    stamina: number;
+    max_stamina: number;
+    stamina_updated_at: number;
+    feng_shui_score: number;
+    neighbor_points: number;
+    wild_plots_unlocked: number;
+    pond_mud_counter: number;
+    rookie_days_claimed: number;
+    rookie_claimed_today: boolean;
+    account_bonus_claimed: boolean;
+    created_as_guest: boolean;
+  };
+  inventory: Record<string, number>;
+  tiles: SnapshotTile[];
+  quests: Record<string, 'EMP' | 'PRAG'>;
+}
+
+export type RpcResult = { ok: true; snapshot: FarmSnapshot } | { ok: false; message: string; missing?: boolean };
+
+function isSnapshot(value: unknown): value is FarmSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.server_now === 'number' && typeof v.profile === 'object' && Array.isArray(v.tiles);
+}
+
+/** Thông báo lỗi thân thiện từ lỗi Postgres (RAISE EXCEPTION trong RPC). */
+function friendlyError(message: string): string {
+  const clean = message.replace(/^.*?ERROR:\s*/i, '').trim();
+  return clean.startsWith('⚠️') || clean.startsWith('🔒') ? clean : `⚠️ ${clean}`;
+}
+
+/** Có phiên đăng nhập Supabase (tài khoản thật hoặc Khách ẩn danh) không. */
+export async function hasCloudSession(): Promise<boolean> {
+  const sb = getSupabaseClient();
+  if (!sb) return false;
+  try {
+    const { data } = await sb.auth.getSession();
+    return Boolean(data.session);
+  } catch {
+    return false;
+  }
+}
+
+export async function callFarmRpc(name: FarmRpcName, args: Record<string, unknown> = {}): Promise<RpcResult> {
+  const sb = getSupabaseClient();
+  if (!sb) return { ok: false, message: '⚠️ Chưa kết nối máy chủ.' };
+  try {
+    const { data, error } = await sb.rpc(name, args);
+    if (error) {
+      // PGRST202 / 42883: máy chủ chưa chạy migration 0004 → client tự chuyển sang chế độ offline.
+      const missing = error.code === 'PGRST202' || error.code === '42883';
+      return { ok: false, message: friendlyError(error.message), missing };
+    }
+    if (!isSnapshot(data)) return { ok: false, message: '⚠️ Máy chủ trả dữ liệu không hợp lệ.' };
+    return { ok: true, snapshot: data };
+  } catch {
+    return { ok: false, message: '⚠️ Mất kết nối máy chủ, vui lòng thử lại!' };
+  }
+}
+
+/** Lưới 12 ô cố định của FarmScene: 4 cột × 3 hàng (Vườn / Vườn cây / Ao). */
+export const GRID_COLS = 4;
+export const GRID_ROWS = 3;
+
+export function createEmptyTiles(): FarmTileEntity[] {
+  const list: FarmTileEntity[] = [];
+  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
+    const row = Math.floor(i / GRID_COLS);
+    list.push({
+      id: `TILE_${i + 1}`,
+      tileX: i % GRID_COLS,
+      tileY: row,
+      zoneType: row === 0 ? 'LAND' : row === 1 ? 'ORCHARD' : 'POND',
+      itemId: null,
+      plantedAt: null,
+      matureAt: null,
+      watered: false,
+      mudApplied: false,
+      isGolden: false,
+      totalYield: 0,
+      remainingYield: 0,
+    });
+  }
+  return list;
+}
+
+/** Ghép các ô có cây từ server vào lưới 12 ô. */
+export function tilesFromSnapshot(snapshot: FarmSnapshot): FarmTileEntity[] {
+  return createEmptyTiles().map((t) => {
+    const s = snapshot.tiles.find((e) => e.x === t.tileX && e.y === t.tileY);
+    if (!s) return t;
+    return {
+      ...t,
+      itemId: s.item_id,
+      plantedAt: s.planted_at,
+      matureAt: s.mature_at,
+      watered: s.watered,
+      mudApplied: s.mud_applied,
+      isGolden: s.is_golden,
+      totalYield: s.total_yield,
+      remainingYield: s.remaining_yield,
+    };
+  });
+}
