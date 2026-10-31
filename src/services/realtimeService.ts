@@ -122,7 +122,8 @@ class VACRealtimeService {
       return { ready: false, detail: 'Chưa khởi tạo Supabase client' };
     }
 
-    await supabase.rpc('rpc_sync_master_catalog', { p_items: GAME_CATALOG }).then(() => {});
+    // Không đồng bộ catalog từ client nữa: bảng master_catalog chỉ được ghi bằng
+    // supabase/seed/master_catalog_seed.sql (service_role) — xem migration 0003.
 
     const { data, error } = await supabase
       .from('market_listings')
@@ -166,13 +167,13 @@ class VACRealtimeService {
 
     const { data: gbData } = await supabase
       .from('farm_guestbook')
-      .select('id, visitor_name, message, created_at')
+      .select('id, host_name, visitor_name, message, created_at')
       .order('created_at', { ascending: false })
       .limit(10);
 
     const mappedGuestbook: GuestbookEntry[] = (gbData ?? []).map((g, idx) => ({
       id: String(g.id ?? `GB_${idx}`),
-      hostName: 'Tư Hậu Lập Nghiệp',
+      hostName: String(g.host_name ?? 'Điền Chủ'),
       visitorName: String(g.visitor_name ?? 'Khách Thăm Quê'),
       message: String(g.message ?? 'Trang trại đẹp quá!'),
       timestamp: new Date(String(g.created_at ?? new Date().toISOString())).toLocaleTimeString('vi-VN', {
@@ -192,31 +193,20 @@ class VACRealtimeService {
 
     return {
       ready: true,
-      detail: `✅ Đã kết nối 7 bảng PostgreSQL (${catalogStatus} • ${mappedListings.length} sạp chợ Cloud)!`,
+      detail: `✅ Đã kết nối Supabase (${catalogStatus} • ${mappedListings.length} sạp chợ Cloud)!`,
       cloudListings: mappedListings.length > 0 ? mappedListings : undefined,
       cloudGuestbook: mappedGuestbook.length > 0 ? mappedGuestbook : undefined,
     };
   }
 
+  /**
+   * Client KHÔNG còn quyền ghi master_catalog (migration 0003 chỉ cho service_role).
+   * Giữ hàm để không gãy luồng cũ: chỉ trả về hướng dẫn nạp seed phía server.
+   */
   async syncFullCatalogToSupabase(): Promise<{ ok: boolean; message: string }> {
-    if (!supabase) {
-      return { ok: false, message: 'Chưa kết nối Supabase Cloud!' };
-    }
-    const { data, error } = await supabase.rpc('rpc_sync_master_catalog', {
-      p_items: GAME_CATALOG,
-    });
-
-    if (error) {
-      return {
-        ok: false,
-        message: `Đã nạp ${GAME_CATALOG.length} thực thể vào Game! (Để lưu bảng master_catalog lên SQL Cloud, hãy chạy thêm file 0002_seed_full_master_data.sql trong Supabase SQL Editor)`,
-      };
-    }
-
-    const syncedCount = (data as { synced_count?: number } | null)?.synced_count ?? GAME_CATALOG.length;
     return {
-      ok: true,
-      message: `☁️ Đã đồng bộ thành công trọn bộ ${syncedCount} thực thể VAC Online lên bảng public.master_catalog trên Supabase Cloud!`,
+      ok: false,
+      message: `Danh mục ${GAME_CATALOG.length} thực thể được nạp lên máy chủ bằng file supabase/seed/master_catalog_seed.sql (chạy trong Supabase SQL Editor), không đẩy từ trình duyệt.`,
     };
   }
 
