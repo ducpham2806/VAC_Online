@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "agent-sprite-forge": {
+      "source": {
+        "source": "github",
+        "repo": "0x0funky/agent-sprite-forge"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "agent-sprite-forge@agent-sprite-forge": true
+  }
+}

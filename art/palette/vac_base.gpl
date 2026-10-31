@@ -1,0 +1,26 @@
+GIMP Palette
+Name: VAC Online base (05_MASTER_ART muc 1.1-1.2)
+Columns: 4
+#
+# 19 mau DA DUOC DINH NGHIA trong 05_MASTER_ART. Bang 64 mau day du CHUA duoc chot —
+# can PO/Art bo sung cac ramp sang/toi truoc khi khoa palette cho san xuat.
+# Cam #000000 (vien den). #FF00FF chi dung lam nen tach (chroma key), khong thuoc palette.
+ 61  35  20	#3D2314 Viền ấm — nâu đất nung (nhà gỗ, thân cây, nhân vật)
+ 27  59  43	#1B3B2B Viền xanh rừng đậm (tán lá, bờ ao)
+ 35  25  45	#23192D Tím than (bóng đổ)
+127 184   0	#7FB800 Bắc — Xanh Cốm
+200  90  50	#C85A32 Bắc — Đỏ Gạch Bát Tràng
+ 92 107 115	#5C6B73 Bắc — Xám Đá Ong
+244 167 185	#F4A7B9 Bắc — Hồng Đào
+245 183   0	#F5B700 Trung — Vàng Nắng/Hoa Mai
+ 94  75  86	#5E4B56 Trung — Tím Huế
+141  59  36	#8D3B24 Trung — Đất Đỏ Bazan
+ 46 196 182	#2EC4B6 Trung — Xanh Biển
+138 201  38	#8AC926 Nam — Xanh Lá Dừa
+201 158 103	#C99E67 Nam — Nâu Phù Sa
+255 183   3	#FFB703 Nam — Vàng Lúa Chín
+ 46 139 141	#2E8B8D Nam — Xanh Kênh Rạch
+155  93 229	#9B5DE5 Đột biến — Tím Thảo Dược
+255 209 102	#FFD166 Đột biến — Vàng Kim Tài Lộc
+241  91 181	#F15BB5 Võ đài — Hồng Sen
+214  40  40	#D62828 Võ đài — Đỏ Cờ Hội

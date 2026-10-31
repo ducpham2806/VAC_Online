@@ -68,7 +68,9 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
 
 ## 1.5. Trạng Thái Thực Tế & Agent/Skill Có Thật (đọc trước khi làm bất kỳ task nào)
 * **Hiện trạng code ≠ tài liệu.** Trước khi tin một con số trong `00 ➔ 16` (155 thực thể, 37 TC, 11 bảng, 7 RPC, `SocialPlazaScene`…), đối chiếu `17_PROJECT_AUDIT` mục A1 và Phụ lục 1.
-* **Blocker phải xử lý trước mọi tính năng mới (Sprint S0):** build lỗi import `getSupabaseClient` (`src/services/authService.ts:1`), không lưu tiến trình, kinh tế chạy ở client, RPC Supabase không xác thực `auth.uid()`, auth giả lưu mật khẩu thô. Chi tiết: `17` mục A3.
+* **Sprint S0 đã xong** (`17` Phần C): build chạy, có vitest + CI, auth chỉ qua Supabase, migration `0003` khóa RPC bằng `auth.uid()`, công cụ debug chỉ hiện ở DEV, dữ liệu `unlockWave` 5 Đợt. **Còn mở (S1):** chưa lưu tiến trình, kinh tế vẫn tính ở client, thu hoạch cộng tiền 2 lần.
+* **Kiểm tra bắt buộc trước khi bàn giao:** `npm run typecheck && npm test && npm run build` (CI chạy đúng 3 lệnh này). Bộ QC in-game `qcTestRunner.ts` chạy trong vitest — không còn mốc "37 TC".
+* **Agent riêng của dự án:** `.claude/agents/` — `vac-designer`, `vac-economy`, `vac-backend`, `vac-frontend`, `vac-art-pipeline`, `vac-qa`. Plugin `agent-sprite-forge` và hook cài thư viện khai báo trong `.claude/settings.json`.
 * **"17 AI Skills" là vai trò, không phải file skill.** Công cụ thật để thực thi (chi tiết `17` Phần D):
   * Thiết kế / kinh tế / backend / frontend / marketing → skill `agency-agents` + subagent `Explore` / `Plan` / `general-purpose`.
   * `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d` → plugin **`agent-sprite-forge`** (github.com/0x0funky/agent-sprite-forge), có bước hậu kỳ viền `#3D2314` + khóa palette 64 màu.

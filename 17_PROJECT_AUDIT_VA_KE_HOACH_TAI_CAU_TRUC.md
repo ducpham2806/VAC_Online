@@ -1,7 +1,7 @@
 # 17 — Kiểm toán dự án & Kế hoạch tái cấu trúc (Project Audit & Re-plan)
 
 **Dự án:** VAC Online — Hương Đồng Gió Nội
-**Phiên bản:** 1.0 — ngày kiểm toán 2026-10-31 (trên commit `05a3a6a`)
+**Phiên bản:** 1.1 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0)
 **Phạm vi:** Toàn bộ tài liệu `00 → 16`, `AGENTS.md`, `src/`, `supabase/migrations/`, `public/`, cấu hình build.
 **Vai trò của file này (RULE D0):** Đây là nguồn chân lý duy nhất về **hiện trạng thực tế** của code so với tài liệu thiết kế, và về **kế hoạch tái cấu trúc + cách dùng agent/skill thật**. Các file `00 → 16` vẫn là nguồn chân lý về *thiết kế đích*; chỗ nào lệch thì file này ghi rõ.
 **Bối cảnh team:** 1 người (PO kiêm dev) + AI agents.
@@ -107,6 +107,27 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 
 ---
 
+### C0. Kết quả Sprint S0 (đã xong)
+| Hạng mục | Trạng thái | Ghi chú |
+|---|---|---|
+| Build | ✅ | Sửa import `getSupabaseClient`, thêm `src/vite-env.d.ts`; `typecheck` + `build` pass |
+| Test + CI | ✅ | vitest (41 test): toàn vẹn catalog & 5 Đợt, CSV ↔ code, luật chợ `src/domain/market.ts`, auth, 25 QC case của `qcTestRunner.ts`, seed catalog. `.github/workflows/ci.yml` chạy typecheck → test → build |
+| 4 QC case fail | ✅ | TC-01.3a, TC-03.4a, TC-06.2a: kỳ vọng của test sai → sửa test. TC-02.4a: lỗi code (không có trần 25 khu) → thêm `MAX_WILD_PLOTS` |
+| Dữ liệu 5 Đợt | ✅ | `unlockWave` cho 131 mục (81 loài V-A-C + pet, xưởng, món, đồ bảo hộ, gia nhân); lũy kế 23/45/63/76/81 được test khóa; CSV thêm cột `Unlock_Wave` |
+| Quy ước số thực thể | ✅ | `GAME_CATALOG` là nguồn chuẩn (166 mục). CSV `04` có 146 dòng (thiếu 8 `MAC_` + 12 `FASH_`); test bắt buộc mọi ID trong CSV phải có trong code |
+| Auth | ✅ | Chỉ Supabase Auth; xóa kho mật khẩu thô + OTP khỏi localStorage; đăng nhập bằng email; Khách offline + phiên ẩn danh Supabase |
+| Bảo mật DB | ✅ | `0003_security_hardening.sql` (additive); `0002` chạy lại không còn xóa dữ liệu; seed catalog phía server `supabase/seed/master_catalog_seed.sql` (`npm run seed:catalog`). Đã chạy thử trên Postgres 16 cục bộ với schema `auth` giả lập |
+| Debug UI | ✅ | ⏩ x60, QC, đẩy catalog, form cấu hình Supabase chỉ hiện ở `npm run dev` (đã kiểm bằng Playwright) |
+| Agent / skill / art | ✅ | `.claude/agents/vac-*` (6 agent), `.claude/settings.json` (plugin `agent-sprite-forge` + SessionStart hook), `art/palette/vac_base.gpl`, `art/prompts/`, `tools/art/recolor_outline.py` |
+
+**Việc PO cần làm trên Supabase:** chạy `0003` rồi `supabase/seed/master_catalog_seed.sql` trong SQL Editor; bật Anonymous Sign-ins; thêm `{{ .Token }}` vào email template Reset Password; đặt `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` trên Vercel nếu muốn dùng project khác.
+
+**Còn mở, chuyển sang S1:** lưu tiến trình (`persist`), kinh tế lên server, thu hoạch cộng tiền 2 lần, khóa Khay giống theo Đợt, tách store/App, rò listener ở `FarmScene`, đăng chợ nhận tiền ngay.
+
+**Phát hiện thêm:** `05_MASTER_ART` chỉ định nghĩa **19 màu** (16 màu 3 miền/đột biến + 3 màu viền), chưa phải bảng 64 màu — cần PO/Art chốt trước khi khóa palette sản xuất.
+
+---
+
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
 
 ### D1. Ánh xạ "17 Skills" sang công cụ có thật trong Claude Code
@@ -192,21 +213,21 @@ Thêm SessionStart hook chạy `npm ci` để session cloud luôn chạy đượ
 
 ---
 
-## Phụ lục 1 — Trạng thái thực thi 52 Module (tại commit `05a3a6a`)
+## Phụ lục 1 — Trạng thái thực thi 52 Module (cập nhật sau Sprint S0)
 Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sai phần quan trọng; **Stub** = 1 nút thưởng cố định, chưa có cơ chế; **Missing** = chưa có.
 
 | Epic | Module | Trạng thái | Ghi chú |
 |---|---|---|---|
-| 01 | M01.0 Splash + Auth 4 tab | Partial | UI có; auth giả (B5) |
+| 01 | M01.0 Splash + Auth 4 tab | Partial | Auth thật qua Supabase (S0); chưa lưu tiến trình |
 | 01 | M01.1 Viewport 2-Thumb Landscape | Partial | Có cảnh báo dọc, fullscreen |
 | 01 | M01.2 Pan/Zoom, Tap vs Drag | Partial | Có drag; leak subscription |
-| 01 | M01.3 Catalog + Supabase sync | Partial | 166 mục; sync từ client là lỗ hổng (B4) |
+| 01 | M01.3 Catalog + Supabase sync | Done | 166 mục, có `unlockWave`; seed phía server, client không ghi được (S0) |
 | 01 | M01.4 Realtime hub | Partial | Chat/presence chạy; payload không xác thực |
 | 02 | M02.1 Đăng ký + chọn miền | Partial | Chỉ buff miền Bắc |
 | 02 | M02.2 Năng lượng Hybrid | Partial | Không tự hồi theo thời gian |
 | 02 | M02.3 Thời tiết động | Partial | Chu kỳ thủ công |
-| 02 | M02.4 Khai hoang 25 khu | Partial | Không có trần 25 |
-| 03 | M03.1 Khay giống + khóa 5 Đợt | Partial | Không khóa Đợt |
+| 02 | M02.4 Khai hoang 25 khu | Partial | Có trần 25 (S0); vẫn tính ở client |
+| 03 | M03.1 Khay giống + khóa 5 Đợt | Partial | Dữ liệu `unlockWave` có (S0); UI chưa khóa theo Đợt (S1) |
 | 03 | M03.2 Tưới giếng −15% | Partial | Client-side |
 | 03 | M03.3 Ao + vét bùn | Partial | Client-side |
 | 03 | M03.4 Phù sa + Hoàng Kim x3 | Partial | Thu hoạch cộng tiền 2 lần |
