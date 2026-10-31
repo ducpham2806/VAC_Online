@@ -48,6 +48,21 @@ flowchart LR
 
 ---
 
+### 2.X. Công Cụ Thực Thi Thật: Plugin `agent-sprite-forge` (bổ sung theo `17_PROJECT_AUDIT` Phần D2)
+Các skill `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d` ở trên được hiện thực bằng plugin **`agent-sprite-forge`** (https://github.com/0x0funky/agent-sprite-forge, MIT). Đầu ra dùng cho Phaser: Aseprite JSON + PNG (`this.load.aseprite`), PNG atlas + `animation.json`, Tiled JSON (`--embedded-variant`, `this.load.tilemapTiledJSON`).
+
+Plugin **chưa tự đáp ứng** đủ chuẩn của file này, nên bắt buộc thêm:
+1. **Viền ấm `#3D2314`:** chạy hậu kỳ `tools/art/recolor_outline.py`; QC Gate 2 kiểm không còn pixel `#000000`.
+2. **Bảng 64 màu:** palette dự án `art/palette/vac64.gpl` + `palette_tool.py lock / apply` (chế độ `--finish pixel`).
+3. **Góc `3/4 Top-Down Oblique`:** ghi rõ trong prompt + ảnh tham chiếu style; prompt mẫu tại `art/prompts/`.
+4. **Kích thước:** `--logical-pixel` / `--pixel-scale` cố định: nhân vật `48x64`, ô đất `168x80`, icon `32x32`. Nền tách `#FF00FF`.
+5. **API key** tạo ảnh/video đặt trong secret môi trường, không commit. `video2dsprite` chỉ dùng cho nhân vật chính & gia nhân.
+6. **Môi trường:** Python 3.10+ (numpy, Pillow, scipy), ffmpeg 5.1+, Node 22.
+
+Cài đặt, cấu trúc thư mục `art/` và quy trình mẫu cho Đợt 1: xem `17_PROJECT_AUDIT` Phần D2 (không chép lại ở đây theo `RULE D0`).
+
+---
+
 ## PHẦN 3: BẢNG MA TRẬN SẢN XUẤT ASSET, ANIMATION & VFX THEO 6 GIAI ĐOẠN (`6-STAGE ASSET & VFX PRODUCTION PLAN`)
 
 Thay vì vẽ dồn toàn bộ 155 thực thể ngay từ đầu, kế hoạch sản xuất Asset, Animation và VFX được chia nhỏ khớp 100% với **5 Đợt Mở Khóa Nông – Thủy – Hải Sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** và **Sảnh Chung Giai Đoạn 6**:

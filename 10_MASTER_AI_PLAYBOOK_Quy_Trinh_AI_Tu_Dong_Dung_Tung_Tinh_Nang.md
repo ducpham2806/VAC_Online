@@ -47,6 +47,25 @@ flowchart TD
 
 ---
 
+### 1.2. Ánh Xạ 17 Skills Sang Công Cụ Có Thật (bổ sung theo `17_PROJECT_AUDIT` Phần D)
+Các `@skill` ở bảng 1.1 là **vai trò**; trong repo chưa có file skill nào và `lookup_skills` không phải công cụ thật. Khi thực thi bằng Claude Code, dùng:
+
+| Skill (vai trò) | Công cụ thật |
+| :--- | :--- |
+| `@game-designer`, `@narrative-designer`, `@level-designer` | Skill `agency-agents` (persona tương ứng) + subagent `Plan` |
+| `@economy-designer` | `agency-agents` (economy-designer) + skill `xlsx` / `dataviz` mô phỏng Sources/Sinks từ CSV `04` |
+| `@backend-architect` | `agency-agents` (backend-architect) + skill `security-review` |
+| `@godot-multiplayer-engineer` | Hiểu là `@realtime-netcode` (Phaser + Supabase Realtime); persona multiplayer của `agency-agents` |
+| `@frontend-developer`, `@ui-designer` | `agency-agents` + skill `run` (Playwright chụp màn hình landscape) |
+| `@technical-artist`, `@game-audio-engineer` | `agency-agents` + subagent `general-purpose` |
+| `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d` | Plugin **`agent-sprite-forge`** (xem `05` mục 2.X) |
+| `@code-reviewer` | Skill `code-review` + `security-review` + `simplify` + CI |
+| `@growth-hacker`, `@content-creator` | `agency-agents` (marketing) + Artifact |
+
+Agent riêng của dự án (`.claude/agents/vac-*`) và vòng lặp 6 bước rút gọn cho 1 người + AI: xem `17` Phần D3–D4.
+
+---
+
 ## PHẦN 2: QUY TRÌNH 6 BƯỚC KHÉP KÍN CÓ TÍCH HỢP SKILL, ĐỐI CHIẾU `RULE D0` & CẢNH BÁO TÁC ĐỘNG SỚM `RULE D1` (`6-STEP SKILL-DRIVEN WORKFLOW`)
 
 1. **📐 Bước 1 — Đối Chiếu Tài Liệu (`RULE D0`), Đánh Giá Tác Động Chéo Sớm (`RULE D1`), Tự Nhận Diện Skill & Chốt Đặc Tả (`@game-designer`, `@economy-designer`, `@narrative-designer`, `@level-designer`, `@backend-architect`):**

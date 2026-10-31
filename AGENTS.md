@@ -8,7 +8,7 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
 
 ### 🔹 `RULE D0`: ĐỐI CHIẾU CHÉO & TRIỆT TIÊU TRÙNG LẶP 100% (`Cross-Document Reconciliation & Zero Redundancy`)
 Ở **TẤT CẢ CÁC TASK** (dù là thêm tính năng, chỉnh sửa thiết kế, cân bằng kinh tế hay viết code), AI **BẮT BUỘC** thực hiện quy trình kiểm toán 3 bước sau:
-1. **Đối chiếu chéo toàn bộ tài liệu hiện có (`Cross-Document Reconciliation`):** Rà soát toàn bộ các file chuẩn (`00` ➔ `16` và `AGENTS.md`) để đảm bảo mọi con số (**6 Giai đoạn, 11 Epics, 52 Modules `M01.0 ➔ M11.6`, 155 Thực thể gốc với 81 loài V-A-C mở khóa theo 5 Đợt `23 ➔ 45 ➔ 63 ➔ 76 ➔ 81`, 17 AI Skills, 37 Test Cases**) và tên thực thể khớp nhau 100%, không để sót bất kỳ tham chiếu cũ nào.
+1. **Đối chiếu chéo toàn bộ tài liệu hiện có (`Cross-Document Reconciliation`):** Rà soát toàn bộ các file chuẩn (`00` ➔ `17` và `AGENTS.md`) để đảm bảo mọi con số (**6 Giai đoạn, 11 Epics, 52 Modules `M01.0 ➔ M11.6`, 155 Thực thể gốc với 81 loài V-A-C mở khóa theo 5 Đợt `23 ➔ 45 ➔ 63 ➔ 76 ➔ 81`, 17 AI Skills, 37 Test Cases**) và tên thực thể khớp nhau 100%, không để sót bất kỳ tham chiếu cũ nào.
 2. **Loại bỏ triệt để phần trùng lặp, dư thừa hoặc không cần thiết (`Zero Redundancy & Pruning`):**
    * Khi thêm tính năng/sự kiện mới có giao thoa với phần cũ, bắt buộc **hợp nhất (Merge) vào cùng một hệ thống duy nhất** và xóa bỏ phần rời rạc cũ (VD: hợp nhất mảnh cổ vật cũ vào `FEAT_03: 12 Kỷ Vật Tuổi Thơ 8x–9x`; phân tách rõ `EVENT_03: Đua Trâu Vàng chỉ số nông trại` với `M11.2..M11.4: Võ Đài PK & Loạn Chiến điều khiển thời gian thực`).
    * Tuân thủ nguyên tắc **Single Source of Truth (Một Nguồn Chân Lý Duy Nhất)**:
@@ -19,7 +19,7 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
      * Sơ đồ luồng & Wireframe màn hình $\rightarrow$ Chỉ viết đầy đủ tại `06_MASTER_UI_UX` & `07_INTERACTIVE_WIREFRAME_VIEWER.html`.
      * Bản đồ lộ trình tổng thể 6 Giai đoạn, 4 Cổng kiểm soát & Lịch LiveOps $\rightarrow$ Chỉ viết tại `08_MASTER_PLAN` & `10_MASTER_AI_PLAYBOOK`.
      * Hồ sơ triển khai chi tiết từng Giai đoạn (What/How từng Module, Phân công 6 Bộ phận, Prompt giao việc 100% cho AI kèm Skills & Checklist QC) $\rightarrow$ Chỉ viết tại bộ 6 file **`11_PLAN_GIAI_DOAN_1` ➔ `16_PLAN_GIAI_DOAN_6`**.
-3. **Lưu trữ sạch sẽ (`Clean Root Directory`):** Mọi file tài liệu rời rạc đã được gộp phải chuyển vào `docs_archive_merged/`, giữ thư mục gốc gọn nhẹ đúng bộ file `00 ➔ 16`.
+3. **Lưu trữ sạch sẽ (`Clean Root Directory`):** Mọi file tài liệu rời rạc đã được gộp phải chuyển vào `docs_archive_merged/`, giữ thư mục gốc gọn nhẹ đúng bộ file `00 ➔ 17`.
 
 ---
 
@@ -36,16 +36,16 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
    * Triển khai tính năng mới **tuyệt đối không được sửa đổi phá vỡ chữ ký hàm (function signatures), state hoặc luồng hoạt động của các tính năng đã chạy ổn định**; bắt buộc vượt qua `npx tsc --noEmit` (`0 errors`) và toàn bộ **37 Test Cases tự động** trong `qcTestRunner.ts`.
 4. **Đồng Nhất & Bảo Toàn Tuyệt Đối Cơ Sở Dữ Liệu (`Database Preservation & Additive-Only Schema`):**
    * Mọi cập nhật lên **11 Bảng PostgreSQL + 7 Hàm Atomic RPC** trên Supabase (`supabase/migrations/*.sql`) cũng như cấu trúc lưu trữ `localStorage` bắt buộc tuân theo nguyên tắc **Mở Rộng Không Phá Hủy (`Additive-Only & Backward-Compatible Migrations`)**: chỉ dùng `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS ... DEFAULT ...`, `CREATE OR REPLACE FUNCTION`.
-   * **CẤM TUYỆT ĐỐI** các lệnh làm mất dữ liệu hoặc gãy tương thích ngược như `DROP TABLE`, `DROP COLUMN`, đổi tên cột đang dùng, hoặc thay đổi `ID` của **155 thực thể gốc** (`CROP_`, `TREE_`, `ANI_`, `AQUA_`, `DISH_`, `WORK_`, `MAC_`, `PET_`, `FASH_`, `DEC_`, `ITEM_`, `CRAFT_`).
+   * **CẤM TUYỆT ĐỐI** các lệnh làm mất dữ liệu hoặc gãy tương thích ngược như `DROP TABLE`, `DROP COLUMN`, đổi tên cột đang dùng, hoặc thay đổi `ID` của **các thực thể gốc trong `GAME_CATALOG`** (prefix thực tế trong code: `CROP_`, `ANI_`, `AQUA_`, `PROD_`, `MAC_`, `WORK_`, `PET_`, `FASH_`, `BM_`, `NEW_`, `CRAFT_`, `IAP_`, `DEF_`, `TRAP_` — hiện có 166 mục trong code / 146 dòng trong CSV `04`, xem `17_PROJECT_AUDIT` mục A1).
 5. **Cơ Chế Cảnh Báo Tác Động Chéo Ngay Từ Bước 1 (`Mandatory Early Impact Alert at Design/Planning Stage`):**
    * Ngay tại **Bước 1 (Lên Thiết Kế & Kế Hoạch)** của bất kỳ tính năng hay chỉnh sửa nào, trước khi viết code hay vẽ asset, AI / Dev **BẮT BUỘC** phải chạy bước kiểm tra và xuất bảng **`[🔍 ĐÁNH GIÁ TÁC ĐỘNG CHÉO - RULE D1 IMPACT REPORT]`** trên 5 khía cạnh: *(1) Core Gameplay VAC, (2) Cân bằng Kinh tế, (3) Art Style & UI, (4) Code Modules cũ, (5) Database Schema*.
    * **Nếu phát hiện tính năng mới có bất kỳ ảnh hưởng hay thay đổi nào chạm tới tính năng khác, Core Gameplay hoặc Database, AI BẮT BUỘC PHẢI THÔNG BÁO RÕ RÀNG NGAY TỪ BƯỚC LÊN THIẾT KẾ / KẾ HOẠCH (nêu rõ mức độ ảnh hưởng + phương án cô lập an toàn) và CHỜ CHỦ DỰ ÁN (PO) PHÊ DUYỆT** trước khi được phép chuyển sang Bước 2–3–4!
 
 ---
 
-## 1. Bản Đồ Bộ Tài Liệu Chuẩn Duy Nhất (`00` ➔ `16` — Đã Đồng Bộ v9.3)
+## 1. Bản Đồ Bộ Tài Liệu Chuẩn Duy Nhất (`00` ➔ `17` — Đã Đồng Bộ v9.3)
 * **11 File Master Cốt Lõi (`00` ➔ `10`):**
-  * `00_MASTER_BIBLE_Tong_Hop_Tai_Lieu_Chuan_Trien_Khai_PO_Dev_Art_UI_QC.md` *(v9.3)*: Sổ tay tổng chỉ huy, điều hướng tài liệu `00 ➔ 16`, bộ đôi quy tắc tối thượng `RULE D0` + `RULE D1` & ánh xạ 6 Bộ phận với **17 AI Skills**.
+  * `00_MASTER_BIBLE_Tong_Hop_Tai_Lieu_Chuan_Trien_Khai_PO_Dev_Art_UI_QC.md` *(v9.3)*: Sổ tay tổng chỉ huy, điều hướng tài liệu `00 ➔ 17`, bộ đôi quy tắc tối thượng `RULE D0` + `RULE D1` & ánh xạ 6 Bộ phận với **17 AI Skills**.
   * `01_MASTER_GDD_Gameplay_Nong_Trai_3_Mien_Va_Cong_Dong.md` *(v8.0)*: Gameplay Vườn – Ao – Chuồng (**155 thực thể**, mở khóa **81 loài V-A-C qua 5 Đợt `23 ➔ 45 ➔ 63 ➔ 76 ➔ 81`**), 3 Miền, 6 Gia nhân, 6 Sự kiện Lễ hội & **Chương 6: Sảnh Chung, Võ Đài PK 1v1 / 3v3 / Loạn Chiến 8–12P & Máy Thùng Hyper-Casual**.
   * `02_MASTER_ECONOMY_Can_Bang_Kinh_Te_IAP_Va_Chong_Lam_Phat.md` *(v8.0)*: Toán học kinh tế 5 Đợt, **7 Van chống lạm phát**, đồng **`🏮 Xu Hội Làng`** & Bảng `Sources vs. Sinks` 6 Giai đoạn.
   * `03_MASTER_TECH_Kien_Truc_Server_Realtime_Webgame_PWA.md` *(v7.0)*: Kiến trúc Phaser 3 + React 19 + 11 Bảng Supabase SQL + 7 Hàm Atomic RPC, **Phân kênh Sảnh Chung `30 CCU/Shard` + `10Hz LERP`**, chuẩn **`IHyperCasualCartridge`** & **14 Quy tắc Kỹ thuật (`RULE C1 ➔ C14`)**.
@@ -61,8 +61,20 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
   * `14_PLAN_GIAI_DOAN_4_v1.8_Hoi_Lang_Va_Thoi_Trang.md` *(v1.1)*: Kế hoạch thực thi Giai đoạn 4 (`12 Ngày` • `M08.1 ➔ M09.3` • Đợt 4: `+13 ➔ 76/81 loài` + Gói Asset/Paper-Doll/VFX Đợt 4 • Chương 8–9).
   * `15_PLAN_GIAI_DOAN_5_v2.0_Le_Cuoi_Va_Homestay.md` *(v1.1)*: Kế hoạch thực thi Giai đoạn 5 (`12 Ngày` • `M10.1 ➔ M10.4` • Đợt 5: `+5 ➔ 81/81 loài` + Gói Asset/Anim/VFX Đợt 5 • Chương 10).
   * `16_PLAN_GIAI_DOAN_6_v3.0_Sanh_Chung_PK_Va_Hyper_Casual.md` *(v1.1)*: Kế hoạch thực thi Giai đoạn 6 (`14 Ngày` • `M11.1 ➔ M11.6` • Tilemap Sảnh Chung `48x32`, PK 1v1/3v3, Loạn Chiến 8–12P & `IHyperCasualCartridge`).
+* **File Kiểm Toán Hiện Trạng & Tái Cấu Trúc (`17`):**
+  * `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md` *(v1.0)*: **Nguồn chân lý về hiện trạng thực tế** của code so với tài liệu (`00 ➔ 16` mô tả thiết kế đích), danh sách Blocker, kế hoạch Sprint `S0 ➔ S12` (1 người + AI), ánh xạ 17 AI Skills sang agent/skill thật & bảng trạng thái 52 Modules.
 
 ---
+
+## 1.5. Trạng Thái Thực Tế & Agent/Skill Có Thật (đọc trước khi làm bất kỳ task nào)
+* **Hiện trạng code ≠ tài liệu.** Trước khi tin một con số trong `00 ➔ 16` (155 thực thể, 37 TC, 11 bảng, 7 RPC, `SocialPlazaScene`…), đối chiếu `17_PROJECT_AUDIT` mục A1 và Phụ lục 1.
+* **Blocker phải xử lý trước mọi tính năng mới (Sprint S0):** build lỗi import `getSupabaseClient` (`src/services/authService.ts:1`), không lưu tiến trình, kinh tế chạy ở client, RPC Supabase không xác thực `auth.uid()`, auth giả lưu mật khẩu thô. Chi tiết: `17` mục A3.
+* **"17 AI Skills" là vai trò, không phải file skill.** Công cụ thật để thực thi (chi tiết `17` Phần D):
+  * Thiết kế / kinh tế / backend / frontend / marketing → skill `agency-agents` + subagent `Explore` / `Plan` / `general-purpose`.
+  * `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d` → plugin **`agent-sprite-forge`** (github.com/0x0funky/agent-sprite-forge), có bước hậu kỳ viền `#3D2314` + khóa palette 64 màu.
+  * `@code-reviewer` → skill `code-review` + `security-review` + `simplify` + CI.
+  * `@godot-multiplayer-engineer` → hiểu là `@realtime-netcode` (dự án dùng Phaser + Supabase).
+* **Impact report rút gọn (5 dòng)** vẫn bắt buộc ở Bước 1; chỉ **dừng chờ PO** khi đụng Database, kinh tế hoặc core loop VAC.
 
 ## 2. Quy Trình 6 Bước Khép Kín Kèm Tự Nhận Diện Skill & Bảo Toàn Hệ Thống (`RULE D0 + RULE D1 Loop`)
 Khi được yêu cầu làm một tính năng (`Module Mxx.y` từ `M01.0` đến `M11.6` hoặc tính năng mới), AI **BẮT BUỘC** tự động nhận diện và kích hoạt các Skill liên quan theo từng bước trong `10_MASTER_AI_PLAYBOOK`:

@@ -7,6 +7,8 @@
 
 ---
 
+> **Lưu ý hiện trạng (2026-10-31):** Lộ trình 6 giai đoạn dưới đây là **thiết kế đích**. Kiểm toán thực tế (`17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md`) cho thấy code mới ở mức prototype và có Blocker về build, lưu tiến trình và bảo mật Supabase. **Sprint S0 (Ổn định nền móng) là điều kiện tiên quyết trước Giai đoạn 1.** Lịch sprint thực tế cho team 1 người + AI (`S0 → S12`, GĐ6 sau soft launch) nằm tại `17` Phần C; số ngày ở bảng dưới chỉ là định mức thiết kế ban đầu.
+
 ## PHẦN 1: BẢN ĐỒ LỘ TRÌNH 6 GIAI ĐOẠN ĐỒNG NHẤT, PHÂN BỔ 5 ĐỢT NÔNG – THỦY – HẢI SẢN & ĐỊNH MỨC SẢN XUẤT ASSET / ANIMATION / VFX (`6-STAGE UNIFIED ROADMAP & ASSET ROLLOUT`)
 
 Thay vì đổ dồn toàn bộ 81 loài trồng & nuôi vào Giai đoạn 1 gây ngợp cho người chơi và quá tải khối lượng sản xuất Đồ họa, hệ sinh thái **81 loài Vườn – Ao – Chuồng (+5 Thú cưng), 8 Xưởng chế biến, 27 Món ăn, 6 Gia nhân cùng toàn bộ Sprite, Animation (`8–12 frames`), Tilemap và Particle VFX** được **chia nhỏ thành 6 Giai Đoạn đồng bộ 100%** như sau:
