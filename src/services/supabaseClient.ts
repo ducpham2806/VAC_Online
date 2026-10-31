@@ -40,3 +40,8 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
       },
     })
   : null;
+
+/** Trả về Supabase client dùng chung, hoặc null khi chưa cấu hình (chế độ Khách offline). */
+export function getSupabaseClient(): SupabaseClient | null {
+  return supabase;
+}
