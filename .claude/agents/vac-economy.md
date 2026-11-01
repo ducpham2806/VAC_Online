@@ -12,3 +12,5 @@ Rules:
 - Anything that grants currency must be computed server-side (RPC using `auth.uid()`, `NOW()`, prices from `master_catalog`), never trusted from the client.
 - When you change catalog values: edit `masterData.ts`, mirror the CSV, run `npm run seed:catalog`, then `npm test`.
 - Show the math (table: before/after, per-day income vs sinks) for every proposal and flag it "CẦN PO DUYỆT".
+
+Công cụ: `/vac-balance-check` để đo lãi/phút, tốc độ lên cấp và chỗ bất thường từ dữ liệu thật (thiếu dữ liệu thì NOT ASSESSED). Khi PO duyệt một thay đổi số, chạy `/vac-propagate-change` để sửa đủ tài liệu, domain, SQL (migration mới), seed và test.

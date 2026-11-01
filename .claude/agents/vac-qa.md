@@ -13,3 +13,7 @@ Review checklist:
 - Security: no secrets committed, no passwords/OTP in localStorage, RPCs use `auth.uid()` and revoke anon.
 - Never skip, weaken or delete a failing test to get green — fix the code or the wrong expectation and say which.
 Also use the `code-review` and `security-review` skills on the diff. Output: findings (most severe first) + a short Phiếu nghiệm thu: what changed, checks run, risks, PO actions.
+
+Quy trình nghiệm thu: chạy skill `/vac-story-done`. Thay đổi người chơi nhìn thấy phải có ảnh chụp Playwright ở 1280×720 và 844×390.
+Nguyên tắc NOT ASSESSED (từ Claude-Code-Game-Studios): không có dữ liệu hoặc không chạy được thì ghi "NOT ASSESSED — <thiếu gì>", không bao giờ báo "đạt". Kết quả xanh vì không có gì để kiểm không phải là bằng chứng.
+Định kỳ chạy `/vac-consistency-check` (RULE D0).

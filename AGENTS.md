@@ -74,6 +74,10 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
   * Có 2 chế độ online/offline. Giai đoạn đang mở do `src/config/features.ts` quyết định.
   * **Supabase thật đã chạy `0001` → `0005` và 2 seed (2026-11-01), smoke test đạt.** Thay đổi DB mới phải đi qua migration `NNNN_*.sql` kèm `npm run test:sql`.
 * **Kiểm tra bắt buộc trước khi bàn giao:** `npm run typecheck && npm test && npm run build`, cùng `npm run test:sql` nếu có đụng tới `supabase/`. CI chạy đủ cả 4 lệnh. Bộ QC in-game `qcTestRunner.ts` chạy trong vitest — không còn mốc "37 TC".
+* **Skill, rule và hook của dự án** (lấy chọn lọc từ Claude-Code-Game-Studios, `17` mục D5):
+  * Skill: `/vac-consistency-check`, `/vac-balance-check`, `/vac-propagate-change`, `/vac-story-done`, `/vac-scope-check`, `/vac-asset-audit`.
+  * Rule theo đường dẫn trong `.claude/rules/`, tự nạp khi sửa file khớp đường dẫn.
+  * Hook `read-guard` (tài liệu > 30 KB phải đọc theo đoạn) và `secret-guard` (chặn commit lộ khóa).
 * **Agent riêng của dự án:** `.claude/agents/` — `vac-designer`, `vac-economy`, `vac-backend`, `vac-frontend`, `vac-art-pipeline`, `vac-qa`. Plugin `agent-sprite-forge` và hook cài thư viện khai báo trong `.claude/settings.json`.
 * **"17 AI Skills" là vai trò, không phải file skill.** Công cụ thật để thực thi (chi tiết `17` Phần D):
   * Thiết kế / kinh tế / backend / frontend / marketing → skill `agency-agents` + subagent `Explore` / `Plan` / `general-purpose`.

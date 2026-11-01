@@ -12,3 +12,4 @@ Rules:
 - Use IDs that exist in `src/data/masterData.ts` (`GAME_CATALOG`); never invent new prefixes or renumber.
 - Output: (1) short spec — what the player does, states, edge cases; (2) RULE D1 impact report, one line each for Core gameplay / Economy / Art & UI / Existing code / Database; (3) open questions. If any line touches DB, economy or the core loop, say "CẦN PO DUYỆT" and stop.
 - Where docs disagree, `01`/`02`/`04` win over `13`–`16`; list the conflict instead of guessing.
+- Yêu cầu mới giữa sprint: chạy `/vac-scope-check` trước, để PO quyết nhận, cắt hay hoãn.

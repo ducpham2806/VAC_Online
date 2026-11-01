@@ -236,6 +236,33 @@ Thêm SessionStart hook chạy `npm ci` để session cloud luôn chạy đượ
 5. `code-review` + `security-review` + CI xanh.
 6. PR kèm Phiếu nghiệm thu → PO duyệt merge.
 
+### D5. Áp dụng Claude-Code-Game-Studios (CCGS) — 2026-11-01
+Repo `Donchitos/Claude-Code-Game-Studios` (MIT) gồm 49 agent, 74 skill, 18 hook, 14 rule và 62 template.
+**Kết luận: không cài nguyên bộ, chỉ lấy chọn lọc rồi viết lại.** Nguồn ghi ở `.claude/THIRD_PARTY.md`.
+
+| Phần của CCGS | Quyết định | Lý do |
+|---|---|---|
+| 49 agent phân tầng (director → lead → specialist) | ❌ Không lấy | Thừa cho 1 người + AI. Giữ 6 agent `vac-*`, chỉ bổ sung vào prompt |
+| Agent / rule cho Godot, Unity, Unreal | ❌ | Dự án dùng Phaser + React + Supabase |
+| `project.yaml`, `design/` GDD, registry, 62 template | ❌ | Sẽ thành hệ tài liệu thứ 2, trái RULE D0. Bộ `00→17` đã là nguồn chuẩn |
+| Chế độ "rigor" + 30 tài liệu trước khi code | ❌ | Chính README của CCGS thừa nhận build tối giản được đánh giá tốt hơn build nhiều tài liệu. Khớp lời khuyên B2 |
+| Rule theo đường dẫn | ✅ 7 rule trong `.claude/rules/` | domain, supabase, client-network, ui, data, tests, docs. Tự nạp khi sửa file khớp đường dẫn |
+| Skill quy trình | ✅ 6 skill trong `.claude/skills/` | Xem bảng dưới |
+| Hook chặn đọc nguyên file tài liệu lớn | ✅ `read-guard` | File > 30 KB thì bắt đọc theo đoạn và trả về mục lục heading. Tiết kiệm context |
+| Hook kiểm tra trước khi commit | ✅ chuyển thành `secret-guard` | Chặn commit có token Supabase / service key / `.env` |
+| Nguyên tắc "NOT ASSESSED — NO DATA" | ✅ | Có trong mọi skill kiểm tra và agent `vac-qa`. Không bao giờ báo "đạt" khi không có dữ liệu |
+| `bug-report`, `playtest-report`, `patch-notes`, `release-checklist` | ⏳ Để S3+ | Cần khi có closed beta / phát hành |
+
+**Skill dùng hằng ngày:**
+| Lệnh | Khi nào dùng | Agent |
+|---|---|---|
+| `/vac-consistency-check` | Sau khi sửa tài liệu; trước khi bàn giao sprint | `vac-qa` |
+| `/vac-balance-check` | Trước khi đổi giá/thời gian/XP hoặc mở Đợt mới | `vac-economy` |
+| `/vac-propagate-change` | PO duyệt đổi 1 luật hoặc 1 con số: sửa đủ tài liệu, domain, SQL, seed và test | `vac-economy`, `vac-backend` |
+| `/vac-story-done` | Trước khi báo "xong": 4 lệnh kiểm tra, ảnh chụp, file 17, Phiếu nghiệm thu | `vac-qa` |
+| `/vac-scope-check` | Có yêu cầu mới giữa sprint | `vac-designer` |
+| `/vac-asset-audit` | Sau mỗi lô sprite | `vac-art-pipeline` |
+
 ---
 
 ## PHẦN E — BACKLOG SỬA TÀI LIỆU (chưa làm ở bản 1.0 này)

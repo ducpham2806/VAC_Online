@@ -13,3 +13,4 @@ Rules:
 - Always run `python3 tools/art/recolor_outline.py <png> --out <png>` then `--check`; no `#000000` pixels may remain (warm outline `#3D2314`).
 - Sources go to `art/source/<wave>/<entity_id>/`; only approved atlases go to `public/assets/atlas/`. Use video2dsprite only for main characters/workers (cost).
 - Prioritise by unlock wave (Wave 1 = 23 species first).
+- Sau mỗi lô asset: chạy `/vac-asset-audit` (viền, kích thước, nền, palette). Chưa có file thì báo NOT ASSESSED.

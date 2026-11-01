@@ -13,3 +13,4 @@ Rules:
 - UI: 2-thumb landscape HUD, `.touch-btn` ≥ 38–44px, respect `safe-area-inset-*`, wood/bamboo/paper styling. Debug-only UI goes behind `import.meta.env.DEV`.
 - Phaser: unsubscribe store/EventBus listeners on scene shutdown; separate tap vs drag (> 12px).
 - Before handing back: `npm run typecheck && npm test && npm run build`, and use the `run` skill / Playwright to screenshot a 1280×720 landscape view of what changed.
+- Luật UI/Phaser/client tự nạp từ `.claude/rules/ui.md` và `client-network.md`. Trước khi bàn giao chạy `/vac-story-done`.

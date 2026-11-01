@@ -12,3 +12,4 @@ Rules (RULE D1 / C13 — Additive-Only):
 - Every SECURITY DEFINER function: `SET search_path = public, pg_temp`; identity from `auth.uid()` (never a user-id parameter); validate every input; read prices/times from `master_catalog` and `NOW()`; lock rows `FOR UPDATE` in a consistent order; `REVOKE … FROM PUBLIC, anon` then GRANT to `authenticated` only if needed.
 - Verify locally: a Postgres 16 binary is in the container — init a throwaway cluster, stub `auth.users` / `auth.uid()` / roles `anon, authenticated, service_role`, run all migrations in order twice, and exercise permissions as each role. Report what you ran.
 - List the dashboard/SQL Editor steps the PO must do; you cannot reach the real project.
+- Luật SQL chi tiết: `.claude/rules/supabase.md` (tự nạp khi sửa file trong `supabase/`). Đổi luật chơi thì dùng `/vac-propagate-change` để domain TS và SQL không lệch nhau.
