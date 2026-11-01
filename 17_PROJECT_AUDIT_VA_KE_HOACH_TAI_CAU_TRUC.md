@@ -158,7 +158,10 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - Thêm `{{ .Token }}` vào email template Reset Password.
 
 **Còn mở, chuyển sang S2:**
-- Tách `useGameStore` thành slice và tách `App.tsx`.
+- ~~Tách `useGameStore` thành slice và tách `App.tsx`~~ ✅ 2026-11-01:
+  - Store: `src/store/{gameTypes,initialState,storeHelpers}.ts` + `src/store/slices/*Slice.ts` (6 slice), `useGameStore.ts` chỉ còn ghép + persist.
+  - App: 11 modal sang `src/ui/modals/*Modal.tsx`; App đọc store qua `useShallow`. Thêm một thay đổi nhỏ: trạng thái tạm của modal (ô tìm kiếm Bách khoa, nồi nấu, form chợ) đặt lại khi mở lại modal.
+  - Danh sách việc: `VIEC_CAN_LAM.md`.
 - Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm.
 - Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp).
 - Atlas sprite thật cho 23 loài Đợt 1.

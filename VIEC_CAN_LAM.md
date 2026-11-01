@@ -41,8 +41,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 
 ## B. Sprint đang làm — S2
 
-- [ ] Tách `useGameStore.ts` thành các slice (giữ nguyên API)
-- [ ] Tách 12 modal khỏi `App.tsx`, dùng selector Zustand
+- [x] ~~Tách `useGameStore.ts` thành 6 slice (giữ nguyên API)~~ ✅ 2026-11-01
+- [x] ~~Tách 11 modal khỏi `App.tsx` (2.084 → ~780 dòng), dùng selector Zustand~~ ✅ 2026-11-01
 - [ ] Khai hoang thật: lưới mở rộng theo số phân khu (hiện vẫn cố định 3×4, server chỉ cho tọa độ 0..3 × 0..2).
 - [ ] Kiểm mục tiêu nhiệm vụ trên server (hiện chỉ kiểm cấp).
 - [ ] Atlas sprite thật cho 23 loài Đợt 1 (`agent-sprite-forge`, sau khi chốt bảng màu).
