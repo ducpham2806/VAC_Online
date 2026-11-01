@@ -743,7 +743,7 @@ export const useGameStore = create<GameState>()(
         [itemId]: Math.max(0, (st.inventory[itemId] ?? 0) - qty),
       },
       marketListings: [createdListing, ...st.marketListings],
-      toastMessage: `📰 Đã đăng bán ${qty} ${spec.emoji} ${spec.name} lên Báo Chợ 3 Miền (giá ${clampedPrice} 🪙/đv)! Khi có người mua bạn nhận ${netRevenueAfterTax} 🪙 (đã trừ 10% Thuế Chợ).`,
+      toastMessage: `📰 Đã đăng bán ${qty} ${spec.emoji} ${spec.name} lên Báo Chợ 3 Miền (giá ${clampedPrice} 🪙/đv)! Khi có người mua bạn nhận ${netRevenueAfterTax} 🪙 (đã trừ 5% Thuế Chợ).`,
     }));
   },
 
@@ -1618,7 +1618,7 @@ export const useGameStore = create<GameState>()(
       luckyPacketsLeft: state.luckyPacketsLeft - 1,
       gold: state.gold + 120,
       stamina: Math.min(state.maxStamina, state.stamina + 5),
-      toastMessage: '🧧 Xin vía Loa Phường thành công! Nhận +120 Xu Vàng (trích từ Quỹ Thuế Chợ 10%) & +5 ⚡ Năng lượng!',
+      toastMessage: '🧧 Xin vía Loa Phường thành công! Nhận +120 Xu Vàng (trích từ Quỹ Thuế Chợ 5%) & +5 ⚡ Năng lượng!',
     });
   },
 

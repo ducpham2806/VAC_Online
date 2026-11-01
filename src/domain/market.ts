@@ -1,9 +1,9 @@
 /**
  * Luật Chợ Phiên P2P (02_MASTER_ECONOMY): giá niêm yết bị kẹp trong [0.8x, 2.0x]
- * giá bán gốc và người bán chịu 10% Thuế Chợ.
+ * giá bán gốc và người bán chịu 5% Thuế Chợ (PO chốt 2026-11-01).
  * Hàm thuần — dùng chung cho Store, QC runner và (sau này) đối chiếu với RPC server.
  */
-export const MARKET_TAX_RATE = 0.1;
+export const MARKET_TAX_RATE = 0.05;
 export const MARKET_MIN_PRICE_RATIO = 0.8;
 export const MARKET_MAX_PRICE_RATIO = 2.0;
 

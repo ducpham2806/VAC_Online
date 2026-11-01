@@ -11,7 +11,7 @@
 - **Mục tiêu sản phẩm & Ràng buộc Thiết kế (`RULE D1` Core Guardrail):**
   - Mở khóa không gian **Real-time Multiplayer Social Plaza** (`SocialPlazaScene.ts`) tách biệt hoàn toàn với `FarmScene.ts` (chuyển cảnh qua cổng Đình Làng hoặc nút HUD `🎪 Sảnh Đình`, đảm bảo nông trại chính luôn nhẹ và mượt).
   - **Cơ chế PK Dân Gian Không Máu Me (Slapstick Folk Arena):** Tuyệt đối không chém giết bạo lực; mọi đòn đánh là **Đấu Gậy Bông Đẩy Cầu Tre, Đấu Vật Đẩy Khỏi Vòng Vôi, Ném Bóng Nước/Cà Chua Chín & Tranh Cờ/Bắt Vịt**.
-  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK & Hyper-Casual tiêu thụ **Bánh Chưng / Cơm Nắm (Stamina Nông Trại)** và trả thưởng bằng **Xu Hội Làng (`🪙 Xu Hội`)** có trần **1.500 Xu/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
+  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK tiêu thụ **`-5 ⚡` Năng lượng Bát Cơm/trận** (hồi bằng Bánh Chưng / Cơm Nắm Bếp Quê; Máy Thùng Hyper-Casual `0⚡`) và trả thưởng bằng **Xu Hội Làng (`🪙 Xu Hội`)** có trần **1.500 Xu/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Bộ phận | Kỹ năng AI sử dụng | Nhiệm vụ cụ thể trong Giai đoạn 6 | Đầu ra nghiệm thu (`Deliverables`) |
 | :--- | :--- | :--- | :--- |
-| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` + `@level-designer` | - Thiết kế layout `48x32 Tiles` cho Sảnh Chung Chợ Đình (luồng di chuyển từ Bến Đò ➔ Cây Đa ➔ Sới Vật ➔ Lều Máy Thùng).<br>- Cân bằng Stamina tiêu thụ (1 Bánh Chưng/lượt PK) và trần **1.500 Xu Hội Làng/ngày** + Shop Đổi Thưởng Hội Làng. | Bản vẽ Layout `48x32` + `STAGE6_ARENA_ECONOMY_CONFIG`. |
+| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` + `@level-designer` | - Thiết kế layout `48x32 Tiles` cho Sảnh Chung Chợ Đình (luồng di chuyển từ Bến Đò ➔ Cây Đa ➔ Sới Vật ➔ Lều Máy Thùng).<br>- Cân bằng năng lượng tiêu thụ (`-5 ⚡`/trận PK) và trần **1.500 Xu Hội Làng/ngày** + Shop Đổi Thưởng Hội Làng. | Bản vẽ Layout `48x32` + `STAGE6_ARENA_ECONOMY_CONFIG`. |
 | **2. Multiplayer & Backend** | `@backend-architect` + `@godot-multiplayer-engineer` (tư duy netcode) | - Thiết kế kênh **Supabase Realtime Broadcast + Presence** (`plaza_room_1..N`, tối đa 25 CCU/phòng, gói tin vị trí nén `< 120 bytes` ở tần số `10Hz`).<br>- Viết **Migration Additive-Only** cho bảng `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards` và RPC `claim_plaza_reward` (kiểm tra trần 1.500 Xu/ngày + chống giả mạo điểm số). | File SQL Migration Giai đoạn 6 + `PlazaRealtimeService.ts` + RPC `claim_plaza_reward`. |
 | **3. Art, Tilemap & VFX** | `@generate2dmap` + `@generate2dsprite` + `@video2dsprite` + `@codeart2d` + `@technical-artist` | - Sản xuất Tilemap `48x32` Sảnh Chung, Lều Máy Thùng, Bộ đạo cụ `PROP_ARENA`.<br>- Tạo 7 bộ animation PK & Giao lưu (`8–12 frames`) khớp Paper-Doll + 4 VFX (`fx_arena_impact`, `fx_water_splash_plaza`, `fx_blade_trail`, `fx_mud_splatter`). | Atlas `plaza_stage6_arena_arcade.json/.png` (Lazy-loaded). |
 | **4. Frontend, Scene & Arcade** | `@frontend-developer` + `@ui-designer` | - Xây dựng `src/game/scenes/SocialPlazaScene.ts` (di chuyển Joystick/WASD + nội suy vị trí người chơi khác + bong bóng chat/emote).<br>- Xây dựng `SocialPlazaModal.tsx` và `HyperCasualArcadeModal.tsx` (4 mini-game 30–45s). | `SocialPlazaScene.ts` + 2 UI Modals + 4 Hyper-Casual Modules. |

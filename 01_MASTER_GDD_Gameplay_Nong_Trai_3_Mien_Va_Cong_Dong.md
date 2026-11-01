@@ -14,14 +14,15 @@
 Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**, **Trung Bộ – Tây Nguyên**, hoặc **Nam Bộ**) tiếp quản mảnh đất tổ tiên cùng chiếc tráp gỗ lim của Ông Nội để lại. Bên trong là **Cuốn Sổ Gia Phả Nông Nghiệp Ba Miền bị thất lạc 9 trang** và tờ khế ước thế chấp đất `50,000 🪙 Xu Vàng` của **Thương Nhân Bá Kiến**. Thay vì mở sẵn toàn bộ cây trồng vật nuôi ngay từ đầu gây ngợp, hệ sinh thái **81 loài Vườn – Ao – Chuồng (+5 Thú cưng), 8 Xưởng chế biến, 27 Món ăn và 6 Gia nhân** được **chia nhỏ thành 5 Đợt Xuất Hiện (`5 Content Waves`) gắn liền với từng Trang Gia Phả được tìm thấy và từng Giai Đoạn Update (`Giai đoạn 1 ➔ Giai đoạn 5`)**, trước khi hội tụ tranh tài tại **Sảnh Chung Chợ Đình (`Giai đoạn 6`)**.
 
 ### 1.2. Quy Tắc Vàng Lối Chơi Hybrid & Năng Lượng "Bát Cơm" (`⚡ Stamina`)
-1. **Chế độ Quản lý Trang trại & Giải trí Sảnh Chung (Tycoon & Casual Arcade – Tốn `0 ⚡ Năng lượng`):**
-   * Góc nhìn `3/4 Top-Down Oblique` trên lưới `32x32 px`. Mọi thao tác sản xuất cốt lõi tại nhà (*Gieo hạt, Tưới nước Giếng Làng, Thu hoạch, Cho vật nuôi ăn, Nấu ăn Bếp Quê, Tiếp củi Bánh Chưng giúp bạn, Dựng giàn cây sau bão*) và **mọi ván chơi giải trí tại Sảnh Chung / Hyper-Casual Arcade** đều **HOÀN TOÀN MIỄN PHÍ NĂNG LƯỢNG (`0 ⚡`)**.
+1. **Chế độ Quản lý Trang trại & Giải trí Sảnh Chung (Tycoon & Casual Arcade – Tốn `0 ⚡ Năng lượng`, trừ PK):**
+   * Góc nhìn `3/4 Top-Down Oblique` trên lưới `32x32 px`. Mọi thao tác sản xuất cốt lõi tại nhà (*Gieo hạt, Tưới nước Giếng Làng, Thu hoạch, Cho vật nuôi ăn, Nấu ăn Bếp Quê, Tiếp củi Bánh Chưng giúp bạn, Dựng giàn cây sau bão*) và **mọi ván chơi giải trí tại Sảnh Chung / Hyper-Casual Arcade (trừ trận PK Võ Đài & Loạn Chiến)** đều **HOÀN TOÀN MIỄN PHÍ NĂNG LƯỢNG (`0 ⚡`)**.
 2. **Chế độ Mở rộng, Khám phá & Tương tác Đặc biệt (RPG – Tốn `⚡ Năng lượng`):**
    * Thanh **Năng lượng (`⚡ 50/50`, hồi `+1 ⚡` mỗi 3 phút hoặc ăn món ăn Bếp Quê)** dùng cho:
      * **🪣 Vét Bùn Đáy Ao (`-3 ⚡`):** Thu `3 Xô Bùn Phù Sa` (`ITEM_BUN_PHU_SA`) bón cây nổ Hoàng Kim `⭐` (`x3 giá trị`) + cơ hội nhặt **Kỷ Vật Tuổi Thơ 8x–9x**.
      * **🪓 Khai Hoang Mở Rộng Đất (`-5 ⚡` + `500 🪙`):** Mở khóa từ `12/25` lên tối đa `25/25` phân khu bản đồ.
      * **🎋 Thám Hiểm Rừng Trúc & Bãi Bồi (`-6 ⚡`):** Đào măng rừng, tìm phấn hoa đột biến & săn **12 Kỷ Vật Tuổi Thơ** (`+5 💎`).
      * **🥁 Chèo Thuyền Rồng Hợp Tác Xã & Đua Trâu Vàng (`-4 ⚡`):** Thi đấu thể thao làng quê nhận Vàng, Ngọc & Cúp vinh danh.
+     * **⚔️ Võ Đài PK 1v1 / 3v3 & Loạn Chiến 8–12P (`-5 ⚡`/trận):** Hồi ⚡ bằng món Bếp Quê (Bánh Chưng, Cơm Nắm…). Trần thưởng & thuế xem `02_MASTER_ECONOMY`.
      * **🥷 Hái Trộm Vườn (`-1 ⚡`) / Câu Trộm Cá (`-2 ⚡`):** Rình hái trộm nhà bạn bè trong cửa sổ vàng 2 phút.
 
 ---

@@ -83,7 +83,7 @@
 
 ### 2.2. Đặc Tả 7 Hàm Atomic RPC Chống Gian Lận (`SECURITY DEFINER`) — thiết kế đích (RPC thật hiện tại: `0003`–`0005`, xem `17` mục C1)
 1. `public.rpc_sync_master_catalog(p_items JSONB)`: **chỉ `service_role`** (khóa ở migration `0003`; client không gọi — catalog nạp bằng `supabase/seed/master_catalog_seed.sql`). Đồng bộ toàn bộ thực thể lên bảng `public.master_catalog` bằng `ON CONFLICT (id) DO UPDATE` (tuyệt đối không xóa các dòng đang tham chiếu bởi `inventories` hoặc `farm_entities`).
-2. `public.rpc_post_market_listing(...)`: Kiểm tra khung giá hợp lệ `[0.8x, 2.0x Base_Sell_Gold]` ngay trên PostgreSQL.
+2. `public.rpc_post_market_listing(...)`: Kiểm tra khung giá hợp lệ `[0.8x, 2.0x Base_Sell_Gold]` ngay trên PostgreSQL. Khi khớp lệnh mua (S6) đốt **`5%` Thuế Chợ** (`tax_burned_gold = FLOOR(total * 0.05)`).
 3. `public.rpc_attempt_steal(p_thief_id UUID, p_target_tile_id UUID)`: Khóa dòng `FOR UPDATE`, kiểm tra 3 phút ân huệ, trần bảo hiểm 80%, và phạt Zero-Sum `50 🪙` + tặng `Dép Tổ Ong` khi bị bắt.
 4. `public.rpc_sell_to_friend_trader(...)`: Khóa dòng `FOR UPDATE`, giới hạn mỗi khách bán ké tối đa `20 đơn vị`, cộng `+5%` hoa hồng cho chủ nhà.
 5. `public.rpc_sign_guestbook(...)`: Lưu lời chúc vào `public.farm_guestbook`.

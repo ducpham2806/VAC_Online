@@ -409,8 +409,8 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 17. EPIC 06: Khung giá Chợ P2P (0.8x - 2.0x) & Khấu trừ 10% Thuế Chợ
-  runCase('TC-06.2a', 'EPIC 06', 'Chợ Phiên P2P kẹp khung giá [0.8x, 2.0x] và đốt đúng 10% Thuế Chợ', () => {
+  // 17. EPIC 06: Khung giá Chợ P2P (0.8x - 2.0x) & Khấu trừ 5% Thuế Chợ
+  runCase('TC-06.2a', 'EPIC 06', 'Chợ Phiên P2P kẹp khung giá [0.8x, 2.0x] và đốt đúng 5% Thuế Chợ', () => {
     const spec = GAME_CATALOG.find((c) => c.id === 'CROP_01')!;
     store.setState({
       gold: 1000,
@@ -419,7 +419,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
     // postItemToMarket là async (chờ Cloud) nên phần cộng tiền không kiểm được đồng bộ.
     // Kiểm (1) luật giá dùng chung trong src/domain/market.ts và (2) nhánh chặn đồng bộ khi thiếu hàng.
     const quote = quoteMarketListing(spec.baseSellGold, 5, 999);
-    const expectedNet = Math.floor(spec.baseSellGold * 2 * 5 * 0.9);
+    const expectedNet = Math.floor(spec.baseSellGold * 2 * 5 * 0.95);
     void store.getState().postItemToMarket('CROP_01', 50, 999);
     const goldAfterReject = store.getState().gold;
     return {

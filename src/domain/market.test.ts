@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { quoteMarketListing } from './market';
 
 describe('quoteMarketListing — luật Chợ Phiên P2P (02_MASTER_ECONOMY)', () => {
-  it('kẹp giá trần 2.0x và trừ 10% thuế', () => {
+  it('kẹp giá trần 2.0x và trừ 5% thuế', () => {
     const q = quoteMarketListing(10, 5, 999);
     expect(q.clampedPrice).toBe(20);
-    expect(q.netRevenueAfterTax).toBe(90);
+    expect(q.netRevenueAfterTax).toBe(95);
   });
 
   it('kẹp giá sàn 0.8x', () => {

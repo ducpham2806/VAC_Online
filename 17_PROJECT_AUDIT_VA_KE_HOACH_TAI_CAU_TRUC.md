@@ -1,7 +1,7 @@
 # 17 — Kiểm toán dự án & Kế hoạch tái cấu trúc (Project Audit & Re-plan)
 
 **Dự án:** VAC Online — Hương Đồng Gió Nội
-**Phiên bản:** 1.3 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0), S1 (mục C1), áp dụng CCGS (D5) và sửa lệch số liệu tài liệu (E)
+**Phiên bản:** 1.3 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0), S1 (mục C1), áp dụng CCGS (D5) và sửa lệch số liệu tài liệu (E), PO chốt thuế 5% / bảo hiểm 80% / PK tốn ⚡ (E)
 **Phạm vi:** Toàn bộ tài liệu `00 → 16`, `AGENTS.md`, `src/`, `supabase/migrations/`, `public/`, cấu hình build.
 **Vai trò của file này (RULE D0):** Đây là nguồn chân lý duy nhất về **hiện trạng thực tế** của code so với tài liệu thiết kế, và về **kế hoạch tái cấu trúc + cách dùng agent/skill thật**. Các file `00 → 16` vẫn là nguồn chân lý về *thiết kế đích*; chỗ nào lệch thì file này ghi rõ.
 **Bối cảnh team:** 1 người (PO kiêm dev) + AI agents.
@@ -52,10 +52,10 @@
 
   | Chủ đề | Một nơi | Nơi khác (`01`/`02`/`03`) |
   |---|---|---|
-  | Chợ P2P | 0.5–1.5x, thuế 5% (`13`) | 0.8–2.0x, thuế 10% |
-  | Trộm | Trần 15%/ô (`13`) | Bảo hiểm giữ 80% |
+  | Chợ P2P | ✅ PO chốt 2026-11-01: **0.8–2.0x, thuế 5%** (code + `02`/`03`/`13` đã sửa) | — |
+  | Trộm | ✅ PO chốt 2026-11-01: **bảo hiểm 80%** (trộm tối đa 20%/ô; `13` đã sửa, `0001` đã đúng) | — |
   | Chó giữ nhà | Chó Cỏ 50% (`13`) | Chó Phú Quốc 70% |
-  | PK / Sảnh Chung | Tiêu Stamina; trần 1.500 tính bằng Xu Hội (`16`) | `0⚡`; trần 1.500 tính bằng 🪙 vàng, Xu Hội 100–250/ngày |
+  | PK / Sảnh Chung | ✅ PO chốt 2026-11-01: **PK `-5⚡`/trận**, Máy Thùng & đi dạo Sảnh `0⚡` (`AGENTS`/`00`/`01`/`02`/`16` đã sửa). **Còn mở:** trần 1.500 tính bằng Xu Hội (`16`) | trần 1.500 tính bằng 🪙 vàng, Xu Hội 100–250/ngày (`02`) |
   | Phòng Sảnh Chung | 25 CCU (`16`) | 30 CCU |
   | Đình Làng | Guild 20–30 người (`14`) | Solo 5k/15k/50k |
   | Lễ cưới | 1.000 điểm thân mật (`15`) | 10 tim |
@@ -272,6 +272,8 @@ Repo `Donchitos/Claude-Code-Game-Studios` (MIT) gồm 49 agent, 74 skill, 18 hoo
 - **"11 bảng / 7 RPC" trong `03` / `00` / `AGENTS`:** giữ nguyên nhưng ghi rõ là **thiết kế đích**.
 - **Mô tả lỗi thời:** sửa cho đúng code: `unlock_stage` → `unlock_wave`; `rpc_sync_master_catalog` chỉ còn `service_role`; catalog nạp bằng seed.
 - **Số hiện trạng chỉ ghi ở file này.** Riêng `AGENTS.md` mô tả CSV `04` là "146 dòng".
+
+**✅ Đã sửa (2026-11-01, PO chốt):** thuế Chợ P2P 5% (`MARKET_TAX_RATE = 0.05`, test, QC TC-06.2a, toast; `02`, `03`, `13`), bảo hiểm trộm 80% (`13`), PK tốn `-5⚡`/trận (`AGENTS`, `00`, `01`, `02`, `16`). Tỉ lệ Sink/Source GĐ3+ sau khi giảm thuế: **CHƯA KIỂM ĐƯỢC** (chưa có dữ liệu chợ thật) — chạy `/vac-balance-check` ở S6.
 
 **Còn lại (cần PO chọn phương án):**
 - [ ] Gộp `13 → 16` về hệ ID của CSV `04`; thống nhất tên dự án.
