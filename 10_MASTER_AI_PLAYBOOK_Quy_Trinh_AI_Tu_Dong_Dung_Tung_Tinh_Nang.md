@@ -18,7 +18,7 @@ flowchart TD
     S1 --> S2["🎨 BƯỚC 2: TẠO ASSET, BẢN ĐỒ, VFX & AUDIO NHẤT QUÁN (RULE D1)\nSkills: @generate2dsprite + @video2dsprite + @generate2dmap\n+ @codeart2d + @technical-artist + @game-audio-engineer"]
     S2 --> S3["🗄️ BƯỚC 3: CODE BACKEND ADDITIVE-ONLY, MULTIPLAYER SYNC & STORE (RULE D1)\nSkills: @backend-architect + @godot-multiplayer-engineer + @economy-designer"]
     S3 --> S4["📱 BƯỚC 4: CODE UI/UX, PHASER SCENE & CARTRIDGE SDK CÔ LẬP\nSkills: @ui-designer + @frontend-developer"]
-    S4 --> S5["🧪 BƯỚC 5: TỰ KIỂM THỬ HỒI QUY (NON-REGRESSION) & AUDIT BẢO MẬT\nSkills: @code-reviewer\n(Chạy tsc --noEmit + 37 TC trong qcTestRunner.ts + Kiểm toán RULE D0/D1)"]
+    S4 --> S5["🧪 BƯỚC 5: TỰ KIỂM THỬ HỒI QUY (NON-REGRESSION) & AUDIT BẢO MẬT\nSkills: @code-reviewer\n(Chạy typecheck + npm test + test:sql + Kiểm toán RULE D0/D1)"]
     S5 --> S6{"💮 BƯỚC 6: TRÌNH PO DUYỆT\nSkills: @growth-hacker + @content-creator\n(Xuất Phiếu Nghiệm Thu & DỪNG CHỜ DUYỆT)"}
     S6 -- "Yêu cầu tinh chỉnh" --> Detect
     S6 -- "PO Gõ 'Duyệt' / 'Next'" --> Next["🚀 Chuyển sang Module tiếp theo"]
@@ -42,7 +42,7 @@ flowchart TD
 | | `@godot-multiplayer-engineer` | Khi lập trình **Đồng bộ vị trí người chơi tại Sảnh Chung (`10Hz Broadcast + 60 FPS Client LERP`), Phân kênh `25–30 CCU/Shard`, Đồng bộ Seed PRNG cho trận PK/Loạn Chiến & AI Bot Fallback**. | Kiến trúc mạng thời gian thực mượt mà, giảm 85% băng thông, ghép trận `< 3 giây`. |
 | **4. UI/UX & Frontend (Bước 4)** | `@ui-designer` | Khi thiết kế bố cục **Màn hình Splash/Auth, Main HUD 2-Thumb, Virtual Joystick + Emote Wheel Sảnh Chung, và Khung vỏ Máy Thùng Hyper-Casual**. | Giao diện chuẩn công thái học 2 ngón cái, nút `.touch-btn >= 38–44px`, bảo vệ vùng Tai thỏ. |
 | | `@frontend-developer` | Khi lập trình **Phaser 3 Scenes (`FarmScene`, `SocialPlazaScene`, `MinigameHostScene`), Chuẩn băng game `IHyperCasualCartridge`, React 19 & Zustand Store**. | Code TypeScript Strict Mode (`0 any`), tách biệt `Tap vs Drag > 12px`, lắp ghép minigame mới trong 1 file. |
-| **5. Kiểm Thử & Audit (Bước 5)** | `@code-reviewer` | **Kích hoạt bắt buộc ở Bước 5 của MỌI tính năng:** Rà soát lỗi tiềm ẩn, lỗ hổng XSS, lỗi âm tiền, vượt trần `1,500🪙/ngày`, kiểm tra hồi quy tính năng cũ (`RULE D1`) và viết Test Case. | Biên dịch `npx tsc --noEmit` (`0 errors`) & chạy `qcTestRunner.ts` (**37 TC**) đạt `100% PASS`. |
+| **5. Kiểm Thử & Audit (Bước 5)** | `@code-reviewer` | **Kích hoạt bắt buộc ở Bước 5 của MỌI tính năng:** Rà soát lỗi tiềm ẩn, lỗ hổng XSS, lỗi âm tiền, vượt trần `1,500🪙/ngày`, kiểm tra hồi quy tính năng cũ (`RULE D1`) và viết Test Case. | Biên dịch `npx tsc --noEmit` (`0 errors`) & chạy toàn bộ test (`npm test` + `npm run test:sql`) đạt `100% PASS`. |
 | **6. Duyệt & Tăng Trưởng (Bước 6)** | `@growth-hacker` & `@content-creator` | Khi tính năng liên quan đến **Vòng lặp lan tỏa (Xin vía Loa Phường, Mua vé số tặng bạn, Tiếp củi Bánh Chưng, Gạ kèo PK Sảnh Chung, Khoe Bằng khen `.PNG`)**. | Tối ưu tỷ lệ giữ chân (Retention/Viral loop) & xuất Phiếu Nghiệm Thu trình PO duyệt. |
 
 ---
@@ -75,7 +75,7 @@ Agent riêng của dự án (`.claude/agents/vac-*`) và vòng lặp 6 bước r
      2. *Tác động tới Kinh tế & Chống lạm phát*: Có vượt trần `Sources vs. Sinks` (`94%–112%`) hoặc trần Hyper-Casual `1,500 🪙/ngày` không?
      3. *Tính nhất quán Art Style & UI/UX*: Có giữ đúng bảng 64 màu, góc `3/4 Top-Down`, viền ấm `#3D2314` và bố cục `2-Thumb Landscape HUD` không?
      4. *Tính nhất quán Code & Ảnh hưởng tới Module khác*: Có sửa vào hàm/state đang dùng chung của tính năng cũ không?
-     5. *Sự đồng nhất & Bảo toàn Cơ sở dữ liệu*: Có đảm bảo **Additive-Only** (không xóa/đổi tên bảng, cột, hoặc `ID` của 155 thực thể gốc) không?
+     5. *Sự đồng nhất & Bảo toàn Cơ sở dữ liệu*: Có đảm bảo **Additive-Only** (không xóa/đổi tên bảng, cột, hoặc `ID` của các thực thể gốc trong `GAME_CATALOG`) không?
      * 🚨 **CỔNG CHẶN AN TOÀN (`EARLY ALERT GATE`):** Nếu bất kỳ hạng mục nào ở trên **CÓ ẢNH HƯỞNG** tới tính năng khác, Core Gameplay hoặc Database, AI **BẮT BUỘC PHẢI THÔNG BÁO NGAY TẠI BƯỚC 1** (nêu rõ nguyên nhân, phạm vi ảnh hưởng và phương án cô lập/di trú an toàn) và **CHỜ CHỦ DỰ ÁN (PO) XÁC NHẬN ĐỒNG Ý** rồi mới được chuyển sang Bước 2!
    * Sau khi kiểm tra an toàn, AI liệt kê bộ Skills kích hoạt cho Module hiện tại và xuất 5 gạch đầu dòng chốt Input, Output, Công thức toán học & Edge cases.
 2. **🎨 Bước 2 — Tạo Asset Pixel Art, Animation, Bản Đồ & Âm Thanh Nhất Quán (`@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`, `@technical-artist`, `@game-audio-engineer`):**
@@ -85,7 +85,7 @@ Agent riêng của dự án (`.claude/agents/vac-*`) và vòng lặp 6 bước r
 4. **📱 Bước 4 — Lập Trình Giao Diện Phaser 3, Cartridge SDK & React 2-Thumb HUD Cô Lập (`@ui-designer`, `@frontend-developer`):**
    * Tích hợp vào `FarmScene.ts`, `SocialPlazaScene.ts`, `MinigameHostScene.ts` (`IHyperCasualCartridge`) và `src/App.tsx` (`.touch-btn >= 38–44px`, `safe-area-inset-*`, không dùng `window.alert`) mà không làm thay đổi hay xô lệch các màn hình/tính năng đã có.
 5. **🧪 Bước 5 — Kiểm Toán Mã Nguồn, Kiểm Thử Hồi Quy (`RULE D1 Non-Regression`), Rà Soát Trùng Lặp (`RULE D0`) & Chạy Test Tự Động QC (`@code-reviewer`):**
-   * Chạy `npx tsc --noEmit` (`0 errors`), thêm/chạy kịch bản `TC-xx.ya` cùng toàn bộ **37 Test Cases** trong `src/services/qcTestRunner.ts` đạt `100% PASS` (chứng minh tính năng mới không gây lỗi hồi quy lên bất kỳ tính năng cũ nào) và đối chiếu lại toàn bộ tài liệu/code theo `RULE D0` & `RULE D1`.
+   * Chạy `npx tsc --noEmit` (`0 errors`), thêm/chạy kịch bản `TC-xx.ya` cùng toàn bộ test tự động (`npm test` + `npm run test:sql`) đạt `100% PASS` (chứng minh tính năng mới không gây lỗi hồi quy lên bất kỳ tính năng cũ nào) và đối chiếu lại toàn bộ tài liệu/code theo `RULE D0` & `RULE D1`.
 6. **💮 Bước 6 — Xuất Phiếu Nghiệm Thu & Dừng Chờ Chủ Dự Án Duyệt (`@growth-hacker`, `@content-creator`):**
    * Xuất **Phiếu Nghiệm Thu Tính Năng** (ghi rõ bộ Skills đã kích hoạt, xác nhận đã đối chiếu `RULE D0` không trùng lặp + xác nhận `RULE D1` bảo toàn Core Gameplay/Art/Code/DB, kết quả `tsc` + `QC Test`, hướng dẫn bấm thử 30 giây) và **DỪNG CHỜ ANH DUYỆT (`Duyệt` / `Next`)**.
 
@@ -100,7 +100,7 @@ Agent riêng của dự án (`.claude/agents/vac-*`) và vòng lặp 6 bước r
 | **01** | `M01.0` | **Splash 4 Bước & Cổng Xác Thực 4 Tabs** *(Login, Register `+500🪙`, Guest, Liên kết `+50💎`, Quên MK OTP)* | `@ui-designer`, `@backend-architect`, `@frontend-developer`, `@narrative-designer`, `@code-reviewer` | `src/services/authService.ts`, `src/components/SplashAndAuthGate.tsx` | `TC-01.0a..0d` |
 | **02** | `M01.1` | **Viewport Màn Hình Ngang `2-Thumb HUD` & Nhắc Xoay Ngang** | `@ui-designer`, `@frontend-developer`, `@technical-artist`, `@code-reviewer` | `src/game/PhaserGame.tsx`, `src/App.tsx`, `capacitor.config.ts` | `TC-01.1a..c` |
 | **03** | `M01.2` | **Điều Khiển Bản Đồ Cảm Ứng (`Drag-to-Pan & Zoom`)** | `@level-designer`, `@frontend-developer`, `@technical-artist`, `@code-reviewer` | `src/game/scenes/FarmScene.ts` (`dist > 12px` tách Tap vs Drag) | `TC-01.2a..b` |
-| **04** | `M01.3` | **Đại Từ Điển 155 Thực Thể & Đồng Bộ Supabase Cloud** | `@economy-designer`, `@backend-architect`, `@frontend-developer`, `@code-reviewer` | `src/data/masterData.ts`, `supabase/migrations/0002_*.sql` | `TC-01.3a..b` |
+| **04** | `M01.3` | **Đại Từ Điển Thực Thể (`GAME_CATALOG`) & Đồng Bộ Supabase Cloud** | `@economy-designer`, `@backend-architect`, `@frontend-developer`, `@code-reviewer` | `src/data/masterData.ts`, `supabase/migrations/0002_*.sql` | `TC-01.3a..b` |
 | **05** | `M01.4` | **Kênh Realtime `vac_online_global_hub` (Chat, Online, Loa Phường)** | `@backend-architect`, `@frontend-developer`, `@growth-hacker`, `@code-reviewer` | `src/services/realtimeService.ts`, `src/store/useGameStore.ts` | `TC-01.4a..b` |
 | **06** | `M02.1` | **Giấy Đăng Ký Về Quê & Chọn 3 Miền (`Bắc / Trung / Nam`)** | `@game-designer`, `@narrative-designer`, `@ui-designer`, `@frontend-developer`, `@code-reviewer` | `src/store/useGameStore.ts` (`setProfile`), Modal `REGISTER` | `TC-02.1a..b` |
 | **07** | `M02.2` | **Hệ Thống Năng Lượng "Bát Cơm" `⚡` Hybrid (`50/50`)** | `@game-designer`, `@economy-designer`, `@frontend-developer`, `@code-reviewer` | `src/store/useGameStore.ts` (làm nông `0⚡`, mở rộng tốn `⚡`) | `TC-02.2a..b` |
@@ -196,7 +196,7 @@ Từ bây giờ, mỗi khi tôi giao một tính năng (từ M01.0 đến M11.6 
 - Bước 0: Tự động nhận diện và kích hoạt các Skill chuyên môn liên quan (`@game-designer`, `@economy-designer`, `@narrative-designer`, `@level-designer`, `@godot-multiplayer-engineer`, `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`, `@technical-artist`, `@game-audio-engineer`, `@backend-architect`, `@ui-designer`, `@frontend-developer`, `@code-reviewer`, `@growth-hacker`).
 - Thực hiện tuần tự 6 Bước Khép Kín:
   + Bước 1: Kiểm toán `RULE D0` (không trùng lặp) + Xuất bảng `[🔍 ĐÁNH GIÁ TÁC ĐỘNG CHÉO - RULE D1 IMPACT REPORT]` (kiểm tra tính nhất quán Art Style, Code, bảo toàn Database Additive-Only và ảnh hưởng tới Core Gameplay / tính năng khác). NẾU CÓ ẢNH HƯỞNG TỚI TÍNH NĂNG KHÁC HOẶC CORE GAMEPLAY, PHẢI THÔNG BÁO NGAY TẠI BƯỚC 1 VÀ CHỜ TÔI DUYỆT KẾ HOẠCH TRƯỚC KHI CODE!
-  + Bước 2 (Tạo Asset/VFX/SFX nhất quán) -> Bước 3 (Code Backend SQL/RPC Additive-Only, Multiplayer Sync & Zustand Store) -> Bước 4 (Code UI 2-Thumb Landscape, Phaser Scene & Cartridge SDK cô lập) -> Bước 5 (Kiểm toán hồi quy bằng `@code-reviewer`, chạy `npx tsc --noEmit` 0 lỗi & chạy đủ 37 Test Cases trong `qcTestRunner.ts`) -> Bước 6 (Xuất Phiếu Nghiệm Thu ghi rõ các Skill đã dùng + xác nhận `RULE D0/D1` và DỪNG CHỜ TÔI DUYỆT).
+  + Bước 2 (Tạo Asset/VFX/SFX nhất quán) -> Bước 3 (Code Backend SQL/RPC Additive-Only, Multiplayer Sync & Zustand Store) -> Bước 4 (Code UI 2-Thumb Landscape, Phaser Scene & Cartridge SDK cô lập) -> Bước 5 (Kiểm toán hồi quy bằng `@code-reviewer`, chạy `npx tsc --noEmit` 0 lỗi & chạy đủ test `npm test` + `npm run test:sql`) -> Bước 6 (Xuất Phiếu Nghiệm Thu ghi rõ các Skill đã dùng + xác nhận `RULE D0/D1` và DỪNG CHỜ TÔI DUYỆT).
 Hãy bắt đầu ngay với Module: [NHẬP MÃ MODULE, VD: M03.1, M11.1, M11.2, M11.3, M11.4, M11.5 hoặc M11.6].
 ```
 

@@ -58,7 +58,7 @@ Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**
 
 ### 3.1. Nguyên Tắc Khóa Mở Khóa 3 Tầng (`3-Layer Content Gating` — Không Đổ Dồn Ở Giai Đoạn 1)
 
-Để người chơi mới không bị ngợp bởi hàng trăm giống cây/cá ngay ngày đầu tiên, đồng thời mỗi bản Update lớn (`Giai đoạn 1 ➔ Giai đoạn 5`) đều mang lại cảm giác háo hức khám phá hệ sinh thái mới, mọi thực thể trong **155 Thực thể** đều đi qua **3 Điều Kiện Mở Khóa Đồng Thời**:
+Để người chơi mới không bị ngợp bởi hàng trăm giống cây/cá ngay ngày đầu tiên, đồng thời mỗi bản Update lớn (`Giai đoạn 1 ➔ Giai đoạn 5`) đều mang lại cảm giác háo hức khám phá hệ sinh thái mới, mọi thực thể trong **danh mục `GAME_CATALOG`** đều đi qua **3 Điều Kiện Mở Khóa Đồng Thời**:
 $$\text{Unlock\_Condition} = (\text{Game\_Stage} \ge \text{Item.unlockStage}) \land (\text{Story\_Chapter} \ge \text{Item.unlockChapter}) \land (\text{Player\_Level} \ge \text{Item.unlockLevel})$$
 
 ### 3.2. Bảng Phân Bổ Chi Tiết 81 Loài Trồng & Nuôi (+5 Thú Cưng, 8 Xưởng, 27 Món Ăn, 4 Đồ Bảo Hộ & 6 Gia Nhân) Qua 5 Đợt Giai Đoạn

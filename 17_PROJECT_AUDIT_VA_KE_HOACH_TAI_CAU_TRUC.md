@@ -1,7 +1,7 @@
 # 17 — Kiểm toán dự án & Kế hoạch tái cấu trúc (Project Audit & Re-plan)
 
 **Dự án:** VAC Online — Hương Đồng Gió Nội
-**Phiên bản:** 1.2 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0) và S1 (mục C1)
+**Phiên bản:** 1.3 — kiểm toán 2026-10-31 (commit `05a3a6a`); cập nhật sau Sprint S0 (mục C0), S1 (mục C1), áp dụng CCGS (D5) và sửa lệch số liệu tài liệu (E)
 **Phạm vi:** Toàn bộ tài liệu `00 → 16`, `AGENTS.md`, `src/`, `supabase/migrations/`, `public/`, cấu hình build.
 **Vai trò của file này (RULE D0):** Đây là nguồn chân lý duy nhất về **hiện trạng thực tế** của code so với tài liệu thiết kế, và về **kế hoạch tái cấu trúc + cách dùng agent/skill thật**. Các file `00 → 16` vẫn là nguồn chân lý về *thiết kế đích*; chỗ nào lệch thì file này ghi rõ.
 **Bối cảnh team:** 1 người (PO kiêm dev) + AI agents.
@@ -266,6 +266,14 @@ Repo `Donchitos/Claude-Code-Game-Studios` (MIT) gồm 49 agent, 74 skill, 18 hoo
 ---
 
 ## PHẦN E — BACKLOG SỬA TÀI LIỆU (chưa làm ở bản 1.0 này)
+
+**✅ Đã sửa (2026-11-01, chạy `/vac-consistency-check` rồi PO duyệt):** 41 chỗ ghi cứng "155 thực thể", "37 Test Cases", "11 bảng / 7 RPC" trong `00`, `01`, `03`, `05`, `06`, `08`, `10`, `11`, `AGENTS.md`. Cách sửa:
+- **Luật / quy trình:** đổi con số thành tham chiếu tới nguồn chuẩn: `GAME_CATALOG`, `npm test` + `npm run test:sql`, `supabase/migrations/`.
+- **"11 bảng / 7 RPC" trong `03` / `00` / `AGENTS`:** giữ nguyên nhưng ghi rõ là **thiết kế đích**.
+- **Mô tả lỗi thời:** sửa cho đúng code: `unlock_stage` → `unlock_wave`; `rpc_sync_master_catalog` chỉ còn `service_role`; catalog nạp bằng seed.
+- **Số hiện trạng chỉ ghi ở file này.** Riêng `AGENTS.md` mô tả CSV `04` là "146 dòng".
+
+**Còn lại (cần PO chọn phương án):**
 - [ ] Gộp `13 → 16` về hệ ID của CSV `04`; thống nhất tên dự án.
 - [ ] Thống nhất các thông số mâu thuẫn ở A4 theo `01` / `02`.
 - [ ] Sửa tham chiếu `04_MASTER_NARRATIVE`, "GDD Mục 9".

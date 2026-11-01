@@ -30,7 +30,7 @@
 
 ## PHẦN 2: QUY TRÌNH 5 BƯỚC SẢN XUẤT ASSET, ANIMATION (`8–12 FRAMES`), TILEMAP & VFX BẰNG AI SKILLS (`AI ASSET PIPELINE`)
 
-Để sản xuất đồng bộ toàn bộ đồ họa cho **155 Thực thể gốc + Sảnh Chung + Võ Đài PK** mà không lệch phong cách (`RULE D1`), đội ngũ Art hoặc AI thực thi theo dây chuyền 5 bước sau:
+Để sản xuất đồng bộ toàn bộ đồ họa cho **toàn bộ thực thể gốc (`GAME_CATALOG`) + Sảnh Chung + Võ Đài PK** mà không lệch phong cách (`RULE D1`), đội ngũ Art hoặc AI thực thi theo dây chuyền 5 bước sau:
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ Cài đặt, cấu trúc thư mục `art/` và quy trình mẫu cho Đợt 1: xe
 
 ## PHẦN 3: BẢNG MA TRẬN SẢN XUẤT ASSET, ANIMATION & VFX THEO 6 GIAI ĐOẠN (`6-STAGE ASSET & VFX PRODUCTION PLAN`)
 
-Thay vì vẽ dồn toàn bộ 155 thực thể ngay từ đầu, kế hoạch sản xuất Asset, Animation và VFX được chia nhỏ khớp 100% với **5 Đợt Mở Khóa Nông – Thủy – Hải Sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** và **Sảnh Chung Giai Đoạn 6**:
+Thay vì vẽ dồn toàn bộ thực thể ngay từ đầu, kế hoạch sản xuất Asset, Animation và VFX được chia nhỏ khớp 100% với **5 Đợt Mở Khóa Nông – Thủy – Hải Sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** và **Sảnh Chung Giai Đoạn 6**:
 
 | Giai Đoạn | Khối Lượng Sprite Thực Thể & Công Trình (`@generate2dsprite`, `@generate2dmap`, `@codeart2d`) | Hạng Mục Animation `8–12 Frames` Cần Làm (`@video2dsprite`) | Hệ Thống Particle VFX & Shader/Tween (`@technical-artist`) |
 | :--- | :--- | :--- | :--- |

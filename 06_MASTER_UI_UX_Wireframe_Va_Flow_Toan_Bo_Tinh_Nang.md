@@ -11,7 +11,7 @@
 
 ```mermaid
 flowchart TD
-    Boot["📱 Mở Webgame / Icon Mobile PWA / App iOS & Android"] --> Splash["🌾 MÀN HÌNH 0A: SPLASH & 4-STAGE LOADING\n(Khởi tạo Phaser 3 -> Nạp 155 Thực thể -> Kết nối Supabase -> Kiểm tra Session)"]
+    Boot["📱 Mở Webgame / Icon Mobile PWA / App iOS & Android"] --> Splash["🌾 MÀN HÌNH 0A: SPLASH & 4-STAGE LOADING\n(Khởi tạo Phaser 3 -> Nạp danh mục thực thể -> Kết nối Supabase -> Kiểm tra Session)"]
 
     Splash --> HasSession{"Đã có Phiên Đăng Nhập\nhoặc Hồ Sơ Lưu?"}
     HasSession -- "Đã có (Remember Me)" --> MainHUD["🏡 MÀN HÌNH 2: CHÍNH NÔNG TRẠI (MAIN HUD 2-THUMB)\n(Tự động chạy Lazy-Tick tính sản lượng 6 Nhân công khi Offline)"]
