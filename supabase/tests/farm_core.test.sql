@@ -173,5 +173,17 @@ SELECT t.eq((public.rpc_harvest(0, 2)->'inventory'->>'AQUA_01')::INT, 2, 'miền
 SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'pond_mud_counter')::INT, 1, 'thu thủy sản +1 bùn ao');
 RESET ROLE;
 
+-- ---------------------------------------------------------------------------
+-- 5. Migration 0005: view hồ sơ công khai tôn trọng RLS; hàm trigger không gọi được qua API
+-- ---------------------------------------------------------------------------
+SET ROLE authenticated;
+SELECT t.eq((SELECT count(*) FROM public.public_profile_cards)::INT, 1, 'view public_profile_cards chỉ thấy hồ sơ của mình');
+SELECT t.expect_error('SELECT public.handle_new_user()', '%permission denied%');
+RESET ROLE;
+SELECT set_config('request.jwt.claim.sub', '', false); -- request anon thật không có user id
+SET ROLE anon;
+SELECT t.eq((SELECT count(*) FROM public.public_profile_cards)::INT, 0, 'anon không đọc được hồ sơ qua view');
+RESET ROLE;
+
 \o
 \echo 'farm_core.test.sql: TẤT CẢ PASS'

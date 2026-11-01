@@ -39,8 +39,8 @@ run() { echo "→ $1"; "${PSQL[@]}" -d "$DB" -f "$1" >/dev/null; }
 
 run supabase/tests/stub_auth.sql
 for f in supabase/migrations/0*.sql; do run "$f"; done
-echo "→ chạy lại 0002..0004 (kiểm idempotent)"
-for f in supabase/migrations/000[2-4]_*.sql; do "${PSQL[@]}" -d "$DB" -f "$f" >/dev/null; done
+echo "→ chạy lại 0002..0005 (kiểm idempotent)"
+for f in supabase/migrations/000[2-5]_*.sql; do "${PSQL[@]}" -d "$DB" -f "$f" >/dev/null; done
 run supabase/seed/master_catalog_seed.sql
 run supabase/seed/quest_catalog_seed.sql
 run supabase/seed/master_catalog_seed.sql

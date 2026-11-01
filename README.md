@@ -36,14 +36,15 @@ npm run build       # bản production (ẩn công cụ debug)
    2. `supabase/migrations/0002_seed_full_master_data.sql`
    3. `supabase/migrations/0003_security_hardening.sql`
    4. `supabase/migrations/0004_farm_core.sql` (vòng chơi GĐ1 trên server)
-   5. `supabase/seed/master_catalog_seed.sql` và `supabase/seed/quest_catalog_seed.sql`. Sinh lại 2 file này bằng
+   5. `supabase/migrations/0005_advisor_fixes.sql` (sửa cảnh báo Security Advisor)
+   6. `supabase/seed/master_catalog_seed.sql` và `supabase/seed/quest_catalog_seed.sql`. Sinh lại 2 file này bằng
       `npm run seed:catalog` mỗi khi sửa `src/data/masterData.ts` hoặc `src/data/quests.ts`.
 
    Có thể chạy tự động qua Management API: đặt biến `SUPABASE_ACCESS_TOKEN` (Personal Access Token, **không commit**) rồi chạy
    ```bash
    npm run supabase -- status
    npm run supabase -- apply supabase/migrations/0003_security_hardening.sql supabase/migrations/0004_farm_core.sql \
-     supabase/seed/master_catalog_seed.sql supabase/seed/quest_catalog_seed.sql
+     supabase/migrations/0005_advisor_fixes.sql supabase/seed/master_catalog_seed.sql supabase/seed/quest_catalog_seed.sql
    npm run supabase -- auth-config --apply   # bật Anonymous Sign-ins + email OTP
    npm run supabase -- smoke                 # chơi thử như Khách thật
    ```

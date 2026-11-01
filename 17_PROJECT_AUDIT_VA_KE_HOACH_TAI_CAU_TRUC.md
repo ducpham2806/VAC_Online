@@ -142,13 +142,20 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 | Sửa lỗi | ✅ | Thu hoạch cộng tiền 2 lần. Bấm nút HTML lại kích hoạt ô đất bên dưới (Phaser nghe mouseup trên window). Rò listener trong `FarmScene`. Đăng chợ nhận tiền ngay. Mua 1 sạp được nhiều lần. Quà 7 ngày nhận nhiều lần trong ngày. Nhiệm vụ không kiểm cấp |
 | Kiểm thử | ✅ | Vitest 73 test. Playwright trên bản production: khách mới → gieo → tưới → thu hoạch → bán → tải lại trang vẫn giữ tiến trình |
 
-**Trạng thái Supabase thật** (kiểm bằng publishable key ngày 2026-10-31):
-- `0001`/`0002` đã chạy; `master_catalog` có 166 dòng.
-- **`0003` và `0004` CHƯA chạy.** Lỗ hổng khách nặc danh ghi đè giá qua `rpc_sync_master_catalog` vẫn mở.
-- Cách chạy:
-  - Thêm biến `SUPABASE_ACCESS_TOKEN` vào môi trường rồi gõ `npm run supabase -- apply …`.
-  - Hoặc dán từng file vào SQL Editor theo thứ tự trong README.
-- Trong lúc chờ, app tự chạy chế độ offline (RPC trả `PGRST202`).
+**Trạng thái Supabase thật (cập nhật 2026-11-01, kiểm qua Supabase connector):**
+- **Đã chạy `0001` → `0005` và 2 seed.** PO tự chạy 0003, 0004 và seed trong SQL Editor; 0005 chạy qua connector.
+- Số liệu: 17 RPC; `master_catalog` 166 dòng (131 có Đợt, đủ 81/81 loài V-A-C); 10 chương nhiệm vụ; `app_game_stage() = 1`; Anonymous Sign-ins đang bật.
+- **Smoke test thật** (`npm run supabase -- smoke`):
+  - `anon` gọi `rpc_sync_master_catalog` bị chặn ✅.
+  - Khách ẩn danh mới: Lv.1, 2.500🪙 ✅; trigger tự tạo hồ sơ với `created_as_guest = true` ✅.
+  - Gieo Lúa còn 2.498🪙 ✅; thu hoạch sớm bị chặn ✅.
+- **Security Advisor:**
+  - Đã hết lỗi ERROR (`0005`: view `public_profile_cards` chuyển sang `security_invoker`; `REVOKE` hàm trigger).
+  - Các WARN còn lại đều đúng thiết kế: RPC cho `authenticated` đều kiểm `auth.uid()`; policy cho khách ẩn danh chỉ đọc dữ liệu của chính mình.
+  - Riêng `rls_auto_enable()` không phải hàm của dự án; PO quyết định có giữ hay không.
+- **Còn lại cho PO:**
+  - Xoá user test "Smoke Test" (`f1598bb5-…`) trong Dashboard → Authentication → Users.
+  - Thêm `{{ .Token }}` vào email template Reset Password.
 
 **Còn mở, chuyển sang S2:**
 - Tách `useGameStore` thành slice và tách `App.tsx`.
