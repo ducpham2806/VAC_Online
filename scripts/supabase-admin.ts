@@ -77,6 +77,9 @@ async function status(): Promise<void> {
   console.log(`Đã chạy 0006 (hàm _plot_order, khai hoang 5×5): ${(await sql(
     "SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = '_plot_order'"
   )).length > 0}`);
+  console.log(`Đã chạy 0007 (bảng player_counters, mục tiêu nhiệm vụ): ${(await sql(
+    "SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'player_counters'"
+  )).length > 0}`);
 }
 
 async function apply(files: string[]): Promise<void> {

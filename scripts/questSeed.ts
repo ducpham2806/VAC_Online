@@ -5,7 +5,8 @@ function sqlText(value: string): string {
 }
 
 function rowFor(q: StoryQuest): string {
-  return `  (${[sqlText(q.id), q.chapterNo, q.unlockStage, q.minLevel, q.rewardGold, q.rewardGems, sqlText(q.chapter)].join(', ')})`;
+  const objectives = `${sqlText(JSON.stringify(q.objectives ?? []))}::jsonb`;
+  return `  (${[sqlText(q.id), q.chapterNo, q.unlockStage, q.minLevel, q.rewardGold, q.rewardGems, sqlText(q.chapter), objectives].join(', ')})`;
 }
 
 /** Sinh SQL seed cho public.quest_catalog từ STORY_QUESTS (src/data/quests.ts). */
@@ -13,10 +14,10 @@ export function buildQuestSeedSql(quests: StoryQuest[] = STORY_QUESTS): string {
   return `-- =============================================================================
 -- FILE SINH TỰ ĐỘNG — KHÔNG SỬA TAY. Nguồn: src/data/quests.ts (STORY_QUESTS)
 -- Sinh lại bằng: npm run seed:catalog
--- Chạy trong Supabase SQL Editor SAU migration 0004. Idempotent (ON CONFLICT DO UPDATE).
+-- Chạy trong Supabase SQL Editor SAU migration 0007 (cột objectives). Idempotent (ON CONFLICT DO UPDATE).
 -- =============================================================================
 
-INSERT INTO public.quest_catalog (id, chapter_no, unlock_stage, min_level, reward_gold, reward_gems, title)
+INSERT INTO public.quest_catalog (id, chapter_no, unlock_stage, min_level, reward_gold, reward_gems, title, objectives)
 VALUES
 ${quests.map(rowFor).join(',\n')}
 ON CONFLICT (id) DO UPDATE SET
@@ -25,7 +26,8 @@ ON CONFLICT (id) DO UPDATE SET
   min_level = EXCLUDED.min_level,
   reward_gold = EXCLUDED.reward_gold,
   reward_gems = EXCLUDED.reward_gems,
-  title = EXCLUDED.title;
+  title = EXCLUDED.title,
+  objectives = EXCLUDED.objectives;
 `;
 }
 

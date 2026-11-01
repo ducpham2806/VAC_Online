@@ -60,6 +60,9 @@ SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'gold')::INT, 2500, 'hồ sơ
 SELECT t.eq((public.rpc_get_my_farm()->>'game_stage')::INT, 1, 'GĐ1');
 
 SELECT t.eq((public.rpc_plant(0, 0, 'CROP_01')->'profile'->>'gold')::INT, 2498, 'gieo CROP_01 trừ 2 vàng');
+-- 0007: chưa tưới / chưa thu hoạch thì chưa nhận được Chương 1
+SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH1'', ''EMP'')', 'Chưa hoàn thành: 💧 Tưới nước Giếng Làng (0/1)');
+SELECT t.eq(public.rpc_get_my_farm()->'counters', '{}'::JSONB, 'bộ đếm ban đầu rỗng');
 SELECT t.expect_error('SELECT public.rpc_plant(0, 0, ''CROP_01'')', '%đang có cây%');
 -- 0006: (4,0) là phân khu ① — nằm trong lưới 5×5 nhưng chưa khai hoang; (5,0) ngoài lưới
 SELECT t.expect_error('SELECT public.rpc_plant(5, 0, ''CROP_01'')', 'Ô đất không hợp lệ');
@@ -78,6 +81,8 @@ SELECT t.eq(
   TRUE, 'buff miền Bắc -10% thời gian');
 
 SELECT t.eq((public.rpc_water(0, 0)->'tiles'->0->>'watered')::BOOLEAN, TRUE, 'tưới nước');
+SELECT t.eq((public.rpc_get_my_farm()->'counters'->>'WATER')::INT, 1, 'tưới nước +1 bộ đếm WATER');
+SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH1'', ''EMP'')', 'Chưa hoàn thành: 🌾 Thu hoạch Lúa Nước (0/1)');
 SELECT t.expect_error('SELECT public.rpc_water(0, 0)', '%đã được tưới%');
 SELECT t.expect_error('SELECT public.rpc_apply_mud(0, 0)', '%hết Bùn%');
 RESET ROLE;
@@ -88,6 +93,9 @@ WHERE user_id = 'a0000000-0000-0000-0000-00000000000a';
 SET ROLE authenticated;
 SELECT t.eq((public.rpc_harvest(0, 0)->'inventory'->>'CROP_01')::INT, 2, 'thu hoạch vào kho 2 Lúa');
 SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'gold')::INT, 2498, 'thu hoạch KHÔNG cộng vàng');
+SELECT t.eq((public.rpc_get_my_farm()->'counters'->>'HARVEST:CROP_01')::INT, 1, 'thu hoạch +1 bộ đếm HARVEST:CROP_01');
+SELECT t.expect_error('SELECT public.rpc_water(0, 0)', '%chưa gieo%');
+SELECT t.eq((public.rpc_get_my_farm()->'counters'->>'WATER')::INT, 1, 'tưới thất bại không tăng bộ đếm');
 SELECT t.eq(jsonb_array_length(public.rpc_get_my_farm()->'tiles'), 0, 'ô đã dọn sau thu hoạch');
 SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'xp')::INT, 1, 'thu hoạch +1 XP');
 
@@ -150,6 +158,16 @@ SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'xp')::INT, 40, 'XP dư 40');
 SELECT t.eq(public.rpc_get_my_farm()->'quests'->>'Q_CH1', 'PRAG', 'ghi nhận nhánh PRAG');
 SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH1'', ''EMP'')', 'Đã nhận thưởng%');
 SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH2'', ''EMP'')', 'Cần đạt Lv.3%');
+-- Chương 2 (Lv.3): A đã vét ao + bón bùn ở trên → đủ mục tiêu
+SELECT t.eq((public.rpc_get_my_farm()->'counters'->>'DREDGE')::INT >= 1 AND (public.rpc_get_my_farm()->'counters'->>'APPLY_MUD')::INT >= 1,
+  TRUE, 'vét ao / bón bùn có bộ đếm');
+RESET ROLE;
+UPDATE public.profiles SET level = 3 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
+SET ROLE authenticated;
+SELECT t.eq(public.rpc_claim_story_quest('Q_CH2', 'EMP')->'quests'->>'Q_CH2', 'EMP', 'Chương 2 nhận được khi đủ vét bùn + bón bùn');
+RESET ROLE;
+UPDATE public.profiles SET level = 2 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
+SET ROLE authenticated;
 SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH3'', ''EMP'')', 'Chương này chưa mở');
 
 SELECT t.eq((public.rpc_claim_rookie_day()->'profile'->>'rookie_days_claimed')::INT, 1, 'quà ngày 1');
@@ -172,6 +190,10 @@ SELECT t.eq(jsonb_array_length(public.rpc_get_my_farm()->'tiles'), 0, 'B không 
 SELECT t.eq((public.rpc_set_profile_basics('Út Nam', 'MALE', 'SOUTH')->'profile'->>'region'), 'SOUTH', 'B đặt quê');
 SELECT t.eq((SELECT count(*) FROM public.profiles)::INT, 1, 'RLS: chỉ đọc được hồ sơ của mình');
 SELECT t.eq((SELECT count(*) FROM public.quest_claims)::INT, 0, 'RLS: không thấy nhiệm vụ của A');
+SELECT t.eq((SELECT count(*) FROM public.player_counters)::INT, 0, 'RLS: không thấy bộ đếm của A');
+SELECT t.expect_error('SELECT public._bump_counter(''b0000000-0000-0000-0000-00000000000b'', ''WATER'', 99)', '%permission denied%');
+SELECT t.expect_error($$INSERT INTO public.player_counters (user_id, counter, value) VALUES ('b0000000-0000-0000-0000-00000000000b', 'WATER', 99)$$, '%row-level security%');
+SELECT t.expect_error('SELECT public.rpc_claim_story_quest(''Q_CH1'', ''EMP'')', 'Chưa hoàn thành%');
 -- RLS không có policy UPDATE: lệnh chạy nhưng không sửa được dòng nào (kiểm ngay bên dưới)
 UPDATE public.profiles SET gold = 999999;
 SELECT t.expect_error($$INSERT INTO public.inventories (user_id, item_id, quantity) VALUES ('b0000000-0000-0000-0000-00000000000b', 'CROP_01', 999)$$, '%row-level security%');

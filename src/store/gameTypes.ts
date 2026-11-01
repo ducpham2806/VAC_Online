@@ -109,6 +109,8 @@ export interface GameState {
   storyQuests: StoryQuest[];
   chatMessages: ChatMessage[];
 
+  /** Bộ đếm hành động cho mục tiêu nhiệm vụ Gia Phả (WATER, HARVEST:<id>, DREDGE, APPLY_MUD…). */
+  progressCounters: Record<string, number>;
   /** Mốc thời gian (ms) để tính hồi năng lượng +1⚡/3 phút. */
   staminaUpdatedAt: number;
   /** Ngày nhận Quà Tân Thủ gần nhất (YYYY-MM-DD, giờ Việt Nam). */

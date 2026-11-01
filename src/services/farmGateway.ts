@@ -62,6 +62,8 @@ export interface FarmSnapshot {
   inventory: Record<string, number>;
   tiles: SnapshotTile[];
   quests: Record<string, 'EMP' | 'PRAG'>;
+  /** Bộ đếm hành động cho mục tiêu nhiệm vụ (migration 0007). Server cũ chưa có → undefined. */
+  counters?: Record<string, number>;
 }
 
 export type RpcResult = { ok: true; snapshot: FarmSnapshot } | { ok: false; message: string; missing?: boolean };

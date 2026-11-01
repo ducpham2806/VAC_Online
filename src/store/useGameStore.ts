@@ -57,7 +57,11 @@ export const useGameStore = create<GameState>()(
       merge: (persisted, current) => {
         const save = (persisted ?? {}) as PersistedSave;
         const merged: GameState = { ...current, ...save };
-        return { ...merged, tiles: normalizePlotTiles(merged.tiles, merged.wildPlotsUnlocked) };
+        return {
+          ...merged,
+          tiles: normalizePlotTiles(merged.tiles, merged.wildPlotsUnlocked),
+          progressCounters: merged.progressCounters ?? {},
+        };
       },
     }
   )

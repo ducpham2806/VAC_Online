@@ -164,7 +164,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - Danh sách việc: `VIEC_CAN_LAM.md`.
 - ~~Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm~~ ✅ 2026-11-01: lưới 5×5 (cột 5 → hàng 4 Ruộng → hàng 5 Ao), ô kế tiếp hiện mờ và chạm để khai hoang; migration `0006` (`_plot_order`, `_lock_tile`, `rpc_harvest` bùn cho hàng Ao mới).
   - Phát sinh: ở 844×390 khay giống che hàng ruộng đầu (có từ trước) → cần sắp lại HUD màn hình nhỏ.
-- Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp).
+- ~~Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp)~~ ✅ 2026-11-01: bảng `player_counters` + `quest_catalog.objectives` (`0007`); Ch.1 = tưới + thu Lúa, Ch.2 = vét bùn + bón bùn (PO chốt; Bếp Quê dời sang Ch.3). Ch.3–10 chưa có mục tiêu, thêm khi mở GĐ2–5.
 - Atlas sprite thật cho 23 loài Đợt 1.
 - Analytics.
 
@@ -303,7 +303,7 @@ Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sa
 | 03 | M03.2 Tưới giếng −15% | Done | Server (S1) |
 | 03 | M03.3 Ao + vét bùn | Done | Server (S1) |
 | 03 | M03.4 Phù sa + Hoàng Kim x3 | Done | Thu hoạch vào Kho ×3, bán HTX (S1) |
-| 03 | M03.5 Chương 1–2 + quà 7 ngày | Partial | Server, 1 lần/ngày, kiểm cấp (S1); chưa kiểm mục tiêu nhiệm vụ |
+| 03 | M03.5 Chương 1–2 + quà 7 ngày | Done (code) | Server kiểm cấp + mục tiêu đo được (`player_counters`, `0007`); chờ chạy `0007` trên Supabase thật |
 | 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | Stub | Bếp luôn ra `PROD_22` |
 | 04 | M04.5 Đố Ca Dao (FEAT_02) | Missing | |
 | 05 | M05.1–M05.5 Lán Thợ, Bàn ăn, Đồ bảo hộ, Giỏ 120, Lazy-tick | Partial | Phần tốt nhất của code; vẫn client-side |

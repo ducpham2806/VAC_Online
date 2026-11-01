@@ -12,7 +12,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy 2 seed `master_catalog_seed.sql`, `quest_catalog_seed.sql`~~ ✅ 2026-11-01
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
-- [ ] **Chạy migration `0006_land_expansion.sql`** (khai hoang 5×5): mở file trong repo, dán vào Supabase **SQL Editor** → Run, rồi báo em kiểm tra. Trước khi chạy, bản online chỉ trồng được 12 ô cũ.
+- [ ] **Chạy trong Supabase SQL Editor, đúng thứ tự:** `0006_land_expansion.sql` (khai hoang 5×5) → `0007_quest_objectives.sql` (mục tiêu nhiệm vụ) → `supabase/seed/quest_catalog_seed.sql` (nạp mục tiêu Ch.1–2). Xong báo em kiểm tra. Trước khi chạy: online chỉ trồng được 12 ô cũ và nhận thưởng chương không cần làm mục tiêu.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
 - [ ] Thêm `{{ .Token }}` vào email template **Reset Password** (game dùng OTP 6 số). Có thể chạy `npm run supabase -- auth-config --apply` khi có `SUPABASE_ACCESS_TOKEN`.
 - [ ] Quyết định giữ hay xóa hàm `rls_auto_enable()` (không phải của dự án, Security Advisor báo WARN).
@@ -45,7 +45,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Tách `useGameStore.ts` thành 6 slice (giữ nguyên API)~~ ✅ 2026-11-01
 - [x] ~~Tách 11 modal khỏi `App.tsx` (2.084 → 699 dòng), dùng selector Zustand~~ ✅ 2026-11-01
 - [x] ~~Khai hoang thật: lưới 5×5, mỗi lần khai hoang mở 1 ô trồng được (`farmGrid.ts`, migration `0006`)~~ ✅ 2026-11-01
-- [ ] Kiểm mục tiêu nhiệm vụ trên server (hiện chỉ kiểm cấp).
+- [x] ~~Kiểm mục tiêu nhiệm vụ trên server: Ch.1 tưới + thu Lúa, Ch.2 vét bùn + bón bùn (`0007`)~~ ✅ 2026-11-01
+- [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 (hiện chỉ kiểm cấp).
 - [ ] Atlas sprite thật cho 23 loài Đợt 1 (`agent-sprite-forge`, sau khi chốt bảng màu).
 - [ ] Analytics (D1/D7, funnel tutorial).
 

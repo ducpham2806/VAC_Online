@@ -2,6 +2,8 @@
  * 10 Chương Gia Phả — dữ liệu nhiệm vụ cốt truyện (nguồn chuẩn duy nhất).
  * Server: supabase/seed/quest_catalog_seed.sql sinh từ file này (npm run seed:catalog).
  */
+import type { QuestObjective } from '../domain/quests';
+
 export interface StoryQuest {
   id: string;
   /** Số chương Gia Phả (1..10). */
@@ -20,6 +22,11 @@ export interface StoryQuest {
   selectedChoice?: 'EMP' | 'PRAG';
   rewardGold: number;
   rewardGems: number;
+  /**
+   * Mục tiêu đo được (bộ đếm hành động, src/domain/quests.ts). Rỗng/không có = chỉ kiểm cấp.
+   * Chương thuộc GĐ chưa mở để trống, thêm khi mở giai đoạn (VIEC_CAN_LAM.md).
+   */
+  objectives?: QuestObjective[];
   completed: boolean;
 }
 
@@ -45,6 +52,10 @@ export const STORY_QUESTS: StoryQuest[] = [
       choicePragLabel: '🪙 Đòi Bá Kiến đặt cọc lúa sạch (+350 🪙)',
       rewardGold: 600,
       rewardGems: 15,
+      objectives: [
+        { counter: 'WATER', target: 1, label: '💧 Tưới nước Giếng Làng' },
+        { counter: 'HARVEST:CROP_01', target: 1, label: '🌾 Thu hoạch Lúa Nước' },
+      ],
       completed: false,
     },
     {
@@ -56,11 +67,15 @@ export const STORY_QUESTS: StoryQuest[] = [
       title: 'Vét Bùn Phù Sa & Đỏ Lửa Bếp Củi Quê Mẹ',
       npcSpeaker: '👴 Bác Trưởng Thôn Bảy',
       npcQuote: '"Mùi cá kho riềng sả bốc lên làm bác nhớ bà nội cháu xưa kia quá... Bát đầu tiên mới ra lò, cháu tính đem biếu ai trước?"',
-      desc: 'Vét Bùn Đáy Ao lấy 3 Xô Phù Sa và phối 3 nguyên liệu trong Nồi Đất Bếp Quê để tìm lại Trang Gia Phả #2.',
+      desc: 'Vét Bùn Đáy Ao lấy 3 Xô Phù Sa rồi bón Bùn Phù Sa cho 1 ô cây để tìm lại Trang Gia Phả #2.',
       choiceEmpLabel: '🤝 Biếu Bác Bảy & Lớp học làng (+30 Phong Thủy)',
       choicePragLabel: '🪙 Bán mở hàng Quán Nước đầu làng (+350 🪙)',
       rewardGold: 900,
       rewardGems: 20,
+      objectives: [
+        { counter: 'DREDGE', target: 1, label: '🪣 Vét bùn đáy ao' },
+        { counter: 'APPLY_MUD', target: 1, label: '🟫 Bón bùn phù sa cho 1 ô' },
+      ],
       completed: false,
     },
     {
@@ -72,7 +87,7 @@ export const STORY_QUESTS: StoryQuest[] = [
       title: 'Dựng Giàn Sau Bão & Giao Đơn Trường Làng',
       npcSpeaker: '👩‍🏫 Cô Giáo Hương',
       npcQuote: '"Cơn mưa đầu mùa làm tốc mái bếp ăn trường làng rồi... May mà có chuyến xe rau gạo Hợp Tác Xã của bạn kịp chở tới!"',
-      desc: 'Dựng lại giàn cây bị nghiêng sau mưa bão (+20% sản lượng) và giao 1 Đơn Hàng Hợp Tác Xã mở Trang Gia Phả #3.',
+      desc: 'Phối 3 nguyên liệu trong Nồi Đất Bếp Quê, dựng lại giàn cây bị nghiêng sau mưa bão (+20% sản lượng) và giao 1 Đơn Hàng Hợp Tác Xã mở Trang Gia Phả #3.',
       choiceEmpLabel: '🤝 Góp tre gỗ sửa mái bếp trường (+30 Phong Thủy)',
       choicePragLabel: '🪙 Ký hợp đồng cung ứng giá sỉ (+350 🪙)',
       rewardGold: 1200,

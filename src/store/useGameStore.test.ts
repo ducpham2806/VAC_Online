@@ -46,11 +46,31 @@ describe('Người chơi mới (production) — vòng chơi offline', () => {
   });
 
   it('nhiệm vụ cần đủ cấp', () => {
+    store.setState({ progressCounters: { WATER: 1, 'HARVEST:CROP_01': 1, DREDGE: 1, APPLY_MUD: 1 } });
     store.getState().claimStoryQuest('Q_CH2', 'EMP'); // Lv.3
     expect(store.getState().storyQuests.find((q) => q.id === 'Q_CH2')?.completed).toBe(false);
     store.getState().claimStoryQuest('Q_CH1', 'PRAG');
     expect(store.getState().gold).toBe(2500 + 600 + 350);
     expect(store.getState().level).toBe(2);
+  });
+
+  it('nhiệm vụ Chương 1 bị chặn tới khi tưới nước và thu hoạch Lúa (M03.5)', () => {
+    store.getState().claimStoryQuest('Q_CH1', 'EMP');
+    expect(store.getState().storyQuests.find((q) => q.id === 'Q_CH1')?.completed).toBe(false);
+    expect(store.getState().toastMessage).toContain('Chưa hoàn thành');
+    expect(store.getState().gold).toBe(2500);
+
+    store.getState().interactTile('TILE_1'); // gieo
+    store.getState().interactTile('TILE_1'); // tưới
+    expect(store.getState().progressCounters.WATER).toBe(1);
+    store.setState({
+      tiles: store.getState().tiles.map((t) => (t.id === 'TILE_1' ? { ...t, matureAt: Date.now() - 1 } : t)),
+    });
+    store.getState().interactTile('TILE_1'); // thu hoạch
+    expect(store.getState().progressCounters['HARVEST:CROP_01']).toBe(1);
+
+    store.getState().claimStoryQuest('Q_CH1', 'EMP');
+    expect(store.getState().storyQuests.find((q) => q.id === 'Q_CH1')?.completed).toBe(true);
   });
 
   it('tiến trình offline được lưu vào localStorage', () => {

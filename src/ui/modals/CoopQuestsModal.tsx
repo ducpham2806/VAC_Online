@@ -1,4 +1,6 @@
 import { isStageOpen } from '../../config/features';
+import { STORY_QUESTS } from '../../data/quests';
+import { questProgress } from '../../domain/quests';
 import { useGameStore } from '../../store/useGameStore';
 
 /** MODAL PHASE 1 + DLC 1: BẢNG ĐƠN HTX, GA TÀU THỐNG NHẤT BẮC NAM, CỐT TRUYỆN & 7 NGÀY TÂN THỦ — tách từ App.tsx (S2). */
@@ -9,6 +11,7 @@ export function CoopQuestsModal() {
   const coopOrders = useGameStore((s) => s.coopOrders);
   const trainCrates = useGameStore((s) => s.trainCrates);
   const storyQuests = useGameStore((s) => s.storyQuests);
+  const progressCounters = useGameStore((s) => s.progressCounters);
   const fillTrainCrate = useGameStore((s) => s.fillTrainCrate);
   const setActiveModal = useGameStore((s) => s.setActiveModal);
   const deliverCoopOrder = useGameStore((s) => s.deliverCoopOrder);
@@ -103,7 +106,14 @@ export function CoopQuestsModal() {
             <h4 className="font-extrabold text-sm text-[#6e4121] sticky top-0 bg-white pb-1 border-b border-[#e0d4c0]">
               📜 3. Gia Phả 10 Chương ({storyQuests.filter((q) => q.completed).length}/10)
             </h4>
-            {storyQuests.filter((q) => isStageOpen(q.unlockStage)).map((q) => (
+            {storyQuests.filter((q) => isStageOpen(q.unlockStage)).map((q) => {
+              // Mục tiêu lấy từ dữ liệu chuẩn (bản trong save cũ có thể thiếu objectives).
+              const progress = questProgress(
+                STORY_QUESTS.find((item) => item.id === q.id)?.objectives ?? [],
+                progressCounters
+              );
+              const ready = progress.every((p) => p.done);
+              return (
               <div key={q.id} className="p-2.5 rounded-lg border border-[#c88a4b] bg-[#fff3e0] space-y-1.5">
                 <div className="font-extrabold text-[#b83224]">{q.chapter}</div>
                 <div className="font-bold text-[#2a180c]">{q.title}</div>
@@ -111,6 +121,15 @@ export function CoopQuestsModal() {
                   <b>{q.npcSpeaker}:</b> {q.npcQuote}
                 </div>
                 <p className="text-[11px] text-[#664930]">{q.desc}</p>
+                {!q.completed && progress.length > 0 && (
+                  <ul className="bg-white border border-[#e0d4c0] rounded-lg px-2 py-1 space-y-0.5 text-[11px] font-bold">
+                    {progress.map((p) => (
+                      <li key={p.label} className={p.done ? 'text-[#1b5e20]' : 'text-[#664930]'}>
+                        {p.done ? '✅' : '⬜'} {p.label} ({p.have}/{p.target})
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className="text-[11px] font-extrabold text-[#4e8222]">
                   Thưởng chương: +{q.rewardGold.toLocaleString()} 🪙 &amp; +{q.rewardGems} 💎 Ngọc
                 </div>
@@ -120,22 +139,26 @@ export function CoopQuestsModal() {
                   </div>
                 ) : (
                   <div className="space-y-1 pt-0.5">
+                    {!ready && (
+                      <div className="text-[11px] font-bold text-[#b83224]">Làm xong các mục tiêu trên để nhận thưởng chương.</div>
+                    )}
                     <button
                       onClick={() => claimStoryQuest(q.id, 'EMP')}
-                      className="touch-btn w-full bg-[#4e8222] text-white font-extrabold py-1 px-2 rounded-lg cursor-pointer text-[11px] text-left"
+                      className={`touch-btn w-full bg-[#4e8222] text-white font-extrabold py-1 px-2 rounded-lg cursor-pointer text-[11px] text-left ${ready ? '' : 'opacity-60'}`}
                     >
                       {q.choiceEmpLabel}
                     </button>
                     <button
                       onClick={() => claimStoryQuest(q.id, 'PRAG')}
-                      className="touch-btn w-full bg-[#f5b82e] text-[#2a180c] font-extrabold py-1 px-2 rounded-lg cursor-pointer text-[11px] text-left"
+                      className={`touch-btn w-full bg-[#f5b82e] text-[#2a180c] font-extrabold py-1 px-2 rounded-lg cursor-pointer text-[11px] text-left ${ready ? '' : 'opacity-60'}`}
                     >
                       {q.choicePragLabel}
                     </button>
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Cột 4: 7 Ngày Tân Thủ */}

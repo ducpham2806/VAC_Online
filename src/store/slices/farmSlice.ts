@@ -1,5 +1,6 @@
 /** Slice Farm của useGameStore (tách S2 — thân hàm giữ nguyên). */
-import { QUEST_BRANCH_REWARDS, QUEST_XP_REWARD } from '../../data/quests';
+import { QUEST_BRANCH_REWARDS, QUEST_XP_REWARD, STORY_QUESTS } from '../../data/quests';
+import { firstMissingObjective } from '../../domain/quests';
 import {
   MAX_WILD_PLOTS,
   MUD_ITEM_ID,
@@ -158,6 +159,13 @@ export const createFarmSlice = (set: StoreSet, get: StoreGet, { runCloud, applyL
     }
     if (state.level < q.minLevel) {
       set({ toastMessage: `🔒 Cần đạt Lv.${q.minLevel} để nhận [${q.chapter}]!` });
+      return;
+    }
+    // Mục tiêu lấy từ dữ liệu chuẩn (bản trong save cũ có thể thiếu objectives).
+    const objectives = STORY_QUESTS.find((item) => item.id === questId)?.objectives ?? [];
+    const missing = firstMissingObjective(objectives, state.progressCounters);
+    if (missing && state.farmMode !== 'cloud') {
+      set({ toastMessage: `📜 Chưa hoàn thành: ${missing.label} (${missing.have}/${missing.target})` });
       return;
     }
     const branch = QUEST_BRANCH_REWARDS[branchChoice];

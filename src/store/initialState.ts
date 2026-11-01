@@ -238,6 +238,7 @@ export function createDemoState(): GameData {
     ],
 
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
+    progressCounters: {},
 
     chatMessages: [
       {
@@ -299,6 +300,7 @@ export function createFreshState(): GameData {
     inventory: {},
     tiles: createEmptyTiles(),
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
+    progressCounters: {},
   };
 }
 
@@ -319,6 +321,7 @@ export function toFarmSave(s: GameData): FarmSave {
     pondMudCounter: s.pondMudCounter,
     inventory: s.inventory,
     tiles: s.tiles,
+    counters: s.progressCounters,
   };
 }
 
@@ -336,6 +339,7 @@ export function fromFarmSave(save: FarmSave): Partial<GameData> {
     pondMudCounter: save.pondMudCounter,
     inventory: save.inventory,
     tiles: save.tiles,
+    progressCounters: save.counters ?? {},
   };
 }
 
@@ -374,6 +378,7 @@ export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<Gam
     rookieLastClaimOn: p.rookie_claimed_today ? todayInVietnam() : null,
     inventory: snap.inventory,
     tiles: tilesFromSnapshot(snap),
+    progressCounters: snap.counters ?? {},
     storyQuests: prev.storyQuests.map((q) => {
       const choice = snap.quests[q.id];
       return choice ? { ...q, completed: true, selectedChoice: choice } : { ...q, completed: false };
@@ -405,6 +410,7 @@ export const PERSISTED_KEYS = [
   'inventory',
   'tiles',
   'storyQuests',
+  'progressCounters',
   'selectedSeedId',
   'farmMode',
 ] as const satisfies ReadonlyArray<keyof GameData>;

@@ -536,14 +536,19 @@ export function runFullQCTestSuite(): QCTestResult[] {
     const fsBefore = store.getState().fengShuiScore;
     store.setState({
       storyQuests: store.getState().storyQuests.map((q) => ({ ...q, completed: false })),
+      progressCounters: {},
     });
+    // M03.5: chưa làm mục tiêu (tưới + thu Lúa) thì không nhận được.
+    store.getState().claimStoryQuest('Q_CH1', 'EMP');
+    const blocked = !store.getState().storyQuests.find((q) => q.id === 'Q_CH1')!.completed;
+    store.setState({ progressCounters: { WATER: 1, 'HARVEST:CROP_01': 1 } });
     store.getState().claimStoryQuest('Q_CH1', 'EMP');
     const q1 = store.getState().storyQuests.find((q) => q.id === 'Q_CH1')!;
     const fsAfter = store.getState().fengShuiScore;
     return {
-      passed: totalChapters === 10 && q1.completed && q1.selectedChoice === 'EMP' && fsAfter === fsBefore + 30,
-      expected: 'Đủ 10 Chương, chọn nhánh EMP cộng +30 Phong Thủy & đánh dấu hoàn thành',
-      actual: `Chapters=${totalChapters}, Q_CH1=${q1.selectedChoice}, Phong Thủy: ${fsBefore} ➔ ${fsAfter}`,
+      passed: totalChapters === 10 && blocked && q1.completed && q1.selectedChoice === 'EMP' && fsAfter === fsBefore + 30,
+      expected: 'Đủ 10 Chương; chặn khi chưa làm mục tiêu; làm xong chọn EMP cộng +30 Phong Thủy & đánh dấu hoàn thành',
+      actual: `Chapters=${totalChapters}, chặn trước=${blocked}, Q_CH1=${q1.selectedChoice}, Phong Thủy: ${fsBefore} ➔ ${fsAfter}`,
     };
   });
 

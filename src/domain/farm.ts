@@ -3,6 +3,7 @@ import { CatalogItem, FarmTileEntity, RegionType } from '../data/types';
 import { applyXp, canPlant } from './progression';
 import { regenStamina } from './stamina';
 import { normalizePlotTiles } from './farmGrid';
+import { COUNTER, Counters, bumpCounter } from './quests';
 
 /**
  * Luật vòng chơi Vườn – Ao – Chuồng (GĐ1) dạng hàm thuần.
@@ -44,6 +45,8 @@ export interface FarmSave {
   pondMudCounter: number;
   inventory: Record<string, number>;
   tiles: FarmTileEntity[];
+  /** Bộ đếm hành động cho mục tiêu nhiệm vụ (src/domain/quests.ts). Save cũ có thể thiếu. */
+  counters?: Counters;
 }
 
 export type FarmResult = { ok: true; save: FarmSave; message: string } | { ok: false; message: string };
@@ -131,7 +134,11 @@ export function water(save: FarmSave, tileId: string, now: number): FarmResult {
   const reduced = tile.matureAt - Math.floor((tile.matureAt - now) * WATER_TIME_CUT);
   return {
     ok: true,
-    save: { ...save, tiles: withTile(save, tileId, { watered: true, matureAt: reduced }) },
+    save: {
+      ...save,
+      tiles: withTile(save, tileId, { watered: true, matureAt: reduced }),
+      counters: bumpCounter(save.counters, COUNTER.WATER),
+    },
     message: `💧 Đã tưới Nước Giếng Làng / Chăm sóc [${item?.name ?? tile.itemId}] (-15% thời gian chờ)!`,
   };
 }
@@ -152,6 +159,7 @@ export function applyMud(save: FarmSave, tileId: string, now: number, rng: () =>
     save: {
       ...save,
       inventory: { ...save.inventory, [MUD_ITEM_ID]: mudQty - 1 },
+      counters: bumpCounter(save.counters, COUNTER.APPLY_MUD),
       tiles: withTile(save, tileId, { mudApplied: true, isGolden: golden, matureAt: now - 1000 }),
     },
     message: `🪣 Đã bón Bùn Phù Sa đáy ao! [${item?.name ?? tile.itemId}] chín ngay lập tức${golden ? ' và NỔ ĐỘT BIẾN HOÀNG KIM ⭐!' : '!'}`,
@@ -180,6 +188,7 @@ export function harvest(save: FarmSave, tileId: string, now: number): FarmResult
       xp: progress.xp,
       pondMudCounter,
       inventory: { ...save.inventory, [item.id]: (save.inventory[item.id] ?? 0) + qty },
+      counters: bumpCounter(save.counters, COUNTER.harvest(item.id)),
       tiles: withTile(save, tileId, emptyTilePatch()),
     },
     message: `🧺 Thu hoạch [${item.emoji} ${item.name}${tile.isGolden ? ' HOÀNG KIM ⭐ ×3' : ''}]: +${qty} vào Kho, +${item.xpReward} XP${
@@ -230,6 +239,7 @@ export function dredgePond(save: FarmSave, now: number): FarmResult {
       xp: progress.xp,
       pondMudCounter: 0,
       inventory: { ...s.inventory, [MUD_ITEM_ID]: mud },
+      counters: bumpCounter(s.counters, COUNTER.DREDGE),
     },
     message: `🪣 Đã Vét Bùn Đáy Ao (-${DREDGE_STAMINA} ⚡): +${DREDGE_MUD_GAIN} Xô Bùn Phù Sa (Đang có: ${mud} xô) & +${DREDGE_XP} XP!`,
   };
