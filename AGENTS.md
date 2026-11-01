@@ -19,7 +19,7 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
      * Sơ đồ luồng & Wireframe màn hình $\rightarrow$ Chỉ viết đầy đủ tại `06_MASTER_UI_UX` & `07_INTERACTIVE_WIREFRAME_VIEWER.html`.
      * Bản đồ lộ trình tổng thể 6 Giai đoạn, 4 Cổng kiểm soát & Lịch LiveOps $\rightarrow$ Chỉ viết tại `08_MASTER_PLAN` & `10_MASTER_AI_PLAYBOOK`.
      * Hồ sơ triển khai chi tiết từng Giai đoạn (What/How từng Module, Phân công 6 Bộ phận, Prompt giao việc 100% cho AI kèm Skills & Checklist QC) $\rightarrow$ Chỉ viết tại bộ 6 file **`11_PLAN_GIAI_DOAN_1` ➔ `16_PLAN_GIAI_DOAN_6`**.
-3. **Lưu trữ sạch sẽ (`Clean Root Directory`):** Mọi file tài liệu rời rạc đã được gộp phải chuyển vào `docs_archive_merged/`, giữ thư mục gốc gọn nhẹ đúng bộ file `00 ➔ 17`.
+3. **Lưu trữ sạch sẽ (`Clean Root Directory`):** Mọi file tài liệu rời rạc đã được gộp phải chuyển vào `docs_archive_merged/`, giữ thư mục gốc gọn nhẹ đúng bộ file `00 ➔ 17` (ngoại lệ: `README.md`, `AGENTS.md` và danh sách việc duy nhất `VIEC_CAN_LAM.md`).
 
 ---
 
@@ -67,6 +67,7 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
 ---
 
 ## 1.5. Trạng Thái Thực Tế & Agent/Skill Có Thật (đọc trước khi làm bất kỳ task nào)
+* **Danh sách việc duy nhất: `VIEC_CAN_LAM.md`** (việc của PO trước, sprint đang làm, lộ trình, backlog tài liệu). Xong việc nào thì đánh dấu `[x]` + gạch đi, không xóa.
 * **Hiện trạng code ≠ tài liệu.** Trước khi tin một con số trong `00 ➔ 16` (155 thực thể, 37 TC, 11 bảng, 7 RPC, `SocialPlazaScene`…), đối chiếu `17_PROJECT_AUDIT` mục A1 và Phụ lục 1.
 * **Sprint S0 đã xong** (`17` Phần C): build chạy, có vitest + CI, auth chỉ qua Supabase, migration `0003` khóa RPC bằng `auth.uid()`, công cụ debug chỉ hiện ở DEV, dữ liệu `unlockWave` 5 Đợt. **Sprint S1 đã xong phần code** (`17` mục C1):
   * Vòng chơi GĐ1 tính trên server (`0004_farm_core.sql`). Luật chung đặt ở `src/domain/`, **sửa luật thì phải sửa cả SQL**.

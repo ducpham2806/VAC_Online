@@ -6,6 +6,7 @@ Webgame / PWA → Mobile App thể loại **Cozy Vietnamese Pixel Art Farm Tycoo
 - Thiết kế đích: bộ tài liệu `00` → `16` (bắt đầu từ `00_MASTER_BIBLE…md`).
 - **Hiện trạng thực tế & kế hoạch sprint:** `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md`.
 - Quy tắc cho AI agent: `AGENTS.md`.
+- **Việc cần làm (PO + dev):** `VIEC_CAN_LAM.md`.
 
 ## Chạy nhanh
 

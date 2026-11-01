@@ -275,14 +275,7 @@ Repo `Donchitos/Claude-Code-Game-Studios` (MIT) gồm 49 agent, 74 skill, 18 hoo
 
 **✅ Đã sửa (2026-11-01, PO chốt):** thuế Chợ P2P 5% (`MARKET_TAX_RATE = 0.05`, test, QC TC-06.2a, toast; `02`, `03`, `13`), bảo hiểm trộm 80% (`13`), PK tốn `-5⚡`/trận (`AGENTS`, `00`, `01`, `02`, `16`). Tỉ lệ Sink/Source GĐ3+ sau khi giảm thuế: **CHƯA KIỂM ĐƯỢC** (chưa có dữ liệu chợ thật) — chạy `/vac-balance-check` ở S6.
 
-**Còn lại (cần PO chọn phương án):**
-- [ ] Gộp `13 → 16` về hệ ID của CSV `04`; thống nhất tên dự án.
-- [ ] Thống nhất các thông số mâu thuẫn ở A4 theo `01` / `02`.
-- [ ] Sửa tham chiếu `04_MASTER_NARRATIVE`, "GDD Mục 9".
-- [ ] Xóa ký tự lạ, sửa lỗi gõ.
-- [ ] Bỏ tick `[x]` ở checklist nghiệm thu GĐ1–2 cho tới khi code đạt.
-- [ ] Điền 2 placeholder rỗng (`02:62`, `08:70`).
-- [ ] Đồng bộ 7/8 van chống lạm phát; số TC thực tế (25 hiện có → mục tiêu mới sau khi port sang vitest).
+**Còn lại:** chuyển sang `VIEC_CAN_LAM.md` mục D (danh sách việc duy nhất, tránh ghi trùng 2 nơi).
 
 **Đã sửa trong bản 1.0 này:** `00` (bản đồ `00 → 17`, nhãn build 6 giai đoạn, 14 quy tắc C1–C14, version v9.3), `AGENTS.md` (file 17, prefix ID thực tế, mục trạng thái & skill thật), `05` (công cụ thực thi `agent-sprite-forge`), `08` (liên kết kế hoạch tái cấu trúc), `10` (ánh xạ skill thật).
 
