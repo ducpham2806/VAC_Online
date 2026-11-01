@@ -61,7 +61,11 @@ SELECT t.eq((public.rpc_get_my_farm()->>'game_stage')::INT, 1, 'GĐ1');
 
 SELECT t.eq((public.rpc_plant(0, 0, 'CROP_01')->'profile'->>'gold')::INT, 2498, 'gieo CROP_01 trừ 2 vàng');
 SELECT t.expect_error('SELECT public.rpc_plant(0, 0, ''CROP_01'')', '%đang có cây%');
-SELECT t.expect_error('SELECT public.rpc_plant(4, 0, ''CROP_01'')', 'Ô đất không hợp lệ');
+-- 0006: (4,0) là phân khu ① — nằm trong lưới 5×5 nhưng chưa khai hoang; (5,0) ngoài lưới
+SELECT t.expect_error('SELECT public.rpc_plant(5, 0, ''CROP_01'')', 'Ô đất không hợp lệ');
+SELECT t.expect_error('SELECT public.rpc_plant(0, 5, ''CROP_01'')', 'Ô đất không hợp lệ');
+SELECT t.expect_error('SELECT public.rpc_plant(4, 0, ''CROP_01'')', 'Ô đất chưa khai hoang%');
+SELECT t.expect_error('SELECT public.rpc_harvest(0, 3)', 'Ô đất chưa khai hoang%');
 SELECT t.expect_error('SELECT public.rpc_plant(1, 0, ''CROP_02'')', '%mở ở Lv.2');
 SELECT t.expect_error('SELECT public.rpc_plant(1, 0, ''CROP_13'')', '%Đợt 2%');
 SELECT t.expect_error('SELECT public.rpc_plant(1, 0, ''CROP_S01'')', '%độc quyền miền khác%');
@@ -102,6 +106,21 @@ SELECT t.eq(
 
 -- Khai hoang
 SELECT t.eq((public.rpc_expand_land()->'profile'->>'wild_plots_unlocked')::INT, 13, 'khai hoang 13/25');
+-- 0006: khai hoang xong thì phân khu ① (4,0) gieo được, ② (4,1) vẫn khóa
+SELECT t.eq(jsonb_array_length(public.rpc_plant(4, 0, 'CROP_01')->'tiles') > 0, TRUE, 'gieo được ở phân khu mới (4,0)');
+SELECT t.expect_error('SELECT public.rpc_plant(4, 1, ''CROP_01'')', 'Ô đất chưa khai hoang%');
+-- Mở tới phân khu ⑨ = ô thứ 21 (0,4) hàng Ao mới: gieo được, thu hoạch tăng bùn
+RESET ROLE;
+UPDATE public.profiles SET wild_plots_unlocked = 21, pond_mud_counter = 0 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
+SET ROLE authenticated;
+SELECT public.rpc_plant(0, 4, 'CROP_01');
+SELECT t.expect_error('SELECT public.rpc_plant(1, 4, ''CROP_01'')', 'Ô đất chưa khai hoang%');
+RESET ROLE;
+UPDATE public.farm_entities SET mature_at = NOW() - INTERVAL '1 second'
+WHERE user_id = 'a0000000-0000-0000-0000-00000000000a' AND tile_x = 0 AND tile_y = 4;
+SET ROLE authenticated;
+SELECT t.eq((public.rpc_harvest(0, 4)->'profile'->>'pond_mud_counter')::INT, 1, 'thu hoạch ở ô Ao hàng 5 tăng bùn');
+SELECT t.eq((SELECT count(*) FROM public.farm_entities WHERE tile_x = 4 AND tile_y = 0)::INT, 1, 'ô (4,0) vẫn còn cây của A');
 RESET ROLE;
 UPDATE public.profiles SET wild_plots_unlocked = 25 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
 SET ROLE authenticated;

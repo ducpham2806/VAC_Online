@@ -5,6 +5,11 @@ import { EventBus } from '../EventBus';
 import { triggerHaptic } from '../../services/nativePlatform';
 import { soundFX } from '../../services/soundEffects';
 import { isStageOpen } from '../../config/features';
+import { PLOT_LAYOUT, nextLockedPlot } from '../../domain/farmGrid';
+
+/** Lưới 5×5 (M02.4): khoảng cách tối thiểu giữa 2 cột để ô 168px không chồng nhau. */
+const MIN_GAP_X = 180;
+const MAX_GAP_Y = 115;
 
 interface TileVisualGroup {
   tileId: string;
@@ -45,8 +50,10 @@ export class FarmScene extends Phaser.Scene {
     const { width, height } = this.scale;
 
     // 1. Nền đồng quê 3 miền rộng mở (Hỗ trợ Camera Pan & Zoom cho Mobile / iPad)
-    this.cameras.main.setBounds(-160, -80, width + 320, height + 180);
-    this.add.rectangle(width / 2, height / 2, width + 320, height + 180, 0x6ab04c);
+    // Vùng kéo bản đồ đủ chứa cả 5 hàng ruộng/ao sau khi khai hoang hết 25 phân khu.
+    const worldH = Math.max(height + 180, this.gridY(4, height) + 140);
+    this.cameras.main.setBounds(-160, -80, width + 320, worldH);
+    this.add.rectangle(width / 2, worldH / 2 - 80, width + 320, worldH, 0x6ab04c);
 
     // Đường làng gạch đỏ Bát Tràng & Đường ray Tàu Thống Nhất Bắc – Nam
     this.add.rectangle(width / 2, 118, width + 240, 22, 0xc85a32).setStrokeStyle(2, 0x3d2314);
@@ -80,7 +87,7 @@ export class FarmScene extends Phaser.Scene {
     // 2. Khuôn viên 4 Cụm Công Trình Làng Quê (Nhà Chính, Lán Thợ, Đình Làng, Chợ Phiên)
     this.createVillageLandmarks(width);
 
-    // 3. Khởi tạo Lưới 12 Ô Vườn - Ao - Chuồng (3 Hàng x 4 Cột) dùng Pixel Textures
+    // 3. Khởi tạo Lưới 25 Phân khu Vườn - Ao - Chuồng (5×5, mở dần bằng Khai Hoang) dùng Pixel Textures
     this.createVACGrid(width, height);
 
     // 4. Khởi tạo 6 Nhân công Lán Thợ & Chó Phú Quốc đi tuần tự động (Seamless Loop)
@@ -253,16 +260,19 @@ export class FarmScene extends Phaser.Scene {
     });
   }
 
-  private createVACGrid(width: number, height: number): void {
-    const state = useGameStore.getState();
-    const startX = width * 0.16;
-    const startY = 185;
-    const gapX = (width * 0.68) / 3;
-    const gapY = Math.min(115, (height - 235) / 2.4);
+  private gridX(col: number, width: number): number {
+    return width * 0.16 + col * Math.max(MIN_GAP_X, (width * 0.68) / 4);
+  }
 
-    state.tiles.forEach((tile, idx) => {
-      const x = startX + tile.tileX * gapX;
-      const y = startY + tile.tileY * gapY;
+  private gridY(row: number, height: number): number {
+    return 185 + row * Math.min(MAX_GAP_Y, (height - 235) / 2.4);
+  }
+
+  /** Dựng sẵn đủ 25 phân khu; ô chưa khai hoang được ẩn / làm mờ trong refreshTileVisuals. */
+  private createVACGrid(width: number, height: number): void {
+    PLOT_LAYOUT.forEach((tile, idx) => {
+      const x = this.gridX(tile.tileX, width);
+      const y = this.gridY(tile.tileY, height);
 
       const initTex =
         tile.zoneType === 'POND'
@@ -303,7 +313,15 @@ export class FarmScene extends Phaser.Scene {
         if (this.isDragging || !this.pressedOnCanvas(pointer)) return;
         triggerHaptic('light');
         const latestState = useGameStore.getState();
-        const currentTile = latestState.tiles.find((t) => t.id === tile.id) ?? tile;
+        const currentTile = latestState.tiles.find((t) => t.id === tile.id);
+        if (!currentTile) {
+          // Ô chưa khai hoang: chỉ ô kế tiếp mới hiện và chạm được → hộp xác nhận Khai Hoang.
+          if (nextLockedPlot(latestState.wildPlotsUnlocked)?.id === tile.id) {
+            soundFX.playGoldenSparkle();
+            latestState.setActiveModal('EXPAND_LAND');
+          }
+          return;
+        }
         const nowMs = Date.now() + latestState.clockOffsetMs;
         const isRipeNow = currentTile.matureAt !== null && nowMs >= currentTile.matureAt;
 
@@ -459,9 +477,30 @@ export class FarmScene extends Phaser.Scene {
       }
     }
 
+    const nextPlotId = nextLockedPlot(state.wildPlotsUnlocked)?.id;
     this.tileVisuals.forEach((vis) => {
       const tile = state.tiles.find((t) => t.id === vis.tileId);
-      if (!tile) return;
+      const parts = [vis.tileSprite, vis.cropSprite, vis.label, vis.statusTag];
+      if (!tile) {
+        // Chưa khai hoang: ô kế tiếp hiện mờ ("Đất Hoang"), các ô sau ẩn hẳn.
+        const isNext = vis.tileId === nextPlotId;
+        [vis.tileSprite, vis.label, vis.statusTag].forEach((o) => o.setVisible(isNext).setAlpha(0.55));
+        vis.cropSprite.setVisible(false);
+        if (isNext) {
+          vis.tileSprite.setInteractive({ useHandCursor: true });
+          vis.label.setText('🌾 Đất Hoang');
+          vis.statusTag.setText('🪓 Chạm khai hoang (-5⚡ -500🪙)');
+          vis.statusTag.setColor('#ffd54f');
+        } else {
+          vis.tileSprite.disableInteractive();
+        }
+        return;
+      }
+      if (!vis.tileSprite.visible || vis.tileSprite.alpha < 1) {
+        parts.forEach((o) => o.setAlpha(1));
+        [vis.tileSprite, vis.label, vis.statusTag].forEach((o) => o.setVisible(true));
+        vis.tileSprite.setInteractive({ useHandCursor: true });
+      }
 
       if (tile.zoneType === 'LAND') {
         vis.tileSprite.setTexture(tile.watered ? 'tile_land_wet' : 'tile_land_dry');

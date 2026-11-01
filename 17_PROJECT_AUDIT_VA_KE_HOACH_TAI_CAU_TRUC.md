@@ -162,7 +162,8 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - Store: `src/store/{gameTypes,initialState,storeHelpers}.ts` + `src/store/slices/*Slice.ts` (6 slice), `useGameStore.ts` chỉ còn ghép + persist.
   - App: 11 modal sang `src/ui/modals/*Modal.tsx`; App đọc store qua `useShallow`. Thêm một thay đổi nhỏ: trạng thái tạm của modal (ô tìm kiếm Bách khoa, nồi nấu, form chợ) đặt lại khi mở lại modal.
   - Danh sách việc: `VIEC_CAN_LAM.md`.
-- Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm.
+- ~~Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm~~ ✅ 2026-11-01: lưới 5×5 (cột 5 → hàng 4 Ruộng → hàng 5 Ao), ô kế tiếp hiện mờ và chạm để khai hoang; migration `0006` (`_plot_order`, `_lock_tile`, `rpc_harvest` bùn cho hàng Ao mới).
+  - Phát sinh: ở 844×390 khay giống che hàng ruộng đầu (có từ trước) → cần sắp lại HUD màn hình nhỏ.
 - Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp).
 - Atlas sprite thật cho 23 loài Đợt 1.
 - Analytics.
@@ -297,7 +298,7 @@ Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sa
 | 02 | M02.1 Đăng ký + chọn miền | Partial | Chỉ buff miền Bắc |
 | 02 | M02.2 Năng lượng Hybrid | Done | Hồi +1⚡/3 phút, tính trên server (S1) |
 | 02 | M02.3 Thời tiết động | Partial | Chu kỳ thủ công |
-| 02 | M02.4 Khai hoang 25 khu | Partial | Server (S1), trần 25; lưới hiển thị vẫn 12 ô |
+| 02 | M02.4 Khai hoang 25 khu | Done (code) | Lưới 5×5 thật (`src/domain/farmGrid.ts` + `0006`); chờ chạy `0006` trên Supabase thật |
 | 03 | M03.1 Khay giống + khóa 5 Đợt | Done | Khoá theo Đợt/cấp/miền ở client và server (S1) |
 | 03 | M03.2 Tưới giếng −15% | Done | Server (S1) |
 | 03 | M03.3 Ao + vét bùn | Done | Server (S1) |

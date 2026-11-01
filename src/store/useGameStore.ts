@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { MAX_WILD_PLOTS } from '../domain/farm';
+import { normalizePlotTiles } from '../domain/farmGrid';
 import type { StoryQuest } from '../data/quests';
 import type { GameState } from './gameTypes';
 import {
@@ -52,6 +53,12 @@ export const useGameStore = create<GameState>()(
           ? { farmMode: 'cloud' }
           : (Object.fromEntries(PERSISTED_KEYS.map((k) => [k, state[k]])) as PersistedSave),
       migrate: (persisted) => persisted as PersistedSave,
+      // Save cũ: bổ sung ô đất đã khai hoang nhưng trước đây chưa có trên lưới (M02.4, lưới 5×5).
+      merge: (persisted, current) => {
+        const save = (persisted ?? {}) as PersistedSave;
+        const merged: GameState = { ...current, ...save };
+        return { ...merged, tiles: normalizePlotTiles(merged.tiles, merged.wildPlotsUnlocked) };
+      },
     }
   )
 );

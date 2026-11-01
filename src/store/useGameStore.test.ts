@@ -61,6 +61,26 @@ describe('Người chơi mới (production) — vòng chơi offline', () => {
     expect(saved.state).not.toHaveProperty('activeModal');
   });
 
+  it('khai hoang offline mở thêm ô thật ở cột 5 và gieo được (M02.4)', () => {
+    store.getState().expandWildLand();
+    const st = store.getState();
+    expect(st).toMatchObject({ wildPlotsUnlocked: 13, gold: 2000, stamina: 45 });
+    expect(st.tiles).toHaveLength(13);
+    expect(st.tiles[12]).toMatchObject({ id: 'TILE_13', tileX: 4, tileY: 0 });
+    store.getState().interactTile('TILE_13');
+    expect(store.getState().tiles[12].itemId).toBe('CROP_01');
+  });
+
+  it('save cũ đã khai hoang nhưng chỉ có 12 ô được bổ sung đủ ô khi tải lại', async () => {
+    const twelve = createFreshState().tiles;
+    localStorage.setItem(
+      SAVE_STORAGE_KEY,
+      JSON.stringify({ state: { ...createFreshState(), wildPlotsUnlocked: 15, tiles: twelve }, version: 1 })
+    );
+    await store.persist.rehydrate();
+    expect(store.getState().tiles.map((t) => t.id).slice(12)).toEqual(['TILE_13', 'TILE_14', 'TILE_15']);
+  });
+
   it('chế độ online không lưu tiến trình cục bộ', () => {
     store.setState({ farmMode: 'cloud', gold: 99999 });
     const saved = JSON.parse(localStorage.getItem(SAVE_STORAGE_KEY) ?? '{}');

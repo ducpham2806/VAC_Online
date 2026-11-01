@@ -1,5 +1,6 @@
 import { FarmTileEntity, GenderType, RegionType } from '../data/types';
 import { getSupabaseClient } from './supabaseClient';
+import { BASE_PLOTS, createPlotTiles } from '../domain/farmGrid';
 
 /**
  * Cầu nối tới các RPC nông trại (migration 0004). Ở chế độ online, mọi thao tác dính tới
@@ -107,34 +108,14 @@ export async function callFarmRpc(name: FarmRpcName, args: Record<string, unknow
 }
 
 /** Lưới 12 ô cố định của FarmScene: 4 cột × 3 hàng (Vườn / Vườn cây / Ao). */
-export const GRID_COLS = 4;
-export const GRID_ROWS = 3;
-
+/** 12 ô trống của người chơi mới (bố cục đầy đủ: src/domain/farmGrid.ts). */
 export function createEmptyTiles(): FarmTileEntity[] {
-  const list: FarmTileEntity[] = [];
-  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-    const row = Math.floor(i / GRID_COLS);
-    list.push({
-      id: `TILE_${i + 1}`,
-      tileX: i % GRID_COLS,
-      tileY: row,
-      zoneType: row === 0 ? 'LAND' : row === 1 ? 'ORCHARD' : 'POND',
-      itemId: null,
-      plantedAt: null,
-      matureAt: null,
-      watered: false,
-      mudApplied: false,
-      isGolden: false,
-      totalYield: 0,
-      remainingYield: 0,
-    });
-  }
-  return list;
+  return createPlotTiles(BASE_PLOTS);
 }
 
-/** Ghép các ô có cây từ server vào lưới 12 ô. */
+/** Ghép các ô có cây từ server vào lưới đã khai hoang (12 → 25 phân khu). */
 export function tilesFromSnapshot(snapshot: FarmSnapshot): FarmTileEntity[] {
-  return createEmptyTiles().map((t) => {
+  return createPlotTiles(snapshot.profile.wild_plots_unlocked ?? BASE_PLOTS).map((t) => {
     const s = snapshot.tiles.find((e) => e.x === t.tileX && e.y === t.tileY);
     if (!s) return t;
     return {

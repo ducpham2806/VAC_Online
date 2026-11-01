@@ -25,7 +25,8 @@ export type ActiveModalType =
   | 'LIVEOPS'
   | 'ENCYCLOPEDIA'
   | 'SUPABASE_CONFIG'
-  | 'QC_REPORT';
+  | 'QC_REPORT'
+  | 'EXPAND_LAND';
 
 export type WeatherType = 'SUNNY' | 'RAINY' | 'FIREFLY_NIGHT';
 

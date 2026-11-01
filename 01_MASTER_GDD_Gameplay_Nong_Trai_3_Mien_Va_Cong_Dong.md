@@ -19,7 +19,7 @@ Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**
 2. **Chế độ Mở rộng, Khám phá & Tương tác Đặc biệt (RPG – Tốn `⚡ Năng lượng`):**
    * Thanh **Năng lượng (`⚡ 50/50`, hồi `+1 ⚡` mỗi 3 phút hoặc ăn món ăn Bếp Quê)** dùng cho:
      * **🪣 Vét Bùn Đáy Ao (`-3 ⚡`):** Thu `3 Xô Bùn Phù Sa` (`ITEM_BUN_PHU_SA`) bón cây nổ Hoàng Kim `⭐` (`x3 giá trị`) + cơ hội nhặt **Kỷ Vật Tuổi Thơ 8x–9x**.
-     * **🪓 Khai Hoang Mở Rộng Đất (`-5 ⚡` + `500 🪙`):** Mở khóa từ `12/25` lên tối đa `25/25` phân khu bản đồ.
+     * **🪓 Khai Hoang Mở Rộng Đất (`-5 ⚡` + `500 🪙`):** Mở khóa từ `12/25` lên tối đa `25/25` phân khu bản đồ. Lưới 5×5: lần lượt cột 5 của 3 hàng Ruộng/Vườn/Ao → hàng 4 Ruộng → hàng 5 Ao; ô kế tiếp hiện mờ trên bản đồ, chạm để khai hoang (bố cục chuẩn: `src/domain/farmGrid.ts`).
      * **🎋 Thám Hiểm Rừng Trúc & Bãi Bồi (`-6 ⚡`):** Đào măng rừng, tìm phấn hoa đột biến & săn **12 Kỷ Vật Tuổi Thơ** (`+5 💎`).
      * **🥁 Chèo Thuyền Rồng Hợp Tác Xã & Đua Trâu Vàng (`-4 ⚡`):** Thi đấu thể thao làng quê nhận Vàng, Ngọc & Cúp vinh danh.
      * **⚔️ Võ Đài PK 1v1 / 3v3 & Loạn Chiến 8–12P (`-5 ⚡`/trận):** Hồi ⚡ bằng món Bếp Quê (Bánh Chưng, Cơm Nắm…). Trần thưởng & thuế xem `02_MASTER_ECONOMY`.

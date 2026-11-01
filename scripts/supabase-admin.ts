@@ -74,6 +74,9 @@ async function status(): Promise<void> {
     "SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='master_catalog' AND column_name='unlock_wave'"
   )).length > 0}`);
   console.log(`Đã chạy 0004 (profiles.stamina_updated_at): ${has('stamina_updated_at')}`);
+  console.log(`Đã chạy 0006 (hàm _plot_order, khai hoang 5×5): ${(await sql(
+    "SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = '_plot_order'"
+  )).length > 0}`);
 }
 
 async function apply(files: string[]): Promise<void> {

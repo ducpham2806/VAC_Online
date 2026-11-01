@@ -14,6 +14,7 @@ import { canPlant, maxUnlockedWave } from './domain/progression';
 import { StaminaBadge } from './ui/hud/StaminaBadge';
 import { XpBar } from './ui/hud/XpBar';
 import { WarehouseModal } from './ui/modals/WarehouseModal';
+import { ExpandLandModal } from './ui/modals/ExpandLandModal';
 import { QcReportModal } from './ui/modals/QcReportModal';
 import { SupabaseConfigModal } from './ui/modals/SupabaseConfigModal';
 import { RegisterModal } from './ui/modals/RegisterModal';
@@ -630,6 +631,7 @@ export const App: React.FC = () => {
       {activeModal === 'COOP_QUESTS' && <CoopQuestsModal />}
 
       {activeModal === 'WAREHOUSE' && <WarehouseModal />}
+      {activeModal === 'EXPAND_LAND' && <ExpandLandModal />}
 
       {/* MODAL 1: LÁN THỢ ĐỒNG QUÊ & QUẢN LÝ 6 GIA NHÂN (CÓ WORKER STATE MACHINE AUTO-TICK) */}
       {activeModal === 'WORKERS' && <WorkersModal />}

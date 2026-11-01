@@ -2,6 +2,7 @@ import { GAME_CATALOG } from '../data/masterData';
 import { CatalogItem, FarmTileEntity, RegionType } from '../data/types';
 import { applyXp, canPlant } from './progression';
 import { regenStamina } from './stamina';
+import { normalizePlotTiles } from './farmGrid';
 
 /**
  * Luật vòng chơi Vườn – Ao – Chuồng (GĐ1) dạng hàm thuần.
@@ -253,6 +254,7 @@ export function expandLand(save: FarmSave, now: number): FarmResult {
       xp: progress.xp,
       gold: s.gold - EXPAND_GOLD,
       wildPlotsUnlocked: plots,
+      tiles: normalizePlotTiles(s.tiles, plots),
       fengShuiScore: s.fengShuiScore + EXPAND_FENG_SHUI,
     },
     message: `🪓 Khai hoang thành công (-${EXPAND_STAMINA} ⚡, -${EXPAND_GOLD} 🪙)! Đã mở rộng lên ${plots}/${MAX_WILD_PLOTS} Phân khu VAC, nhận +${EXPAND_XP} XP & +${EXPAND_FENG_SHUI} Phong Thủy!`,
