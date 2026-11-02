@@ -102,3 +102,5 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 - **2026-11-02** — PO chạy `0009` trên Supabase thật; AI chạy `recipe_seed.sql` qua connector và kiểm: 3 bảng mới, 22 RPC (5 RPC Bếp), `anon` không gọi được, 14 món / 34 dòng công thức, `app_game_stage() = 1` (Bếp chưa mở cho người chơi). Security Advisor: 0 ERROR, WARN như cũ.
 - **2026-11-02** — Thêm RULE bắt buộc ghi nhật ký vào `AGENTS.md` mục 1.5 + mục F này.
 
+- **2026-11-02** — `/vac-balance-check` Đợt 1–2 (chỉ phân tích). Phát hiện: vật nuôi `ANI_01..07` và thủy sản `AQUA_01..06` đều **lỗ mỗi lứa** (chỉ có XP); thu nhập trần ~3.240🪙/ngày (12 ô Lúa, 90 phút) so với `02` giả định 12.000–20.000🪙/ngày → lương Lán Thợ lớn hơn thu nhập. Ghi vào `17` mục C3.
+- **2026-11-02** — Viết đặc tả **nháp S5 Lán Thợ** (`17` mục C3) + RULE D1 sơ bộ. **Dừng ở đây: chờ PO trả lời 4 câu hỏi** (cách thợ làm việc, mức lương, sửa vật nuôi lỗ, lệch cấp Chương 6–7). Chưa viết code S5.

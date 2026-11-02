@@ -259,6 +259,42 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 - ⏳ Mở GĐ2 (việc riêng, cùng Đợt 2 = 45 loài): migration đổi `app_game_stage()` thành 2 + `VITE_GAME_STAGE=2` trên Vercel. Trước đó nên đặt mục tiêu Chương 3 (Bếp Quê) và chạy `/vac-balance-check`.
 - Chưa có: sprite xưởng trên bản đồ (S5), icon riêng cho món (đang dùng emoji).
 
+
+### C3. Đặc tả S5 — Lán Thợ & Xưởng nghề (M05.1–M05.5) — NHÁP, chờ PO duyệt (2026-11-02)
+**Hiện trạng code (`workersSlice.ts`) là stub, có 3 nguồn in tiền:**
+- `claimWorkerPantry` cộng 18🪙/món + tặng cố định 15 Lúa, 8 Trứng, 6 Cá, 3 Bùn mỗi lần thu Giỏ.
+- `simulateOfflineWorkerProgress` hồi +10⚡/giờ offline.
+- Thợ tự gieo lại không tốn tiền giống. Không có gì chạy trên server.
+
+**Kiểm cân bằng (`/vac-balance-check`, dữ liệu catalog, chưa có số liệu người chơi thật):**
+
+| Nhóm Đợt 1–2 | Lãi/phút/ô | Ghi chú |
+|---|---|---|
+| Cây ruộng `CROP_01..19` | 0,75 → 3,00 🪙 | Lúa `CROP_01` (Lv.1) lãi/phút cao nhất; loài cấp cao kém loài cấp thấp |
+| Cây lâu năm `CROP_23..26` | 0,89 → 0,95 🪙 | |
+| **Vật nuôi `ANI_01..07`** | **−1,73 → −4,48 🪙 (lỗ)** | vd Gà `ANI_01` mua 40, bán 14 × 1 |
+| **Thủy sản `AQUA_01..06`** | **−0,65 → −1,73 🪙 (lỗ)** | Chỉ có XP; người chơi bị phạt khi nuôi |
+
+- Thu nhập trần: 12 ô Lúa, thu liên tục 90 phút/ngày ≈ **3.240🪙/ngày** (20 ô ≈ 5.400). Thực tế thấp hơn.
+- `02` giả định GĐ2 có Sources **12.000–20.000🪙/ngày** → lệch ~4–6 lần. Lương 2 thợ GĐ2 (800 + 1.100🪙/ngày + cơm) sẽ lớn hơn thu nhập.
+- XP: Lv.9 cần 5.044 XP; Lv.14 cần 16.056 XP (tổng từ Lv.1).
+- Sources/Sinks thực tế: **NOT ASSESSED — NO DATA** (chưa có beta).
+
+**Đề xuất mặc định (chờ PO chọn ở 4 câu hỏi):**
+1. Thợ thu ô đã chín ≥ 5 phút (chừa thời gian cho chủ tự thu) và tưới ô chưa tưới. **Không tự gieo lại.** Hàng thật vào Giỏ Thợ (tối đa 120), bấm "Thu Giỏ" mới về Kho. XP thu hoạch không cộng.
+2. Thợ chỉ làm khi còn hợp đồng và Độ No ≥ 35%. Độ No giảm theo giờ; đói thì tự ăn 1 suất ở Bàn Ăn. Mâm cơm lấy từ món Bếp Quê thật hoặc mua bằng 🪙.
+3. Tính lười (lazy-tick) ở server khi gọi `rpc_get_my_farm` / thao tác. Bỏ 3 nguồn in tiền ở trên.
+4. Xưởng nghề `MAC_07` / `MAC_08` + đồ thợ `CRAFT_01..02`: công thức theo ID như S4 (cần map "Tre Trúc", "Kén Tơ Tằm"… sang ID có thật). Đồ thợ 72h: +15% tốc độ (giảm mốc chờ 5 phút / tăng Độ No).
+5. Mục tiêu chương: Ch.3 = xây Bếp Củi + nấu 1 món (PO đã chốt Bếp dời sang Ch.3 ở S2); Ch.6 = thuê Chú Tư + dọn 1 mâm cơm; Ch.7 = cấp 1 đồ thợ.
+6. `MAC_01` Cối Xay Cám: chưa có luật cho vật nuôi ăn cám → hoãn tới khi sửa vật nuôi (câu hỏi 3).
+
+**RULE D1 (sơ bộ):**
+1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).
+2. Kinh tế 🔴: lương lệch thu nhập; vật nuôi / thủy sản đang lỗ (lỗi có từ GĐ1).
+3. Art 🟡: cần sprite Lán Thợ + 2 thợ.
+4. Code 🟢: giữ tên action cũ.
+5. DB 🟡: migration `0010` chỉ thêm.
+
 ---
 
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
