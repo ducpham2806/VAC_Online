@@ -56,3 +56,24 @@ export function canPlant(item: CatalogItem, level: number, gameStage: number, re
   if (item.unlockLevel > level) return { ok: false, reason: 'LEVEL_LOCKED' };
   return { ok: true };
 }
+
+/** Bếp Quê, Xưởng, đồ thợ… (mọi thứ không gieo/nuôi được) mở từ Giai đoạn 2 (`12_PLAN` M04.1–M04.3). */
+export const CRAFT_MIN_STAGE = 2;
+
+export type CraftLock =
+  | { ok: true }
+  | { ok: false; reason: 'PLANTABLE' | 'LEVEL_LOCKED' }
+  | { ok: false; reason: 'STAGE_LOCKED'; stage: number };
+
+/**
+ * Có được chế biến / sở hữu vật phẩm không gieo được (món ăn, máy, đồ thợ…) không.
+ * Cần Giai đoạn ≥ max(2, Đợt của vật phẩm) và đủ cấp. Trước đây Bách Khoa không kiểm điều này
+ * nên ở GĐ1 có thể "mua" món rồi bán lại cho HTX để lời vô hạn (sửa 2026-11-02).
+ */
+export function canCraftOrBuy(item: CatalogItem, level: number, gameStage: number): CraftLock {
+  if (isPlantable(item)) return { ok: false, reason: 'PLANTABLE' };
+  const stage = Math.max(CRAFT_MIN_STAGE, item.unlockWave ?? CRAFT_MIN_STAGE);
+  if (gameStage < stage) return { ok: false, reason: 'STAGE_LOCKED', stage };
+  if (item.unlockLevel > level) return { ok: false, reason: 'LEVEL_LOCKED' };
+  return { ok: true };
+}

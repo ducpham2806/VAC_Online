@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { GAME_CATALOG, REGION_INFO } from '../../data/masterData';
 import { RegionType } from '../../data/types';
+import { GAME_STAGE } from '../../config/features';
+import { canCraftOrBuy } from '../../domain/progression';
 import { useGameStore } from '../../store/useGameStore';
 
 const IS_DEV = import.meta.env.DEV;
@@ -8,6 +10,7 @@ const IS_DEV = import.meta.env.DEV;
 /** MODAL ĐẠI TỪ ĐIỂN BÁCH KHOA 155 THỰC THỂ & ĐỒNG BỘ SUPABASE CLOUD — tách từ App.tsx (S2). */
 export function EncyclopediaModal() {
   const inventory = useGameStore((s) => s.inventory);
+  const level = useGameStore((s) => s.level);
   const syncCatalogToSupabaseCloud = useGameStore((s) => s.syncCatalogToSupabaseCloud);
   const setActiveModal = useGameStore((s) => s.setActiveModal);
   const craftOrBuyCatalogItem = useGameStore((s) => s.craftOrBuyCatalogItem);
@@ -140,6 +143,8 @@ export function EncyclopediaModal() {
               item.category === 'MUTANT_CROP' ||
               item.category === 'ANIMAL' ||
               item.category === 'AQUA';
+            const craftLock = isPlantable ? null : canCraftOrBuy(item, level, GAME_STAGE);
+            const lockedStage = craftLock && !craftLock.ok && craftLock.reason === 'STAGE_LOCKED' ? craftLock.stage : null;
             return (
               <div
                 key={item.id}
@@ -182,6 +187,11 @@ export function EncyclopediaModal() {
                     Mua: <b>{item.buyCostGold.toLocaleString()}🪙</b> | Bán:{' '}
                     <b className="text-[#4e8222]">{item.baseSellGold.toLocaleString()}🪙</b>
                   </div>
+                  {lockedStage !== null ? (
+                    <span className="px-2.5 py-1 rounded-lg font-extrabold text-[11px] bg-[#e0d4c0] text-[#664930]">
+                      🔒 Mở ở GĐ{lockedStage}
+                    </span>
+                  ) : (
                   <button
                     onClick={() => craftOrBuyCatalogItem(item.id)}
                     className={`touch-btn px-2.5 py-1 rounded-lg font-extrabold text-[11px] cursor-pointer ${
@@ -192,6 +202,7 @@ export function EncyclopediaModal() {
                   >
                     {isPlantable ? '🌱 Chọn Gieo/Nuôi' : '⚡ Chế Biến / Sở Hữu'}
                   </button>
+                  )}
                 </div>
               </div>
             );

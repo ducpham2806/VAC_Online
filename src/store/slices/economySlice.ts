@@ -1,5 +1,7 @@
 /** Slice Economy của useGameStore (tách S2 — thân hàm giữ nguyên). */
+import { GAME_STAGE } from '../../config/features';
 import { GAME_CATALOG } from '../../data/masterData';
+import { canCraftOrBuy } from '../../domain/progression';
 import { vacRealtime } from '../../services/realtimeService';
 import type { GameState } from '../gameTypes';
 import type { StoreGet, StoreHelpers, StoreSet } from '../storeHelpers';
@@ -55,6 +57,17 @@ export const createEconomySlice = (set: StoreSet, get: StoreGet, _helpers: Store
         selectedSeedId: spec.id,
         activeModal: null,
         toastMessage: `🌱 Đã chọn [${spec.emoji} ${spec.name}]! Chạm vào ô đất/ao trên bản đồ để gieo trồng hoặc chăn nuôi ngay!`,
+      });
+      return;
+    }
+
+    const lock = canCraftOrBuy(spec, state.level, GAME_STAGE);
+    if (!lock.ok) {
+      set({
+        toastMessage:
+          lock.reason === 'STAGE_LOCKED'
+            ? `🔒 [${spec.name}] mở ở Giai đoạn ${lock.stage} (Bếp Quê & Xưởng)!`
+            : `🔒 Cần đạt Cấp ${spec.unlockLevel} để chế biến/sở hữu [${spec.name}]!`,
       });
       return;
     }

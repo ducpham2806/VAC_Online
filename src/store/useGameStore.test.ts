@@ -31,6 +31,16 @@ describe('Người chơi mới (production) — vòng chơi offline', () => {
     expect(store.getState().inventory.CROP_01).toBe(0);
   });
 
+  // vitest chạy DEV → GAME_STAGE = 6; nhánh GĐ1 (STAGE_LOCKED) được test ở src/domain/progression.test.ts.
+  it('chế biến món khi chưa đủ cấp bị chặn: không trừ vàng, không vào kho, không hồi ⚡', () => {
+    store.getState().craftOrBuyCatalogItem('PROD_01'); // Cơm Trắng cần Lv.4, người chơi mới Lv.1
+    const s = store.getState();
+    expect(s.gold).toBe(2500);
+    expect(s.inventory.PROD_01).toBeUndefined();
+    expect(s.stamina).toBe(50);
+    expect(s.toastMessage).toContain('Cấp 4');
+  });
+
   it('không gieo được loài chưa đủ cấp', () => {
     store.setState({ selectedSeedId: 'CROP_02' });
     store.getState().interactTile('TILE_1');

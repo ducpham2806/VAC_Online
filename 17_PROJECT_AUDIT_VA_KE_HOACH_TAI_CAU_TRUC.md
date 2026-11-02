@@ -172,6 +172,83 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 - ~~Atlas sprite thật cho 23 loài Đợt 1~~ ✅ (bản tạm) 2026-11-02: đường ống `import_sprite.py` → `pack_atlas.py` → atlas `wave1` (92 khung, 64 màu) đang chạy trong game với hình vẽ bằng code; VFX theo kết quả thật. **Chưa có ảnh vẽ đẹp**: plugin `agent-sprite-forge` chưa cài trong môi trường cloud và cần API key tạo ảnh → PO chọn ChatGPT/Gemini thủ công (bộ prompt `art/prompts/wave1_species.md`) hoặc cấp `OPENAI_API_KEY` / `GEMINI_API_KEY`.
 - ✅ 2026-11-02 **Bản chạy thử GĐ1 (asset tạm đầy đủ):** atlas `world` (ô đất, ao 3 khung, nhà, giếng, lô sắp mở, cảnh trang trí, điền chủ nam/nữ đi + tưới, Bác Bảy, bướm, chim, khói), icon pixel + khung gỗ / giấy dó + tranh splash (`tools/art/codeart_ui.py`), animation (nhân vật đi tới ô, vật nuôi nhún, cá nhảy, ao gợn), hiệu ứng UI (số tiền nhảy, xu bay, modal trồi lên, âm lật trang / kèn lên cấp). `npm run build:preview` (GĐ1, offline, `--base=./`) → Artifact riêng tư https://claude.ai/artifact/8R1sgtQahsaAaGgG3DB36h. Vẽ lại toàn bộ asset tạm: `npm run art:all`.
 - ~~Analytics~~ ✅ 2026-11-02: đo ở server, không có code theo dõi ở client (`0008`): `player_active_days` (ghi trong `rpc_get_my_farm`), `economy_daily` (trigger biến động 🪙/💎 trên `profiles`), view `analytics_retention` / `analytics_funnel` / `analytics_economy` chỉ `service_role` đọc. Xem bằng `npm run supabase -- report`. Khách offline không được đo.
+- ✅ 2026-11-02 **Vá lỗ hổng Bách Khoa:**
+  - Lỗi: ở GĐ1 offline, nút "Chế Biến / Sở Hữu" cho "mua" món với giá thực `mua − bán` rồi bán lại cho HTX, ra 🪙 / XP / ⚡ vô hạn. Nút này cũng không kiểm Giai đoạn hay Cấp.
+  - Sửa: `canCraftOrBuy` (`src/domain/progression.ts`) chỉ mở đồ không gieo được khi GĐ ≥ max(2, Đợt) và đủ cấp; nút hiện "🔒 Mở ở GĐ2".
+  - Chế độ online không bị ảnh hưởng: server không có RPC mua món, snapshot ghi đè.
+  - Bản chạy thử đã đăng lại (Version 2).
+
+
+### C2. Đặc tả S4 — Bếp Quê & Xưởng (M04.1–M04.3) — PO duyệt 2026-11-02
+**Phạm vi:**
+- 3 xưởng ăn uống: `MAC_02` Bếp Củi (Lv.4, 350🪙), `MAC_03` Lò Đậu Phụ & Bánh (Lv.8, 850🪙), `MAC_04` Quán Nước (Lv.12, 1.600🪙).
+- 14 món Đợt 1–2: `PROD_01..12`, `PROD_N01`, `PROD_C01`.
+- Ăn món hồi ⚡.
+- Dời sang S5 (cùng Lán Thợ): `MAC_01`, `MAC_07`, `MAC_08`, `CRAFT_01..04`. M04.5 Đố Ca Dao làm sau.
+
+**Quyết định PO:**
+1. **Nồi Đất = khám phá công thức.**
+   - Bỏ 1–4 nguyên liệu đang có trong Kho. Khớp đúng một công thức chưa khám phá (đã mở Đợt, đủ cấp) thì mở công thức đó, lần đầu **+10💎 +50XP**.
+   - Nguyên liệu không bị tiêu. Sai thì chỉ báo gợi ý.
+   - Cần đã xây `MAC_02`. Cơm Trắng mở sẵn.
+   - Sổ Tay hiện "???" kèm 1 nguyên liệu gợi ý cho món chưa khám phá. Phải khám phá món trước khi nấu ở xưởng.
+2. **Giữ dữ liệu gốc:**
+   - `PROD_11` cần Chè `CROP_N02` (chỉ miền Bắc trồng; miền khác chờ Chợ GĐ3).
+   - `PROD_C01` cần Cà Phê `CROP_C05` (Đợt 4, Lv.22) nên hiện khóa "cần Cà Phê – Đợt 4".
+3. **Giữ giá catalog.** 10/13 món có giá bán < giá nguyên liệu: Bếp là nơi đổi nông sản lấy ⚡/XP và là van hút hàng. Xem lại bằng `/vac-balance-check` sau beta.
+4. **Mở ở GĐ2** (`01` mục 3.2 đã ghi chú). `CRAFT_MIN_STAGE = 2`.
+
+**Luật** (`src/domain/cooking.ts`, bản sao SQL ở `0009_kitchen.sql`):
+
+| Hành động | Điều kiện | Kết quả |
+|---|---|---|
+| Xây xưởng | GĐ ≥ 2, đủ cấp, chưa có, đủ 🪙 | −`buyCostGold`, +`xpReward` của xưởng |
+| Nấu | Có xưởng, xưởng rảnh (1 suất), món thuộc xưởng và đã khám phá, nguyên liệu đã mở Đợt, đủ cấp, Kho đủ nguyên liệu | Trừ nguyên liệu, **0⚡**; xong sau `growOrCraftMinutes` (miền Trung ×0,9) |
+| Lấy món | Đã xong | +1 món vào Kho, +`xpReward` của món |
+| Ăn | Có món, ⚡ chưa đầy | −1 món; `⚡ = min(max, ⚡ đã hồi + staminaDelta)` |
+| Thử Nồi Đất | Có `MAC_02`, 1–4 nguyên liệu có trong Kho | Khớp đúng món mới: mở công thức, +10💎 +50XP |
+
+- Bỏ đường "mua món bằng vàng" và stub `cookRandomDish`; giữ tên 2 action cũ để không gãy API.
+
+**Bảng công thức** (`recipe` + `machineId` thêm vào `GAME_CATALOG`; `inputIngredients` giữ làm chữ hiển thị):
+
+| Món | Xưởng | Công thức |
+|---|---|---|
+| PROD_01 Cơm Trắng | MAC_02 | 3 CROP_01 |
+| PROD_02 Khoai Ngô Nướng | MAC_02 | CROP_06 + CROP_03 + CROP_04 |
+| PROD_03 Canh Cải Cá Rô | MAC_02 | AQUA_01 + 2 CROP_05 + CROP_04 |
+| PROD_04 Tép Rang | MAC_02 | AQUA_02 + CROP_11 + CROP_09 |
+| PROD_05 Đậu Phụ | MAC_03 | 3 CROP_07 |
+| PROD_06 Bánh Đa Vừng | MAC_03 | 2 CROP_01 + CROP_18 + CROP_06 |
+| PROD_07 Bánh Cuốn | MAC_03 | 2 CROP_01 + ANI_05 + CROP_04 |
+| PROD_08 Canh Bầu Tôm | MAC_02 | CROP_16 + AQUA_02 + CROP_04 |
+| PROD_09 Nước Mía | MAC_04 | 2 CROP_09 |
+| PROD_10 Sữa Đậu Nành | MAC_04 | 2 CROP_07 + CROP_03 + CROP_09 |
+| PROD_11 Trà Đá Kẹo Lạc | MAC_04 | CROP_N02 + CROP_10 + CROP_09 |
+| PROD_12 Ốc Hấp Sả | MAC_02 | AQUA_03 + CROP_11 |
+| PROD_N01 Cốm Làng Vòng | MAC_03 | 2 CROP_15 + CROP_19 |
+| PROD_C01 Cà Phê Muối | MAC_04 | CROP_C05 + ANI_07 + CROP_09 (khóa tới Đợt 4) |
+
+**Server `0009_kitchen.sql`** (additive-only):
+- Bảng:
+  - `master_catalog.machine_id`.
+  - `recipe_ingredients`: seed sinh tự động.
+  - `player_machines`, `player_recipes`: RLS chỉ đọc của mình.
+- RPC: `rpc_build_machine`, `rpc_start_craft`, `rpc_collect_craft`, `rpc_eat_dish`, `rpc_cook_pot`. Mỗi hàm `SECURITY DEFINER`, dùng `auth.uid()`, kiểm `app_game_stage() >= 2`; chỉ GRANT cho `authenticated`.
+- `_farm_snapshot` thêm `machines` và `recipes`.
+
+**Client:**
+- `kitchenSlice.ts`: local dùng domain, cloud dùng RPC.
+- `CookingModal` 3 tab: Xưởng / Sổ Tay / Nồi Đất.
+- Kho có nút "🍚 Ăn".
+- Save cũ vẫn tương thích (trường mới mặc định rỗng).
+
+**RULE D1:**
+1. Core VAC 🟢: Bếp tiêu nông sản, thao tác tại nhà vẫn 0⚡.
+2. Kinh tế 🟡: bỏ 2 nguồn in tiền (mua-bán lại món, stub Nồi Đất không giới hạn); thêm sink xây xưởng và nguyên liệu bị tiêu.
+3. Art/UI 🟢: modal sẵn có, icon tạm; chưa có sprite xưởng trên bản đồ (S5).
+4. Code cũ 🟢: giữ chữ ký action.
+5. DB 🟡: `0009` chỉ thêm; PO dán vào SQL Editor.
 
 ---
 

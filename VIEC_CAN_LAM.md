@@ -56,11 +56,14 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Bản chạy thử GĐ1 đủ asset tạm (thế giới, nhân vật, UI, icon, animation, VFX, âm thanh) — link Artifact riêng tư https://claude.ai/artifact/8R1sgtQahsaAaGgG3DB36h (`npm run build:preview`, chạy offline)~~ ✅ 2026-11-02
 - [x] ~~Analytics phía server: retention D1/D7, phễu tân thủ, Sources/Sinks (`0008`, `npm run supabase -- report`)~~ ✅ 2026-11-02
 - [x] ~~Sửa CI job `sql` luôn đỏ (`scripts/test-sql.sh` thoát mã 1 dù test PASS)~~ ✅ 2026-11-02
+- [x] ~~Vá lỗ hổng Bách Khoa: GĐ1 "mua" món rồi bán lại HTX ra vàng/XP/⚡ vô hạn (`canCraftOrBuy`, bản chạy thử đã đăng lại)~~ ✅ 2026-11-02
 
 ## C. Lộ trình sau (chi tiết: `17` Phần C)
 - [x] ~~S3: Hướng dẫn tân thủ Chương 1–2 (Bác Bảy, 8 bước, `src/domain/tutorial.ts`)~~ ✅ 2026-11-02
 - [ ] S3: closed beta 50–100 người (xem số liệu bằng `npm run supabase -- report`).
-- [ ] S4–S5: GĐ2 Bếp Quê & Lán Thợ (45 loài), công thức bếp theo nguyên liệu, lazy-tick ở server.
+- [x] ~~S4: đặc tả Bếp Quê & Xưởng + 4 quyết định PO (Nồi Đất khám phá, giữ dữ liệu gốc, giữ giá, mở GĐ2) — `17` mục C2~~ ✅ 2026-11-02
+- [ ] S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu).
+- [ ] S5: Lán Thợ (Cối Xay Cám, Đan Lát, Khung Cửi, đồ thợ, lazy-tick ở server).
 - [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.
 - [ ] S11–S12: GĐ5, đóng gói Capacitor, soft launch.
