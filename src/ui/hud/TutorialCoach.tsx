@@ -48,7 +48,7 @@ export function TutorialCoach() {
       role="status"
       aria-live="polite"
     >
-      <div className="pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-xl shadow-xl px-2.5 py-2 short:py-1 text-[#2a180c]">
+      <div className="vac-paper vac-pop-in pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-xl shadow-xl px-2.5 py-2 short:py-1 text-[#2a180c]">
         <div className="flex items-center justify-between gap-2 text-[11px] font-extrabold text-[#6e4121]">
           <span>
             👴 Bác Bảy • Bước {current.index}/{TUTORIAL_STEPS.length}

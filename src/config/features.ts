@@ -14,3 +14,9 @@ export const GAME_STAGE = readStage();
 export function isStageOpen(stage: number): boolean {
   return GAME_STAGE >= stage;
 }
+
+/**
+ * Bản chạy thử chơi ngay (Artifact / link xem trước): không kết nối Supabase, không service worker,
+ * mọi thứ chạy chế độ Khách offline. Bật bằng VITE_OFFLINE_DEMO=1 (npm run build:preview).
+ */
+export const OFFLINE_DEMO = import.meta.env.VITE_OFFLINE_DEMO === '1';

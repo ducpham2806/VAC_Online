@@ -54,3 +54,47 @@
 .touch-btn:active {
   transform: scale(0.94);
 }
+
+/* ---------------------------------------------------------------------------
+ * Khung UI pixel (tools/art/codeart_ui.py): gỗ lim & giấy dó, 9-slice viền 8px.
+ * Màu nền Tailwind của phần tử vẫn giữ làm dự phòng nếu ảnh chưa tải.
+ * ------------------------------------------------------------------------- */
+.vac-wood {
+  border-style: solid;
+  border-width: 6px;
+  border-image: url('./assets/ui/ui_wood.png') 8 fill / 6px / 0 stretch;
+  image-rendering: pixelated;
+}
+.vac-paper {
+  border-style: solid;
+  border-width: 6px;
+  border-image: url('./assets/ui/ui_paper.png') 8 fill / 6px / 0 stretch;
+  image-rendering: pixelated;
+}
+
+/* Hiệu ứng UI: modal trồi lên, số tiền nhảy khi đổi, đồng xu bay */
+@keyframes vac-pop-in {
+  from { transform: translateY(18px) scale(0.96); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.vac-pop-in { animation: vac-pop-in 0.22s ease-out both; }
+@keyframes vac-bump-up {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); color: #8ac926; }
+  100% { transform: scale(1); }
+}
+@keyframes vac-bump-down {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.88); color: #f07c4a; }
+  100% { transform: scale(1); }
+}
+.vac-bump-up { display: inline-block; animation: vac-bump-up 0.5s ease-out; }
+.vac-bump-down { display: inline-block; animation: vac-bump-down 0.5s ease-out; }
+@keyframes vac-coin-fly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.6); opacity: 0.2; }
+}
+.vac-coin-fly { position: fixed; z-index: 70; pointer-events: none; animation: vac-coin-fly 0.75s ease-in forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .vac-pop-in, .vac-bump-up, .vac-bump-down, .vac-coin-fly { animation: none; }
+}

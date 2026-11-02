@@ -1,6 +1,7 @@
 import { EXPAND_GOLD, EXPAND_STAMINA, MAX_WILD_PLOTS } from '../../domain/farm';
 import { nextLockedPlot } from '../../domain/farmGrid';
 import { useGameStore } from '../../store/useGameStore';
+import { GameIcon } from '../GameIcon';
 
 const ZONE_NAME: Record<string, string> = {
   LAND: '🟫 Ruộng',
@@ -23,8 +24,8 @@ export function ExpandLandModal() {
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-md w-full p-3 sm:p-4 shadow-2xl text-xs space-y-3">
-        <div className="bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold text-sm">
+      <div className="vac-paper vac-pop-in bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-md w-full p-3 sm:p-4 shadow-2xl text-xs space-y-3">
+        <div className="vac-wood bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold text-sm">
           🪓 KHAI HOANG MỞ RỘNG ĐẤT
         </div>
 
@@ -37,7 +38,7 @@ export function ExpandLandModal() {
             <div className="bg-white border-2 border-[#c88a4b] rounded-xl p-2 font-extrabold text-[#2a180c] flex justify-between">
               <span>Chi phí</span>
               <span>
-                -{EXPAND_STAMINA} ⚡ &nbsp; -{EXPAND_GOLD} 🪙
+                -{EXPAND_STAMINA} <GameIcon id="energy" fallback="⚡" size={16} /> &nbsp; -{EXPAND_GOLD} <GameIcon id="gold" fallback="🪙" size={16} />
               </span>
             </div>
             {!affordable && (

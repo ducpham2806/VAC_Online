@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { GAME_CATALOG } from '../../data/masterData';
 import { useGameStore } from '../../store/useGameStore';
+import { GameIcon } from '../GameIcon';
+import { flyCoins } from '../fx/flyCoins';
 
 /** 🧺 Kho Nông Sản & Bán cho Hợp Tác Xã theo giá gốc (S1 — thu hoạch vào kho, tiền về khi bán). */
 export function WarehouseModal() {
@@ -17,8 +19,8 @@ export function WarehouseModal() {
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-3xl w-full p-3 sm:p-4 max-h-[90dvh] overflow-y-auto shadow-2xl text-xs space-y-3">
-        <div className="bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-sm sticky top-0">
+      <div className="vac-paper vac-pop-in bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-3xl w-full p-3 sm:p-4 max-h-[90dvh] overflow-y-auto shadow-2xl text-xs space-y-3">
+        <div className="vac-wood bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-sm sticky top-0">
           <span>🧺 KHO NÔNG SẢN &amp; BÁN CHO HỢP TÁC XÃ</span>
           <button
             onClick={() => setActiveModal(null)}
@@ -42,7 +44,7 @@ export function WarehouseModal() {
             return (
               <div key={item.id} className="bg-white border-2 border-[#c88a4b] rounded-xl p-2 flex flex-col gap-1.5">
                 <div className="font-extrabold text-[#2a180c]">
-                  {item.emoji} {item.name} <span className="text-[#664930]">× {have}</span>
+                  <GameIcon id={item.id} fallback={item.emoji} size={28} /> {item.name} <span className="text-[#664930]">× {have}</span>
                 </div>
                 {sellable ? (
                   <div className="flex items-center gap-1.5">
@@ -59,7 +61,10 @@ export function WarehouseModal() {
                     />
                     <button
                       disabled={farmBusy}
-                      onClick={() => sellToHtx(item.id, qty)}
+                      onClick={(e) => {
+                        flyCoins(e.currentTarget, Math.min(8, 3 + Math.floor(qty / 3)));
+                        sellToHtx(item.id, qty);
+                      }}
                       className="touch-btn flex-1 min-h-[44px] bg-[#4e8222] text-white font-extrabold px-2 rounded-lg cursor-pointer disabled:opacity-60"
                     >
                       🏪 Bán HTX +{(item.baseSellGold * qty).toLocaleString()} 🪙
@@ -73,7 +78,7 @@ export function WarehouseModal() {
           })}
           {extras.map(([id, q]) => (
             <div key={id} className="bg-white border-2 border-[#c88a4b] rounded-xl p-2 font-extrabold text-[#2a180c]">
-              {id === 'ITEM_BUN_PHU_SA' ? '🪣 Bùn Phù Sa' : id} × {q}
+              {id === 'ITEM_BUN_PHU_SA' ? <><GameIcon id="mud" fallback="🪣" size={24} /> Bùn Phù Sa</> : id} × {q}
             </div>
           ))}
         </div>

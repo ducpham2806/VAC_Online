@@ -31,8 +31,10 @@ export function saveSupabaseCredentials(url: string, anonKey: string): void {
 const creds = getSupabaseCredentials();
 // Khi chạy test (vitest đặt MODE = 'test') luôn ở chế độ offline để test không chạm mạng/DB thật.
 const isTestRun = import.meta.env.MODE === 'test';
+// Bản chạy thử (VITE_OFFLINE_DEMO=1, src/config/features.ts): không kết nối Supabase, chơi Khách offline.
+const isOfflineDemo = import.meta.env.VITE_OFFLINE_DEMO === '1';
 export const isSupabaseConfigured = Boolean(
-  !isTestRun && creds.url && creds.anonKey && !creds.url.includes('your-project-id')
+  !isTestRun && !isOfflineDemo && creds.url && creds.anonKey && !creds.url.includes('your-project-id')
 );
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured

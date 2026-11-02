@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { GAME_CATALOG } from './masterData';
@@ -50,5 +50,15 @@ describe('Atlas world (bản chạy thử GĐ1)', () => {
     for (const f of ['house', 'well', 'lot_sign', 'grass_tile', 'path_tile', 'bacbay_idle_0', 'butterfly_0', 'bird_0', 'smoke']) {
       expect(w.frames).toHaveProperty(f);
     }
+  });
+});
+
+describe('Icon UI pixel (src/assets/icons)', () => {
+  it('có icon cho 23 loài Đợt 1 và các icon HUD / dock', () => {
+    for (const c of WAVE1) expect(existsSync(resolve(root, `src/assets/icons/${c.id}.png`))).toBe(true);
+    for (const k of ['gold', 'gem', 'energy', 'xp', 'mud', 'scroll', 'basket', 'book', 'axe', 'gate', 'seed']) {
+      expect(existsSync(resolve(root, `src/assets/icons/${k}.png`))).toBe(true);
+    }
+    for (const k of ['ui_wood', 'ui_paper', 'splash_scene']) expect(existsSync(resolve(root, `src/assets/ui/${k}.png`))).toBe(true);
   });
 });

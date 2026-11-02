@@ -10,6 +10,8 @@ import {
   UserAuthAccount,
 } from '../services/authService';
 import { useGameStore } from '../store/useGameStore';
+import splashScene from '../assets/ui/splash_scene.png';
+import { GAME_STAGE, OFFLINE_DEMO } from '../config/features';
 import { soundFX } from '../services/soundEffects';
 
 export type AuthTabMode = 'LOGIN' | 'REGISTER' | 'GUEST' | 'FORGOT';
@@ -114,12 +116,16 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
 
         {/* Cụm Logo & Biểu tượng 3 Miền trung tâm */}
         <div className="my-auto max-w-2xl w-full mx-auto bg-[#fff8eb] text-[#2a180c] border-4 border-[#6e4121] rounded-3xl p-4 sm:p-6 shadow-2xl text-center space-y-3">
-          <div className="text-3xl sm:text-5xl">⛩️ 🌾 🐃 🚂 🐕 🪷</div>
+          <img
+            src={splashScene}
+            alt="Nhà ngói 3 gian, cây đa và điền chủ — Hương Đồng Gió Nội"
+            className="mx-auto w-full max-w-[360px] [image-rendering:pixelated] short:max-w-[240px]"
+          />
           <h1 className="text-xl sm:text-3xl font-black text-[#b83224] tracking-wide">
             VAC ONLINE — NÔNG TRẠI BA MIỀN
           </h1>
           <p className="text-xs sm:text-sm font-bold text-[#6e4121]">
-            Vườn – Ao – Chuồng Tuần Hoàn • 155 Thực Thể Bản Địa • 6 Gia Nhân Lán Thợ • Chợ Phiên &amp; Hái Trộm
+            Vườn – Ao – Chuồng 3 Miền • 81 loài mở dần qua 5 Đợt • Gia Phả 10 Chương
           </p>
 
           <div className="flex flex-wrap justify-center gap-2 text-[11px] font-extrabold">
@@ -155,8 +161,8 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
         </div>
 
         <div className="flex justify-between items-center text-[11px] text-[#ffe8c2]/90 font-bold">
-          <span>Phiên bản: v2.0 Complete Edition (Mobile Landscape PWA &amp; CapacitorJS)</span>
-          <span>☁️ Máy chủ: Supabase Realtime Cloud</span>
+          <span>Giai đoạn {GAME_STAGE} • Mobile Landscape PWA</span>
+          <span>{OFFLINE_DEMO ? '🧪 Bản chạy thử (offline)' : '☁️ Máy chủ: Supabase'}</span>
         </div>
       </div>
     );

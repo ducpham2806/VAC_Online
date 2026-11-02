@@ -27,8 +27,8 @@ export function MarketStealModal() {
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-5xl w-full p-3 sm:p-4 max-h-[88dvh] overflow-y-auto shadow-2xl text-xs">
-        <div className="bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center mb-3 text-xs sm:text-sm sticky top-0 z-10">
+      <div className="vac-paper vac-pop-in bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-5xl w-full p-3 sm:p-4 max-h-[88dvh] overflow-y-auto shadow-2xl text-xs">
+        <div className="vac-wood bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center mb-3 text-xs sm:text-sm sticky top-0 z-10">
           <span>📰 NHẬT BÁO CHỢ PHIÊN 3 MIỀN ({marketListings.length} SẠP CLOUD), HÁI TRỘM &amp; SỔ LƯU BÚT</span>
           <button
             onClick={() => setActiveModal(null)}

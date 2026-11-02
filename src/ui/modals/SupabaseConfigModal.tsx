@@ -17,8 +17,8 @@ export function SupabaseConfigModal() {
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-lg w-full p-4 space-y-3 text-xs shadow-2xl">
-        <div className="bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-sm">
+      <div className="vac-paper vac-pop-in bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-lg w-full p-4 space-y-3 text-xs shadow-2xl">
+        <div className="vac-wood bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-sm">
           <span>🟢 TRẠNG THÁI SUPABASE CLOUD &amp; ĐỒNG BỘ 155 THỰC THỂ</span>
           <button
             onClick={() => setActiveModal(null)}

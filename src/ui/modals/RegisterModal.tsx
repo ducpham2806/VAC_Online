@@ -18,8 +18,8 @@ export function RegisterModal({ tempName, setTempName, tempGender, setTempGender
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-xl w-full p-3 sm:p-4 max-h-[88dvh] overflow-y-auto shadow-2xl text-xs space-y-3">
-        <div className="bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-xs sm:text-sm">
+      <div className="vac-paper vac-pop-in bg-[#fff8eb] border-4 border-[#6e4121] rounded-2xl max-w-xl w-full p-3 sm:p-4 max-h-[88dvh] overflow-y-auto shadow-2xl text-xs space-y-3">
+        <div className="vac-wood bg-[#6e4121] text-[#f5b82e] px-3 py-2 rounded-xl font-extrabold flex justify-between items-center text-xs sm:text-sm">
           <span>📜 GIẤY ĐĂNG KÝ VỀ QUÊ LẬP NGHIỆP (CHỌN NHÂN VẬT &amp; 3 MIỀN)</span>
           <button
             onClick={() => setActiveModal(null)}

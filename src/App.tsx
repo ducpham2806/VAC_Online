@@ -13,6 +13,8 @@ import { GAME_STAGE, isStageOpen } from './config/features';
 import { canPlant, maxUnlockedWave } from './domain/progression';
 import { StaminaBadge } from './ui/hud/StaminaBadge';
 import { XpBar } from './ui/hud/XpBar';
+import { CurrencyBadge } from './ui/hud/CurrencyBadge';
+import { GameIcon } from './ui/GameIcon';
 import { TutorialCoach } from './ui/hud/TutorialCoach';
 import { WarehouseModal } from './ui/modals/WarehouseModal';
 import { ExpandLandModal } from './ui/modals/ExpandLandModal';
@@ -249,7 +251,7 @@ export const App: React.FC = () => {
       {/* =================================================================== */}
       <header className="fixed top-0 left-0 right-0 z-20 safe-top safe-left safe-right pointer-events-none flex flex-nowrap items-center justify-between gap-1.5 px-2 py-1">
         {/* Cụm Trái: Hồ sơ Điền chủ + Năng lượng ⚡ + Thời tiết */}
-        <div className="pointer-events-auto min-w-0 overflow-x-auto flex items-center [&>*]:shrink-0 gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg backdrop-blur-xs">
+        <div className="vac-wood pointer-events-auto min-w-0 overflow-x-auto flex items-center [&>*]:shrink-0 gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg backdrop-blur-xs">
           <button
             onClick={() => setActiveModal('REGISTER')}
             className="touch-btn bg-[#c88a4b] text-[#2a180c] font-extrabold px-2.5 py-0.5 rounded-full text-xs cursor-pointer shrink-0 max-w-[220px] truncate"
@@ -305,13 +307,21 @@ export const App: React.FC = () => {
         </div>
 
         {/* Cụm Phải: Vàng, Ngọc, Nhạc Nền 4 Chế Độ, Tua x60, Fullscreen PWA & Supabase Realtime */}
-        <div className="pointer-events-auto shrink-0 flex items-center gap-1 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 text-[#fff8eb] shadow-lg">
-          <span className="bg-[#3e2723] border border-[#f5b82e] px-2 py-0.5 rounded-full text-xs font-extrabold">
-            🪙 {gold.toLocaleString()}
-          </span>
-          <span className="bg-[#1a3a3a] border border-[#4dd0e1] px-2 py-0.5 rounded-full text-xs font-extrabold">
-            💎 {gems}
-          </span>
+        <div className="vac-wood pointer-events-auto shrink-0 flex items-center gap-1 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 text-[#fff8eb] shadow-lg">
+          <CurrencyBadge
+            id="hud-gold"
+            icon="gold"
+            fallback="🪙"
+            value={gold}
+            className="bg-[#3e2723] border border-[#f5b82e] px-2 py-0.5 rounded-full text-xs font-extrabold"
+          />
+          <CurrencyBadge
+            id="hud-gems"
+            icon="gem"
+            fallback="💎"
+            value={gems}
+            className="bg-[#1a3a3a] border border-[#4dd0e1] px-2 py-0.5 rounded-full text-xs font-extrabold"
+          />
           <button
             onClick={() => {
               const playing = soundFX.toggleFolkBgm();
@@ -379,7 +389,7 @@ export const App: React.FC = () => {
           >
             <span>
               <span className="short:hidden">🌱 Đang chọn: </span>
-              {selectedSeedObj.emoji} {selectedSeedObj.name}
+              <GameIcon id={selectedSeedObj.id} fallback={selectedSeedObj.emoji} size={20} /> {selectedSeedObj.name}
               <span className="short:hidden">
                 {' '}({seedTrayCatalog.filter((i) => canPlant(i, level, GAME_STAGE, region).ok).length}/{seedTrayCatalog.length} loài)
               </span>{' '}
@@ -401,7 +411,7 @@ export const App: React.FC = () => {
             className="touch-btn bg-[#2e8b8d] border-2 border-[#80deea] text-white font-extrabold px-2.5 py-1 rounded-xl text-xs shadow-lg cursor-pointer"
           >
             <span>
-              🪣 <span className="short:hidden">Vét Bùn Ao (</span>
+              <GameIcon id="mud" fallback="🪣" size={18} /> <span className="short:hidden">Vét Bùn Ao (</span>
               {pondMudCounter}/10
               <span className="short:hidden"> • -3⚡) [Kho: {inventory.ITEM_BUN_PHU_SA ?? 0}]</span>
               <span className="hidden short:inline"> • 🟫{inventory.ITEM_BUN_PHU_SA ?? 0}</span>
@@ -413,7 +423,7 @@ export const App: React.FC = () => {
             className="touch-btn bg-[#6e4121] border-2 border-[#c88a4b] text-[#fff8eb] font-bold px-2.5 py-1 rounded-xl text-xs shadow-lg cursor-pointer"
           >
             <span>
-              🪓 <span className="short:hidden">Khai Hoang (</span>
+              <GameIcon id="axe" fallback="🪓" size={18} /> <span className="short:hidden">Khai Hoang (</span>
               {wildPlotsUnlocked}/25
               <span className="short:hidden"> • -5⚡)</span>
             </span>
@@ -430,7 +440,7 @@ export const App: React.FC = () => {
         </div>
 
         {isSeedDrawerOpen && (
-          <div className="pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-r-xl p-1.5 shadow-xl flex flex-col gap-1 max-w-[94vw] sm:max-w-[740px] short:max-h-[45dvh] short:overflow-y-auto">
+          <div className="vac-paper pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-r-xl p-1.5 shadow-xl flex flex-col gap-1 max-w-[94vw] sm:max-w-[740px] short:max-h-[45dvh] short:overflow-y-auto">
             {/* Thanh lọc nhanh 81 giống Vườn - Ao - Chuồng */}
             <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-[11px]">
               {[
@@ -477,7 +487,7 @@ export const App: React.FC = () => {
                     }`}
                   >
                     {locked ? '🔒 ' : ''}
-                    {item.emoji} {item.name} ({item.buyCostGold}🪙 • Lv.{item.unlockLevel})
+                    <GameIcon id={item.id} fallback={item.emoji} size={22} /> {item.name} ({item.buyCostGold}🪙 • Lv.{item.unlockLevel})
                   </button>
                 );
               })}
@@ -553,24 +563,24 @@ export const App: React.FC = () => {
         </div>
 
         {/* Ngón cái phải: 8 Nút Action Dock chuẩn Ergonomic */}
-        <div className="pointer-events-auto flex items-center gap-1 overflow-x-auto max-w-full bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 shadow-lg short:flex-1 short:min-w-0">
+        <div className="vac-wood pointer-events-auto flex items-center gap-1 overflow-x-auto max-w-full bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 shadow-lg short:flex-1 short:min-w-0">
           <button
             onClick={() => setActiveModal('ENCYCLOPEDIA')}
             className="touch-btn bg-gradient-to-r from-[#ff9800] to-[#f5b82e] border border-white text-[#2a180c] text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
-            📖 {GAME_CATALOG.length} Thực Thể
+            <GameIcon id="book" fallback="📖" size={18} /> {GAME_CATALOG.length} Thực Thể
           </button>
           <button
             onClick={() => setActiveModal('COOP_QUESTS')}
             className="touch-btn bg-[#4e8222] border border-[#b8f272] text-white text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
-            {isStageOpen(3) ? '🚂 Tàu Hỏa & HTX' : '📜 Gia Phả & Quà'}
+            {isStageOpen(3) ? '🚂 Tàu Hỏa & HTX' : <><GameIcon id="scroll" fallback="📜" size={18} /> Gia Phả &amp; Quà</>}
           </button>
           <button
             onClick={() => setActiveModal('WAREHOUSE')}
             className="touch-btn bg-[#6e4121] border border-[#f5b82e] text-[#fff8eb] text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
-            🧺 Kho &amp; Bán HTX
+            <GameIcon id="basket" fallback="🧺" size={18} /> Kho &amp; Bán HTX
           </button>
           {isStageOpen(2) && (
           <button
@@ -627,7 +637,7 @@ export const App: React.FC = () => {
             }}
             className="touch-btn bg-[#b83224] border border-[#f5b82e] text-white text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"
           >
-            ⛩️ Cổng Đăng Nhập
+            <GameIcon id="gate" fallback="⛩️" size={18} /> Cổng Đăng Nhập
           </button>
           {IS_DEV && (
             <button

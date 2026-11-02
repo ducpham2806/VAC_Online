@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { STAMINA_REGEN_MS, regenStamina } from '../../domain/stamina';
 import { useGameStore } from '../../store/useGameStore';
+import { GameIcon } from '../GameIcon';
 
 /** Năng lượng hiện tại (đã tính hồi +1⚡/3 phút) + đếm ngược tới lần hồi kế tiếp. */
 export function StaminaBadge() {
@@ -24,10 +25,10 @@ export function StaminaBadge() {
 
   return (
     <span
-      className="text-xs font-extrabold text-[#b8f272] px-1"
+      className="inline-flex items-center gap-1 text-xs font-extrabold text-[#b8f272] px-1"
       title={full ? 'Năng lượng đầy' : `+1 ⚡ sau ${mm}:${ss} (hồi 1 ⚡ mỗi 3 phút)`}
     >
-      ⚡ {current.stamina}/{maxStamina}
+      <GameIcon id="energy" fallback="⚡" size={16} /> {current.stamina}/{maxStamina}
       {!full && <span className="text-[10px] text-[#ffe8c2] font-bold"> (+1 {mm}:{ss})</span>}
     </span>
   );
