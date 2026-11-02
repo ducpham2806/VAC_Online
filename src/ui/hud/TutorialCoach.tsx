@@ -4,7 +4,10 @@ import { TUTORIAL_STEPS, currentTutorialStep } from '../../domain/tutorial';
 import { useGameStore } from '../../store/useGameStore';
 import { useTutorialStore, watchFirstSale } from '../../store/useTutorialStore';
 
-/** 👴 Bác Bảy hướng dẫn tân thủ Chương 1–2 (S3). Ẩn khi đang mở cửa sổ hoặc khi người chơi tắt. */
+/**
+ * 👴 Bác Bảy hướng dẫn tân thủ Chương 1–2 (S3). Ẩn khi đang mở cửa sổ hoặc khi người chơi tắt.
+ * Bong bóng cho chạm xuyên qua (chỉ nút "Ẩn hướng dẫn" nhận chạm) để không che ô đất bên dưới.
+ */
 export function TutorialCoach() {
   const { level, tiles, progressCounters, storyQuests, activeModal, setToast } = useGameStore(
     useShallow((s) => ({
@@ -48,14 +51,14 @@ export function TutorialCoach() {
       role="status"
       aria-live="polite"
     >
-      <div className="vac-paper vac-pop-in pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-xl shadow-xl px-2.5 py-2 short:py-1 text-[#2a180c]">
+      <div className="vac-paper vac-pop-in pointer-events-none bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-xl shadow-xl px-2.5 py-2 short:py-1 text-[#2a180c]">
         <div className="flex items-center justify-between gap-2 text-[11px] font-extrabold text-[#6e4121]">
           <span>
             👴 Bác Bảy • Bước {current.index}/{TUTORIAL_STEPS.length}
           </span>
           <button
             onClick={dismiss}
-            className="touch-btn min-h-[44px] short:min-h-[38px] px-2 rounded-lg bg-[#6e4121] text-[#fff8eb] text-[10px] font-bold cursor-pointer"
+            className="pointer-events-auto touch-btn min-h-[44px] short:min-h-[38px] px-2 rounded-lg bg-[#6e4121] text-[#fff8eb] text-[10px] font-bold cursor-pointer"
           >
             Ẩn hướng dẫn
           </button>
