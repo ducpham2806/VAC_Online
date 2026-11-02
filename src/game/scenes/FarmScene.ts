@@ -9,6 +9,7 @@ import { PLOT_LAYOUT, nextLockedPlot } from '../../domain/farmGrid';
 import { DOG_CATCH_CHANCE } from '../../domain/social';
 import { growthFrame, growthStage } from '../../domain/growth';
 import { SPRITE_ATLASES } from './BootScene';
+import { FarmVfx } from '../vfx/farmVfx';
 
 /** Lưới 5×5 (M02.4): khoảng cách tối thiểu giữa 2 cột để ô 168px không chồng nhau. */
 const MIN_GAP_X = 180;
@@ -105,6 +106,13 @@ export class FarmScene extends Phaser.Scene {
 
     // 6. Cử chỉ Kéo Bản Đồ (Touch Drag-to-Pan) & Zoom (+/-) cho Mobile / iPad
     this.setupMobileTouchCamera();
+
+    // VFX theo kết quả thật (gieo / tưới / thu hoạch / Hoàng Kim / khai hoang / lên cấp)
+    const vfx = new FarmVfx(this, (tileId) => {
+      const vis = this.tileVisuals.find((v) => v.tileId === tileId);
+      return vis ? { x: vis.tileSprite.x, y: vis.tileSprite.y } : null;
+    });
+    this.teardown.push(vfx.watch());
 
     this.teardown.push(
       useGameStore.subscribe(() => {
