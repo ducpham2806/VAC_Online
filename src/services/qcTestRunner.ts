@@ -1,8 +1,11 @@
 import { useGameStore } from '../store/useGameStore';
 import { GAME_CATALOG } from '../data/masterData';
+import { quoteMarketListing } from '../domain/market';
 import {
+  LEGACY_PASSWORD_STORAGE_KEYS,
   confirmPasswordResetWithOtp,
   createGuestSession,
+  purgeLegacyLocalAuthData,
   registerNewAccount,
   requestPasswordReset,
   upgradeGuestToRegistered,
@@ -172,38 +175,38 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 4. EPIC 01: Quên mật khẩu OTP 2 Bước (Chặn OTP sai & Cho phép đổi khi đúng OTP)
-  runCase('TC-01.0d', 'EPIC 01', 'Quên mật khẩu OTP 6 số chặn mã sai và đổi mật khẩu khi mã đúng', () => {
+  // 4. EPIC 01: Không lưu mật khẩu / OTP ở client (Auth thật qua Supabase — 17_PROJECT_AUDIT B5)
+  runCase('TC-01.0d', 'EPIC 01', 'Không lưu mật khẩu/OTP ở client: dọn kho cũ & phiên Khách không chứa mật khẩu', () => {
+    let legacyRemoved = true;
+    let sessionClean = true;
     if (typeof window !== 'undefined') {
-      localStorage.setItem(
-        'vac_online_auth_otp_v1',
-        JSON.stringify({
-          email: 'tuhau@vaconline.vn',
-          otpCode: '686868',
-          expiresAt: Date.now() + 300_000,
-        })
-      );
+      localStorage.setItem(LEGACY_PASSWORD_STORAGE_KEYS[0], JSON.stringify([{ passwordHash: 'plain' }]));
+      localStorage.setItem(LEGACY_PASSWORD_STORAGE_KEYS[1], JSON.stringify({ otpCode: '686868' }));
+      purgeLegacyLocalAuthData();
+      legacyRemoved = LEGACY_PASSWORD_STORAGE_KEYS.every((key) => localStorage.getItem(key) === null);
+      createGuestSession('Khách Kiểm Thử');
+      const raw = JSON.stringify(localStorage);
+      sessionClean = !raw.includes('passwordHash') && !raw.includes('otpCode');
     }
-    const wrongTry = confirmPasswordResetWithOtp('tuhau@vaconline.vn', '000000', 'newpass123');
-    const rightTry = confirmPasswordResetWithOtp('tuhau@vaconline.vn', '686868', '123456');
     return {
-      passed: !wrongTry.success && rightTry.success,
-      expected: 'Chặn OTP sai (000000) & Thành công với OTP đúng (686868)',
-      actual: `WrongOTP_Blocked=${!wrongTry.success}, RightOTP_Passed=${rightTry.success}`,
+      passed: legacyRemoved && sessionClean,
+      expected: 'Kho mật khẩu/OTP cũ bị xóa & localStorage không còn passwordHash/otpCode',
+      actual: `LegacyRemoved=${legacyRemoved}, StorageClean=${sessionClean}`,
     };
   });
 
-  // 5. EPIC 01: Toàn vẹn 155 Thực thể Master Data
-  runCase('TC-01.3a', 'EPIC 01', 'Toàn vẹn Danh mục 155 Thực thể & Không trùng lặp ID', () => {
+  // 5. EPIC 01: Toàn vẹn Master Data (GAME_CATALOG là nguồn chuẩn — xem 17_PROJECT_AUDIT mục A1)
+  runCase('TC-01.3a', 'EPIC 01', 'Toàn vẹn Danh mục Thực thể: ID duy nhất, đủ 81 loài V-A-C & không có giá NaN', () => {
     const total = GAME_CATALOG.length;
     const uniqueIds = new Set(GAME_CATALOG.map((item) => item.id)).size;
+    const vacSpecies = GAME_CATALOG.filter((item) => /^(CROP|ANI|AQUA)_/.test(item.id)).length;
     const hasInvalidPrice = GAME_CATALOG.some(
       (item) => Number.isNaN(item.buyCostGold) || Number.isNaN(item.baseSellGold)
     );
     return {
-      passed: total === 155 && uniqueIds === 155 && !hasInvalidPrice,
-      expected: '155 thực thể duy nhất, không có giá NaN',
-      actual: `${total} thực thể (${uniqueIds} ID duy nhất), Lỗi giá: ${hasInvalidPrice}`,
+      passed: uniqueIds === total && vacSpecies === 81 && !hasInvalidPrice,
+      expected: 'Mọi ID duy nhất, 81 loài V-A-C, không có giá NaN',
+      actual: `${total} thực thể (${uniqueIds} ID duy nhất), ${vacSpecies} loài V-A-C, Lỗi giá: ${hasInvalidPrice}`,
     };
   });
 
@@ -245,7 +248,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
 
   // 8. EPIC 02: Chặn âm Năng lượng khi Vét Ao / Khai Hoang
   runCase('TC-02.2b', 'EPIC 02', 'Chặn âm Năng lượng (Stamina) khi Vét Ao lúc ⚡ < 3', () => {
-    store.setState({ stamina: 2 });
+    store.setState({ stamina: 2, staminaUpdatedAt: Date.now() });
     store.getState().dredgePondMud();
     const afterStamina = store.getState().stamina;
     return {
@@ -311,7 +314,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
   });
 
   // 12. EPIC 03: Bón Bùn Phù Sa & Nhân 3 Giá Trị Nông Sản Hoàng Kim ⭐
-  runCase('TC-03.4a', 'EPIC 03', 'Thu hoạch Nông sản Hoàng Kim ⭐ nhận gấp 3 lần giá trị Xu Vàng', () => {
+  runCase('TC-03.4a', 'EPIC 03', 'Thu hoạch Nông sản Hoàng Kim ⭐ vào Kho gấp 3 sản lượng (không cộng vàng — bán ở HTX)', () => {
     const now = Date.now();
     const spec = GAME_CATALOG.find((c) => c.id === 'CROP_01')!;
     store.setState({
@@ -334,13 +337,16 @@ export function runFullQCTestSuite(): QCTestResult[] {
           : t
       ),
     });
+    const stockBefore = store.getState().inventory.CROP_01 ?? 0;
     store.getState().interactTile('TILE_1');
-    const goldEarned = store.getState().gold - 1000;
-    const expectedGold = spec.baseSellGold * 5 * 3;
+    const goldAfter = store.getState().gold;
+    const stockGained = (store.getState().inventory.CROP_01 ?? 0) - stockBefore;
+    // Quyết định PO (S1): thu hoạch vào Kho; sản lượng lấy từ dữ liệu (RULE C2), Hoàng Kim ×3
+    const expectedQty = (spec.yieldCount ?? 2) * 3;
     return {
-      passed: goldEarned === expectedGold,
-      expected: `Nhận x3 giá trị = +${expectedGold} 🪙`,
-      actual: `Thực nhận = +${goldEarned} 🪙`,
+      passed: stockGained === expectedQty && goldAfter === 1000,
+      expected: `Kho +${expectedQty} ${spec.name}, Vàng giữ nguyên 1000`,
+      actual: `Kho +${stockGained}, Vàng = ${goldAfter}`,
     };
   });
 
@@ -403,20 +409,26 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 17. EPIC 06: Khung giá Chợ P2P (0.8x - 2.0x) & Khấu trừ 10% Thuế Chợ
-  runCase('TC-06.2a', 'EPIC 06', 'Chợ Phiên P2P kẹp khung giá [0.8x, 2.0x] và đốt đúng 10% Thuế Chợ', () => {
+  // 17. EPIC 06: Khung giá Chợ P2P (0.8x - 2.0x) & Khấu trừ 5% Thuế Chợ
+  runCase('TC-06.2a', 'EPIC 06', 'Chợ Phiên P2P kẹp khung giá [0.8x, 2.0x] và đốt đúng 5% Thuế Chợ', () => {
     const spec = GAME_CATALOG.find((c) => c.id === 'CROP_01')!;
     store.setState({
       gold: 1000,
       inventory: { ...store.getState().inventory, CROP_01: 10 },
     });
-    store.getState().postItemToMarket('CROP_01', 5, 999);
-    const netGain = store.getState().gold - 1000;
-    const expectedNet = Math.floor(spec.baseSellGold * 2 * 5 * 0.9);
+    // postItemToMarket là async (chờ Cloud) nên phần cộng tiền không kiểm được đồng bộ.
+    // Kiểm (1) luật giá dùng chung trong src/domain/market.ts và (2) nhánh chặn đồng bộ khi thiếu hàng.
+    const quote = quoteMarketListing(spec.baseSellGold, 5, 999);
+    const expectedNet = Math.floor(spec.baseSellGold * 2 * 5 * 0.95);
+    void store.getState().postItemToMarket('CROP_01', 50, 999);
+    const goldAfterReject = store.getState().gold;
     return {
-      passed: netGain === expectedNet,
-      expected: `Kẹp giá trần 2.0x & trừ 10% thuế = +${expectedNet} 🪙`,
-      actual: `Thực nhận = +${netGain} 🪙`,
+      passed:
+        quote.clampedPrice === spec.baseSellGold * 2 &&
+        quote.netRevenueAfterTax === expectedNet &&
+        goldAfterReject === 1000,
+      expected: `Kẹp giá trần 2.0x & trừ 10% thuế = +${expectedNet} 🪙; đăng 50 khi kho có 10 bị chặn (Gold giữ 1000)`,
+      actual: `Giá kẹp = ${quote.clampedPrice}, thực nhận = +${quote.netRevenueAfterTax} 🪙; Gold sau khi bị chặn = ${goldAfterReject}`,
     };
   });
 
@@ -524,14 +536,19 @@ export function runFullQCTestSuite(): QCTestResult[] {
     const fsBefore = store.getState().fengShuiScore;
     store.setState({
       storyQuests: store.getState().storyQuests.map((q) => ({ ...q, completed: false })),
+      progressCounters: {},
     });
+    // M03.5: chưa làm mục tiêu (tưới + thu Lúa) thì không nhận được.
+    store.getState().claimStoryQuest('Q_CH1', 'EMP');
+    const blocked = !store.getState().storyQuests.find((q) => q.id === 'Q_CH1')!.completed;
+    store.setState({ progressCounters: { WATER: 1, 'HARVEST:CROP_01': 1 } });
     store.getState().claimStoryQuest('Q_CH1', 'EMP');
     const q1 = store.getState().storyQuests.find((q) => q.id === 'Q_CH1')!;
     const fsAfter = store.getState().fengShuiScore;
     return {
-      passed: totalChapters === 10 && q1.completed && q1.selectedChoice === 'EMP' && fsAfter === fsBefore + 30,
-      expected: 'Đủ 10 Chương, chọn nhánh EMP cộng +30 Phong Thủy & đánh dấu hoàn thành',
-      actual: `Chapters=${totalChapters}, Q_CH1=${q1.selectedChoice}, Phong Thủy: ${fsBefore} ➔ ${fsAfter}`,
+      passed: totalChapters === 10 && blocked && q1.completed && q1.selectedChoice === 'EMP' && fsAfter === fsBefore + 30,
+      expected: 'Đủ 10 Chương; chặn khi chưa làm mục tiêu; làm xong chọn EMP cộng +30 Phong Thủy & đánh dấu hoàn thành',
+      actual: `Chapters=${totalChapters}, chặn trước=${blocked}, Q_CH1=${q1.selectedChoice}, Phong Thủy: ${fsBefore} ➔ ${fsAfter}`,
     };
   });
 
@@ -542,6 +559,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
   void registerNewAccount;
   void upgradeGuestToRegistered;
   void requestPasswordReset;
+  void confirmPasswordResetWithOtp;
 
   return results;
 }

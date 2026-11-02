@@ -2,7 +2,8 @@
 -- HƯƠNG ĐỒNG GIÓ NỘI (VAC ONLINE - GAME NÔNG TRẠI 3 MIỀN VIỆT NAM)
 -- 0002_seed_full_master_data.sql
 -- Bảng Đại Từ Điển Thực Thể (master_catalog) + RPC Đồng Bộ 155 Thực Thể, Chợ & Lưu Bút
--- Chạy an toàn nhiều lần (Idempotent 100%) trong Supabase SQL Editor
+-- Chạy an toàn nhiều lần trong Supabase SQL Editor. Thứ tự: 0001 → 0002 → 0003.
+-- Quyền gọi rpc_sync_master_catalog được khóa ở 0003 (chỉ service_role).
 -- =============================================================================
 
 CREATE TABLE IF NOT EXISTS public.master_catalog (
@@ -46,6 +47,7 @@ CREATE OR REPLACE FUNCTION public.rpc_sync_master_catalog(
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public, pg_temp
 AS $$
 DECLARE
   v_item JSONB;
@@ -106,75 +108,14 @@ END;
 $$;
 
 -- =============================================================================
--- RPC 2: ĐĂNG BÁN NÔNG SẢN LÊN BÁO CHỢ PHIÊN 3 MIỀN TRÊN SUPABASE CLOUD
+-- RPC 2 & 3 (rpc_post_market_listing, rpc_sign_guestbook): bản gốc ở đây không xác thực người
+-- gọi. Định nghĩa duy nhất (có auth.uid(), kẹp giá, giới hạn tần suất) nằm ở
+-- 0003_security_hardening.sql — để chạy lại file này không ghi đè bản an toàn.
 -- =============================================================================
-CREATE OR REPLACE FUNCTION public.rpc_post_market_listing(
-  p_seller_name TEXT,
-  p_seller_region TEXT,
-  p_item_id TEXT,
-  p_quantity INT,
-  p_unit_price INT
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-  v_new_id UUID;
-BEGIN
-  IF p_quantity <= 0 OR p_quantity > 50 THEN
-    RAISE EXCEPTION 'Số lượng mỗi sạp phải từ 1 đến 50 đơn vị!';
-  END IF;
 
-  INSERT INTO public.market_listings (
-    seller_name, seller_region, item_id, quantity, unit_price, status
-  )
-  VALUES (
-    p_seller_name, p_seller_region, p_item_id, p_quantity, p_unit_price, 'ACTIVE'
-  )
-  RETURNING id INTO v_new_id;
-
-  RETURN jsonb_build_object(
-    'success', true,
-    'listing_id', v_new_id
-  );
-END;
-$$;
-
--- =============================================================================
--- RPC 3: KÝ SỔ LƯU BÚT CỔNG LÀNG & CHECK-IN NHẬN ĐIỂM MỸ QUAN (NEW_GUEST_01)
--- =============================================================================
-CREATE OR REPLACE FUNCTION public.rpc_sign_guestbook(
-  p_host_name TEXT,
-  p_visitor_name TEXT,
-  p_message TEXT
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-  v_new_id UUID;
-BEGIN
-  INSERT INTO public.farm_guestbook (
-    host_name, visitor_name, message
-  )
-  VALUES (
-    p_host_name, p_visitor_name, p_message
-  )
-  RETURNING id INTO v_new_id;
-
-  RETURN jsonb_build_object(
-    'success', true,
-    'entry_id', v_new_id
-  );
-END;
-$$;
-
--- NẠP ĐẦY ĐỦ 8 SẠP HÀNG CHỢ PHIÊN 3 MIỀN LÊN SUPABASE CLOUD
-DELETE FROM public.market_listings WHERE seller_id IS NULL;
+-- NẠP 8 SẠP HÀNG CHỢ PHIÊN MẪU (chỉ thêm sạp nào chưa có — chạy lại KHÔNG xóa dữ liệu thật, RULE C13)
 INSERT INTO public.market_listings (seller_name, seller_region, item_id, quantity, unit_price, status)
-VALUES
+SELECT seed.* FROM (VALUES
   ('Út Nhỏ Miền Tây', 'SOUTH', 'CROP_S05', 5, 95, 'ACTIVE'),
   ('A Páo Tây Nguyên', 'CENTRAL', 'CROP_C05', 8, 88, 'ACTIVE'),
   ('Lý Trưởng Kinh Bắc', 'NORTH', 'CROP_N03', 6, 72, 'ACTIVE'),
@@ -182,11 +123,20 @@ VALUES
   ('Ông Giáo làng Vũ Đại', 'NORTH', 'AQUA_N01', 4, 115, 'ACTIVE'),
   ('O Nhung Phố Hội', 'CENTRAL', 'CROP_C01', 10, 32, 'ACTIVE'),
   ('Chú Sáu Cà Mau', 'SOUTH', 'AQUA_S03', 3, 195, 'ACTIVE'),
-  ('Thím Tư Hưng Yên', 'NORTH', 'ANI_N01', 4, 65, 'ACTIVE');
+  ('Thím Tư Hưng Yên', 'NORTH', 'ANI_N01', 4, 65, 'ACTIVE')
+) AS seed(seller_name, seller_region, item_id, quantity, unit_price, status)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.market_listings m
+  WHERE m.seller_id IS NULL AND m.seller_name = seed.seller_name AND m.item_id = seed.item_id
+);
 
--- NẠP SẴN DỮ LIỆU MẪU SỔ LƯU BÚT CỔNG LÀNG
-DELETE FROM public.farm_guestbook WHERE visitor_user_id IS NULL;
+-- NẠP DỮ LIỆU MẪU SỔ LƯU BÚT CỔNG LÀNG (chỉ thêm khi chưa có — không xóa dữ liệu thật)
 INSERT INTO public.farm_guestbook (host_name, visitor_name, message)
-VALUES
+SELECT seed.* FROM (VALUES
   ('Tư Hậu Lập Nghiệp', 'Út Nhỏ Miền Tây', 'Vườn vải thiều và đầm sen nhà bạn đẹp quá, mình ghé chụp ảnh check-in tặng +10 Mỹ Quan nè!'),
-  ('Tư Hậu Lập Nghiệp', 'Lý Trưởng Kinh Bắc', 'Đã sang dựng giúp giàn bầu sau cơn mưa rào, chúc điền chủ vụ mùa bội thu!');
+  ('Tư Hậu Lập Nghiệp', 'Lý Trưởng Kinh Bắc', 'Đã sang dựng giúp giàn bầu sau cơn mưa rào, chúc điền chủ vụ mùa bội thu!')
+) AS seed(host_name, visitor_name, message)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.farm_guestbook g
+  WHERE g.visitor_user_id IS NULL AND g.visitor_name = seed.visitor_name AND g.message = seed.message
+);

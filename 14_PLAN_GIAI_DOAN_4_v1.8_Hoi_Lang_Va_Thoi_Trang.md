@@ -1,13 +1,13 @@
 # 🏮 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 4: HỘI LÀNG ĐÌNH CHUNG, CÂY ĐỘT BIẾN, KỶ VẬT & THỜI TRANG (`v1.8`)
 **Phiên bản:** `1.1 (Stage 4 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Paper-Doll & VFX)`  
 **Mốc phát hành:** Tháng 4 (Tuần 7–8 — Bản cập nhật Cộng đồng Đình Làng, Sưu tầm chuyên sâu & Cá nhân hóa Thời trang)  
-**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_NARRATIVE` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
+**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 4 (CHAPTER 4: TRỐNG HỘI ĐÌNH LÀNG & MÙA HOA ĐỘT BIẾN)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Tiếng trống cái từ **Đình Làng Tam Miền** vang vọng khắp xóm! Cả làng cùng góp gạch ngói, gỗ lim và nông sản để trùng tu ngôi Đình cổ 3 cấp. Nhờ mạch nước ngầm cổ dưới chân Đình khơi thông và lớp bùn phù sa đặc biệt của *Chú Tám Mộc*, những giống cây trồng quý hiếm bắt đầu kết trái **Đột Biến Ngũ Sắc** rực rỡ. Mỗi tối cuối tuần, sân Đình lại rộn ràng **3 trò chơi dân gian Hội Làng**, và bà con diện những bộ **Áo Dài, Áo Tứ Thân, Áo Bà Ba** đẹp nhất đi trẩy hội!
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Tiếng trống cái từ **Đình Làng Tam Miền** vang vọng khắp xóm! Cả làng cùng góp gạch ngói, gỗ lim và nông sản để trùng tu ngôi Đình cổ 3 cấp. Nhờ mạch nước ngầm cổ dưới chân Đình khơi thông và lớp bùn phù sa đặc biệt của *Chú Tám Mộc*, những giống cây trồng quý hiếm bắt đầu kết trái **Đột Biến Ngũ Sắc** rực rỡ. Mỗi tối cuối tuần, sân Đình lại rộn ràng **3 trò chơi dân gian Hội Làng**, và bà con diện những bộ **Áo Dài, Áo Tứ Thân, Áo Bà Ba** đẹp nhất đi trẩy hội!
 - **Mục tiêu sản phẩm & KPI:**
   - Mở khóa **Đình Làng Cộng Đồng (Co-op Guild 20–30 thành viên)**, **3 Minigame Lễ Hội Dân Gian**, **Hệ thống Lai Tạo Cây Đột Biến Ngũ Sắc**, **Bảo Tàng Kỷ Vật Tuổi Thơ 8x–9x (12 món)**, và **Tủ Đồ Thời Trang 12 Lớp Paper-Doll**.
   - Nâng tổng hệ sinh thái sinh vật từ **63 loài lên 76 loài (+13 loài quý hiếm Bậc 4–5)**.

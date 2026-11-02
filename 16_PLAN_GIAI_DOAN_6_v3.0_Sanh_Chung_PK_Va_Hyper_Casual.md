@@ -1,17 +1,17 @@
 # 🎪 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 6: SẢNH CHUNG CHỢ ĐÌNH, PK DÂN GIAN (1V1 & LOẠN CHIẾN) & KHU TRÒ CHƠI HYPER-CASUAL (`v3.0`)
 **Phiên bản:** `1.1 (Stage 6 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Tilemap Sảnh Chung & VFX)`  
 **Mốc phát hành:** Tháng 7+ (Tuần 13–16 — Bản Đại Mở Rộng Multiplayer Social Plaza, Đấu Trường Dân Gian Vui Nhộn & Cổng Arcade Siêu Tốc)  
-**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` (Mục 9) ➔ `02_MASTER_ECONOMY` (Mục 8) ➔ `03_MASTER_TECH` (Mục 7) ➔ `04_MASTER_NARRATIVE` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX` (Mục 4.10)  
+**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` (Chương 6) ➔ `02_MASTER_ECONOMY` (Phần 4) ➔ `03_MASTER_TECH` (Phần 3) ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX` (Mục 2.5–2.6)  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay Nông trại làm gốc, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
-## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 6 (CHAPTER 6: BẾN ĐÌNH HỘI TỤ & SỚI VẬT TRẩy HỘI BỐN PHƯƠNG)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, 20–30 người chơi có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
+## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 6 (CHAPTER 6: BẾN ĐÌNH HỘI TỤ & SỚI VẬT TRẨY HỘI BỐN PHƯƠNG)
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, 20–30 người chơi có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
 - **Mục tiêu sản phẩm & Ràng buộc Thiết kế (`RULE D1` Core Guardrail):**
   - Mở khóa không gian **Real-time Multiplayer Social Plaza** (`SocialPlazaScene.ts`) tách biệt hoàn toàn với `FarmScene.ts` (chuyển cảnh qua cổng Đình Làng hoặc nút HUD `🎪 Sảnh Đình`, đảm bảo nông trại chính luôn nhẹ và mượt).
   - **Cơ chế PK Dân Gian Không Máu Me (Slapstick Folk Arena):** Tuyệt đối không chém giết bạo lực; mọi đòn đánh là **Đấu Gậy Bông Đẩy Cầu Tre, Đấu Vật Đẩy Khỏi Vòng Vôi, Ném Bóng Nước/Cà Chua Chín & Tranh Cờ/Bắt Vịt**.
-  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK & Hyper-Casual tiêu thụ **Bánh Chưng / Cơm Nắm (Stamina Nông Trại)** và trả thưởng bằng **Xu Hội Làng (`🪙 Xu Hội`)** có trần **1.500 Xu/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
+  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK tiêu thụ **`-5 ⚡` Năng lượng Bát Cơm/trận** (hồi bằng Bánh Chưng / Cơm Nắm Bếp Quê; Máy Thùng Hyper-Casual `0⚡`) và trả thưởng bằng **Xu Hội Làng (`🪙 Xu Hội`)** có trần **1.500 Xu/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Bộ phận | Kỹ năng AI sử dụng | Nhiệm vụ cụ thể trong Giai đoạn 6 | Đầu ra nghiệm thu (`Deliverables`) |
 | :--- | :--- | :--- | :--- |
-| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` + `@level-designer` | - Thiết kế layout `48x32 Tiles` cho Sảnh Chung Chợ Đình (luồng di chuyển từ Bến Đò ➔ Cây Đa ➔ Sới Vật ➔ Lều Máy Thùng).<br>- Cân bằng Stamina tiêu thụ (1 Bánh Chưng/lượt PK) và trần **1.500 Xu Hội Làng/ngày** + Shop Đổi Thưởng Hội Làng. | Bản vẽ Layout `48x32` + `STAGE6_ARENA_ECONOMY_CONFIG`. |
+| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` + `@level-designer` | - Thiết kế layout `48x32 Tiles` cho Sảnh Chung Chợ Đình (luồng di chuyển từ Bến Đò ➔ Cây Đa ➔ Sới Vật ➔ Lều Máy Thùng).<br>- Cân bằng năng lượng tiêu thụ (`-5 ⚡`/trận PK) và trần **1.500 Xu Hội Làng/ngày** + Shop Đổi Thưởng Hội Làng. | Bản vẽ Layout `48x32` + `STAGE6_ARENA_ECONOMY_CONFIG`. |
 | **2. Multiplayer & Backend** | `@backend-architect` + `@godot-multiplayer-engineer` (tư duy netcode) | - Thiết kế kênh **Supabase Realtime Broadcast + Presence** (`plaza_room_1..N`, tối đa 25 CCU/phòng, gói tin vị trí nén `< 120 bytes` ở tần số `10Hz`).<br>- Viết **Migration Additive-Only** cho bảng `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards` và RPC `claim_plaza_reward` (kiểm tra trần 1.500 Xu/ngày + chống giả mạo điểm số). | File SQL Migration Giai đoạn 6 + `PlazaRealtimeService.ts` + RPC `claim_plaza_reward`. |
 | **3. Art, Tilemap & VFX** | `@generate2dmap` + `@generate2dsprite` + `@video2dsprite` + `@codeart2d` + `@technical-artist` | - Sản xuất Tilemap `48x32` Sảnh Chung, Lều Máy Thùng, Bộ đạo cụ `PROP_ARENA`.<br>- Tạo 7 bộ animation PK & Giao lưu (`8–12 frames`) khớp Paper-Doll + 4 VFX (`fx_arena_impact`, `fx_water_splash_plaza`, `fx_blade_trail`, `fx_mud_splatter`). | Atlas `plaza_stage6_arena_arcade.json/.png` (Lazy-loaded). |
 | **4. Frontend, Scene & Arcade** | `@frontend-developer` + `@ui-designer` | - Xây dựng `src/game/scenes/SocialPlazaScene.ts` (di chuyển Joystick/WASD + nội suy vị trí người chơi khác + bong bóng chat/emote).<br>- Xây dựng `SocialPlazaModal.tsx` và `HyperCasualArcadeModal.tsx` (4 mini-game 30–45s). | `SocialPlazaScene.ts` + 2 UI Modals + 4 Hyper-Casual Modules. |

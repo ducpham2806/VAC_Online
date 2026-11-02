@@ -1,7 +1,7 @@
 # TÀI LIỆU THIẾT KẾ WIREFRAME GIAO DIỆN (UI/UX), SPLASH & AUTH FLOWS, LÁN THỢ, SẢNH CHUNG MULTIPLAYER, VÕ ĐÀI PK & CỔNG HYPER-CASUAL
 ## Dự án: **VAC ONLINE — HƯƠNG ĐỒNG GIÓ NỘI (GAME NÔNG TRẠI 3 MIỀN VIỆT NAM)**
 **Mã tài liệu:** `06_MASTER_UI_UX_Wireframe_Va_Flow_Toan_Bo_Tinh_Nang.md`  
-**Phiên bản:** Master UI/UX 7.0 (Tích hợp đầy đủ Splash 4 bước, Cổng Xác thực 4 Tabs, Main HUD 2-Thumb Landscape, Lán Thợ 6 Gia Nhân & **Màn Hình 4–5: Sảnh Chung Chợ Đình Đa Người Chơi + Võ Đài PK / Loạn Chiến & Máy Thùng Hyper-Casual**)  
+**Phiên bản:** Master UI/UX 7.1 (Tích hợp đầy đủ Splash 4 bước, Cổng Xác thực 4 Tabs, Main HUD 2-Thumb Landscape, Lán Thợ 6 Gia Nhân & **Màn Hình 4–5: Sảnh Chung Chợ Đình Đa Người Chơi + Võ Đài PK / Loạn Chiến & Máy Thùng Hyper-Casual**)  
 **Thực hiện bởi:** `@ui-designer`, `@game-designer` & `@frontend-developer`  
 **Đối tượng sử dụng:** UI/UX Designer, Frontend Engineer (Phaser 3 / React 19), Product Owner & QA/QC
 
@@ -11,7 +11,7 @@
 
 ```mermaid
 flowchart TD
-    Boot["📱 Mở Webgame / Icon Mobile PWA / App iOS & Android"] --> Splash["🌾 MÀN HÌNH 0A: SPLASH & 4-STAGE LOADING\n(Khởi tạo Phaser 3 -> Nạp 155 Thực thể -> Kết nối Supabase -> Kiểm tra Session)"]
+    Boot["📱 Mở Webgame / Icon Mobile PWA / App iOS & Android"] --> Splash["🌾 MÀN HÌNH 0A: SPLASH & 4-STAGE LOADING\n(Khởi tạo Phaser 3 -> Nạp danh mục thực thể -> Kết nối Supabase -> Kiểm tra Session)"]
 
     Splash --> HasSession{"Đã có Phiên Đăng Nhập\nhoặc Hồ Sơ Lưu?"}
     HasSession -- "Đã có (Remember Me)" --> MainHUD["🏡 MÀN HÌNH 2: CHÍNH NÔNG TRẠI (MAIN HUD 2-THUMB)\n(Tự động chạy Lazy-Tick tính sản lượng 6 Nhân công khi Offline)"]

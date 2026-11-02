@@ -8,7 +8,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run",
+    "seed:catalog": "tsx scripts/generate-catalog-seed.ts",
+    "test:sql": "bash scripts/test-sql.sh",
+    "supabase": "tsx scripts/supabase-admin.ts",
+    "test:art": "python3 -m unittest discover -s tools/art -p 'test_*.py'",
+    "art:wave1": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1",
+    "art:all": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1 && python3 tools/art/codeart_world.py && python3 tools/art/pack_atlas.py art/source/world --name world && python3 tools/art/codeart_ui.py",
+    "build:preview": "VITE_GAME_STAGE=1 VITE_OFFLINE_DEMO=1 vite build --base=./ --outDir dist-preview --emptyOutDir && python3 tools/make_preview_page.py dist-preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
@@ -20,11 +29,15 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.6",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^4.0.6",
+    "tsx": "^4.23.15",
     "typescript": "~5.7.2",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "vitest": "^3.2.7"
   }
 }

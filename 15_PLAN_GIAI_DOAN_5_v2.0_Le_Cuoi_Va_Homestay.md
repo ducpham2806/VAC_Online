@@ -1,13 +1,13 @@
 # 💒 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 5: LỄ CƯỚI LÀNG QUÊ, TỔ ẤM GIA ĐÌNH, DU LỊCH HOMESTAY & TẾT ĐOÀN VIÊN (`v2.0`)
 **Phiên bản:** `1.1 (Stage 5 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Bằng Khen & VFX)`  
 **Mốc phát hành:** Tháng 5–6 (Tuần 9–12 — Bản Đại Cập Nhật Kết Tinh Tình Yêu, Gia Đình, Du Lịch Sinh Thái & Sự Kiện Tết Nguyên Đán)  
-**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_NARRATIVE` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
+**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 5 (CHAPTER 5: TRẦU CAU NÊN DUYÊN, MÁI ẤM GIA ĐÌNH & ĐÊM GIAO THỪA ĐỎ LỬA)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Sau 4 mùa mưa nắng cùng nhau dựng xây nông trại từ mảnh vườn hoang của Nội, mối tình quê mộc mạc đã đến ngày đơm hoa kết trái! Giàn **Trầu Không quấn quýt thân Cau** trước ngõ đã xanh mướt, đôi **Cá Chép Koi Ngũ Sắc** bơi lượn trong hồ, và mâm **Đại Tiệc Cưới Quê 3 Miền** (*Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau*) đã sẵn sàng đón họ hàng hai bên. Sau đám cưới rộn ràng rước dâu bằng thuyền hoa/kiệu cổ, hai vợ chồng đón **Bé Tiểu Đồng Gia Bảo** lon ton phụ nhặt trứng ngoài sân, mở **Khu Du Lịch Sinh Thái Homestay** đón du khách phương xa, cùng bà con canh **Nồi Bánh Chưng Tết Đỏ Lửa** đêm Giao Thừa và nhận tấm **Bằng Khen Gia Đình Văn Hóa & Nông Dân Tiêu Biểu** treo trang trọng giữa nhà!
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Sau 4 mùa mưa nắng cùng nhau dựng xây nông trại từ mảnh vườn hoang của Nội, mối tình quê mộc mạc đã đến ngày đơm hoa kết trái! Giàn **Trầu Không quấn quýt thân Cau** trước ngõ đã xanh mướt, đôi **Cá Chép Koi Ngũ Sắc** bơi lượn trong hồ, và mâm **Đại Tiệc Cưới Quê 3 Miền** (*Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau*) đã sẵn sàng đón họ hàng hai bên. Sau đám cưới rộn ràng rước dâu bằng thuyền hoa/kiệu cổ, hai vợ chồng đón **Bé Tiểu Đồng Gia Bảo** lon ton phụ nhặt trứng ngoài sân, mở **Khu Du Lịch Sinh Thái Homestay** đón du khách phương xa, cùng bà con canh **Nồi Bánh Chưng Tết Đỏ Lửa** đêm Giao Thừa và nhận tấm **Bằng Khen Gia Đình Văn Hóa & Nông Dân Tiêu Biểu** treo trang trọng giữa nhà!
 - **Mục tiêu sản phẩm & KPI:**
   - Hoàn thiện **100% Hệ sinh thái 81 Sinh vật & 22 Công thức Chế biến** (mở khóa 5 loài Đỉnh cao Đợt 5 + *Mâm Cỗ Cưới / Mâm Ngũ Quả*).
   - Ra mắt trọn vẹn vòng lặp End-game ấm áp: **Lễ Cưới Làng Quê & Nuôi Con Nhỏ (`MarriageFamilyModal`)**, **Khu Nghỉ Dưỡng Homestay (`HomestayModal`)**, **Sự Kiện Nấu Bánh Chưng Tết Cộng Đồng**, và **Máy Xuất Ảnh Bằng Khen `.PNG` (`certificateExporter.ts`)** để chia sẻ lên Facebook.
@@ -21,7 +21,7 @@
 1. **1 Cây trồng Tín vật Tình yêu Đợt 5:**
    - *Cây Cau & Giàn Trầu Không (`CROP_30` - Lâu năm Bậc 5, thu hoạch Buồng Cau & Lá Trầu Phượng Vũ dùng làm Sính lễ Cầu Hôn & Cỗ Cưới)*.
 2. **4 Thủy – Hải sản Đại Tiệc & Phong Thủy Đợt 5:**
-   - *Rươi Tứ Kỳ Mùa Thu (`AQUA_13` - Bắc, chỉ xuất hiện vào tiết Thu – Đông, nguyên liệu làm Chả Rươi VõBếp Thượng Hạng)*.
+   - *Rươi Tứ Kỳ Mùa Thu (`AQUA_13` - Bắc, chỉ xuất hiện vào tiết Thu – Đông, nguyên liệu làm Chả Rươi Vỏ Quýt `PROD_24`)*.
    - *Tôm Hùm Bông Phú Yên (`AQUA_14` - Trung, nuôi lồng bè biển sâu)*.
    - *Cua Biển Cà Mau (`AQUA_15` - Nam, nuôi vuông tôm rừng ngập mặn)*.
    - *Cá Chép Koi Ngũ Sắc (`AQUA_10` - Cá cảnh phong thủy thả hồ trước nhà, tăng **+10% Điểm Hạnh Phúc Tổ Ấm & Hấp dẫn Du khách Homestay**)*.

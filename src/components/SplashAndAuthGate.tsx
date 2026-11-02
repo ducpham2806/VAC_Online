@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   confirmPasswordResetWithOtp,
   createGuestSession,
+  ensureCloudGuestSession,
   loginWithCredentials,
   registerNewAccount,
   requestPasswordReset,
@@ -9,6 +10,8 @@ import {
   UserAuthAccount,
 } from '../services/authService';
 import { useGameStore } from '../store/useGameStore';
+import splashScene from '../assets/ui/splash_scene.png';
+import { GAME_STAGE, OFFLINE_DEMO } from '../config/features';
 import { soundFX } from '../services/soundEffects';
 
 export type AuthTabMode = 'LOGIN' | 'REGISTER' | 'GUEST' | 'FORGOT';
@@ -55,8 +58,8 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
   const [showPass, setShowPass] = useState(false);
 
   // Form Đăng Nhập
-  const [loginId, setLoginId] = useState('tuhau@vaconline.vn');
-  const [loginPassword, setLoginPassword] = useState('123456');
+  const [loginId, setLoginId] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
 
   // Form Đăng Ký Mới / Liên Kết Khách
@@ -69,8 +72,7 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
   const [guestCustomName, setGuestCustomName] = useState('');
 
   // Form Quên Mật Khẩu OTP 2 Bước
-  const [forgotEmail, setForgotEmail] = useState('tuhau@vaconline.vn');
-  const [otpSentCode, setOtpSentCode] = useState<string | null>(null);
+  const [forgotEmail, setForgotEmail] = useState('');
   const [otpInput, setOtpInput] = useState('');
   const [newResetPassword, setNewResetPassword] = useState('');
 
@@ -114,12 +116,16 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
 
         {/* Cụm Logo & Biểu tượng 3 Miền trung tâm */}
         <div className="my-auto max-w-2xl w-full mx-auto bg-[#fff8eb] text-[#2a180c] border-4 border-[#6e4121] rounded-3xl p-4 sm:p-6 shadow-2xl text-center space-y-3">
-          <div className="text-3xl sm:text-5xl">⛩️ 🌾 🐃 🚂 🐕 🪷</div>
+          <img
+            src={splashScene}
+            alt="Nhà ngói 3 gian, cây đa và điền chủ — Hương Đồng Gió Nội"
+            className="mx-auto w-full max-w-[360px] [image-rendering:pixelated] short:max-w-[240px]"
+          />
           <h1 className="text-xl sm:text-3xl font-black text-[#b83224] tracking-wide">
             VAC ONLINE — NÔNG TRẠI BA MIỀN
           </h1>
           <p className="text-xs sm:text-sm font-bold text-[#6e4121]">
-            Vườn – Ao – Chuồng Tuần Hoàn • 155 Thực Thể Bản Địa • 6 Gia Nhân Lán Thợ • Chợ Phiên &amp; Hái Trộm
+            Vườn – Ao – Chuồng 3 Miền • 81 loài mở dần qua 5 Đợt • Gia Phả 10 Chương
           </p>
 
           <div className="flex flex-wrap justify-center gap-2 text-[11px] font-extrabold">
@@ -155,8 +161,8 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
         </div>
 
         <div className="flex justify-between items-center text-[11px] text-[#ffe8c2]/90 font-bold">
-          <span>Phiên bản: v2.0 Complete Edition (Mobile Landscape PWA &amp; CapacitorJS)</span>
-          <span>☁️ Máy chủ: Supabase Realtime Cloud</span>
+          <span>Giai đoạn {GAME_STAGE} • Mobile Landscape PWA</span>
+          <span>{OFFLINE_DEMO ? '🧪 Bản chạy thử (offline)' : '☁️ Máy chủ: Supabase'}</span>
         </div>
       </div>
     );
@@ -197,6 +203,9 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
   const handlePlayGuest = () => {
     const res = createGuestSession(guestCustomName);
     if (res.account) {
+      void ensureCloudGuestSession(res.account.playerName).then((ok) => {
+        if (ok) void useGameStore.getState().syncFarmFromServer();
+      });
       soundFX.playHarvestCoin();
       onAuthSuccess(res.account, true, false);
     }
@@ -227,14 +236,12 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
       setFeedback({ type: 'err', text: res.message });
       return;
     }
-    setOtpSentCode(res.otpCode ?? null);
-    setOtpInput(res.otpCode ?? '');
     setFeedback({ type: 'ok', text: res.message });
   };
 
-  const handleConfirmResetPassword = (e: React.FormEvent) => {
+  const handleConfirmResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = confirmPasswordResetWithOtp(forgotEmail, otpInput, newResetPassword);
+    const res = await confirmPasswordResetWithOtp(forgotEmail, otpInput, newResetPassword);
     if (!res.success || !res.account) {
       setFeedback({ type: 'err', text: res.message });
       return;
@@ -384,31 +391,18 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
                   <h4 className="font-extrabold text-[#3e2413] text-sm">
                     🔑 ĐĂNG NHẬP VÀO ĐIỀN TRANG
                   </h4>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginId('tuhau@vaconline.vn');
-                      setLoginPassword('123456');
-                      setFeedback({
-                        type: 'ok',
-                        text: '✨ Đã điền sẵn Tài khoản Mẫu (tuhau@vaconline.vn / 123456)!',
-                      });
-                    }}
-                    className="text-[11px] bg-[#f3e5ab] border border-[#c88a4b] px-2 py-0.5 rounded font-bold text-[#6e4121] cursor-pointer"
-                  >
-                    ⚡ Điền TK Mẫu
-                  </button>
                 </div>
 
                 <div>
                   <label className="font-bold block mb-1">
-                    📧 Email hoặc Tên Điền Chủ:
+                    📧 Email:
                   </label>
                   <input
-                    type="text"
+                    type="email"
+                    autoComplete="email"
                     value={loginId}
                     onChange={(e) => setLoginId(e.target.value)}
-                    placeholder="tuhau@vaconline.vn"
+                    placeholder="nongdan@email.com"
                     className="w-full border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 font-semibold"
                   />
                 </div>
@@ -602,7 +596,7 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
                       type="email"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="tuhau@vaconline.vn"
+                      placeholder="nongdan@email.com"
                       className="flex-1 border-2 border-[#c88a4b] rounded-lg px-3 py-1.5 bg-white font-semibold"
                     />
                     <button
@@ -613,11 +607,6 @@ export const SplashAndAuthGate: React.FC<SplashAndAuthGateProps> = ({
                       📩 Gửi Mã OTP 6 Số
                     </button>
                   </div>
-                  {otpSentCode && (
-                    <div className="text-[11px] text-[#1b5e20] font-extrabold bg-[#e8f5e9] px-2.5 py-1 rounded border border-[#4e8222]">
-                      📬 Hệ thống đã cấp Mã OTP khôi phục: <span className="underline">{otpSentCode}</span>
-                    </div>
-                  )}
                 </div>
 
                 <form

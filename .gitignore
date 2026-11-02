@@ -4,3 +4,9 @@ dist-ssr
 *.local
 .env
 .DS_Store
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+dist-preview

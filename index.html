@@ -21,9 +21,10 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      if ('serviceWorker' in navigator) {
+      // Bản chạy thử (build:preview) đặt data-offline-demo trên <html> → không đăng ký service worker.
+      if ('serviceWorker' in navigator && !document.documentElement.hasAttribute('data-offline-demo')) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+          navigator.serviceWorker.register('sw.js').catch(() => {});
         });
       }
     </script>

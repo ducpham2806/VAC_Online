@@ -26,11 +26,32 @@
 | **Miền Nam (`SOUTH`)** | `#8AC926` (Xanh Lá Dừa), `#C99E67` (Nâu Phù Sa), `#FFB703` (Vàng Lúa Chín), `#2E8B8D` (Xanh Kênh Rạch) | Cầu khỉ tre đấu gậy, xuồng ba lá, đầm sen Đồng Tháp, vườn sầu riêng Ri6 và măng cụt. |
 | **Đột Biến & Võ Đài (`MUTANT / ARENA`)** | `#9B5DE5` (Tím Thảo Dược), `#FFD166` (Vàng Kim Tài Lộc), `#F15BB5` (Hồng Sen), `#D62828` (Đỏ Cờ Hội) | Hạt sáng cây đột biến, cờ đuôi nheo Sới vật Đình làng và hiệu ứng va chạm Võ đài PK. |
 
+### 1.3. Bảng 64 Màu Chính Thức (PO chốt 2026-11-02)
+
+**Nguồn chuẩn duy nhất:** `art/palette/vac_base.gpl` (GIMP/Aseprite đọc trực tiếp). Gồm 19 màu ở mục 1.1–1.2 + 45 màu dải sáng→tối cho đổ bóng `3/4 Top-Down`. Mọi sprite, tilemap, icon, VFX chỉ dùng các màu này; `#000000` bị cấm, `#FF00FF` chỉ làm nền tách.
+
+| Nhóm | Số màu | Mã màu |
+|---|---|---|
+| Viền & bóng (cấm #000000) | 4 | `#3D2314` `#1B3B2B` `#23192D` `#2A180C` |
+| Gỗ lim / tre / giấy dó | 7 | `#FFF8EB` `#F3E3C3` `#E0C79A` `#C88A4B` `#A0673A` `#6E4121` `#4A2C17` |
+| Lá & cây | 6 | `#E4F5B0` `#B8F272` `#8AC926` `#7FB800` `#4E8222` `#2F5F1E` |
+| Nước & ao | 6 | `#CDEFF2` `#80DEEA` `#2EC4B6` `#2E8B8D` `#1D5F6E` `#123D4A` |
+| Đất & phù sa | 6 | `#E6C79C` `#C99E67` `#A97B4F` `#8D3B24` `#6B4A32` `#4E3424` |
+| Da người | 5 | `#FCE3C8` `#F2C9A0` `#DCA57A` `#B97B52` `#8A5638` |
+| Đỏ & cam | 6 | `#FFC9B0` `#F07C4A` `#C85A32` `#D62828` `#A51F1F` `#FF9800` |
+| Vàng & lúa | 6 | `#FFF3B0` `#FFD166` `#FFB703` `#F5B700` `#E09F00` `#A86B00` |
+| Hồng & tím | 8 | `#FFD6E4` `#F4A7B9` `#F15BB5` `#B23A8A` `#C9B6E4` `#9B5DE5` `#6A3FA0` `#5E4B56` |
+| Đá & xám | 5 | `#F2F0EA` `#C4C7C2` `#8E9A9F` `#5C6B73` `#3E474D` |
+| Trời | 4 | `#BFE4FF` `#6FB7E8` `#3A7BBF` `#24477A` |
+| Điểm sáng | 1 | `#FFFFFF` |
+
+Hậu kỳ khóa màu: `python3 tools/art/recolor_outline.py in.png --palette art/palette/vac_base.gpl --out out.png` (đổi viền đen → `#3D2314` rồi đưa từng pixel về màu gần nhất); kiểm: thêm `--check`. Màu giao diện HTML (Tailwind) không bắt buộc theo bảng này.
+
 ---
 
 ## PHẦN 2: QUY TRÌNH 5 BƯỚC SẢN XUẤT ASSET, ANIMATION (`8–12 FRAMES`), TILEMAP & VFX BẰNG AI SKILLS (`AI ASSET PIPELINE`)
 
-Để sản xuất đồng bộ toàn bộ đồ họa cho **155 Thực thể gốc + Sảnh Chung + Võ Đài PK** mà không lệch phong cách (`RULE D1`), đội ngũ Art hoặc AI thực thi theo dây chuyền 5 bước sau:
+Để sản xuất đồng bộ toàn bộ đồ họa cho **toàn bộ thực thể gốc (`GAME_CATALOG`) + Sảnh Chung + Võ Đài PK** mà không lệch phong cách (`RULE D1`), đội ngũ Art hoặc AI thực thi theo dây chuyền 5 bước sau:
 
 ```mermaid
 flowchart LR
@@ -48,9 +69,30 @@ flowchart LR
 
 ---
 
+### 2.X. Công Cụ Thực Thi Thật: Plugin `agent-sprite-forge` (bổ sung theo `17_PROJECT_AUDIT` Phần D2)
+Các skill `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d` ở trên được hiện thực bằng plugin **`agent-sprite-forge`** (https://github.com/0x0funky/agent-sprite-forge, MIT). Đầu ra dùng cho Phaser: Aseprite JSON + PNG (`this.load.aseprite`), PNG atlas + `animation.json`, Tiled JSON (`--embedded-variant`, `this.load.tilemapTiledJSON`).
+
+Plugin **chưa tự đáp ứng** đủ chuẩn của file này, nên bắt buộc thêm:
+1. **Viền ấm `#3D2314`:** chạy hậu kỳ `tools/art/recolor_outline.py`; QC Gate 2 kiểm không còn pixel `#000000`.
+2. **Bảng 64 màu:** palette dự án `art/palette/vac_base.gpl` (mục 1.3); khóa màu bằng `tools/art/import_sprite.py` / `recolor_outline.py --palette`.
+3. **Góc `3/4 Top-Down Oblique`:** ghi rõ trong prompt + ảnh tham chiếu style; prompt mẫu tại `art/prompts/`.
+4. **Kích thước:** `--logical-pixel` / `--pixel-scale` cố định: nhân vật `48x64`, ô đất `168x80`, icon `32x32`. Nền tách `#FF00FF`.
+5. **API key** tạo ảnh/video đặt trong secret môi trường, không commit. `video2dsprite` chỉ dùng cho nhân vật chính & gia nhân.
+6. **Môi trường:** Python 3.10+ (numpy, Pillow, scipy), ffmpeg 5.1+, Node 22.
+
+Cài đặt, cấu trúc thư mục `art/` và quy trình mẫu cho Đợt 1: xem `17_PROJECT_AUDIT` Phần D2 (không chép lại ở đây theo `RULE D0`).
+
+**Đường ống thực tế của dự án (2026-11-02, dùng cho mọi nguồn ảnh: plugin, ChatGPT/Gemini, API, họa sĩ):**
+`ảnh gốc` → `tools/art/import_sprite.py` (tách nền `#FF00FF`, lưới 48x48 neo đáy, alpha 0/255, 64 màu, viền `#3D2314`)
+→ `art/source/<lô>/<ID>/<0..3>.png` (4 giai đoạn lớn) → `tools/art/pack_atlas.py` → `public/assets/atlas/<lô>.png/.json`
+→ Phaser chọn khung `<ID>_<giai đoạn>` (`src/domain/growth.ts`). Thiếu khung thì dùng hình vẽ code.
+Hình tạm Đợt 1: `npm run art:wave1`. Bộ prompt 23 loài: `art/prompts/wave1_species.md`. VFX nông trại: `src/game/vfx/farmVfx.ts`.
+
+---
+
 ## PHẦN 3: BẢNG MA TRẬN SẢN XUẤT ASSET, ANIMATION & VFX THEO 6 GIAI ĐOẠN (`6-STAGE ASSET & VFX PRODUCTION PLAN`)
 
-Thay vì vẽ dồn toàn bộ 155 thực thể ngay từ đầu, kế hoạch sản xuất Asset, Animation và VFX được chia nhỏ khớp 100% với **5 Đợt Mở Khóa Nông – Thủy – Hải Sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** và **Sảnh Chung Giai Đoạn 6**:
+Thay vì vẽ dồn toàn bộ thực thể ngay từ đầu, kế hoạch sản xuất Asset, Animation và VFX được chia nhỏ khớp 100% với **5 Đợt Mở Khóa Nông – Thủy – Hải Sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** và **Sảnh Chung Giai Đoạn 6**:
 
 | Giai Đoạn | Khối Lượng Sprite Thực Thể & Công Trình (`@generate2dsprite`, `@generate2dmap`, `@codeart2d`) | Hạng Mục Animation `8–12 Frames` Cần Làm (`@video2dsprite`) | Hệ Thống Particle VFX & Shader/Tween (`@technical-artist`) |
 | :--- | :--- | :--- | :--- |

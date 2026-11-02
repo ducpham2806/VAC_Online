@@ -1,5 +1,7 @@
 export type RegionType = 'NORTH' | 'CENTRAL' | 'SOUTH';
 export type GenderType = 'MALE' | 'FEMALE';
+export type UnlockWave = 1 | 2 | 3 | 4 | 5;
+
 export type EntityCategory =
   | 'CROP'
   | 'TREE'
@@ -16,6 +18,12 @@ export type EntityCategory =
   | 'DEFENSE'
   | 'IAP';
 
+/** 1 dòng nguyên liệu trong công thức Bếp Quê (S4, `17` mục C2). */
+export interface RecipeIngredient {
+  itemId: string;
+  qty: number;
+}
+
 export interface CatalogItem {
   id: string;
   category: EntityCategory;
@@ -23,12 +31,18 @@ export interface CatalogItem {
   name: string;
   region: 'ALL' | RegionType;
   unlockLevel: number;
+  /** Đợt mở khóa V-A-C (GDD 01 mục 3.2): 1..5. Không có = không gắn với Đợt (tính năng, IAP, thời trang...). */
+  unlockWave?: UnlockWave;
   buyCostGold: number;
   baseSellGold: number;
   maxMarketGold?: number;
   growOrCraftMinutes: number;
   yieldCount?: number;
   inputIngredients?: string;
+  /** Xưởng nấu món này (S4). */
+  machineId?: string;
+  /** Công thức theo ID thực thể (S4). `inputIngredients` giữ làm chữ hiển thị. */
+  recipe?: RecipeIngredient[];
   xpReward: number;
   staminaDelta: number;
   emoji: string;

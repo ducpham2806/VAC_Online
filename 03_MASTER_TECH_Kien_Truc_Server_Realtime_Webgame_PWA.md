@@ -33,14 +33,14 @@
 └── src/
     ├── data/
     │   ├── types.ts                    # Toàn bộ TypeScript Interfaces toàn dự án
-    │   └── masterData.ts               # Danh mục cứng 155 Thực thể (GAME_CATALOG)
+    │   └── masterData.ts               # Danh mục thực thể gốc GAME_CATALOG (nguồn chuẩn)
     ├── services/
     │   ├── supabaseClient.ts           # Khởi tạo kết nối Supabase & lưu thông tin cấu hình
     │   ├── authService.ts              # Đăng ký, Đăng nhập, Chơi Khách, Liên kết TK (+50💎), Quên MK OTP
     │   ├── realtimeService.ts          # Kênh Realtime vac_online_global_hub & Sharded Plaza Rooms
     │   ├── soundEffects.ts             # Nhạc nền Ngũ Cung 3 miền & SFX đồng quê / võ đài
     │   ├── certificateExporter.ts      # Vẽ & tải ảnh Bằng Khen Điền Chủ (.PNG) bằng HTML5 Canvas
-    │   └── qcTestRunner.ts             # Bộ chạy kiểm thử tự động 37 Test Cases (Snapshot & Restore)
+    │   └── qcTestRunner.ts             # Bộ QC in-game (Snapshot & Restore), chạy trong vitest
     ├── game/
     │   ├── EventBus.ts                 # Cầu nối sự kiện 2 chiều React HUD <-> Phaser 3 Scenes
     │   ├── PhaserGame.tsx              # Khởi tạo Phaser.Scale.RESIZE / ENVELOP
@@ -68,8 +68,8 @@
 
 ## PHẦN 2: KIẾN TRÚC DATABASE SUPABASE POSTGRESQL, RLS, ATOMIC RPC & QUY TẮC BẢO TOÀN DỮ LIỆU (`RULE D1`)
 
-### 2.1. Danh Mục 11 Bảng Dữ Liệu Trên Supabase (`0001`, `0002` & `0003` Migrations — Additive-Only Schema)
-1. `public.master_catalog`: Lưu trữ 155 thực thể chuẩn (`id`, `category`, `region`, `name`, **`unlock_stage` (`1..5`)**, **`unlock_story_chapter` (`1..10`)**, `unlock_level`, `buy_cost_gold`, `base_sell_gold`, `grow_or_craft_minutes`, `xp_reward`) — phục vụ cơ chế **Mở khóa 3 tầng (`Stage + Story Chapter + Level`)** chia nhỏ 81 loài V-A-C qua 5 Giai đoạn.
+### 2.1. Danh Mục 11 Bảng Dữ Liệu Trên Supabase — thiết kế đích GĐ1–6 (hiện trạng & migration thật: `17`) (`0001`, `0002` & `0003` Migrations — Additive-Only Schema)
+1. `public.master_catalog`: Lưu trữ toàn bộ thực thể (seed sinh từ `GAME_CATALOG`) (`id`, `category`, `region`, `name`, **`unlock_wave` (`1..5`)**, **`unlock_story_chapter` (`1..10`)**, `unlock_level`, `buy_cost_gold`, `base_sell_gold`, `grow_or_craft_minutes`, `xp_reward`) — phục vụ cơ chế **Mở khóa 3 tầng (`Stage + Story Chapter + Level`)** chia nhỏ 81 loài V-A-C qua 5 Giai đoạn.
 2. `public.profiles`: Hồ sơ người chơi (`id`, `display_name`, `gender`, `region`, `level`, `xp`, `gold`, `gems`, `stamina`, **`current_stage_unlocked` (`1..6`)**, **`highest_story_chapter_completed` (`0..10`)**, `style_score`, `feng_shui_score`, `neighbor_points`, `dinh_lang_stage`, `festival_tokens` (`🏮 Xu Hội Làng`), `arena_elo`, `daily_arcade_gold_earned`).
 3. `public.farm_entities`: Trạng thái từng ô đất/ao/vườn cây (`id`, `user_id`, `zone_type`, `item_id`, `planted_at`, `mature_at`, `watered`, `mud_applied`, `is_golden`, `remaining_yield`, `stolen_by`).
 4. `public.inventories`: Kho nông sản, món ăn, vật tư, kỷ vật 8x–9x và trang phục (`user_id`, `item_id`, `quantity`).
@@ -81,10 +81,10 @@
 10. `public.arena_matches` *(Giai đoạn 6 - Mới)*: Lưu trữ phiên đấu PK 1v1, 3v3 & Loạn Chiến 8–12P (`match_id`, `mode_code`, `entry_fee_gold`, `tax_burned_gold`, `participants JSONB`, `winner_ids UUID[]`, `status`, `created_at`).
 11. `public.minigame_leaderboards` *(Giai đoạn 6 - Mới)*: Bảng vàng kỷ lục tuần của từng trò chơi Hyper-Casual (`game_code`, `user_id`, `display_name`, `region`, `best_score`, `week_key`).
 
-### 2.2. Đặc Tả 7 Hàm Atomic RPC Chống Gian Lận (`SECURITY DEFINER`)
-1. `public.rpc_sync_master_catalog(p_items JSONB)`: Đồng bộ trọn bộ 155 thực thể lên bảng `public.master_catalog` bằng `ON CONFLICT (id) DO UPDATE` (tuyệt đối không xóa các dòng đang tham chiếu bởi `inventories` hoặc `farm_entities`).
-2. `public.rpc_post_market_listing(...)`: Kiểm tra khung giá hợp lệ `[0.8x, 2.0x Base_Sell_Gold]` ngay trên PostgreSQL.
-3. `public.rpc_attempt_steal(p_thief_id UUID, p_target_tile_id UUID)`: Khóa dòng `FOR UPDATE`, kiểm tra 3 phút ân huệ, trần bảo hiểm 80%, và phạt Zero-Sum `50 🪙` + tặng `Dép Tổ Ong` khi bị bắt.
+### 2.2. Đặc Tả 7 Hàm Atomic RPC Chống Gian Lận (`SECURITY DEFINER`) — thiết kế đích (RPC thật hiện tại: `0003`–`0005`, xem `17` mục C1)
+1. `public.rpc_sync_master_catalog(p_items JSONB)`: **chỉ `service_role`** (khóa ở migration `0003`; client không gọi — catalog nạp bằng `supabase/seed/master_catalog_seed.sql`). Đồng bộ toàn bộ thực thể lên bảng `public.master_catalog` bằng `ON CONFLICT (id) DO UPDATE` (tuyệt đối không xóa các dòng đang tham chiếu bởi `inventories` hoặc `farm_entities`).
+2. `public.rpc_post_market_listing(...)`: Kiểm tra khung giá hợp lệ `[0.8x, 2.0x Base_Sell_Gold]` ngay trên PostgreSQL. Khi khớp lệnh mua (S6) đốt **`5%` Thuế Chợ** (`tax_burned_gold = FLOOR(total * 0.05)`).
+3. `public.rpc_attempt_steal(p_thief_id UUID, p_target_tile_id UUID)`: Khóa dòng `FOR UPDATE`, kiểm tra cửa sổ trộm 2 phút (PO chốt 2026-11-02, `src/domain/social.ts`), Chó Phú Quốc bắt 50%, trần bảo hiểm 80%, và phạt Zero-Sum `50 🪙` + tặng `Dép Tổ Ong` khi bị bắt.
 4. `public.rpc_sell_to_friend_trader(...)`: Khóa dòng `FOR UPDATE`, giới hạn mỗi khách bán ké tối đa `20 đơn vị`, cộng `+5%` hoa hồng cho chủ nhà.
 5. `public.rpc_sign_guestbook(...)`: Lưu lời chúc vào `public.farm_guestbook`.
 6. `public.rpc_settle_arena_wager(p_match_id UUID, p_winner_id UUID)` *(Giai đoạn 6 - Mới)*:
@@ -175,6 +175,6 @@ export interface IHyperCasualCartridge {
 | **RULE C9** | **Cửa Sổ Trộm 2 Phút & Lazy-Tick** | Nhân công chờ 5 phút sau khi cây chín mới thu gom; khi mở lại game phải tính sản lượng Offline qua `simulateOfflineWorkerProgress`. |
 | **RULE C10** | **Không Dùng `window.alert/confirm`** | Toàn bộ thông báo trong game phải hiển thị qua hệ thống **Toast Banner Gỗ/Tre** (`setToast`) hoặc Modal UI. |
 | **RULE C11** | **Zero External Audio Blocking** | Âm thanh và nhạc nền Ngũ Cung tổng hợp trực tiếp qua Web Audio API (`soundEffects.ts`), tự động `resume()` khi người chơi chạm màn hình. |
-| **RULE C12** | **Kiểm Thử Tự Động Snapshot An Toàn** | Bộ `runFullQCTestSuite()` (**37 Test Cases**) phải chụp `structuredClone` trước khi chạy và khôi phục 100% trạng thái sau khi kết thúc. |
-| **RULE C13** | **Bảo Toàn Cơ Sở Dữ Liệu (`Additive-Only DB Schema` - `RULE D1`)** | Mọi bản cập nhật SQL (`supabase/migrations/*.sql`) và `localStorage` chỉ được phép **mở rộng không phá hủy** (`CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS ... DEFAULT ...`). Tuyệt đối **cấm `DROP TABLE`, `DROP COLUMN`, hoặc thay đổi `ID` của 155 thực thể gốc** làm mất tài sản hay gãy dữ liệu người chơi cũ. |
+| **RULE C12** | **Kiểm Thử Tự Động Snapshot An Toàn** | Bộ `runFullQCTestSuite()` (**bộ QC in-game, chạy trong vitest**) phải chụp `structuredClone` trước khi chạy và khôi phục 100% trạng thái sau khi kết thúc. |
+| **RULE C13** | **Bảo Toàn Cơ Sở Dữ Liệu (`Additive-Only DB Schema` - `RULE D1`)** | Mọi bản cập nhật SQL (`supabase/migrations/*.sql`) và `localStorage` chỉ được phép **mở rộng không phá hủy** (`CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS ... DEFAULT ...`). Tuyệt đối **cấm `DROP TABLE`, `DROP COLUMN`, hoặc thay đổi `ID` của các thực thể gốc trong `GAME_CATALOG`** làm mất tài sản hay gãy dữ liệu người chơi cũ. |
 | **RULE C14** | **Cô Lập Module & Cảnh Báo Tác Động Chéo Sớm (`RULE D1`)** | Triển khai tính năng mới không được làm ảnh hưởng tới Core Gameplay VAC hoặc tính năng cũ. Nếu phát hiện có tác động chéo tới tính năng khác hoặc Database, **bắt buộc phải thông báo ngay từ Bước 1 (Lên Thiết Kế / Kế Hoạch) và chờ PO phê duyệt** trước khi viết code. |
