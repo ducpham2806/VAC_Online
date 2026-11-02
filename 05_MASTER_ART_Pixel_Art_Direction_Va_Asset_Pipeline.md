@@ -74,13 +74,19 @@ Các skill `@generate2dsprite`, `@video2dsprite`, `@generate2dmap`, `@codeart2d`
 
 Plugin **chưa tự đáp ứng** đủ chuẩn của file này, nên bắt buộc thêm:
 1. **Viền ấm `#3D2314`:** chạy hậu kỳ `tools/art/recolor_outline.py`; QC Gate 2 kiểm không còn pixel `#000000`.
-2. **Bảng 64 màu:** palette dự án `art/palette/vac64.gpl` + `palette_tool.py lock / apply` (chế độ `--finish pixel`).
+2. **Bảng 64 màu:** palette dự án `art/palette/vac_base.gpl` (mục 1.3); khóa màu bằng `tools/art/import_sprite.py` / `recolor_outline.py --palette`.
 3. **Góc `3/4 Top-Down Oblique`:** ghi rõ trong prompt + ảnh tham chiếu style; prompt mẫu tại `art/prompts/`.
 4. **Kích thước:** `--logical-pixel` / `--pixel-scale` cố định: nhân vật `48x64`, ô đất `168x80`, icon `32x32`. Nền tách `#FF00FF`.
 5. **API key** tạo ảnh/video đặt trong secret môi trường, không commit. `video2dsprite` chỉ dùng cho nhân vật chính & gia nhân.
 6. **Môi trường:** Python 3.10+ (numpy, Pillow, scipy), ffmpeg 5.1+, Node 22.
 
 Cài đặt, cấu trúc thư mục `art/` và quy trình mẫu cho Đợt 1: xem `17_PROJECT_AUDIT` Phần D2 (không chép lại ở đây theo `RULE D0`).
+
+**Đường ống thực tế của dự án (2026-11-02, dùng cho mọi nguồn ảnh: plugin, ChatGPT/Gemini, API, họa sĩ):**
+`ảnh gốc` → `tools/art/import_sprite.py` (tách nền `#FF00FF`, lưới 48x48 neo đáy, alpha 0/255, 64 màu, viền `#3D2314`)
+→ `art/source/<lô>/<ID>/<0..3>.png` (4 giai đoạn lớn) → `tools/art/pack_atlas.py` → `public/assets/atlas/<lô>.png/.json`
+→ Phaser chọn khung `<ID>_<giai đoạn>` (`src/domain/growth.ts`). Thiếu khung thì dùng hình vẽ code.
+Hình tạm Đợt 1: `npm run art:wave1`. Bộ prompt 23 loài: `art/prompts/wave1_species.md`. VFX nông trại: `src/game/vfx/farmVfx.ts`.
 
 ---
 

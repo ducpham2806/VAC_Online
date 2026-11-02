@@ -37,6 +37,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
   - [x] ~~Cửa sổ trộm: 2 phút~~ ✅ 2026-11-02
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
 - [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
+- [ ] **Chọn nguồn ảnh cho sprite đẹp:** (1) anh tự tạo bằng ChatGPT / Gemini theo `art/prompts/wave1_species.md` rồi bỏ vào `art/source/inbox/`, hoặc (2) thêm `OPENAI_API_KEY` / `GEMINI_API_KEY` vào cài đặt môi trường cloud để AI tự tạo hàng loạt (tốn phí API). Không dán key vào chat.
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
 - [ ] Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ** (em sẽ trình trước khi code, vì đụng DB).
 
@@ -50,7 +51,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Kiểm mục tiêu nhiệm vụ trên server: Ch.1 tưới + thu Lúa, Ch.2 vét bùn + bón bùn (`0007`)~~ ✅ 2026-11-01
 - [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 (hiện chỉ kiểm cấp).
 - [x] ~~HUD màn hình ngang thấp (844×390, 667×375): khay giống không che ruộng, footer 1 hàng~~ ✅ 2026-11-02
-- [ ] Atlas sprite thật cho 23 loài Đợt 1 (`agent-sprite-forge`, sau khi chốt bảng màu).
+- [x] ~~Đường ống asset + atlas tạm 23 loài Đợt 1 × 4 giai đoạn + VFX nông trại~~ ✅ 2026-11-02
+- [ ] Thay hình tạm Đợt 1 bằng ảnh vẽ đẹp (chờ PO chọn nguồn ảnh — mục A2).
 - [x] ~~Analytics phía server: retention D1/D7, phễu tân thủ, Sources/Sinks (`0008`, `npm run supabase -- report`)~~ ✅ 2026-11-02
 
 ## C. Lộ trình sau (chi tiết: `17` Phần C)

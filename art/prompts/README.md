@@ -31,7 +31,10 @@ Actions: Idle, Walk (4 directions), Water, Harvest — 8–12 frames each, seaml
 
 ## Sau khi xuất
 ```bash
-python3 tools/art/recolor_outline.py <file>.png --out <file>.png   # đổi viền đen → #3D2314
-python3 tools/art/recolor_outline.py <file>.png --check            # phải in OK
+python3 tools/art/import_sprite.py <file>.png --id CROP_01 --stage 3   # tách nền, 48x48, 64 màu, viền ấm
+python3 tools/art/pack_atlas.py art/source/wave1 --name wave1           # đóng atlas vào public/assets/atlas/
+python3 tools/art/recolor_outline.py public/assets/atlas/wave1.png --palette art/palette/vac_base.gpl --check
 ```
+Bộ prompt 23 loài Đợt 1 (dùng cho ChatGPT / Gemini hoặc API): `art/prompts/wave1_species.md`.
+Hình tạm vẽ bằng code: `npm run art:wave1` (`tools/art/codeart_wave1.py`).
 Lưu nguồn tại `art/source/<wave>/<entity_id>/`; chỉ atlas đã duyệt mới vào `public/assets/atlas/`.
