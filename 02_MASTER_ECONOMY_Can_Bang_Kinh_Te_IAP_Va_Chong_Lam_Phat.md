@@ -66,7 +66,15 @@
 
 ## PHẦN 4: MA TRẬN CÂN BẰNG KINH TẾ CHO 17 TÍNH NĂNG BENCHMARK / LỄ HỘI & 6 HỆ THỐNG SẢNH CHUNG / PK / HYPER-CASUAL
 
-*(Giữ nguyên toàn bộ thông số chuẩn hóa của 17 Tính năng Benchmark/Lễ hội từ Giai đoạn 2 ➔ 5 và 6 Chế độ Sảnh Chung / Võ Đài PK / Loạn Chiến / Hyper-Casual ở Giai đoạn 6 như đã đối chiếu tại `01_MASTER_GDD`).*
+> **Chưa lập bảng.** Ma trận số liệu cho 17 tính năng Benchmark / Lễ hội (GĐ2 ➔ GĐ5) và 6 chế độ Sảnh Chung / PK / Hyper-Casual (GĐ6) chưa được viết. Mỗi bảng sẽ được lập khi mở Giai đoạn tương ứng: chạy `/vac-balance-check` trên dữ liệu thật rồi ghi kết quả vào đây.
+>
+> **Đã chốt** (PO duyệt, đã ghi ở các mục khác của file này):
+> * Thuế Chợ P2P `5%`, bảo hiểm trộm `80%`: Van 2–3 (Phần 1).
+> * Trần thưởng Hyper-Casual `1.500/ngày`: Van 7. Còn chờ PO chốt đơn vị là 🪙 hay 🏮, xem `VIEC_CAN_LAM.md` A2.
+> * Thuế Sới Đình `10% Zero-Sum`: Phần 5.
+> * PK `-5⚡`/trận: `01_MASTER_GDD` mục 1.2.
+>
+> Tạm thời, mô tả từng tính năng xem `01_MASTER_GDD` Chương 5–6, còn số liệu dự kiến xem các file kế hoạch `12 ➔ 16`. Hiện trạng code xem `17`.
 
 ---
 

@@ -1,13 +1,13 @@
 # 🎪 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 6: SẢNH CHUNG CHỢ ĐÌNH, PK DÂN GIAN (1V1 & LOẠN CHIẾN) & KHU TRÒ CHƠI HYPER-CASUAL (`v3.0`)
 **Phiên bản:** `1.1 (Stage 6 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Tilemap Sảnh Chung & VFX)`  
 **Mốc phát hành:** Tháng 7+ (Tuần 13–16 — Bản Đại Mở Rộng Multiplayer Social Plaza, Đấu Trường Dân Gian Vui Nhộn & Cổng Arcade Siêu Tốc)  
-**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` (Mục 9) ➔ `02_MASTER_ECONOMY` (Mục 8) ➔ `03_MASTER_TECH` (Mục 7) ➔ `04_MASTER_NARRATIVE` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX` (Mục 4.10)  
+**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` (Chương 6) ➔ `02_MASTER_ECONOMY` (Phần 4) ➔ `03_MASTER_TECH` (Phần 3) ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX` (Mục 2.5–2.6)  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay Nông trại làm gốc, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
-## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 6 (CHAPTER 6: BẾN ĐÌNH HỘI TỤ & SỚI VẬT TRẩy HỘI BỐN PHƯƠNG)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, 20–30 người chơi có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
+## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 6 (CHAPTER 6: BẾN ĐÌNH HỘI TỤ & SỚI VẬT TRẨY HỘI BỐN PHƯƠNG)
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, 20–30 người chơi có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
 - **Mục tiêu sản phẩm & Ràng buộc Thiết kế (`RULE D1` Core Guardrail):**
   - Mở khóa không gian **Real-time Multiplayer Social Plaza** (`SocialPlazaScene.ts`) tách biệt hoàn toàn với `FarmScene.ts` (chuyển cảnh qua cổng Đình Làng hoặc nút HUD `🎪 Sảnh Đình`, đảm bảo nông trại chính luôn nhẹ và mượt).
   - **Cơ chế PK Dân Gian Không Máu Me (Slapstick Folk Arena):** Tuyệt đối không chém giết bạo lực; mọi đòn đánh là **Đấu Gậy Bông Đẩy Cầu Tre, Đấu Vật Đẩy Khỏi Vòng Vôi, Ném Bóng Nước/Cà Chua Chín & Tranh Cờ/Bắt Vịt**.

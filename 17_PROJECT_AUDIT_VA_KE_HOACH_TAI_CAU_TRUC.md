@@ -63,10 +63,14 @@
   | Số món ăn | 22 (`13`, `14`, `15`) | 27 |
   | Cửa sổ trộm | ✅ PO chốt 2026-11-02: **2 phút** (`03` đã sửa; SQL viết lại ở S6) | — |
 
-- **Tham chiếu sai:** `13 → 16` dẫn `04_MASTER_NARRATIVE` (file `04` là CSV; narrative nằm ở `docs_archive_merged/12_MASTER_NARRATIVE…`); `16` dẫn "GDD Mục 9" (GDD chỉ có 7 chương).
-- **Số tổng không khớp:** 7 hay 8 van chống lạm phát (`00` vs `02`); 12 hay 14 quy tắc code (`00:62` vs `03`); Bible v9.2 vs AGENTS v9.3; UI v7.0 vs v7.1; nhãn build trong bảng `00` (dòng 44–49) ghi "v1.1 …" cho cả 6 giai đoạn.
+- ~~**Tham chiếu sai:** `13 → 16` dẫn `04_MASTER_NARRATIVE`; `16` dẫn "GDD Mục 9".~~ ✅ 2026-11-02: đổi thành `01_MASTER_GDD` Chương 4 (cốt truyện đã gộp vào `01`), `04_MASTER_DATA`, và `16` dẫn đúng `01` Chương 6 / `02` Phần 4 / `03` Phần 3 / `06` Mục 2.5–2.6.
+- **Số tổng không khớp:** ~~7 hay 8 van chống lạm phát~~ (✅ 2026-11-02: `00`, `AGENTS.md` theo `02` = 8 van); ~~12 hay 14 quy tắc code; Bible v9.2 vs AGENTS v9.3; UI v7.0 vs v7.1~~ (✅ 2026-11-02: mọi nơi đã ghi `C1 ➔ C14`, Bible `9.3`, đầu file `06` đổi thành `7.1` cho khớp mục lục); nhãn build trong bảng `00` (dòng 44–49) ghi "v1.1 …" cho cả 6 giai đoạn.
 - **Cấp độ mở khóa lệch:** `WORK_02` Lv.16 vs Chương 6 thuê ở Lv.13; `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (Lv.21+).
-- **Soạn thảo:** còn ký tự Trung (`定` ở `01`, `枯` ở `13`), lỗi gõ ("PHạm", "TRẩy", "VõBếp"); checklist nghiệm thu GĐ1–2 đã tick `[x]` dù code chưa đạt; 2 placeholder rỗng "Giữ nguyên…" (`02:62`, `08:70`).
+- ~~**Soạn thảo:** ký tự Trung, lỗi gõ, checklist GĐ1–2 tick sai, 2 placeholder rỗng.~~ ✅ 2026-11-02:
+  - Đã xóa ký tự lạ và sửa lỗi gõ ("VõBếp" → "Vỏ Quýt `PROD_24`").
+  - Checklist `11`: còn tick 3/6 mục đạt thật. Checklist `12`: bỏ tick cả 5 mục.
+  - Buff Nam trong `11` đổi theo `01` (`+1` sản lượng phụ).
+  - Placeholder `02` Phần 4 ghi rõ "chưa lập bảng" và dẫn tới các số đã chốt; `08` Phần 5 đã điền trước đó.
 - **Hình thức:** quá nhiều emoji / backtick / ô bảng nối `<br>`; RULE D0/D1 chép gần nguyên văn ở ~6 nơi — chính các bản chép này là nơi số liệu trôi lệch.
 
 ### A5. Rủi ro

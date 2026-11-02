@@ -1,13 +1,13 @@
 # 🚂 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 3: CHỢ PHIÊN, CHUYẾN TÀU THỐNG NHẤT & HÀNG XÓM (`v1.5`)
 **Phiên bản:** `1.1 (Stage 3 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Tilemap & VFX)`  
 **Mốc phát hành:** Tháng 3 (Tuần 5–6 — Bản mở rộng Giao thương liên vùng & Tương tác Hàng xóm đầu tiên)  
-**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_NARRATIVE` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
+**Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 3 (CHAPTER 3: TIẾNG CÒI TÀU THỐNG NHẤT & NHỊP CHỢ PHIÊN)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Chuyến Tàu Thống Nhất Bắc – Nam khôi phục lại ga xép đầu làng! Nông sản của nông trại giờ đây không chỉ bán quanh xóm mà còn đóng toa tàu đi khắp 3 Miền. Hàng xóm láng giềng (*Tí Nị, Út Mót*) bắt đầu ghé sang thăm vườn, tưới nước hộ, bắt sâu giúp... và thỉnh thoảng "sang thăm" lúc nửa đêm để hái trộm 1–2 trái chín đầu cành (hoặc bị Chó Phú Quốc rượt rớt lại *Dép Tổ Ong* làm kỷ niệm).
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Chuyến Tàu Thống Nhất Bắc – Nam khôi phục lại ga xép đầu làng! Nông sản của nông trại giờ đây không chỉ bán quanh xóm mà còn đóng toa tàu đi khắp 3 Miền. Hàng xóm láng giềng (*Tí Nị, Út Mót*) bắt đầu ghé sang thăm vườn, tưới nước hộ, bắt sâu giúp... và thỉnh thoảng "sang thăm" lúc nửa đêm để hái trộm 1–2 trái chín đầu cành (hoặc bị Chó Phú Quốc rượt rớt lại *Dép Tổ Ong* làm kỷ niệm).
 - **Mục tiêu sản phẩm & KPI:**
   - Mở khóa hệ thống **Giao thương P2P** (*Sạp Báo Chợ Phiên 8 ô*), **Đơn hàng lớn liên vùng** (*Tàu Hỏa Thống Nhất 3 toa x 3 kiện*) và **Tương tác Hàng xóm** (*Thăm vườn, Giúp đỡ +5 Tim/lượt, Hái trộm vui vẻ tối đa 20% sản lượng/ô — Bảo hiểm 80% & Chó Phú Quốc canh gác*).
   - Mở rộng hệ sinh thái sinh vật từ **45 loài lên 63 loài (+18 loài mới)** trải dài khắp 3 Miền.
@@ -15,14 +15,14 @@
 
 ---
 
-## 2. DANH MỤC TÍNH NĂNG, HỆ SINH THÁI & PHạm VI TRIỂN KHAI GIAI ĐOẠN 3 (`WHAT TO BUILD`)
+## 2. DANH MỤC TÍNH NĂNG, HỆ SINH THÁI & PHẠM VI TRIỂN KHAI GIAI ĐOẠN 3 (`WHAT TO BUILD`)
 
 ### 2.1. Hệ Sinh Thái Nông – Thủy – Hải Sản Đợt 3 (+18 Loài Mở Khóa = Lũy Kế 63 Loài)
 1. **12 Cây trồng Đợt 3 (Mở khóa Vườn Cây Ăn Quả Lâu Năm & Đặc sản 3 Miền):**
    - **Miền Bắc (4 loài):** *Nấm Hương Rừng (`CROP_06`), Đậu Tương (`CROP_07`), Vải Thiều Thanh Hà (`CROP_08`), Nhãn Lồng Hưng Yên (`CROP_09`)*.
    - **Miền Trung (4 loài):** *Mía Đường (`CROP_14`), Sen Hồng (`CROP_15`), Nho Ninh Thuận (`CROP_16`), Hồ Tiêu (`CROP_17`)*.
    - **Miền Nam (4 loài):** *Xoài Cát Hòa Lộc (`CROP_22`), Vú Sữa Lò Rèn (`CROP_23`), Măng Cụt Lái Thiêu (`CROP_24`), Mít Tố Nữ (`CROP_25`)*.
-   - *Cơ chế mới:* **Cây Ăn Quả Lâu Năm (Perennial Trees)** thu hoạch **3 mùa quả liên tiếp** rồi mới枯 (cần **Cưa Sắt** `TOOL_SAW` để dọn gốc nhận Gỗ).
+   - *Cơ chế mới:* **Cây Ăn Quả Lâu Năm (Perennial Trees)** thu hoạch **3 mùa quả liên tiếp** rồi mới khô héo (cần **Cưa Sắt** `TOOL_SAW` để dọn gốc nhận Gỗ).
 2. **1 Vật nuôi bảo vệ & thụ phấn Đợt 3:**
    - *Ong Mật Rừng (`ANIM_08` - Đặt cạnh vườn cây ăn quả tăng **+5% xác suất Nông sản Sao Vàng ⭐**)*.
    - Mở khóa đầy đủ *Đàn Ngỗng Trắng (`ANIM_03`)* & *Trâu Đen Cày Ruộng (`ANIM_06`)* cho liên vùng.

@@ -39,7 +39,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
 - [ ] **Chọn nguồn ảnh cho sprite đẹp:** (1) anh tự tạo bằng ChatGPT / Gemini theo `art/prompts/wave1_species.md` rồi bỏ vào `art/source/inbox/`, hoặc (2) thêm `OPENAI_API_KEY` / `GEMINI_API_KEY` vào cài đặt môi trường cloud để AI tự tạo hàng loạt (tốn phí API). Không dán key vào chat.
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
-- [ ] Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ** (em sẽ trình trước khi code, vì đụng DB).
+- [x] ~~Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ**~~ ✅ 2026-11-01
 
 ---
 
@@ -55,6 +55,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [ ] Thay hình tạm Đợt 1 bằng ảnh vẽ đẹp (chờ PO chọn nguồn ảnh — mục A2).
 - [x] ~~Bản chạy thử GĐ1 đủ asset tạm (thế giới, nhân vật, UI, icon, animation, VFX, âm thanh) — link Artifact riêng tư https://claude.ai/artifact/8R1sgtQahsaAaGgG3DB36h (`npm run build:preview`, chạy offline)~~ ✅ 2026-11-02
 - [x] ~~Analytics phía server: retention D1/D7, phễu tân thủ, Sources/Sinks (`0008`, `npm run supabase -- report`)~~ ✅ 2026-11-02
+- [x] ~~Sửa CI job `sql` luôn đỏ (`scripts/test-sql.sh` thoát mã 1 dù test PASS)~~ ✅ 2026-11-02
 
 ## C. Lộ trình sau (chi tiết: `17` Phần C)
 - [x] ~~S3: Hướng dẫn tân thủ Chương 1–2 (Bác Bảy, 8 bước, `src/domain/tutorial.ts`)~~ ✅ 2026-11-02
@@ -69,11 +70,13 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Sửa số cứng "155 thực thể / 37 TC / 11 bảng / 7 RPC"~~ ✅ 2026-11-01
 - [x] ~~Thống nhất thuế Chợ, bảo hiểm trộm, năng lượng PK~~ ✅ 2026-11-01
 - [ ] Gộp `13 → 16` về hệ ID của CSV `04`; thống nhất tên dự án.
-- [ ] Sửa tham chiếu `04_MASTER_NARRATIVE`, "GDD Mục 9".
-- [ ] Xóa ký tự lạ (`定`, `枯`), sửa lỗi gõ.
-- [ ] Bỏ tick `[x]` ở checklist nghiệm thu GĐ1–2 cho tới khi code đạt.
-- [ ] Điền 2 placeholder rỗng (`02:62`, `08:70`).
-- [ ] Đồng bộ 7/8 van chống lạm phát.
+- [x] ~~Sửa tham chiếu `04_MASTER_NARRATIVE`, "GDD Mục 9"~~ ✅ 2026-11-02
+- [x] ~~Xóa ký tự lạ, sửa lỗi gõ~~ ✅ 2026-11-02
+- [x] ~~Bỏ tick `[x]` ở checklist nghiệm thu GĐ1–2 cho tới khi code đạt~~ ✅ 2026-11-02
+- [x] ~~Điền 2 placeholder rỗng (`02` Phần 4, `08` Phần 5)~~ ✅ 2026-11-02
+- [x] ~~Đồng bộ 7/8 van chống lạm phát (= 8, theo `02`)~~ ✅ 2026-11-02
+- [x] ~~Lệch số quy tắc code (14), số phiên bản Bible / UI~~ ✅ 2026-11-02
+- [ ] Cấp mở khóa lệch: `WORK_02` Lv.16 vs Chương 6 Lv.13; `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (`17` mục A4). Đụng dữ liệu catalog nên để làm cùng lúc mở GĐ tương ứng.
 
 ## E. Đã xong trước đó
 - [x] ~~Phân tích dự án, lập file `17` và kế hoạch sprint~~ ✅ 2026-10-31

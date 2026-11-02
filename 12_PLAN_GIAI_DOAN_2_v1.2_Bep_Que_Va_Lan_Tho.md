@@ -102,8 +102,9 @@ Nhớ xuất bảng `[🔍 ĐÁNH GIÁ TÁC ĐỘNG CHÉO - RULE D1 IMPACT REPOR
 ---
 
 ## ✅ 6. TIÊU CHÍ NGHIỆM THU HOÀN THÀNH GIAI ĐOẠN 2 (`STAGE 2 EXIT CRITERIA`)
-- [x] Mở khóa đúng **+22 loài Đợt 2** (tổng `45/81 loài V-A-C`), 3 Xưởng làng nghề (*Quán Nước, Đan Lát, Khung Cửi*) và 9 Món ăn mới khi hoàn thành Chương 3, 6, 7.
-- [x] Toàn bộ **Asset, Animation (`8–12 frames`) và VFX của Đợt 2 (`Mục 2.5`)** hoạt động mượt: Gia nhân hiển thị trên bản đồ, tự đổi sang nhãn đỏ `[Đói ➔ Về Lán]` và đi bộ về `bldg_lodge` khi `belly < 35%`.
-- [x] Nồi Đất Phối Món chặn khi `< 3` nguyên liệu và thưởng đúng `+10💎`, `+50 XP`, `+25⚡` khi `>= 3` nguyên liệu.
-- [x] Gia hạn lương 3 ngày tính đúng chiết khấu `-12%` (`Round(Salary * 3 * 0.88)`), nhân công tự về bàn ăn khi `belly < 35%` và Giỏ Kho Thợ khóa cứng ở trần `120/120`.
-- [x] Pass 100% các Test Cases `TC-04.1a`, `TC-04.2a`, `TC-04.3a`, `TC-04.5a`, `TC-05.1a`, `TC-05.2a`, `TC-05.3a`, `TC-05.4a`, `TC-05.5a` (đồng thời giữ `100% PASS` toàn bộ Test Cases Giai đoạn 1).
+*(Chưa đạt mục nào: GĐ2 chưa code, dự kiến làm ở Sprint S4–S5. Xem `17` mục C2 và Phụ lục 1.)*
+- [ ] Mở khóa đúng **+22 loài Đợt 2** (tổng `45/81 loài V-A-C`), 3 Xưởng làng nghề (*Quán Nước, Đan Lát, Khung Cửi*) và 9 Món ăn mới khi hoàn thành Chương 3, 6, 7.
+- [ ] Toàn bộ **Asset, Animation (`8–12 frames`) và VFX của Đợt 2 (`Mục 2.5`)** hoạt động mượt: Gia nhân hiển thị trên bản đồ, tự đổi sang nhãn đỏ `[Đói ➔ Về Lán]` và đi bộ về `bldg_lodge` khi `belly < 35%`.
+- [ ] Nồi Đất Phối Món chặn khi `< 3` nguyên liệu và thưởng đúng `+10💎`, `+50 XP`, `+25⚡` khi `>= 3` nguyên liệu.
+- [ ] Gia hạn lương 3 ngày tính đúng chiết khấu `-12%` (`Round(Salary * 3 * 0.88)`), nhân công tự về bàn ăn khi `belly < 35%` và Giỏ Kho Thợ khóa cứng ở trần `120/120`.
+- [ ] Pass 100% các Test Cases `TC-04.1a`, `TC-04.2a`, `TC-04.3a`, `TC-04.5a`, `TC-05.1a`, `TC-05.2a`, `TC-05.3a`, `TC-05.4a`, `TC-05.5a` (đồng thời giữ `100% PASS` toàn bộ Test Cases Giai đoạn 1).
