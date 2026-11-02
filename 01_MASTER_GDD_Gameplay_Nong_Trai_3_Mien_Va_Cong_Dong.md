@@ -133,6 +133,7 @@ $$\text{Unlock\_Condition} = (\text{Game\_Stage} \ge \text{Item.unlockStage}) \l
 ## CHƯƠNG 7: KIẾN TRÚC HỆ THỐNG NHIỆM VỤ 6 TẦNG (`6-TIER QUEST ARCHITECTURE`)
 
 1. **Tầng 1 – Nhiệm vụ Chính tuyến 10 Chương (*Gia Phả Ba Miền*):** Dẫn dắt cốt truyện và **mở khóa tuần tự 5 Đợt Nông – Thủy – Hải sản (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`)** kèm lựa chọn phân nhánh `EMP` / `PRAG`.
+   * **Hướng dẫn tân thủ (Bác Bảy, 8 bước — Chương 1–2):** gieo → tưới → thu hoạch → nhận Chương 1 → bán HTX → đạt Lv.3 → vét bùn + bón bùn → nhận Chương 2. Mỗi bước tự xong theo trạng thái game thật; người chơi có thể ẩn. Nguồn chuẩn: `src/domain/tutorial.ts`.
 2. **Tầng 2 – Chuỗi 7 Ngày Tân Thủ (*Về Quê Lập Nghiệp*):** Điểm danh 7 ngày nhận Vàng, Ngọc, *Áo Bà Ba Lụa*, *Nón Lá Bài Thơ* và **🐕 Chó Phú Quốc Giữ Nhà SSR**.
 3. **Tầng 3 – Vòng lặp Phiên chơi (*Đơn Hợp Tác Xã, 3 Toa Tàu Thống Nhất & Đố Ca Dao Thực Khách Bí Ẩn*):** Chỉ yêu cầu các nông sản/món ăn thuộc những Đợt Giai Đoạn người chơi đã mở khóa.
 4. **Tầng 4 – Tâm Tình Lán Thợ & Kỷ Vật Tuổi Thơ (*Chuyện Đời 6 Gia Nhân & Bảo Tàng 8x–9x*).**

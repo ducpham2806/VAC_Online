@@ -298,12 +298,12 @@ Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sa
 | 02 | M02.1 Đăng ký + chọn miền | Partial | Chỉ buff miền Bắc |
 | 02 | M02.2 Năng lượng Hybrid | Done | Hồi +1⚡/3 phút, tính trên server (S1) |
 | 02 | M02.3 Thời tiết động | Partial | Chu kỳ thủ công |
-| 02 | M02.4 Khai hoang 25 khu | Done (code) | Lưới 5×5 thật (`src/domain/farmGrid.ts` + `0006`); chờ chạy `0006` trên Supabase thật |
+| 02 | M02.4 Khai hoang 25 khu | Done | Lưới 5×5 thật (`src/domain/farmGrid.ts` + `0006`, đã chạy trên Supabase thật 2026-11-02) |
 | 03 | M03.1 Khay giống + khóa 5 Đợt | Done | Khoá theo Đợt/cấp/miền ở client và server (S1) |
 | 03 | M03.2 Tưới giếng −15% | Done | Server (S1) |
 | 03 | M03.3 Ao + vét bùn | Done | Server (S1) |
 | 03 | M03.4 Phù sa + Hoàng Kim x3 | Done | Thu hoạch vào Kho ×3, bán HTX (S1) |
-| 03 | M03.5 Chương 1–2 + quà 7 ngày | Done (code) | Server kiểm cấp + mục tiêu đo được (`player_counters`, `0007`); chờ chạy `0007` trên Supabase thật |
+| 03 | M03.5 Chương 1–2 + quà 7 ngày | Done | Server kiểm cấp + mục tiêu đo được (`player_counters`, `0007`, đã chạy trên Supabase thật 2026-11-02); Hướng dẫn tân thủ 8 bước (`src/domain/tutorial.ts`, `TutorialCoach`) |
 | 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | Stub | Bếp luôn ra `PROD_22` |
 | 04 | M04.5 Đố Ca Dao (FEAT_02) | Missing | |
 | 05 | M05.1–M05.5 Lán Thợ, Bàn ăn, Đồ bảo hộ, Giỏ 120, Lazy-tick | Partial | Phần tốt nhất của code; vẫn client-side |

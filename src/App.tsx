@@ -13,6 +13,7 @@ import { GAME_STAGE, isStageOpen } from './config/features';
 import { canPlant, maxUnlockedWave } from './domain/progression';
 import { StaminaBadge } from './ui/hud/StaminaBadge';
 import { XpBar } from './ui/hud/XpBar';
+import { TutorialCoach } from './ui/hud/TutorialCoach';
 import { WarehouseModal } from './ui/modals/WarehouseModal';
 import { ExpandLandModal } from './ui/modals/ExpandLandModal';
 import { QcReportModal } from './ui/modals/QcReportModal';
@@ -484,6 +485,9 @@ export const App: React.FC = () => {
           </div>
         )}
       </aside>
+
+      {/* Hướng dẫn tân thủ Chương 1–2 (Bác Bảy) */}
+      <TutorialCoach />
 
       {/* =================================================================== */}
       {/* 3. CỤM ĐIỀU KHIỂN CAMERA CHO MOBILE / IPAD (GÓC PHẢI GIỮA)          */}
