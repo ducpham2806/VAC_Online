@@ -124,7 +124,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 
 **Còn mở, chuyển sang S1:** lưu tiến trình (`persist`), kinh tế lên server, thu hoạch cộng tiền 2 lần, khóa Khay giống theo Đợt, tách store/App, rò listener ở `FarmScene`, đăng chợ nhận tiền ngay.
 
-**Phát hiện thêm:** `05_MASTER_ART` chỉ định nghĩa **19 màu** (16 màu 3 miền/đột biến + 3 màu viền), chưa phải bảng 64 màu — cần PO/Art chốt trước khi khóa palette sản xuất.
+~~**Phát hiện thêm:** `05_MASTER_ART` chỉ định nghĩa **19 màu** (16 màu 3 miền/đột biến + 3 màu viền), chưa phải bảng 64 màu — cần PO/Art chốt trước khi khóa palette sản xuất.~~ ✅ 2026-11-02: PO chốt bảng **64 màu** (`art/palette/vac_base.gpl`, `05` mục 1.3; giữ 19 màu gốc + 45 màu dải sáng→tối), `recolor_outline.py --palette` khóa/kiểm màu, test `src/data/palette.test.ts`.
 
 ---
 

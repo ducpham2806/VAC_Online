@@ -8,7 +8,7 @@ và luôn đưa thêm 1 ảnh tham chiếu style (ảnh thứ hai) là sprite đ
 | Mục | Giá trị |
 |---|---|
 | Finish | `pixel` |
-| Palette | `art/palette/vac_base.gpl` (`palette_tool.py lock / apply`) |
+| Palette | `art/palette/vac_base.gpl` — 64 màu đã chốt (`05` mục 1.3); khóa màu: `tools/art/recolor_outline.py --palette art/palette/vac_base.gpl` |
 | Nền tách | chroma key `#FF00FF` |
 | Kích thước | nhân vật `48x64`, ô đất `168x80`, icon / vật phẩm `32x32` |
 | Animation | 8–12 frame, chân bám đất (planted feet), neo `(0.5, 0.9)` |

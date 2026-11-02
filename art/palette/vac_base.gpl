@@ -1,26 +1,84 @@
 GIMP Palette
-Name: VAC Online base (05_MASTER_ART muc 1.1-1.2)
-Columns: 4
+Name: VAC Online 64 (05_MASTER_ART — PO chốt 2026-11-02)
+Columns: 8
 #
-# 19 mau DA DUOC DINH NGHIA trong 05_MASTER_ART. Bang 64 mau day du CHUA duoc chot —
-# can PO/Art bo sung cac ramp sang/toi truoc khi khoa palette cho san xuat.
-# Cam #000000 (vien den). #FF00FF chi dung lam nen tach (chroma key), khong thuoc palette.
- 61  35  20	#3D2314 Viền ấm — nâu đất nung (nhà gỗ, thân cây, nhân vật)
- 27  59  43	#1B3B2B Viền xanh rừng đậm (tán lá, bờ ao)
- 35  25  45	#23192D Tím than (bóng đổ)
-127 184   0	#7FB800 Bắc — Xanh Cốm
-200  90  50	#C85A32 Bắc — Đỏ Gạch Bát Tràng
- 92 107 115	#5C6B73 Bắc — Xám Đá Ong
-244 167 185	#F4A7B9 Bắc — Hồng Đào
-245 183   0	#F5B700 Trung — Vàng Nắng/Hoa Mai
- 94  75  86	#5E4B56 Trung — Tím Huế
-141  59  36	#8D3B24 Trung — Đất Đỏ Bazan
- 46 196 182	#2EC4B6 Trung — Xanh Biển
+# NGUỒN CHUẨN DUY NHẤT của bảng 64 màu sprite / tilemap / VFX (RULE D1 Art Lock).
+# Giữ nguyên 19 màu gốc của 05 (3 viền + 16 màu 3 miền / đột biến / võ đài), thêm 45 màu thành dải sáng→tối.
+# Cấm #000000 (viền đen). #FF00FF chỉ là nền tách (chroma key), không thuộc palette.
+# Hậu kỳ: python3 tools/art/recolor_outline.py in.png --palette art/palette/vac_base.gpl --out out.png
+# --- Viền & bóng (cấm #000000) (4)
+ 61  35  20	#3D2314 Viền ấm — nâu đất nung (CHUẨN)
+ 27  59  43	#1B3B2B Viền xanh rừng đậm
+ 35  25  45	#23192D Tím than — bóng đổ
+ 42  24  12	#2A180C Nâu gụ — viền UI / gỗ tối
+# --- Gỗ lim / tre / giấy dó (7)
+255 248 235	#FFF8EB Giấy dó sáng
+243 227 195	#F3E3C3 Giấy dó
+224 199 154	#E0C79A Tre khô
+200 138  75	#C88A4B Gỗ mít
+160 103  58	#A0673A Gỗ lim sáng
+110  65  33	#6E4121 Gỗ lim
+ 74  44  23	#4A2C17 Gỗ lim tối
+# --- Lá & cây (6)
+228 245 176	#E4F5B0 Lá non sáng
+184 242 114	#B8F272 Lá non
 138 201  38	#8AC926 Nam — Xanh Lá Dừa
-201 158 103	#C99E67 Nam — Nâu Phù Sa
-255 183   3	#FFB703 Nam — Vàng Lúa Chín
+127 184   0	#7FB800 Bắc — Xanh Cốm
+ 78 130  34	#4E8222 Lá già
+ 47  95  30	#2F5F1E Lá bóng
+# --- Nước & ao (6)
+205 239 242	#CDEFF2 Bọt nước
+128 222 234	#80DEEA Nước nông
+ 46 196 182	#2EC4B6 Trung — Xanh Biển
  46 139 141	#2E8B8D Nam — Xanh Kênh Rạch
-155  93 229	#9B5DE5 Đột biến — Tím Thảo Dược
-255 209 102	#FFD166 Đột biến — Vàng Kim Tài Lộc
-241  91 181	#F15BB5 Võ đài — Hồng Sen
+ 29  95 110	#1D5F6E Nước sâu
+ 18  61  74	#123D4A Đáy ao
+# --- Đất & phù sa (6)
+230 199 156	#E6C79C Cát / đất khô sáng
+201 158 103	#C99E67 Nam — Nâu Phù Sa
+169 123  79	#A97B4F Đất ruộng
+141  59  36	#8D3B24 Trung — Đất Đỏ Bazan
+107  74  50	#6B4A32 Đất ẩm
+ 78  52  36	#4E3424 Bùn đáy ao
+# --- Da người (5)
+252 227 200	#FCE3C8 Da sáng
+242 201 160	#F2C9A0 Da
+220 165 122	#DCA57A Da bóng
+185 123  82	#B97B52 Da rám nắng
+138  86  56	#8A5638 Da bóng tối
+# --- Đỏ & cam (6)
+255 201 176	#FFC9B0 Hồng cam nhạt
+240 124  74	#F07C4A Cam đất
+200  90  50	#C85A32 Bắc — Đỏ Gạch Bát Tràng
 214  40  40	#D62828 Võ đài — Đỏ Cờ Hội
+165  31  31	#A51F1F Đỏ sẫm
+255 152   0	#FF9800 Cam lửa / FX
+# --- Vàng & lúa (6)
+255 243 176	#FFF3B0 Vàng nhạt
+255 209 102	#FFD166 Đột biến — Vàng Kim Tài Lộc
+255 183   3	#FFB703 Nam — Vàng Lúa Chín
+245 183   0	#F5B700 Trung — Vàng Nắng / Hoa Mai
+224 159   0	#E09F00 Vàng rơm
+168 107   0	#A86B00 Vàng bóng
+# --- Hồng & tím (8)
+255 214 228	#FFD6E4 Hồng sen nhạt
+244 167 185	#F4A7B9 Bắc — Hồng Đào
+241  91 181	#F15BB5 Võ đài — Hồng Sen
+178  58 138	#B23A8A Hồng sẫm
+201 182 228	#C9B6E4 Tím nhạt
+155  93 229	#9B5DE5 Đột biến — Tím Thảo Dược
+106  63 160	#6A3FA0 Tím sẫm
+ 94  75  86	#5E4B56 Trung — Tím Huế
+# --- Đá & xám (5)
+242 240 234	#F2F0EA Đá vôi sáng
+196 199 194	#C4C7C2 Đá xám nhạt
+142 154 159	#8E9A9F Đá xám
+ 92 107 115	#5C6B73 Bắc — Xám Đá Ong
+ 62  71  77	#3E474D Đá bóng
+# --- Trời (4)
+191 228 255	#BFE4FF Trời sáng
+111 183 232	#6FB7E8 Trời
+ 58 123 191	#3A7BBF Trời chiều
+ 36  71 122	#24477A Trời đêm
+# --- Điểm sáng (1)
+255 255 255	#FFFFFF Ánh sáng / lấp lánh (chỉ điểm nhỏ)

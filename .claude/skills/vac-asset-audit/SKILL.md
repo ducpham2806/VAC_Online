@@ -23,7 +23,7 @@ Dùng Pillow đọc kích thước. So với chuẩn theo loại:
 Kiểm alpha: nền đã tách hết `#FF00FF` chưa (không còn pixel magenta).
 
 ## Bước 3 — Palette
-So số màu với `art/palette/vac_base.gpl` (19 màu đã chốt). Bảng 64 màu **chưa chốt**, nên phần "đúng 64 màu" ghi NOT ASSESSED cho tới khi PO/Art chốt.
+Mọi pixel không trong suốt phải thuộc bảng **64 màu đã chốt** `art/palette/vac_base.gpl` (05 mục 1.3, PO chốt 2026-11-02). Kiểm bằng `python3 tools/art/recolor_outline.py <file> --palette art/palette/vac_base.gpl --check`; sửa bằng `--out` (đưa về màu gần nhất).
 
 ## Báo cáo
 | File | Viền | Kích thước | Nền | Palette | Kết luận |

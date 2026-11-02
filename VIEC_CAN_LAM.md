@@ -35,7 +35,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
   - [ ] Số món ăn: 22 hay 27?
   - [x] ~~Cửa sổ trộm: 2 phút~~ ✅ 2026-11-02
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
-- [ ] Chốt **bảng 64 màu** (`05` mới định nghĩa 19 màu) trước khi làm sprite.
+- [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
 - [ ] Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ** (em sẽ trình trước khi code, vì đụng DB).
 

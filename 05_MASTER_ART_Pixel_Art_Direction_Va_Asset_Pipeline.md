@@ -26,6 +26,27 @@
 | **Miền Nam (`SOUTH`)** | `#8AC926` (Xanh Lá Dừa), `#C99E67` (Nâu Phù Sa), `#FFB703` (Vàng Lúa Chín), `#2E8B8D` (Xanh Kênh Rạch) | Cầu khỉ tre đấu gậy, xuồng ba lá, đầm sen Đồng Tháp, vườn sầu riêng Ri6 và măng cụt. |
 | **Đột Biến & Võ Đài (`MUTANT / ARENA`)** | `#9B5DE5` (Tím Thảo Dược), `#FFD166` (Vàng Kim Tài Lộc), `#F15BB5` (Hồng Sen), `#D62828` (Đỏ Cờ Hội) | Hạt sáng cây đột biến, cờ đuôi nheo Sới vật Đình làng và hiệu ứng va chạm Võ đài PK. |
 
+### 1.3. Bảng 64 Màu Chính Thức (PO chốt 2026-11-02)
+
+**Nguồn chuẩn duy nhất:** `art/palette/vac_base.gpl` (GIMP/Aseprite đọc trực tiếp). Gồm 19 màu ở mục 1.1–1.2 + 45 màu dải sáng→tối cho đổ bóng `3/4 Top-Down`. Mọi sprite, tilemap, icon, VFX chỉ dùng các màu này; `#000000` bị cấm, `#FF00FF` chỉ làm nền tách.
+
+| Nhóm | Số màu | Mã màu |
+|---|---|---|
+| Viền & bóng (cấm #000000) | 4 | `#3D2314` `#1B3B2B` `#23192D` `#2A180C` |
+| Gỗ lim / tre / giấy dó | 7 | `#FFF8EB` `#F3E3C3` `#E0C79A` `#C88A4B` `#A0673A` `#6E4121` `#4A2C17` |
+| Lá & cây | 6 | `#E4F5B0` `#B8F272` `#8AC926` `#7FB800` `#4E8222` `#2F5F1E` |
+| Nước & ao | 6 | `#CDEFF2` `#80DEEA` `#2EC4B6` `#2E8B8D` `#1D5F6E` `#123D4A` |
+| Đất & phù sa | 6 | `#E6C79C` `#C99E67` `#A97B4F` `#8D3B24` `#6B4A32` `#4E3424` |
+| Da người | 5 | `#FCE3C8` `#F2C9A0` `#DCA57A` `#B97B52` `#8A5638` |
+| Đỏ & cam | 6 | `#FFC9B0` `#F07C4A` `#C85A32` `#D62828` `#A51F1F` `#FF9800` |
+| Vàng & lúa | 6 | `#FFF3B0` `#FFD166` `#FFB703` `#F5B700` `#E09F00` `#A86B00` |
+| Hồng & tím | 8 | `#FFD6E4` `#F4A7B9` `#F15BB5` `#B23A8A` `#C9B6E4` `#9B5DE5` `#6A3FA0` `#5E4B56` |
+| Đá & xám | 5 | `#F2F0EA` `#C4C7C2` `#8E9A9F` `#5C6B73` `#3E474D` |
+| Trời | 4 | `#BFE4FF` `#6FB7E8` `#3A7BBF` `#24477A` |
+| Điểm sáng | 1 | `#FFFFFF` |
+
+Hậu kỳ khóa màu: `python3 tools/art/recolor_outline.py in.png --palette art/palette/vac_base.gpl --out out.png` (đổi viền đen → `#3D2314` rồi đưa từng pixel về màu gần nhất); kiểm: thêm `--check`. Màu giao diện HTML (Tailwind) không bắt buộc theo bảng này.
+
 ---
 
 ## PHẦN 2: QUY TRÌNH 5 BƯỚC SẢN XUẤT ASSET, ANIMATION (`8–12 FRAMES`), TILEMAP & VFX BẰNG AI SKILLS (`AI ASSET PIPELINE`)
