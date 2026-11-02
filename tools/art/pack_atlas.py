@@ -4,7 +4,10 @@
   python3 tools/art/pack_atlas.py art/source/wave1 --name wave1
   → public/assets/atlas/wave1.png + public/assets/atlas/wave1.json   (khung tên "<ID>_<stage>")
 
-Mọi khung phải cùng kích thước (mặc định 48x48); xếp thành lưới, cách nhau 2px để tránh lem khi zoom.
+Hai kiểu thư mục nguồn:
+  - <ID>/<stage>.png  → khung "<ID>_<stage>" (sprite cây/vật nuôi theo giai đoạn, thường cùng 48x48)
+  - <tên>.png         → khung "<tên>" (asset thế giới / UI, kích thước tùy ý)
+Khung cùng kích thước xếp lưới; khác kích thước thì xếp theo kệ (shelf). Cách nhau 2px để tránh lem khi zoom.
 """
 import argparse
 import json
@@ -22,6 +25,9 @@ def collect(src: str) -> list[tuple[str, str]]:
     for entity in sorted(os.listdir(src)):
         d = os.path.join(src, entity)
         if not os.path.isdir(d):
+            stem, ext = os.path.splitext(entity)
+            if ext.lower() == ".png":
+                frames.append((stem, d))
             continue
         for f in sorted(os.listdir(d)):
             stem, ext = os.path.splitext(f)
@@ -30,21 +36,38 @@ def collect(src: str) -> list[tuple[str, str]]:
     return frames
 
 
+def layout(sizes: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Cùng kích thước → lưới vuông; khác nhau → xếp kệ theo chiều cao giảm dần, rộng tối đa 1024px."""
+    if len(set(sizes)) == 1:
+        fw, fh = sizes[0]
+        cols = math.ceil(math.sqrt(len(sizes)))
+        return [((i % cols) * (fw + PADDING), (i // cols) * (fh + PADDING)) for i in range(len(sizes))]
+    max_w = max(1024, max(w for w, _ in sizes) + PADDING)
+    order = sorted(range(len(sizes)), key=lambda i: (-sizes[i][1], -sizes[i][0]))
+    pos: list[tuple[int, int]] = [(0, 0)] * len(sizes)
+    x = y = shelf_h = 0
+    for i in order:
+        w, h = sizes[i]
+        if x + w + PADDING > max_w:
+            x, y, shelf_h = 0, y + shelf_h + PADDING, 0
+        pos[i] = (x, y)
+        x += w + PADDING
+        shelf_h = max(shelf_h, h)
+    return pos
+
+
 def pack(src: str, name: str, out_dir: str) -> tuple[str, str, int]:
     frames = collect(src)
     if not frames:
         raise ValueError(f"Không có sprite nào trong {src} (cần <ID>/<stage>.png)")
     images = [(n, Image.open(p).convert("RGBA")) for n, p in frames]
-    fw, fh = images[0][1].size
-    for n, im in images:
-        if im.size != (fw, fh):
-            raise ValueError(f"Khung {n} có kích thước {im.size}, khác {fw}x{fh}")
-    cols = math.ceil(math.sqrt(len(images)))
-    rows = math.ceil(len(images) / cols)
-    sheet = Image.new("RGBA", (cols * (fw + PADDING), rows * (fh + PADDING)), (0, 0, 0, 0))
+    positions = layout([im.size for _, im in images])
+    sheet_w = max(x + im.width for (x, _), (_, im) in zip(positions, images)) + PADDING
+    sheet_h = max(y + im.height for (_, y), (_, im) in zip(positions, images)) + PADDING
+    sheet = Image.new("RGBA", (sheet_w, sheet_h), (0, 0, 0, 0))
     meta_frames = {}
-    for i, (n, im) in enumerate(images):
-        x, y = (i % cols) * (fw + PADDING), (i // cols) * (fh + PADDING)
+    for (x, y), (n, im) in zip(positions, images):
+        fw, fh = im.size
         sheet.paste(im, (x, y))
         meta_frames[n] = {
             "frame": {"x": x, "y": y, "w": fw, "h": fh},

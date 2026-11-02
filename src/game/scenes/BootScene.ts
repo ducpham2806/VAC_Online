@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import { PixelAssetGenerator } from '../assets/PixelAssetGenerator';
+import { createWorldAnims } from '../worldTex';
 
 /** Atlas sprite theo lô (public/assets/atlas/<tên>.png + .json). */
-export const SPRITE_ATLASES = ['wave1'] as const;
+export const SPRITE_ATLASES = ['wave1', 'world'] as const;
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    createWorldAnims(this);
     this.scene.start('FarmScene');
   }
 }

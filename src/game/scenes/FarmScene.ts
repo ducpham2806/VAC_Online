@@ -10,6 +10,9 @@ import { DOG_CATCH_CHANCE } from '../../domain/social';
 import { growthFrame, growthStage } from '../../domain/growth';
 import { SPRITE_ATLASES } from './BootScene';
 import { FarmVfx } from '../vfx/farmVfx';
+import { WORLD_ATLAS, hasWorldFrame, setWorldTexture } from '../worldTex';
+import { FarmPlayer } from '../player';
+import { createAmbient, decorLayout } from '../ambient';
 
 /** Lưới 5×5 (M02.4): khoảng cách tối thiểu giữa 2 cột để ô 168px không chồng nhau. */
 const MIN_GAP_X = 180;
@@ -23,10 +26,15 @@ interface TileVisualGroup {
   statusTag: Phaser.GameObjects.Text;
   phaseOffset: number;
   baseY: number;
+  /** Loại sinh vật đang ở ô (để chọn kiểu chuyển động: đung đưa / nhún / cá nhảy). */
+  kind?: 'plant' | 'animal' | 'fish';
+  /** Texture nền theo loại đất của ô (khi đã khai hoang). */
+  zoneTex: string;
 }
 
 export class FarmScene extends Phaser.Scene {
   private tileVisuals: TileVisualGroup[] = [];
+  private player: FarmPlayer | null = null;
   private workerSprites: {
     workerCode?: string;
     icon: Phaser.GameObjects.Image;
@@ -57,11 +65,19 @@ export class FarmScene extends Phaser.Scene {
     // Vùng kéo bản đồ đủ chứa cả 5 hàng ruộng/ao sau khi khai hoang hết 25 phân khu.
     const worldH = Math.max(height + 180, this.gridY(4, height) + 140);
     this.cameras.main.setBounds(-160, -80, width + 320, worldH);
-    this.add.rectangle(width / 2, worldH / 2 - 80, width + 320, worldH, 0x6ab04c);
+    if (hasWorldFrame(this, 'grass_tile')) {
+      this.add.tileSprite(width / 2, worldH / 2 - 80, width + 320, worldH, WORLD_ATLAS, 'grass_tile').setDepth(-1000);
+    } else {
+      this.add.rectangle(width / 2, worldH / 2 - 80, width + 320, worldH, 0x6ab04c).setDepth(-1000);
+    }
 
-    // Đường làng gạch đỏ Bát Tràng & Đường ray Tàu Thống Nhất Bắc – Nam
-    this.add.rectangle(width / 2, 118, width + 240, 22, 0xc85a32).setStrokeStyle(2, 0x3d2314);
-    this.add.rectangle(width / 2, 118, width + 240, 6, 0x4a3b32);
+    // Đường làng (GĐ1) — đường ray Tàu Thống Nhất chỉ từ GĐ3
+    if (hasWorldFrame(this, 'path_tile')) {
+      this.add.tileSprite(width / 2, 120, width + 320, 26, WORLD_ATLAS, 'path_tile').setDepth(-900);
+    } else {
+      this.add.rectangle(width / 2, 118, width + 240, 22, 0xc85a32).setStrokeStyle(2, 0x3d2314);
+    }
+    if (isStageOpen(3)) this.add.rectangle(width / 2, 118, width + 240, 6, 0x4a3b32).setDepth(-890);
 
     // Đầu máy Tàu Thống Nhất Bắc – Nam chạy dọc đường ray
     this.trainSprite = this.add
@@ -101,7 +117,7 @@ export class FarmScene extends Phaser.Scene {
     this.waterWaveGraphics = this.add.graphics();
     this.weatherOverlay = this.add
       .rectangle(width / 2, height / 2, width + 320, height + 180, 0x0d1b2a, 0)
-      .setDepth(25);
+      .setDepth(1500);
     this.createWeatherParticles(width, height);
 
     // 6. Cử chỉ Kéo Bản Đồ (Touch Drag-to-Pan) & Zoom (+/-) cho Mobile / iPad
@@ -113,6 +129,9 @@ export class FarmScene extends Phaser.Scene {
       return vis ? { x: vis.tileSprite.x, y: vis.tileSprite.y } : null;
     });
     this.teardown.push(vfx.watch());
+
+    // Nhân vật điền chủ, Bác Bảy, giếng làng & cảnh nền sống động (chỉ hình ảnh)
+    this.createFarmLife(width, height);
 
     this.teardown.push(
       useGameStore.subscribe(() => {
@@ -129,11 +148,45 @@ export class FarmScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.DESTROY, () => this.runTeardown());
   }
 
+  /** Nhân vật, NPC, giếng và cảnh nền — chỉ hình ảnh, không ảnh hưởng luật chơi. */
+  private createFarmLife(width: number, height: number): void {
+    if (!this.textures.exists(WORLD_ATLAS)) return;
+    const houseX = width * 0.15;
+    if (hasWorldFrame(this, 'well')) this.add.image(houseX + 110, 112, WORLD_ATLAS, 'well').setOrigin(0.5, 1).setDepth(112);
+    if (this.anims.exists('bacbay_idle')) {
+      this.add.sprite(houseX - 56, 150, WORLD_ATLAS, 'bacbay_idle_0').setOrigin(0.5, 0.95).setDepth(150).play('bacbay_idle');
+    }
+
+    const state = useGameStore.getState();
+    this.player = new FarmPlayer(this, { x: houseX + 160, y: 156 }).spawn(state.gender);
+    this.teardown.push(
+      useGameStore.subscribe((now, prev) => {
+        if (now.gender !== prev.gender) this.player?.setGender(now.gender);
+      })
+    );
+    this.teardown.push(() => {
+      this.player?.destroy();
+      this.player = null;
+    });
+
+    const left = this.gridX(0, width) - 84;
+    const right = this.gridX(4, width) + 84;
+    const top = this.gridY(0, height) - 40;
+    const bottom = this.gridY(4, height) + 40;
+    this.teardown.push(
+      createAmbient(this, {
+        decor: decorLayout(width, left, right, top, bottom),
+        chimney: { x: houseX + 32, y: 22 },
+        field: new Phaser.Geom.Rectangle(left, top, right - left, bottom - top),
+      })
+    );
+  }
+
   private createWeatherParticles(width: number, height: number): void {
     for (let i = 0; i < 24; i++) {
       const p = this.add
         .image(Math.random() * width, Math.random() * height, 'fx_raindrop')
-        .setDepth(26)
+        .setDepth(1501)
         .setVisible(false);
       this.weatherParticles.push(p);
     }
@@ -233,26 +286,40 @@ export class FarmScene extends Phaser.Scene {
     ];
 
     landmarks.forEach((lm) => {
-      const sprite = this.add.image(lm.x, lm.y, lm.tex).setInteractive({ useHandCursor: true });
-
-      this.add
-        .text(lm.x, lm.y - 16, lm.title, {
-          fontSize: '12px',
-          fontStyle: 'bold',
-          color: '#fff8eb',
-        })
-        .setOrigin(0.5);
-
       const open = isStageOpen(lm.stage);
+      // Asset thế giới: nhà chính 3 gian (GĐ1) / lô "sắp mở" có biển gỗ cho công trình chưa mở.
+      const worldFrame = open ? (lm.tex === 'bldg_house' ? 'house' : null) : 'lot_sign';
+      const useWorld = worldFrame !== null && hasWorldFrame(this, worldFrame);
+      const sprite = (
+        useWorld && worldFrame
+          ? this.add.image(lm.x, 116, WORLD_ATLAS, worldFrame).setOrigin(0.5, 1)
+          : this.add.image(lm.x, lm.y, lm.tex)
+      ).setInteractive({ useHandCursor: true });
+
+      if (!useWorld) {
+        this.add
+          .text(lm.x, lm.y - 16, lm.title, { fontSize: '12px', fontStyle: 'bold', color: '#fff8eb' })
+          .setOrigin(0.5);
+      }
       this.add
-        .text(lm.x, lm.y + 12, open ? lm.sub : `🔒 Sắp mở (Giai đoạn ${lm.stage})`, {
-          fontSize: '11px',
-          fontStyle: 'bold',
-          color: '#2a180c',
-          backgroundColor: 'rgba(255,248,235,0.88)',
-          padding: { x: 5, y: 2 },
-        })
-        .setOrigin(0.5);
+        .text(
+          lm.x,
+          useWorld ? 128 : lm.y + 12,
+          useWorld
+            ? `${lm.title} · ${open ? lm.sub : `🔒 Sắp mở (GĐ${lm.stage})`}`
+            : open
+            ? lm.sub
+            : `🔒 Sắp mở (Giai đoạn ${lm.stage})`,
+          {
+            fontSize: '11px',
+            fontStyle: 'bold',
+            color: '#2a180c',
+            backgroundColor: 'rgba(255,248,235,0.92)',
+            padding: { x: 5, y: 2 },
+          }
+        )
+        .setOrigin(0.5)
+        .setDepth(-100);
 
       sprite.on('pointerup', (pointer: Phaser.Input.Pointer) => {
         if (this.isDragging || !this.pressedOnCanvas(pointer)) return;
@@ -292,9 +359,8 @@ export class FarmScene extends Phaser.Scene {
           ? 'tile_orchard'
           : 'tile_land_dry';
 
-      const tileSprite = this.add
-        .image(x, y, initTex)
-        .setInteractive({ useHandCursor: true });
+      const tileSprite = this.add.image(x, y, initTex).setInteractive({ useHandCursor: true });
+      setWorldTexture(tileSprite, initTex === 'tile_pond' ? 'tile_pond_0' : initTex, initTex);
 
       const cropSprite = this.add
         .image(x - 54, y - 6, 'crop_rice_gold')
@@ -329,6 +395,7 @@ export class FarmScene extends Phaser.Scene {
           // Ô chưa khai hoang: chỉ ô kế tiếp mới hiện và chạm được → hộp xác nhận Khai Hoang.
           if (nextLockedPlot(latestState.wildPlotsUnlocked)?.id === tile.id) {
             soundFX.playGoldenSparkle();
+            this.player?.goTo(x - 96, y + 30);
             latestState.setActiveModal('EXPAND_LAND');
           }
           return;
@@ -361,6 +428,7 @@ export class FarmScene extends Phaser.Scene {
           !currentTile.itemId || currentTile.watered ? 'fx_gold_star' : 'fx_water_drop'
         );
         latestState.interactTile(tile.id);
+        this.player?.goTo(x - 96, y + 30);
       });
 
       this.tileVisuals.push({
@@ -371,13 +439,14 @@ export class FarmScene extends Phaser.Scene {
         statusTag,
         phaseOffset: idx * 0.85,
         baseY: y - 12,
+        zoneTex: initTex,
       });
     });
   }
 
   private spawnClickParticles(x: number, y: number, texKey: string): void {
     for (let i = 0; i < 6; i++) {
-      const p = this.add.image(x, y, texKey).setDepth(30);
+      const p = this.add.image(x, y, texKey).setDepth(2000);
       const angle = (Math.PI * 2 * i) / 6;
       this.tweens.add({
         targets: p,
@@ -497,6 +566,12 @@ export class FarmScene extends Phaser.Scene {
         const isNext = vis.tileId === nextPlotId;
         [vis.tileSprite, vis.label, vis.statusTag].forEach((o) => o.setVisible(isNext).setAlpha(0.55));
         vis.cropSprite.setVisible(false);
+        if (isNext && hasWorldFrame(this, 'tile_wild')) {
+          setWorldTexture(vis.tileSprite, 'tile_wild');
+          vis.tileSprite.setAlpha(0.9);
+          vis.label.setAlpha(1);
+          vis.statusTag.setAlpha(1);
+        }
         if (isNext) {
           vis.tileSprite.setInteractive({ useHandCursor: true });
           vis.label.setText('🌾 Đất Hoang');
@@ -512,12 +587,16 @@ export class FarmScene extends Phaser.Scene {
         [vis.tileSprite, vis.label, vis.statusTag].forEach((o) => o.setVisible(true));
         vis.tileSprite.setInteractive({ useHandCursor: true });
       }
+      if (vis.zoneTex !== 'tile_pond' && vis.zoneTex !== 'tile_land_dry') setWorldTexture(vis.tileSprite, vis.zoneTex);
+      if (vis.zoneTex === 'tile_pond' && vis.tileSprite.frame.name === 'tile_wild') setWorldTexture(vis.tileSprite, 'tile_pond_0', 'tile_pond');
 
       if (tile.zoneType === 'LAND') {
-        vis.tileSprite.setTexture(tile.watered ? 'tile_land_wet' : 'tile_land_dry');
+        const key = tile.watered ? 'tile_land_wet' : 'tile_land_dry';
+        setWorldTexture(vis.tileSprite, key, key);
       }
 
       if (!tile.itemId) {
+        vis.kind = undefined;
         vis.cropSprite.setVisible(false);
         vis.label.setText(
           tile.zoneType === 'POND'
@@ -532,6 +611,7 @@ export class FarmScene extends Phaser.Scene {
       }
 
       const spec = GAME_CATALOG.find((c) => c.id === tile.itemId);
+      vis.kind = spec?.category === 'ANIMAL' ? 'animal' : spec?.category === 'AQUA' ? 'fish' : 'plant';
       const isRipe = tile.matureAt !== null && now >= tile.matureAt;
 
       vis.cropSprite.setVisible(true);
@@ -581,10 +661,27 @@ export class FarmScene extends Phaser.Scene {
     const state = useGameStore.getState();
 
     // 1. Hiệu ứng gió đồng nội đung đưa cây trồng (Wind Sway 60 FPS)
+    // Cây đung đưa; vật nuôi nhún / mổ thóc; cá thỉnh thoảng nhảy lên mặt nước. Ô ao gợn sóng 3 khung.
+    const pondFrame = `tile_pond_${Math.floor(time / 420) % 3}`;
     this.tileVisuals.forEach((vis) => {
       const sway = Math.sin(time * 0.004 + vis.phaseOffset) * 2.5;
       vis.label.y = vis.baseY + sway;
-      vis.cropSprite.y = vis.baseY + 6 + sway;
+      if (vis.kind === 'animal') {
+        const hop = Math.abs(Math.sin(time * 0.006 + vis.phaseOffset)) * 3;
+        vis.cropSprite.y = vis.baseY + 6 - hop;
+        vis.cropSprite.angle = Math.sin(time * 0.003 + vis.phaseOffset) > 0.92 ? 8 : 0;
+      } else if (vis.kind === 'fish') {
+        const t = (time * 0.00025 + vis.phaseOffset * 0.37) % 1;
+        const jump = t < 0.06 ? Math.sin((t / 0.06) * Math.PI) * 14 : 0;
+        vis.cropSprite.y = vis.baseY + 6 - jump + Math.sin(time * 0.003 + vis.phaseOffset);
+        vis.cropSprite.angle = t < 0.06 ? (t < 0.03 ? -12 : 12) : 0;
+      } else {
+        vis.cropSprite.y = vis.baseY + 6 + sway;
+        vis.cropSprite.angle = 0;
+      }
+      if (vis.zoneTex === 'tile_pond' && vis.tileSprite.alpha === 1 && vis.tileSprite.frame.name !== pondFrame) {
+        setWorldTexture(vis.tileSprite, pondFrame, 'tile_pond');
+      }
     });
 
     // 2. Chuyển động Tàu Thống Nhất Bắc – Nam chạy ngang đường ray

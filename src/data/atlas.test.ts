@@ -34,3 +34,21 @@ describe('Atlas wave1', () => {
     expect(json.meta.image).toBe('wave1.png');
   });
 });
+
+describe('Atlas world (bản chạy thử GĐ1)', () => {
+  const w = JSON.parse(readFileSync(resolve(root, 'public/assets/atlas/world.json'), 'utf-8')) as typeof json;
+  const size = (f: string) => [w.frames[f].frame.w, w.frames[f].frame.h];
+  it('đủ khung ô đất 168x80, nhân vật 48x64 và hoạt ảnh', () => {
+    for (const f of ['tile_land_dry', 'tile_land_wet', 'tile_orchard', 'tile_wild', 'tile_pond_0', 'tile_pond_1', 'tile_pond_2']) {
+      expect(size(f)).toEqual([168, 80]);
+    }
+    for (const who of ['farmer_m', 'farmer_f']) {
+      for (const f of [`${who}_idle_0`, `${who}_idle_1`, `${who}_act_0`, `${who}_act_1`, ...[0, 1, 2, 3].map((i) => `${who}_walk_${i}`)]) {
+        expect(size(f)).toEqual([48, 64]);
+      }
+    }
+    for (const f of ['house', 'well', 'lot_sign', 'grass_tile', 'path_tile', 'bacbay_idle_0', 'butterfly_0', 'bird_0', 'smoke']) {
+      expect(w.frames).toHaveProperty(f);
+    }
+  });
+});

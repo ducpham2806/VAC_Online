@@ -45,7 +45,7 @@ export class FarmVfx {
   private burst(x: number, y: number, colors: readonly number[], n: number, spread: number, lift: number): void {
     for (let i = 0; i < n; i++) {
       const size = 3 + (i % 3);
-      const p = this.scene.add.rectangle(x, y, size, size, colors[i % colors.length]).setDepth(31);
+      const p = this.scene.add.rectangle(x, y, size, size, colors[i % colors.length]).setDepth(2001);
       const a = (Math.PI * 2 * i) / n + (i % 2) * 0.3;
       this.scene.tweens.add({
         targets: p,
@@ -63,7 +63,7 @@ export class FarmVfx {
     for (let i = 0; i < 6; i++) {
       const s = this.scene.add
         .image(x + Phaser.Math.Between(-22, 22), y + Phaser.Math.Between(-16, 10), 'fx_gold_star')
-        .setDepth(32)
+        .setDepth(2002)
         .setScale(0.2)
         .setTint(i % 2 ? VFX_COLORS.gold : VFX_COLORS.goldDeep);
       this.scene.tweens.add({
@@ -82,7 +82,7 @@ export class FarmVfx {
     const t = this.scene.add
       .text(x, y, text, { fontSize: '18px', fontStyle: 'bold', color: '#fff3b0', stroke: '#3d2314', strokeThickness: 4 })
       .setOrigin(0.5)
-      .setDepth(33);
+      .setDepth(2003);
     this.scene.tweens.add({ targets: t, y: y - 18, duration: 1200, ease: 'Sine.easeOut' });
     this.scene.tweens.add({ targets: t, alpha: 0, delay: 650, duration: 550, onComplete: () => t.destroy() });
   }
@@ -94,7 +94,7 @@ export class FarmVfx {
     for (let i = 0; i < 36; i++) {
       const p = this.scene.add
         .rectangle(cx + Phaser.Math.Between(-60, 60), top, 4, 6, VFX_COLORS.confetti[i % VFX_COLORS.confetti.length])
-        .setDepth(40)
+        .setDepth(2010)
         .setAngle(Phaser.Math.Between(0, 90));
       this.scene.tweens.add({
         targets: p,
