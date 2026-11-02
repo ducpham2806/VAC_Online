@@ -6,6 +6,7 @@ import { quoteMarketListing } from '../../domain/market';
 import type { GameState } from '../gameTypes';
 import type { StoreGet, StoreHelpers, StoreSet } from '../storeHelpers';
 
+import { DOG_CATCH_CHANCE } from '../../domain/social';
 export type SocialActions = Pick<
   GameState,
   | 'initSupabaseRealtimeSync'
@@ -133,7 +134,7 @@ export const createSocialSlice = (set: StoreSet, get: StoreGet, _helpers: StoreH
       set({ toastMessage: '⚡ Không đủ Năng lượng để đi hái trộm!' });
       return;
     }
-    const caughtByDog = Math.random() < 0.45;
+    const caughtByDog = Math.random() < DOG_CATCH_CHANCE;
     if (caughtByDog) {
       const penalty = Math.min(state.gold, 50);
       set({

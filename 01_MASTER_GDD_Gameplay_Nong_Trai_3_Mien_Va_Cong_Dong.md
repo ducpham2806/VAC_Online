@@ -23,7 +23,7 @@ Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**
      * **🎋 Thám Hiểm Rừng Trúc & Bãi Bồi (`-6 ⚡`):** Đào măng rừng, tìm phấn hoa đột biến & săn **12 Kỷ Vật Tuổi Thơ** (`+5 💎`).
      * **🥁 Chèo Thuyền Rồng Hợp Tác Xã & Đua Trâu Vàng (`-4 ⚡`):** Thi đấu thể thao làng quê nhận Vàng, Ngọc & Cúp vinh danh.
      * **⚔️ Võ Đài PK 1v1 / 3v3 & Loạn Chiến 8–12P (`-5 ⚡`/trận):** Hồi ⚡ bằng món Bếp Quê (Bánh Chưng, Cơm Nắm…). Trần thưởng & thuế xem `02_MASTER_ECONOMY`.
-     * **🥷 Hái Trộm Vườn (`-1 ⚡`) / Câu Trộm Cá (`-2 ⚡`):** Rình hái trộm nhà bạn bè trong cửa sổ vàng 2 phút.
+     * **🥷 Hái Trộm Vườn (`-1 ⚡`) / Câu Trộm Cá (`-2 ⚡`):** Rình hái trộm nhà bạn bè trong cửa sổ vàng 2 phút. **Chó Phú Quốc bắt 50%**, Ngỗng 40% (cùng thức: 70%); chủ vườn luôn giữ ≥ 80% sản lượng (PO chốt 2026-11-02, hằng số `src/domain/social.ts`).
 
 ---
 

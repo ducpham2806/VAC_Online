@@ -1340,7 +1340,7 @@ export const GAME_CATALOG: CatalogItem[] = [
     staminaDelta: 0,
     emoji: '🐕',
     tags: ['GUARD', 'PET'],
-    description: '70% bắt sống kẻ trộm (Trừ 60 Xu ví trộm + 1 Dép Tổ Ong) & Đào vật tư kho.',
+    description: '50% bắt sống kẻ trộm (Trừ 60 Xu ví trộm + 1 Dép Tổ Ong) & Đào vật tư kho.',
   },
   {
     id: 'PET_02',
@@ -1376,7 +1376,7 @@ export const GAME_CATALOG: CatalogItem[] = [
     staminaDelta: 0,
     emoji: '🦢',
     tags: ['GUARD', 'PET'],
-    description: '40% mổ kẻ trộm (Trừ 30 Xu ví trộm) - Cộng dồn 85% khi thức cùng Chó Phú Quốc!',
+    description: '40% mổ kẻ trộm (Trừ 30 Xu ví trộm) - Cộng dồn 70% khi thức cùng Chó Phú Quốc!',
   },
   {
     id: 'PET_03',

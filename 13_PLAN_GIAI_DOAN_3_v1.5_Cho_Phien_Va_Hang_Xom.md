@@ -7,9 +7,9 @@
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 3 (CHAPTER 3: TIẾNG CÒI TÀU THỐNG NHẤT & NHỊP CHỢ PHIÊN)
-- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Chuyến Tàu Thống Nhất Bắc – Nam khôi phục lại ga xép đầu làng! Nông sản của nông trại giờ đây không chỉ bán quanh xóm mà còn đóng toa tàu đi khắp 3 Miền. Hàng xóm láng giềng (*Tí Nị, Út Mót*) bắt đầu ghé sang thăm vườn, tưới nước hộ, bắt sâu giúp... và thỉnh thoảng "sang thăm" lúc nửa đêm để hái trộm 1–2 trái chín đầu cành (hoặc bị Chó Cỏ rượt rớt lại *Dép Tổ Ong* làm kỷ niệm).
+- **Bối cảnh cốt truyện (`04_MASTER_NARRATIVE` Mục 1.7):** Chuyến Tàu Thống Nhất Bắc – Nam khôi phục lại ga xép đầu làng! Nông sản của nông trại giờ đây không chỉ bán quanh xóm mà còn đóng toa tàu đi khắp 3 Miền. Hàng xóm láng giềng (*Tí Nị, Út Mót*) bắt đầu ghé sang thăm vườn, tưới nước hộ, bắt sâu giúp... và thỉnh thoảng "sang thăm" lúc nửa đêm để hái trộm 1–2 trái chín đầu cành (hoặc bị Chó Phú Quốc rượt rớt lại *Dép Tổ Ong* làm kỷ niệm).
 - **Mục tiêu sản phẩm & KPI:**
-  - Mở khóa hệ thống **Giao thương P2P** (*Sạp Báo Chợ Phiên 8 ô*), **Đơn hàng lớn liên vùng** (*Tàu Hỏa Thống Nhất 3 toa x 3 kiện*) và **Tương tác Hàng xóm** (*Thăm vườn, Giúp đỡ +5 Tim/lượt, Hái trộm vui vẻ tối đa 20% sản lượng/ô — Bảo hiểm 80% & Chó Cỏ canh gác*).
+  - Mở khóa hệ thống **Giao thương P2P** (*Sạp Báo Chợ Phiên 8 ô*), **Đơn hàng lớn liên vùng** (*Tàu Hỏa Thống Nhất 3 toa x 3 kiện*) và **Tương tác Hàng xóm** (*Thăm vườn, Giúp đỡ +5 Tim/lượt, Hái trộm vui vẻ tối đa 20% sản lượng/ô — Bảo hiểm 80% & Chó Phú Quốc canh gác*).
   - Mở rộng hệ sinh thái sinh vật từ **45 loài lên 63 loài (+18 loài mới)** trải dài khắp 3 Miền.
   - Tăng chỉ số **D7 Retention > 28%** và tỷ lệ tương tác xã hội hàng ngày (**Social Daily Active Ratio > 45%**).
 
@@ -42,16 +42,16 @@
   - Mỗi người chơi có **8 ô bày bán** (mở khóa dần theo Level/Vàng).
   - Giá trần – giá sàn tự động giới hạn trong biên độ **`[0.8x – 2.0x BasePrice]`**, thuế sàn **5%** theo đúng `02_MASTER_ECONOMY`.
   - Đăng báo miễn phí lên *Tờ Báo Nông Thôn Hàng Ngày* mỗi 15 phút/lần.
-- **Thăm Vườn Hàng Xóm, Hái Trộm Vui Vẻ & Chó Cỏ Canh Gác (`NeighborService`):**
+- **Thăm Vườn Hàng Xóm, Hái Trộm Vui Vẻ & Chó Phú Quốc Canh Gác (`NeighborService`):**
   - Ghé thăm nông trại bạn bè/hàng xóm qua thanh Drawer dưới đáy màn hình.
   - **Giúp đỡ:** Tưới cây/bắt sâu/cho ăn giúp (tối đa **5 lần/nhà/ngày**, nhận **+5 💖 Tim/lần**, tối đa `100 💖/ngày`).
   - **Hái trộm vui vẻ (Social Stealing Guardrail):** Chỉ hái được trên ô cây đã chín rộ có **>= 6 đơn vị**, tối đa **20% sản lượng/ô**, để lại tối thiểu **80% sản lượng gốc** (Bảo hiểm 80%) cho chủ nhà (`RULE D1` Anti-Griefing).
-  - **Chó Cỏ Canh Vườn (`ANIM_04`):** Có **50% xác suất** phát hiện khách hái trộm, sủa vang thu hồi lại nông sản và làm khách đánh rơi **1 Chiếc Dép Tổ Ong (`ITEM_SLIPPER` - bán được `50 🪙` hoặc đổi quà kỷ niệm)**.
+  - **Chó Phú Quốc Canh Vườn (`PET_01`):** Có **50% xác suất** phát hiện khách hái trộm, sủa vang thu hồi lại nông sản và làm khách đánh rơi **1 Chiếc Dép Tổ Ong (`ITEM_SLIPPER` - bán được `50 🪙` hoặc đổi quà kỷ niệm)**.
 - **Gia Nhân Đợt 3 (+2 Gia Nhân = Lũy Kế 4/6):**
   - Mở khóa **Anh Sáu Chăn Trâu (`WORK_03`)** (tự động thu hoạch & cho ăn toàn bộ Chuồng Trại) và **Dì Bảy Đan Lát (`WORK_04`)** (tự động nạp nguyên liệu vào các máy chế biến).
 
 ### 2.4. Hệ Thống Audio & Âm Thanh Giai Đoạn 3 (`soundEffects.ts`)
-- Kích hoạt SFX còi tàu hơi nước ấm áp kết hợp tiếng chuông ga xép (`playTrainHorn`), tiếng lục lạc Chó Cỏ sủa vui nhộn khi bắt trộm, và nhạc nền `market` (*Hội Chợ Phiên Rộn Ràng — 108 BPM*) khi mở Sạp Báo Chợ Phiên.
+- Kích hoạt SFX còi tàu hơi nước ấm áp kết hợp tiếng chuông ga xép (`playTrainHorn`), tiếng lục lạc Chó Phú Quốc sủa vui nhộn khi bắt trộm, và nhạc nền `market` (*Hội Chợ Phiên Rộn Ràng — 108 BPM*) khi mở Sạp Báo Chợ Phiên.
 
 ---
 
@@ -66,7 +66,7 @@
 | **4. Công trình Ga Tàu, Sạp Báo & Xưởng Đợt 3** | Đầu máy Tàu Thống Nhất (`bldg_train` `120x32 px` + 3 Toa hàng), Sạp Báo Chợ Phiên (`bldg_market` `175x74 px`), Xưởng Tre Mây (`MACH_05` `64x64 px`), Quầy Chè (`MACH_06` `64x64 px`) | `64x64 px` ➔ `175x74 px` | `Idle` (**4 frames**), `Train_Arrive_Brake` (**12 frames**), `Working_Loop` (**8 frames**) | `@generate2dmap` + `@generate2dsprite` |
 | **5. Nhân vật Gia nhân Đợt 3 & Animation Tương tác Hàng xóm** | Gia nhân *Anh Sáu Chăn Trâu (`WORK_03`)*, *Dì Bảy Đan Lát (`WORK_04`)*; Animation người chơi đi thăm vườn | `32x48 px` | `Steal_Sneak` (**8 frames** — rón rén nhón chân), `Caught_DropSlipper` (**10 frames** — giật mình nhảy dựng rớt Dép Tổ Ong) | `@generate2dsprite` ➔ `@video2dsprite` |
 | **6. Bộ Icon Món Chế Biến Đợt 3 & Vật Phẩm Xã Hội** | 9 Icon món (`PROD_05..07`, `PROD_11..12`, `PROD_16..19`), *Cưa Sắt (`TOOL_SAW`)*, *Chiếc Dép Tổ Ong (`ITEM_SLIPPER`)*, *Kiện Hàng Ga Tàu* | `32x32 px` | 15 Icons sắc nét, viền `#3D2314` | `@generate2dsprite` / `@codeart2d` |
-| **7. Hệ thống Particle VFX Giai Đoạn 3** | `fx_train_steam` (Khói trắng đầu máy hơi nước), `fx_steal_alert` (Dấu chấm than đỏ `[!]` + tiếng sủa khi Chó Cỏ phát hiện), `fx_bee_pollen` (Đàn ong vàng bay quanh vườn cây ăn quả) | `12x12 px` ➔ `24x24 px` | Particle JSON + Sprite strip **6–8 frames** | `@codeart2d` + `@technical-artist` |
+| **7. Hệ thống Particle VFX Giai Đoạn 3** | `fx_train_steam` (Khói trắng đầu máy hơi nước), `fx_steal_alert` (Dấu chấm than đỏ `[!]` + tiếng sủa khi Chó Phú Quốc phát hiện), `fx_bee_pollen` (Đàn ong vàng bay quanh vườn cây ăn quả) | `12x12 px` ➔ `24x24 px` | Particle JSON + Sprite strip **6–8 frames** | `@codeart2d` + `@technical-artist` |
 
 ### B. Quy Trình Kỹ Thuật & Kiểm Định Art Giai Đoạn 3 (`RULE D1`)
 1. **Quy chuẩn Cây Lâu Năm (`48x64 px`):** Tán cây ăn quả (*Vải, Nhãn, Xoài, Măng Cụt, Mít*) vươn cao nhưng gốc cây vẫn neo đúng tâm ô đất (`Anchor (0.5, 0.9)`), tự động bật hiệu ứng bán trong suốt (`alpha = 0.65`) khi nhân vật đi phía sau tán cây.
@@ -78,7 +78,7 @@
 
 | Bộ phận | Kỹ năng AI sử dụng | Nhiệm vụ cụ thể trong Giai đoạn 3 | Đầu ra nghiệm thu (`Deliverables`) |
 | :--- | :--- | :--- | :--- |
-| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` | - Cân bằng phần thưởng 3 Toa Tàu Thống Nhất (hệ số 1.35x giá gốc + điểm Công Đức).<br>- Thiết kế công thức chống lạm phát & chống chuyển Vàng lậu qua Sạp Báo Chợ Phiên (khóa biên độ giá `[0.8x – 2.0x]`, ẩn danh người bán ngoài danh sách bạn bè nếu vượt ngưỡng).<br>- Cân bằng tỷ lệ hái trộm (max 20%/ô, bảo hiểm 80%) & xác suất Chó Cỏ bắt trộm (50%). | Bảng thông số `STAGE3_MARKET_TRAIN_CONFIG` & công thức chống lạm phát P2P. |
+| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` | - Cân bằng phần thưởng 3 Toa Tàu Thống Nhất (hệ số 1.35x giá gốc + điểm Công Đức).<br>- Thiết kế công thức chống lạm phát & chống chuyển Vàng lậu qua Sạp Báo Chợ Phiên (khóa biên độ giá `[0.8x – 2.0x]`, ẩn danh người bán ngoài danh sách bạn bè nếu vượt ngưỡng).<br>- Cân bằng tỷ lệ hái trộm (max 20%/ô, bảo hiểm 80%) & xác suất Chó Phú Quốc bắt trộm (50%). | Bảng thông số `STAGE3_MARKET_TRAIN_CONFIG` & công thức chống lạm phát P2P. |
 | **2. Backend & Multiplayer** | `@backend-architect` | - Viết **Migration Additive-Only** cho bảng `market_listings` (Sạp Báo Chợ Phiên), `train_orders` (Tàu Hỏa 3 toa), và `neighbor_steal_logs` (Nhật ký thăm vườn/hái trộm/rớt dép).<br>- Viết **Supabase RPC** `buy_market_listing` (có `SELECT ... FOR UPDATE SKIP LOCKED` chống 2 người mua trùng 1 món hàng cùng mili-giây) và RPC `steal_neighbor_crop` (kiểm tra sản lượng `>= 6` và không để ô xuống dưới 80% sản lượng gốc, atomic). | File SQL Migration Giai đoạn 3 + 3 RPC atomic transactions. |
 | **3. Art, Animation & VFX** | `@generate2dsprite` + `@video2dsprite` + `@generate2dmap` + `@codeart2d` + `@technical-artist` | - Sản xuất 48 frames cây trồng Đợt 3 (tán cây lâu năm `48x64`), Ong mật, Ngỗng, Trâu, 5 Thủy sản.<br>- Render animation Đầu máy Tàu Thống Nhất nhả khói (`fx_train_steam`), animation nhân vật rón rén hái trộm (`Steal_Sneak`) & giật mình rớt Dép Tổ Ong (`Caught_DropSlipper`). | Atlas `farm_stage3_market_train.json/.png` & VFX configs. |
 | **4. Frontend & Gameplay** | `@frontend-developer` + `@ui-designer` | - Xây dựng `RoadsideShopModal.tsx` (Sạp báo 8 ô + Báo Nông Thôn) và `TrainOrderModal.tsx` (Tàu 3 toa + nút Nhờ bạn bè).<br>- Xây dựng **Chế độ Thăm Vườn Hàng Xóm (`NeighborVisitMode`)**: Chuyển cảnh sang nông trại bạn bè với bảng HUD Tưới hộ/Hái trộm/Nhật ký Dép Tổ Ong. | UI Modals + `NeighborService.ts` + `TrainService.ts`. |
@@ -92,7 +92,7 @@
 ```markdown
 Hãy đóng vai đội ngũ phát triển dự án "Nông Trại Tình Yêu & Gia Đình 3 Miền" và triển khai GIAI ĐOẠN 3 (v1.5 - Chợ Phiên, Tàu Thống Nhất & Hàng Xóm) theo đúng file `13_PLAN_GIAI_DOAN_3_v1.5_Cho_Phien_Va_Hang_Xom.md`:
 1. BƯỚC 1 (Khai báo Tác động chéo theo RULE D0 & D1): Kiểm tra tác động lên `FarmScene.ts`, `App.tsx`, `market_listings`, `train_orders` và xác nhận Additive-Only 100% trước khi viết code.
-2. BƯỚC 2 (Database & Economy - @economy-designer + @backend-architect): Tạo migration SQL cho `market_listings`, `train_orders`, `neighbor_steal_logs` và các RPC atomic (`buy_market_listing` với FOR UPDATE SKIP LOCKED, `steal_neighbor_crop` giới hạn <=20% sản lượng (bảo hiểm 80%) và kiểm tra Chó Cỏ 50%). Mở khóa 18 sinh vật Đợt 3 (lũy kế 63 loài) và 9 món chế biến Đợt 3.
+2. BƯỚC 2 (Database & Economy - @economy-designer + @backend-architect): Tạo migration SQL cho `market_listings`, `train_orders`, `neighbor_steal_logs` và các RPC atomic (`buy_market_listing` với FOR UPDATE SKIP LOCKED, `steal_neighbor_crop` giới hạn <=20% sản lượng (bảo hiểm 80%) và kiểm tra Chó Phú Quốc 50%). Mở khóa 18 sinh vật Đợt 3 (lũy kế 63 loài) và 9 món chế biến Đợt 3.
 3. BƯỚC 3 (Gameplay & UI - @frontend-developer + @ui-designer): Xây dựng `TrainOrderModal.tsx`, `RoadsideShopModal.tsx` (khung gỗ #3D2314, giấy #FFFDF5) và chế độ Thăm Vườn Hàng Xóm (`NeighborVisitMode`) trên `FarmScene.ts` (tưới hộ +5 Tim, hái trộm vui vẻ rớt Dép Tổ Ong).
 4. BƯỚC 4 (Audio & QA - @game-audio-engineer + @code-reviewer): Gắn `soundEffects.playTrainHorn()` và BGM `market`, sau đó chạy nghiệm thu toàn diện theo Checklist Mục 5.
 ```

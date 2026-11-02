@@ -6,6 +6,7 @@ import { triggerHaptic } from '../../services/nativePlatform';
 import { soundFX } from '../../services/soundEffects';
 import { isStageOpen } from '../../config/features';
 import { PLOT_LAYOUT, nextLockedPlot } from '../../domain/farmGrid';
+import { DOG_CATCH_CHANCE } from '../../domain/social';
 
 /** Lưới 5×5 (M02.4): khoảng cách tối thiểu giữa 2 cột để ô 168px không chồng nhau. */
 const MIN_GAP_X = 180;
@@ -431,7 +432,7 @@ export class FarmScene extends Phaser.Scene {
       },
       {
         tex: 'char_dog_phuquoc',
-        text: '🐕 Chó Phú Quốc (70% Bắt trộm)',
+        text: `🐕 Chó Phú Quốc (${Math.round(DOG_CATCH_CHANCE * 100)}% Bắt trộm)`,
         x: width * 0.78,
         y: 142,
         speed: 0.0028,

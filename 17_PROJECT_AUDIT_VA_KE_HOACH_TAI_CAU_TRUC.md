@@ -54,14 +54,14 @@
   |---|---|---|
   | Chợ P2P | ✅ PO chốt 2026-11-01: **0.8–2.0x, thuế 5%** (code + `02`/`03`/`13` đã sửa) | — |
   | Trộm | ✅ PO chốt 2026-11-01: **bảo hiểm 80%** (trộm tối đa 20%/ô; `13` đã sửa, `0001` đã đúng) | — |
-  | Chó giữ nhà | Chó Cỏ 50% (`13`) | Chó Phú Quốc 70% |
+  | Chó giữ nhà | ✅ PO chốt 2026-11-02: **Chó Phú Quốc 50%** (Ngỗng 40%, cùng thức 70%; `src/domain/social.ts`) | — |
   | PK / Sảnh Chung | ✅ PO chốt 2026-11-01: **PK `-5⚡`/trận**, Máy Thùng & đi dạo Sảnh `0⚡` (`AGENTS`/`00`/`01`/`02`/`16` đã sửa). **Còn mở:** trần 1.500 tính bằng Xu Hội (`16`) | trần 1.500 tính bằng 🪙 vàng, Xu Hội 100–250/ngày (`02`) |
   | Phòng Sảnh Chung | 25 CCU (`16`) | 30 CCU |
   | Đình Làng | Guild 20–30 người (`14`) | Solo 5k/15k/50k |
   | Lễ cưới | 1.000 điểm thân mật (`15`) | 10 tim |
   | Nồi Bánh Chưng | 12h, cả làng (`15`) | 6h, tối đa 5 bạn |
   | Số món ăn | 22 (`13`, `14`, `15`) | 27 |
-  | Cửa sổ trộm | 2 phút (`01`, RULE C9) | 3 phút (`03` RPC) |
+  | Cửa sổ trộm | ✅ PO chốt 2026-11-02: **2 phút** (`03` đã sửa; SQL viết lại ở S6) | — |
 
 - **Tham chiếu sai:** `13 → 16` dẫn `04_MASTER_NARRATIVE` (file `04` là CSV; narrative nằm ở `docs_archive_merged/12_MASTER_NARRATIVE…`); `16` dẫn "GDD Mục 9" (GDD chỉ có 7 chương).
 - **Số tổng không khớp:** 7 hay 8 van chống lạm phát (`00` vs `02`); 12 hay 14 quy tắc code (`00:62` vs `03`); Bible v9.2 vs AGENTS v9.3; UI v7.0 vs v7.1; nhãn build trong bảng `00` (dòng 44–49) ghi "v1.1 …" cho cả 6 giai đoạn.

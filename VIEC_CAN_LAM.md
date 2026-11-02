@@ -12,7 +12,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy 2 seed `master_catalog_seed.sql`, `quest_catalog_seed.sql`~~ ✅ 2026-11-01
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
-- [ ] **Chạy trong Supabase SQL Editor, đúng thứ tự:** `0006_land_expansion.sql` (khai hoang 5×5) → `0007_quest_objectives.sql` (mục tiêu nhiệm vụ) → `supabase/seed/quest_catalog_seed.sql` (nạp mục tiêu Ch.1–2) → `0008_analytics.sql` (đo retention / phễu / dòng tiền). Xong báo em kiểm tra. Trước khi chạy: online chỉ trồng được 12 ô cũ và nhận thưởng chương không cần làm mục tiêu.
+- [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
+- [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
 - [ ] Thêm `{{ .Token }}` vào email template **Reset Password** (game dùng OTP 6 số). Có thể chạy `npm run supabase -- auth-config --apply` khi có `SUPABASE_ACCESS_TOKEN`.
 - [ ] Quyết định giữ hay xóa hàm `rls_auto_enable()` (không phải của dự án, Security Advisor báo WARN).
@@ -26,13 +27,13 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [ ] Duyệt 2 mặc định em tự chọn: **PK `-5⚡`/trận** và **Máy Thùng Hyper-Casual vẫn `0⚡`**.
 - [ ] Trần thưởng 1.500/ngày tính bằng **Xu Hội Làng** (`16`) hay **🪙 vàng** (`02`)?
 - [ ] Chốt các mâu thuẫn còn lại (`17` mục A4):
-  - [ ] Chó giữ nhà: Chó Cỏ 50% (`13`) hay Chó Phú Quốc 70%?
+  - [x] ~~Chó giữ nhà: Chó Phú Quốc 50% (Ngỗng 40%, cùng thức 70%)~~ ✅ 2026-11-02
   - [ ] Phòng Sảnh Chung: 25 hay 30 CCU?
   - [ ] Đình Làng: guild 20–30 người (`14`) hay solo 5k/15k/50k?
   - [ ] Lễ cưới: 1.000 điểm thân mật (`15`) hay 10 tim?
   - [ ] Nồi Bánh Chưng: 12h cả làng (`15`) hay 6h tối đa 5 bạn?
   - [ ] Số món ăn: 22 hay 27?
-  - [ ] Cửa sổ trộm: 2 phút (`01`) hay 3 phút (`03`)?
+  - [x] ~~Cửa sổ trộm: 2 phút~~ ✅ 2026-11-02
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
 - [ ] Chốt **bảng 64 màu** (`05` mới định nghĩa 19 màu) trước khi làm sprite.
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
@@ -54,7 +55,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 ## C. Lộ trình sau (chi tiết: `17` Phần C)
 - [ ] S3: tutorial Chương 1–2, closed beta 50–100 người.
 - [ ] S4–S5: GĐ2 Bếp Quê & Lán Thợ (45 loài), công thức bếp theo nguyên liệu, lazy-tick ở server.
-- [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server, chạy lại `/vac-balance-check`.
+- [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.
 - [ ] S11–S12: GĐ5, đóng gói Capacitor, soft launch.
 - [ ] Sau launch: GĐ6 Sảnh Chung / Hyper-Casual / PvP.
