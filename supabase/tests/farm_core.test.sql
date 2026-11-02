@@ -226,5 +226,51 @@ SET ROLE anon;
 SELECT t.eq((SELECT count(*) FROM public.public_profile_cards)::INT, 0, 'anon không đọc được hồ sơ qua view');
 RESET ROLE;
 
+
+-- ---------------------------------------------------------------------------
+-- 6. Migration 0008: analytics phía server (chỉ service_role đọc được)
+-- ---------------------------------------------------------------------------
+RESET ROLE;
+DELETE FROM public.player_active_days;  -- dữ liệu test tạm, không phải migration
+DELETE FROM public.economy_daily;
+SELECT set_config('request.jwt.claim.sub', 'a0000000-0000-0000-0000-00000000000a', false);
+SET ROLE authenticated;
+SELECT public.rpc_get_my_farm();
+SELECT public.rpc_get_my_farm();
+RESET ROLE;
+SELECT t.eq((SELECT count(*) FROM public.player_active_days WHERE user_id = 'a0000000-0000-0000-0000-00000000000a')::INT, 1,
+  'vào game 2 lần trong ngày → 1 ngày hoạt động');
+UPDATE public.profiles SET gold = 5000, level = 5 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
+DELETE FROM public.economy_daily;
+SET ROLE authenticated;
+SELECT public.rpc_plant(1, 1, 'CROP_01');
+RESET ROLE;
+SELECT t.eq((SELECT gold_out FROM public.economy_daily WHERE user_id = 'a0000000-0000-0000-0000-00000000000a')::INT, 2,
+  'gieo -2 vàng → gold_out 2');
+INSERT INTO public.inventories (user_id, item_id, quantity) VALUES ('a0000000-0000-0000-0000-00000000000a', 'CROP_01', 2)
+ON CONFLICT (user_id, item_id) DO UPDATE SET quantity = 2;
+SET ROLE authenticated;
+SELECT public.rpc_sell_to_htx('CROP_01', 2);
+SELECT t.expect_error('SELECT count(*) FROM public.analytics_economy', '%permission denied%');
+SELECT t.expect_error('SELECT count(*) FROM public.analytics_retention', '%permission denied%');
+SELECT t.expect_error('SELECT count(*) FROM public.analytics_funnel', '%permission denied%');
+SELECT t.expect_error('SELECT count(*) FROM public.economy_daily', '%permission denied%');
+SELECT t.expect_error('SELECT count(*) FROM public.player_active_days', '%permission denied%');
+SELECT t.expect_error('SELECT public._log_economy_delta()', '%permission denied%');
+RESET ROLE;
+SELECT t.eq((SELECT gold_in FROM public.economy_daily WHERE user_id = 'a0000000-0000-0000-0000-00000000000a')::INT, 8,
+  'bán HTX +8 vàng → gold_in 8');
+SET ROLE service_role;
+SELECT t.eq((SELECT sink_source_pct FROM public.analytics_economy WHERE day = public._vn_today()), 25.0::NUMERIC,
+  'Sink/Source = 2/8 = 25%');
+SELECT t.eq((SELECT players FROM public.analytics_funnel WHERE step_no = 2)::INT, 1, 'phễu: 1 người đã tưới');
+SELECT t.eq((SELECT players FROM public.analytics_funnel WHERE step_no = 4)::INT, 1, 'phễu: 1 người nhận Chương 1');
+SELECT t.eq((SELECT sum(new_players) FROM public.analytics_retention)::INT, 2, 'retention: 2 hồ sơ (A, B)');
+RESET ROLE;
+SELECT set_config('request.jwt.claim.sub', '', false);
+SET ROLE anon;
+SELECT t.expect_error('SELECT count(*) FROM public.analytics_economy', '%permission denied%');
+RESET ROLE;
+
 \o
 \echo 'farm_core.test.sql: TẤT CẢ PASS'

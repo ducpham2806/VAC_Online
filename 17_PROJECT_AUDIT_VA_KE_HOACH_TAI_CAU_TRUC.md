@@ -87,7 +87,7 @@
 7. **Art thật:** atlas PNG cho thực thể, `PixelAssetGenerator` chỉ còn lo VFX/fallback. Dùng `agent-sprite-forge` (Phần D2). Ưu tiên 23 loài Đợt 1.
 8. **Rút gọn quy trình AI cho 1 người:** impact report 5 dòng; chỉ dừng chờ PO khi đụng DB / kinh tế / core loop; Phiếu nghiệm thu = mô tả PR.
 9. **Hoãn PvP realtime (GĐ6) đến sau soft launch.** Social bất đồng bộ (thăm nhà, lưu bút, chợ) rẻ và an toàn hơn.
-10. **Đo lường từ closed beta:** retention D1/D7, funnel tutorial, dòng tiền Sources/Sinks thực tế → cân bằng kinh tế bằng dữ liệu.
+10. **Đo lường từ closed beta:** retention D1/D7, funnel tutorial, dòng tiền Sources/Sinks thực tế → cân bằng kinh tế bằng dữ liệu. *(Đã có từ `0008`: `npm run supabase -- report`.)*
 
 ---
 
@@ -166,7 +166,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - ~~Phát sinh: ở 844×390 khay giống che hàng ruộng đầu (có từ trước) → cần sắp lại HUD màn hình nhỏ~~ ✅ 2026-11-02: variant `short:` (cao ≤ 500px) trong `index.css` — khay giống đóng sẵn và tự đóng sau khi chọn, nhãn nút rút gọn, footer 1 hàng. Kiểm ở 1280×720 (không đổi), 844×390, 667×375 (trước đó chạm ô ruộng ở 667 rơi vào nút Khai Hoang).
 - ~~Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp)~~ ✅ 2026-11-01: bảng `player_counters` + `quest_catalog.objectives` (`0007`); Ch.1 = tưới + thu Lúa, Ch.2 = vét bùn + bón bùn (PO chốt; Bếp Quê dời sang Ch.3). Ch.3–10 chưa có mục tiêu, thêm khi mở GĐ2–5.
 - Atlas sprite thật cho 23 loài Đợt 1.
-- Analytics.
+- ~~Analytics~~ ✅ 2026-11-02: đo ở server, không có code theo dõi ở client (`0008`): `player_active_days` (ghi trong `rpc_get_my_farm`), `economy_daily` (trigger biến động 🪙/💎 trên `profiles`), view `analytics_retention` / `analytics_funnel` / `analytics_economy` chỉ `service_role` đọc. Xem bằng `npm run supabase -- report`. Khách offline không được đo.
 
 ---
 

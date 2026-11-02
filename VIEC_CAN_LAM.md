@@ -12,7 +12,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy 2 seed `master_catalog_seed.sql`, `quest_catalog_seed.sql`~~ ✅ 2026-11-01
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
-- [ ] **Chạy trong Supabase SQL Editor, đúng thứ tự:** `0006_land_expansion.sql` (khai hoang 5×5) → `0007_quest_objectives.sql` (mục tiêu nhiệm vụ) → `supabase/seed/quest_catalog_seed.sql` (nạp mục tiêu Ch.1–2). Xong báo em kiểm tra. Trước khi chạy: online chỉ trồng được 12 ô cũ và nhận thưởng chương không cần làm mục tiêu.
+- [ ] **Chạy trong Supabase SQL Editor, đúng thứ tự:** `0006_land_expansion.sql` (khai hoang 5×5) → `0007_quest_objectives.sql` (mục tiêu nhiệm vụ) → `supabase/seed/quest_catalog_seed.sql` (nạp mục tiêu Ch.1–2) → `0008_analytics.sql` (đo retention / phễu / dòng tiền). Xong báo em kiểm tra. Trước khi chạy: online chỉ trồng được 12 ô cũ và nhận thưởng chương không cần làm mục tiêu.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
 - [ ] Thêm `{{ .Token }}` vào email template **Reset Password** (game dùng OTP 6 số). Có thể chạy `npm run supabase -- auth-config --apply` khi có `SUPABASE_ACCESS_TOKEN`.
 - [ ] Quyết định giữ hay xóa hàm `rls_auto_enable()` (không phải của dự án, Security Advisor báo WARN).
@@ -49,7 +49,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 (hiện chỉ kiểm cấp).
 - [x] ~~HUD màn hình ngang thấp (844×390, 667×375): khay giống không che ruộng, footer 1 hàng~~ ✅ 2026-11-02
 - [ ] Atlas sprite thật cho 23 loài Đợt 1 (`agent-sprite-forge`, sau khi chốt bảng màu).
-- [ ] Analytics (D1/D7, funnel tutorial).
+- [x] ~~Analytics phía server: retention D1/D7, phễu tân thủ, Sources/Sinks (`0008`, `npm run supabase -- report`)~~ ✅ 2026-11-02
 
 ## C. Lộ trình sau (chi tiết: `17` Phần C)
 - [ ] S3: tutorial Chương 1–2, closed beta 50–100 người.

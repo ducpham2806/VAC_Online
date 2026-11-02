@@ -8,6 +8,7 @@
  *   npx tsx scripts/supabase-admin.ts apply <file.sql> [...]      # chạy SQL theo thứ tự
  *   npx tsx scripts/supabase-admin.ts auth-config [--apply]        # xem / bật Anonymous + OTP email
  *   npx tsx scripts/supabase-admin.ts smoke                        # chơi thử bằng publishable key
+ *   npx tsx scripts/supabase-admin.ts report                       # analytics (0008): retention, phễu, Sources/Sinks
  *   Thêm --dry-run để chỉ in ra việc sẽ làm.
  */
 import { readFileSync } from 'node:fs';
@@ -80,6 +81,9 @@ async function status(): Promise<void> {
   console.log(`Đã chạy 0007 (bảng player_counters, mục tiêu nhiệm vụ): ${(await sql(
     "SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'player_counters'"
   )).length > 0}`);
+  console.log(`Đã chạy 0008 (analytics: economy_daily, player_active_days): ${(await sql(
+    "SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'economy_daily'"
+  )).length > 0}`);
 }
 
 async function apply(files: string[]): Promise<void> {
@@ -147,12 +151,39 @@ async function smoke(): Promise<void> {
   console.log(`Thu hoạch sớm: ${early.error ? `bị chặn ✅ (${early.error.message})` : 'KHÔNG bị chặn ❌'}`);
 }
 
+const REPORT_QUERIES: Array<[string, string]> = [
+  [
+    'Retention theo ngày tạo hồ sơ (14 ngày gần nhất)',
+    'SELECT cohort_day, new_players, d1_players, d1_pct, d7_players, d7_pct FROM public.analytics_retention ORDER BY cohort_day DESC LIMIT 14',
+  ],
+  ['Phễu tân thủ', 'SELECT step_no, step, players FROM public.analytics_funnel ORDER BY step_no'],
+  [
+    'Dòng tiền theo ngày — mục tiêu Sink/Source 94–112% (02_MASTER_ECONOMY)',
+    'SELECT day, active_payers, gold_sources, gold_sinks, sink_source_pct, gems_sources, gems_sinks FROM public.analytics_economy ORDER BY day DESC LIMIT 14',
+  ],
+];
+
+/** Báo cáo analytics (migration 0008). Chỉ đo người chơi có phiên Supabase; Khách offline không được tính. */
+async function report(): Promise<void> {
+  for (const [title, query] of REPORT_QUERIES) {
+    console.log(`\n== ${title}`);
+    if (dryRun) {
+      console.log(`[dry-run] ${query}`);
+      continue;
+    }
+    const rows = await sql(query);
+    if (rows.length === 0) console.log('(chưa có dữ liệu)');
+    else console.table(rows);
+  }
+}
+
 async function main(): Promise<void> {
   if (command === 'status') return status();
   if (command === 'apply') return apply(args.slice(1).filter((a) => !a.startsWith('--')));
   if (command === 'auth-config') return authConfig();
   if (command === 'smoke') return smoke();
-  console.log(readFileSync(new URL(import.meta.url), 'utf-8').split('\n').slice(1, 13).join('\n'));
+  if (command === 'report') return report();
+  console.log(readFileSync(new URL(import.meta.url), 'utf-8').split('\n').slice(1, 14).join('\n'));
 }
 
 main().catch((err: unknown) => {
