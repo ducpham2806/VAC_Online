@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Màn hình ngang thấp (điện thoại landscape ≤ 500px cao): HUD gọn để không che ruộng. */
+@custom-variant short (@media (max-height: 500px));
+
 @layer base {
   :root {
     --sat: env(safe-area-inset-top, 0px);

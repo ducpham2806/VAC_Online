@@ -114,7 +114,9 @@ export const App: React.FC = () => {
   const [showSplashScreen, setShowSplashScreen] = useState<boolean>(true);
   const [authModalTab, setAuthModalTab] = useState<AuthTabMode>('LOGIN');
 
-  const [isSeedDrawerOpen, setIsSeedDrawerOpen] = useState(true);
+  // Màn hình ngang thấp (khớp variant `short:` trong index.css): khay giống đóng sẵn để không che ruộng.
+  const isShortScreen = () => window.matchMedia?.('(max-height: 500px)').matches ?? false;
+  const [isSeedDrawerOpen, setIsSeedDrawerOpen] = useState(() => !isShortScreen());
   const [seedFilterGroup, setSeedFilterGroup] = useState<
     'ALL' | 'CROP_COMMON' | 'TREE_COMMON' | 'REGIONAL' | 'MUTANT' | 'ANIMAL' | 'AQUA'
   >('ALL');
@@ -374,8 +376,14 @@ export const App: React.FC = () => {
             onClick={() => setIsSeedDrawerOpen(!isSeedDrawerOpen)}
             className="touch-btn bg-[#321b0d]/95 border-2 border-[#f5b82e] text-[#fff8eb] font-extrabold px-3 py-1 rounded-r-xl text-xs shadow-lg cursor-pointer"
           >
-            🌱 Đang chọn: {selectedSeedObj.emoji} {selectedSeedObj.name} (
-            {seedTrayCatalog.filter((i) => canPlant(i, level, GAME_STAGE, region).ok).length}/{seedTrayCatalog.length} loài) {isSeedDrawerOpen ? '◀' : '▶'}
+            <span>
+              <span className="short:hidden">🌱 Đang chọn: </span>
+              {selectedSeedObj.emoji} {selectedSeedObj.name}
+              <span className="short:hidden">
+                {' '}({seedTrayCatalog.filter((i) => canPlant(i, level, GAME_STAGE, region).ok).length}/{seedTrayCatalog.length} loài)
+              </span>{' '}
+              {isSeedDrawerOpen ? '◀' : '▶'}
+            </span>
           </button>
 
           {isStageOpen(2) && (
@@ -391,14 +399,23 @@ export const App: React.FC = () => {
             onClick={dredgePondMud}
             className="touch-btn bg-[#2e8b8d] border-2 border-[#80deea] text-white font-extrabold px-2.5 py-1 rounded-xl text-xs shadow-lg cursor-pointer"
           >
-            🪣 Vét Bùn Ao ({pondMudCounter}/10 • -3⚡) [Kho: {inventory.ITEM_BUN_PHU_SA ?? 0}]
+            <span>
+              🪣 <span className="short:hidden">Vét Bùn Ao (</span>
+              {pondMudCounter}/10
+              <span className="short:hidden"> • -3⚡) [Kho: {inventory.ITEM_BUN_PHU_SA ?? 0}]</span>
+              <span className="hidden short:inline"> • 🟫{inventory.ITEM_BUN_PHU_SA ?? 0}</span>
+            </span>
           </button>
 
           <button
             onClick={expandWildLand}
             className="touch-btn bg-[#6e4121] border-2 border-[#c88a4b] text-[#fff8eb] font-bold px-2.5 py-1 rounded-xl text-xs shadow-lg cursor-pointer"
           >
-            🪓 Khai Hoang ({wildPlotsUnlocked}/25 • -5⚡)
+            <span>
+              🪓 <span className="short:hidden">Khai Hoang (</span>
+              {wildPlotsUnlocked}/25
+              <span className="short:hidden"> • -5⚡)</span>
+            </span>
           </button>
 
           {visitingFriendName && (
@@ -412,7 +429,7 @@ export const App: React.FC = () => {
         </div>
 
         {isSeedDrawerOpen && (
-          <div className="pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-r-xl p-1.5 shadow-xl flex flex-col gap-1 max-w-[94vw] sm:max-w-[740px]">
+          <div className="pointer-events-auto bg-[#fff8eb]/95 border-2 border-[#6e4121] rounded-r-xl p-1.5 shadow-xl flex flex-col gap-1 max-w-[94vw] sm:max-w-[740px] short:max-h-[45dvh] short:overflow-y-auto">
             {/* Thanh lọc nhanh 81 giống Vườn - Ao - Chuồng */}
             <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-[11px]">
               {[
@@ -445,7 +462,10 @@ export const App: React.FC = () => {
                   <button
                     key={item.id}
                     disabled={locked}
-                    onClick={() => setSelectedSeed(item.id)}
+                    onClick={() => {
+                      setSelectedSeed(item.id);
+                      if (isShortScreen()) setIsSeedDrawerOpen(false);
+                    }}
                     title={locked ? `Mở ở Lv.${item.unlockLevel}` : undefined}
                     className={`touch-btn px-2.5 py-1 rounded-lg font-bold border text-xs shrink-0 ${
                       locked
@@ -506,9 +526,9 @@ export const App: React.FC = () => {
       {/* =================================================================== */}
       {/* 5. FLOATING BOTTOM 2-THUMB DOCK (CHAT TRÁI + 8 NÚT TÍNH NĂNG PHẢI)  */}
       {/* =================================================================== */}
-      <footer className="fixed bottom-0 left-0 right-0 z-20 safe-bottom safe-left safe-right pointer-events-none flex flex-wrap items-center justify-between gap-1.5 px-2 py-1">
+      <footer className="fixed bottom-0 left-0 right-0 z-20 safe-bottom safe-left safe-right pointer-events-none flex flex-wrap short:flex-nowrap items-center justify-between gap-1.5 px-2 py-1">
         {/* Ngón cái trái: Khung Chat Làng Xóm Realtime */}
-        <div className="pointer-events-auto flex items-center gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg max-w-full sm:max-w-[300px] flex-1">
+        <div className="pointer-events-auto flex items-center gap-1.5 bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2.5 py-1 text-[#fff8eb] shadow-lg max-w-full sm:max-w-[300px] flex-1 short:flex-none short:max-w-[180px]">
           <span className="text-[11px] truncate flex-1">
             💬 <b>{chatMessages[chatMessages.length - 1]?.sender}:</b>{' '}
             {chatMessages[chatMessages.length - 1]?.content}
@@ -524,12 +544,12 @@ export const App: React.FC = () => {
               }
             }}
             placeholder="Chat..."
-            className="bg-[#fff8eb] text-[#2a180c] text-xs px-2 py-0.5 rounded-full border border-[#c88a4b] w-20"
+            className="bg-[#fff8eb] text-[#2a180c] text-xs px-2 py-0.5 rounded-full border border-[#c88a4b] w-20 short:w-14"
           />
         </div>
 
         {/* Ngón cái phải: 8 Nút Action Dock chuẩn Ergonomic */}
-        <div className="pointer-events-auto flex items-center gap-1 overflow-x-auto max-w-full bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 shadow-lg">
+        <div className="pointer-events-auto flex items-center gap-1 overflow-x-auto max-w-full bg-[#321b0d]/92 border-2 border-[#c88a4b] rounded-full px-2 py-1 shadow-lg short:flex-1 short:min-w-0">
           <button
             onClick={() => setActiveModal('ENCYCLOPEDIA')}
             className="touch-btn bg-gradient-to-r from-[#ff9800] to-[#f5b82e] border border-white text-[#2a180c] text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 cursor-pointer"

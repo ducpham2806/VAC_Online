@@ -163,7 +163,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - App: 11 modal sang `src/ui/modals/*Modal.tsx`; App đọc store qua `useShallow`. Thêm một thay đổi nhỏ: trạng thái tạm của modal (ô tìm kiếm Bách khoa, nồi nấu, form chợ) đặt lại khi mở lại modal.
   - Danh sách việc: `VIEC_CAN_LAM.md`.
 - ~~Lưới hiển thị vẫn cố định 12 ô; khai hoang mới chỉ tăng bộ đếm~~ ✅ 2026-11-01: lưới 5×5 (cột 5 → hàng 4 Ruộng → hàng 5 Ao), ô kế tiếp hiện mờ và chạm để khai hoang; migration `0006` (`_plot_order`, `_lock_tile`, `rpc_harvest` bùn cho hàng Ao mới).
-  - Phát sinh: ở 844×390 khay giống che hàng ruộng đầu (có từ trước) → cần sắp lại HUD màn hình nhỏ.
+  - ~~Phát sinh: ở 844×390 khay giống che hàng ruộng đầu (có từ trước) → cần sắp lại HUD màn hình nhỏ~~ ✅ 2026-11-02: variant `short:` (cao ≤ 500px) trong `index.css` — khay giống đóng sẵn và tự đóng sau khi chọn, nhãn nút rút gọn, footer 1 hàng. Kiểm ở 1280×720 (không đổi), 844×390, 667×375 (trước đó chạm ô ruộng ở 667 rơi vào nút Khai Hoang).
 - ~~Mục tiêu nhiệm vụ chưa được kiểm (chỉ kiểm cấp)~~ ✅ 2026-11-01: bảng `player_counters` + `quest_catalog.objectives` (`0007`); Ch.1 = tưới + thu Lúa, Ch.2 = vét bùn + bón bùn (PO chốt; Bếp Quê dời sang Ch.3). Ch.3–10 chưa có mục tiêu, thêm khi mở GĐ2–5.
 - Atlas sprite thật cho 23 loài Đợt 1.
 - Analytics.
