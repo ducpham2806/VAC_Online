@@ -7,6 +7,8 @@ import { soundFX } from '../../services/soundEffects';
 import { isStageOpen } from '../../config/features';
 import { PLOT_LAYOUT, nextLockedPlot } from '../../domain/farmGrid';
 import { DOG_CATCH_CHANCE } from '../../domain/social';
+import { growthFrame, growthStage } from '../../domain/growth';
+import { SPRITE_ATLASES } from './BootScene';
 
 /** Lưới 5×5 (M02.4): khoảng cách tối thiểu giữa 2 cột để ô 168px không chồng nhau. */
 const MIN_GAP_X = 180;
@@ -525,7 +527,14 @@ export class FarmScene extends Phaser.Scene {
       const isRipe = tile.matureAt !== null && now >= tile.matureAt;
 
       vis.cropSprite.setVisible(true);
-      if (tile.itemId.includes('MUT')) {
+      // Sprite thật theo loài + giai đoạn lớn (atlas tools/art/pack_atlas.py); thiếu thì dùng hình vẽ code.
+      const frame = growthFrame(tile.itemId, growthStage(tile.plantedAt, tile.matureAt, now));
+      const atlas = SPRITE_ATLASES.find((a) => this.textures.exists(a) && this.textures.get(a).has(frame));
+      if (atlas) {
+        if (vis.cropSprite.texture.key !== atlas || vis.cropSprite.frame.name !== frame) {
+          vis.cropSprite.setTexture(atlas, frame).setScale(1.25);
+        }
+      } else if (tile.itemId.includes('MUT')) {
         vis.cropSprite.setTexture('crop_mutant_purple');
       } else if (tile.itemId === 'CROP_15' || tile.zoneType === 'POND') {
         vis.cropSprite.setTexture('crop_lotus');
@@ -534,6 +543,7 @@ export class FarmScene extends Phaser.Scene {
       } else {
         vis.cropSprite.setTexture('crop_rice_gold');
       }
+      if (!atlas) vis.cropSprite.setScale(0.85);
 
       vis.label.setText(
         `${spec?.emoji ?? '🌱'} ${spec?.name ?? tile.itemId}${tile.isGolden ? ' ⭐' : ''}`

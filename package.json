@@ -13,7 +13,9 @@
     "test": "vitest run",
     "seed:catalog": "tsx scripts/generate-catalog-seed.ts",
     "test:sql": "bash scripts/test-sql.sh",
-    "supabase": "tsx scripts/supabase-admin.ts"
+    "supabase": "tsx scripts/supabase-admin.ts",
+    "test:art": "python3 -m unittest discover -s tools/art -p 'test_*.py'",
+    "art:wave1": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

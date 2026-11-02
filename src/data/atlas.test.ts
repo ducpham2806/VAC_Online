@@ -1,0 +1,36 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { GAME_CATALOG } from './masterData';
+
+/** Atlas sprite Đợt 1 (tools/art/codeart_wave1.py → pack_atlas.py). */
+const root = process.cwd();
+const json = JSON.parse(readFileSync(resolve(root, 'public/assets/atlas/wave1.json'), 'utf-8')) as {
+  frames: Record<string, { frame: { x: number; y: number; w: number; h: number } }>;
+  meta: { image: string; size: { w: number; h: number } };
+};
+const png = readFileSync(resolve(root, 'public/assets/atlas/wave1.png'));
+const pngSize = { w: png.readUInt32BE(16), h: png.readUInt32BE(20) };
+
+const WAVE1 = GAME_CATALOG.filter(
+  (c) => c.unlockWave === 1 && ['CROP', 'TREE', 'ANIMAL', 'AQUA', 'MUTANT_CROP'].includes(c.category)
+);
+
+describe('Atlas wave1', () => {
+  it('đủ 23 loài Đợt 1 × 4 giai đoạn lớn, tên khung <ID>_<0..3>', () => {
+    expect(WAVE1).toHaveLength(23);
+    for (const c of WAVE1) for (let st = 0; st < 4; st++) expect(json.frames).toHaveProperty(`${c.id}_${st}`);
+    expect(Object.keys(json.frames)).toHaveLength(92);
+  });
+
+  it('mọi khung là 48x48 và nằm trong ảnh PNG thật', () => {
+    expect(png.subarray(1, 4).toString()).toBe('PNG');
+    expect(pngSize).toEqual(json.meta.size);
+    for (const { frame } of Object.values(json.frames)) {
+      expect([frame.w, frame.h]).toEqual([48, 48]);
+      expect(frame.x + frame.w).toBeLessThanOrEqual(pngSize.w);
+      expect(frame.y + frame.h).toBeLessThanOrEqual(pngSize.h);
+    }
+    expect(json.meta.image).toBe('wave1.png');
+  });
+});
