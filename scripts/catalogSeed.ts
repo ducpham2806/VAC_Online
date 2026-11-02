@@ -75,3 +75,37 @@ ON CONFLICT (id) DO UPDATE SET
 }
 
 export const CATALOG_SEED_PATH = 'supabase/seed/master_catalog_seed.sql';
+
+export const RECIPE_SEED_PATH = 'supabase/seed/recipe_seed.sql';
+
+/**
+ * Sinh SQL seed công thức Bếp Quê (S4): cột master_catalog.machine_id + bảng recipe_ingredients,
+ * lấy từ `machineId` / `recipe` trong GAME_CATALOG. Cần migration 0009 và master_catalog_seed.sql trước.
+ */
+export function buildRecipeSeedSql(items: CatalogItem[] = GAME_CATALOG): string {
+  const dishes = items.filter((i) => i.machineId && i.recipe && i.recipe.length > 0);
+  const machineRows = dishes.map((d) => `  (${sqlText(d.id)}, ${sqlText(d.machineId)})`).join(',\n');
+  const ingredientRows = dishes
+    .flatMap((d) => (d.recipe ?? []).map((r) => `  (${sqlText(d.id)}, ${sqlText(r.itemId)}, ${sqlInt(r.qty, 1)})`))
+    .join(',\n');
+  return `-- =============================================================================
+-- FILE SINH TỰ ĐỘNG — KHÔNG SỬA TAY. Nguồn: src/data/masterData.ts (machineId, recipe)
+-- Sinh lại bằng: npm run seed:catalog
+-- Chạy trong Supabase SQL Editor SAU migration 0009 và master_catalog_seed.sql.
+-- Idempotent: UPDATE + INSERT ... ON CONFLICT DO UPDATE — không xóa dòng nào.
+-- Số món có công thức: ${dishes.length}
+-- =============================================================================
+
+UPDATE public.master_catalog AS m
+SET machine_id = v.machine_id, updated_at = NOW()
+FROM (VALUES
+${machineRows}
+) AS v(id, machine_id)
+WHERE m.id = v.id;
+
+INSERT INTO public.recipe_ingredients (product_id, item_id, qty)
+VALUES
+${ingredientRows}
+ON CONFLICT (product_id, item_id) DO UPDATE SET qty = EXCLUDED.qty;
+`;
+}
