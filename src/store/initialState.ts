@@ -3,6 +3,7 @@ import { FarmTileEntity } from '../data/types';
 import { INITIAL_MARKET_LISTINGS, INITIAL_WORKERS } from '../data/masterData';
 import { STORY_QUESTS } from '../data/quests';
 import { FarmSave } from '../domain/farm';
+import type { KitchenSave, MachineState } from '../domain/cooking';
 import { FarmSnapshot, createEmptyTiles, tilesFromSnapshot } from '../services/farmGateway';
 import type { GameData } from './gameTypes';
 
@@ -239,6 +240,12 @@ export function createDemoState(): GameData {
 
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
     progressCounters: {},
+    machines: {
+      MAC_02: { craftItemId: null, readyAt: null },
+      MAC_03: { craftItemId: null, readyAt: null },
+      MAC_04: { craftItemId: null, readyAt: null },
+    },
+    discoveredRecipes: ['PROD_03', 'PROD_05'],
 
     chatMessages: [
       {
@@ -301,6 +308,8 @@ export function createFreshState(): GameData {
     tiles: createEmptyTiles(),
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
     progressCounters: {},
+    machines: {},
+    discoveredRecipes: [],
   };
 }
 
@@ -357,6 +366,44 @@ export function todayInVietnam(): string {
 }
 
 /** Ảnh chụp từ server → state client (server là nguồn chân lý ở chế độ online). */
+/** Xưởng từ ảnh chụp server (0009) sang dạng domain. */
+export function machinesFromSnapshot(snap: FarmSnapshot): Record<string, MachineState> {
+  return Object.fromEntries(
+    Object.entries(snap.machines ?? {}).map(([id, m]) => [id, { craftItemId: m.craft_item_id ?? null, readyAt: m.ready_at ?? null }])
+  );
+}
+
+/** Phần save mà luật Bếp Quê đọc/ghi (src/domain/cooking.ts). */
+export function toKitchenSave(s: GameData): KitchenSave {
+  return {
+    region: s.region,
+    level: s.level,
+    xp: s.xp,
+    gold: s.gold,
+    gems: s.gems,
+    stamina: s.stamina,
+    maxStamina: s.maxStamina,
+    staminaUpdatedAt: s.staminaUpdatedAt,
+    inventory: s.inventory,
+    machines: s.machines ?? {},
+    discoveredRecipes: s.discoveredRecipes ?? [],
+  };
+}
+
+export function fromKitchenSave(save: KitchenSave): Partial<GameData> {
+  return {
+    level: save.level,
+    xp: save.xp,
+    gold: save.gold,
+    gems: save.gems,
+    stamina: save.stamina,
+    staminaUpdatedAt: save.staminaUpdatedAt,
+    inventory: save.inventory,
+    machines: save.machines,
+    discoveredRecipes: save.discoveredRecipes,
+  };
+}
+
 export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
   const p = snap.profile;
   return {
@@ -379,6 +426,8 @@ export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<Gam
     inventory: snap.inventory,
     tiles: tilesFromSnapshot(snap),
     progressCounters: snap.counters ?? {},
+    machines: machinesFromSnapshot(snap),
+    discoveredRecipes: snap.recipes ?? [],
     storyQuests: prev.storyQuests.map((q) => {
       const choice = snap.quests[q.id];
       return choice ? { ...q, completed: true, selectedChoice: choice } : { ...q, completed: false };
@@ -411,6 +460,8 @@ export const PERSISTED_KEYS = [
   'tiles',
   'storyQuests',
   'progressCounters',
+  'machines',
+  'discoveredRecipes',
   'selectedSeedId',
   'farmMode',
 ] as const satisfies ReadonlyArray<keyof GameData>;

@@ -80,6 +80,8 @@ export function runFullQCTestSuite(): QCTestResult[] {
     trainCrates: initialState.trainCrates,
     storyQuests: initialState.storyQuests,
     chatMessages: initialState.chatMessages,
+    machines: initialState.machines,
+    discoveredRecipes: initialState.discoveredRecipes,
   });
 
   const runCase = (
@@ -350,17 +352,24 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 13. EPIC 04: Nồi Đất Phối Món Ngẫu Nhiên (Random Alchemy >= 3 nguyên liệu)
-  runCase('TC-04.2a', 'EPIC 04', 'Bếp Củi Ngẫu Nhiên chặn nấu khi < 3 nguyên liệu & thưởng +10 💎 khi đủ', () => {
+  // 13. EPIC 04: Nồi Đất khám phá công thức (S4 — 17 mục C2; thay stub "≥ 3 nguyên liệu" cũ)
+  runCase('TC-04.2a', 'EPIC 04', 'Nồi Đất: sai công thức không thưởng; đúng thì mở món +10 💎 và không tiêu nguyên liệu', () => {
+    store.setState({
+      level: 15,
+      machines: { MAC_02: { craftItemId: null, readyAt: null } },
+      discoveredRecipes: [],
+      inventory: { ...store.getState().inventory, CROP_09: 2 },
+    });
     const gemsBefore = store.getState().gems;
-    store.getState().cookRandomDish(['Cá Trắm', 'Hồ Tiêu']);
+    store.getState().cookRandomDish(['CROP_09']);
     const blocked = store.getState().gems === gemsBefore;
-    store.getState().cookRandomDish(['Cá Trắm', 'Hồ Tiêu', 'Nước Dừa']);
-    const gemsAfter = store.getState().gems;
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    const s = store.getState();
+    const found = s.discoveredRecipes.includes('PROD_09');
     return {
-      passed: blocked && gemsAfter === gemsBefore + 10,
-      expected: 'Chặn khi 2 nguyên liệu, cộng +10 💎 khi đủ 3 nguyên liệu',
-      actual: `Blocked(2)=${blocked}, Gems: ${gemsBefore} ➔ ${gemsAfter}`,
+      passed: blocked && found && s.gems === gemsBefore + 10 && s.inventory.CROP_09 === 2,
+      expected: '1 Mía: không thưởng; 2 Mía: mở Nước Mía, +10 💎, Kho còn 2 Mía',
+      actual: `Blocked=${blocked}, Mở=${found}, Gems: ${gemsBefore} ➔ ${s.gems}, Mía=${s.inventory.CROP_09}`,
     };
   });
 

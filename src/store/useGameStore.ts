@@ -15,6 +15,7 @@ import {
 import { createStoreHelpers } from './storeHelpers';
 import { createEconomySlice } from './slices/economySlice';
 import { createFarmSlice } from './slices/farmSlice';
+import { createKitchenSlice } from './slices/kitchenSlice';
 import { createLiveOpsSlice } from './slices/liveOpsSlice';
 import { createMetaSlice } from './slices/metaSlice';
 import { createSocialSlice } from './slices/socialSlice';
@@ -39,6 +40,7 @@ export const useGameStore = create<GameState>()(
         ...createFarmSlice(set, get, helpers),
         ...createWorkersSlice(set, get, helpers),
         ...createEconomySlice(set, get, helpers),
+        ...createKitchenSlice(set, get, helpers),
         ...createSocialSlice(set, get, helpers),
         ...createLiveOpsSlice(set, get, helpers),
       };
@@ -61,6 +63,9 @@ export const useGameStore = create<GameState>()(
           ...merged,
           tiles: normalizePlotTiles(merged.tiles, merged.wildPlotsUnlocked),
           progressCounters: merged.progressCounters ?? {},
+          // Save trước S4 chưa có Bếp Quê.
+          machines: merged.machines ?? {},
+          discoveredRecipes: merged.discoveredRecipes ?? [],
         };
       },
     }

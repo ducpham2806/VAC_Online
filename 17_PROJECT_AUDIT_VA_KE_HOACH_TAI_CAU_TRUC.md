@@ -250,6 +250,15 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 4. Code cũ 🟢: giữ chữ ký action.
 5. DB 🟡: `0009` chỉ thêm; PO dán vào SQL Editor.
 
+**Trạng thái (2026-11-02): code xong, chưa áp lên Supabase thật, chưa mở GĐ2.**
+- ✅ Domain `src/domain/cooking.ts` + 22 test; công thức theo ID trong `GAME_CATALOG`; seed `recipe_seed.sql` sinh tự động.
+- ✅ `0009_kitchen.sql` + `supabase/tests/kitchen.test.sql` (anon bị chặn, GĐ1 khóa, mọi nhánh từ chối, cô lập 2 người chơi). Server có 22 RPC.
+- ✅ Store: `kitchenSlice.ts` (offline dùng domain, online dùng RPC); `machines` + `discoveredRecipes` lưu trong save, save cũ tự thêm mặc định rỗng. `cookRandomDish` / `craftOrBuyCatalogItem` giữ tên, chuyển sang luật mới. QC `TC-04.2a` viết lại theo Nồi Đất khám phá.
+- ✅ UI: `CookingModal` 3 tab Xưởng / Sổ Tay / Nồi Đất; Kho có nút "🍚 Ăn". Kiểm ở 1280×720 và 844×390.
+- ⏳ PO: dán `0009` rồi `master_catalog_seed.sql`, `recipe_seed.sql` vào SQL Editor.
+- ⏳ Mở GĐ2 (việc riêng, cùng Đợt 2 = 45 loài): migration đổi `app_game_stage()` thành 2 + `VITE_GAME_STAGE=2` trên Vercel. Trước đó nên đặt mục tiêu Chương 3 (Bếp Quê) và chạy `/vac-balance-check`.
+- Chưa có: sprite xưởng trên bản đồ (S5), icon riêng cho món (đang dùng emoji).
+
 ---
 
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
@@ -386,7 +395,7 @@ Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sa
 | 03 | M03.3 Ao + vét bùn | Done | Server (S1) |
 | 03 | M03.4 Phù sa + Hoàng Kim x3 | Done | Thu hoạch vào Kho ×3, bán HTX (S1) |
 | 03 | M03.5 Chương 1–2 + quà 7 ngày | Done | Server kiểm cấp + mục tiêu đo được (`player_counters`, `0007`, đã chạy trên Supabase thật 2026-11-02); Hướng dẫn tân thủ 8 bước (`src/domain/tutorial.ts`, `TutorialCoach`) |
-| 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | Stub | Bếp luôn ra `PROD_22` |
+| 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | M04.1–M04.3 có code (S4, chờ mở GĐ2); M04.4 Stub | Xem `17` mục C2 — Khung cửi làm ở S5 |
 | 04 | M04.5 Đố Ca Dao (FEAT_02) | Missing | |
 | 05 | M05.1–M05.5 Lán Thợ, Bàn ăn, Đồ bảo hộ, Giỏ 120, Lazy-tick | Partial | Phần tốt nhất của code; vẫn client-side |
 | 06 | M06.1 Đơn HTX | Partial | |

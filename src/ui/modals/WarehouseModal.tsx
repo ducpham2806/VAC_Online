@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { GAME_STAGE } from '../../config/features';
+import { CRAFT_MIN_STAGE } from '../../domain/progression';
 import { GAME_CATALOG } from '../../data/masterData';
 import { useGameStore } from '../../store/useGameStore';
 import { GameIcon } from '../GameIcon';
@@ -9,6 +11,7 @@ export function WarehouseModal() {
   const inventory = useGameStore((s) => s.inventory);
   const farmBusy = useGameStore((s) => s.farmBusy);
   const sellToHtx = useGameStore((s) => s.sellToHtx);
+  const eatDish = useGameStore((s) => s.eatDish);
   const setActiveModal = useGameStore((s) => s.setActiveModal);
   const [qtyById, setQtyById] = useState<Record<string, number>>({});
 
@@ -41,6 +44,8 @@ export function WarehouseModal() {
             const have = inventory[item.id] ?? 0;
             const qty = Math.min(have, Math.max(1, qtyById[item.id] ?? have));
             const sellable = item.baseSellGold > 0;
+            // S4: món Bếp Quê ăn được để hồi ⚡ (luật ở src/domain/cooking.ts eatDish).
+            const edible = GAME_STAGE >= CRAFT_MIN_STAGE && item.category === 'RECIPE' && item.staminaDelta > 0;
             return (
               <div key={item.id} className="bg-white border-2 border-[#c88a4b] rounded-xl p-2 flex flex-col gap-1.5">
                 <div className="font-extrabold text-[#2a180c]">
@@ -72,6 +77,15 @@ export function WarehouseModal() {
                   </div>
                 ) : (
                   <div className="text-[11px] text-[#664930]">HTX không thu mua vật phẩm này.</div>
+                )}
+                {edible && (
+                  <button
+                    disabled={farmBusy}
+                    onClick={() => eatDish(item.id)}
+                    className="touch-btn min-h-[44px] bg-[#f5b82e] text-[#2a180c] font-extrabold px-2 rounded-lg cursor-pointer disabled:opacity-60"
+                  >
+                    🍚 Ăn (+{item.staminaDelta} ⚡)
+                  </button>
                 )}
               </div>
             );

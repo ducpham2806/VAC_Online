@@ -136,3 +136,54 @@ describe('tilesFromSnapshot', () => {
     expect(tiles.filter((t) => t.itemId).length).toBe(1);
   });
 });
+
+// vitest chạy DEV → GAME_STAGE = 6 nên Bếp Quê mở; nhánh GĐ1 test ở src/domain/cooking.test.ts.
+describe('Bếp Quê & Xưởng (S4) — offline qua kitchenSlice', () => {
+  beforeEach(() => {
+    store.setState({ ...createFreshState(), level: 15, gold: 1000, inventory: { CROP_01: 4 } });
+  });
+
+  it('xây Bếp Củi → nấu Cơm (trừ 3 Lúa, 0⚡) → lấy món → ăn hồi ⚡', () => {
+    store.getState().craftOrBuyCatalogItem('MAC_02'); // đường cũ (Bách Khoa) dẫn tới xây xưởng
+    expect(store.getState().gold).toBe(650);
+    expect(store.getState().machines.MAC_02).toEqual({ craftItemId: null, readyAt: null });
+
+    store.getState().craftOrBuyCatalogItem('PROD_01'); // không còn "mua" món bằng vàng
+    let s = store.getState();
+    expect(s.gold).toBe(650);
+    expect(s.inventory.CROP_01).toBe(1);
+    expect(s.stamina).toBe(50);
+    expect(s.machines.MAC_02.craftItemId).toBe('PROD_01');
+
+    store.setState({ machines: { MAC_02: { craftItemId: 'PROD_01', readyAt: Date.now() - 1 } } });
+    store.getState().collectKitchenCraft('MAC_02');
+    expect(store.getState().inventory.PROD_01).toBe(1);
+
+    store.setState({ stamina: 40, staminaUpdatedAt: Date.now() });
+    store.getState().eatDish('PROD_01');
+    s = store.getState();
+    expect(s.stamina).toBe(45);
+    expect(s.inventory.PROD_01).toBe(0);
+  });
+
+  it('Nồi Đất qua cookRandomDish (tên cũ): cần Bếp Củi, sai không thưởng, đúng +10 💎', () => {
+    store.setState({ inventory: { CROP_09: 2 } });
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    expect(store.getState().toastMessage).toContain('Bếp Củi');
+    store.setState({ machines: { MAC_02: { craftItemId: null, readyAt: null } } });
+    store.getState().cookRandomDish(['CROP_09']);
+    expect(store.getState().gems).toBe(50);
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    expect(store.getState().gems).toBe(60);
+    expect(store.getState().discoveredRecipes).toEqual(['PROD_09']);
+    expect(store.getState().inventory.CROP_09).toBe(2);
+  });
+
+  it('save cũ (trước S4) thiếu machines / discoveredRecipes vẫn mở được', async () => {
+    localStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify({ state: { level: 7, gold: 900 }, version: 1 }));
+    await store.persist.rehydrate();
+    expect(store.getState().level).toBe(7);
+    expect(store.getState().machines).toBeDefined();
+    expect(Array.isArray(store.getState().discoveredRecipes)).toBe(true);
+  });
+});

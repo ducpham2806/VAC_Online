@@ -13,6 +13,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
+- [ ] Chạy `0009_kitchen.sql` → `master_catalog_seed.sql` → `recipe_seed.sql` trong SQL Editor (Bếp Quê S4; chưa ai dùng được tới khi mở GĐ2). Hoặc cho phép AI áp qua Supabase connector.
 - [ ] (Không gấp) Chạy lại `supabase/seed/master_catalog_seed.sql` trong SQL Editor để cập nhật chữ mô tả Chó Phú Quốc 50% / Ngỗng 70% trên DB (luật không đổi).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
@@ -62,7 +63,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~S3: Hướng dẫn tân thủ Chương 1–2 (Bác Bảy, 8 bước, `src/domain/tutorial.ts`)~~ ✅ 2026-11-02
 - [ ] S3: closed beta 50–100 người (xem số liệu bằng `npm run supabase -- report`).
 - [x] ~~S4: đặc tả Bếp Quê & Xưởng + 4 quyết định PO (Nồi Đất khám phá, giữ dữ liệu gốc, giữ giá, mở GĐ2) — `17` mục C2~~ ✅ 2026-11-02
-- [ ] S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu).
+- [x] ~~S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu)~~ ✅ 2026-11-02 (chờ PO chạy `0009` + seed)
+- [ ] Mở GĐ2: đặt mục tiêu Chương 3 (Bếp Quê), `/vac-balance-check`, migration đổi `app_game_stage()` = 2, `VITE_GAME_STAGE=2` trên Vercel.
 - [ ] S5: Lán Thợ (Cối Xay Cám, Đan Lát, Khung Cửi, đồ thợ, lazy-tick ở server).
 - [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.
