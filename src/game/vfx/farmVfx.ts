@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { VFX_COLORS, VfxEvent, diffVfxEvents } from '../../domain/vfxEvents';
 import { useGameStore } from '../../store/useGameStore';
+import { soundFX } from '../../services/soundEffects';
 
 /**
  * VFX nông trại dựa trên KẾT QUẢ thật trong store (chạy giống nhau ở online/offline):
@@ -22,6 +23,7 @@ export class FarmVfx {
 
   play(ev: VfxEvent): void {
     if (ev.kind === 'levelUp') {
+      soundFX.playLevelUpFanfare();
       this.confetti(ev.level);
       return;
     }

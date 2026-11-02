@@ -130,6 +130,15 @@ export const App: React.FC = () => {
   const [dismissPortraitWarning, setDismissPortraitWarning] = useState(false);
 
 
+  // Âm "lật trang giấy dó" mỗi khi mở một cửa sổ (chỉ hiệu ứng).
+  useEffect(
+    () =>
+      useGameStore.subscribe((now, prev) => {
+        if (now.activeModal && now.activeModal !== prev.activeModal) soundFX.playPageFlip();
+      }),
+    []
+  );
+
   useEffect(() => {
     initSupabaseRealtimeSync();
     const checkOrientation = () => {
