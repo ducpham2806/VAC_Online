@@ -2,6 +2,7 @@
 
 Danh sách việc **duy nhất** của dự án. Việc xong: đánh dấu `[x]`, gạch đi và ghi ngày; không xóa dòng.
 Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md`.
+Bàn giao cho người làm sau (tóm tắt toàn bộ đã làm, quy tắc, bẫy cần tránh): `17` mục **C3**.
 
 ---
 
@@ -13,6 +14,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
+- [ ] (Không gấp — Bếp chỉ chạy khi mở GĐ2) Dán `supabase/migrations/0009_kitchen.sql` rồi `supabase/seed/recipe_seed.sql` vào SQL Editor, báo em kiểm lại bằng SQL chỉ đọc.
 - [ ] (Không gấp) Chạy lại `supabase/seed/master_catalog_seed.sql` trong SQL Editor để cập nhật chữ mô tả Chó Phú Quốc 50% / Ngỗng 70% trên DB (luật không đổi).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
@@ -43,7 +45,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 
 ---
 
-## B. Sprint đang làm — S2
+## B. Sprint đang làm — S2 → S4
 
 - [x] ~~Tách `useGameStore.ts` thành 6 slice (giữ nguyên API)~~ ✅ 2026-11-01
 - [x] ~~Tách 11 modal khỏi `App.tsx` (2.084 → 699 dòng), dùng selector Zustand~~ ✅ 2026-11-01
@@ -62,7 +64,11 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~S3: Hướng dẫn tân thủ Chương 1–2 (Bác Bảy, 8 bước, `src/domain/tutorial.ts`)~~ ✅ 2026-11-02
 - [ ] S3: closed beta 50–100 người (xem số liệu bằng `npm run supabase -- report`).
 - [x] ~~S4: đặc tả Bếp Quê & Xưởng + 4 quyết định PO (Nồi Đất khám phá, giữ dữ liệu gốc, giữ giá, mở GĐ2) — `17` mục C2~~ ✅ 2026-11-02
-- [ ] S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu).
+- [x] ~~S4-1: luật Bếp `src/domain/cooking.ts` + công thức 14 món trong catalog + `recipe_seed.sql`~~ ✅ 2026-11-02
+- [x] ~~S4-2: migration `0009_kitchen.sql` (5 RPC) + `supabase/tests/kitchen.test.sql`~~ ✅ 2026-11-02
+- [ ] S4-3: nối store/gateway: `kitchenSlice.ts`, `FarmSnapshot.machines/recipes`, save cục bộ có `machines`/`discoveredRecipes`; sửa `qcTestRunner` dùng ID nguyên liệu.
+- [ ] S4-4: `CookingModal` 3 tab (Xưởng / Sổ Tay / Nồi Đất) + nút "🍚 Ăn" ở Kho; kiểm Playwright ở GĐ2 (1280×720, 844×390).
+- [ ] S4-5: tài liệu (`17` Phụ lục 1, checklist `12`, `02`) + `/vac-balance-check` cho Bếp + phiếu nghiệm thu.
 - [ ] S5: Lán Thợ (Cối Xay Cám, Đan Lát, Khung Cửi, đồ thợ, lazy-tick ở server).
 - [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.

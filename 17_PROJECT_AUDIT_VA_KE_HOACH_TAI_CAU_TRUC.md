@@ -250,6 +250,56 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 4. Code cũ 🟢: giữ chữ ký action.
 5. DB 🟡: `0009` chỉ thêm; PO dán vào SQL Editor.
 
+
+**Tiến độ S4 (2026-11-02):**
+- S4-1 xong (`e3ae998`): domain + công thức + seed.
+- S4-2 xong (`8c1fd50`): `0009` + test SQL. **PO chưa dán `0009` lên Supabase thật.**
+- Còn lại: S4-3 store / gateway, S4-4 UI, S4-5 tài liệu + `/vac-balance-check`.
+
+### C3. Bàn giao cho người làm sau (cập nhật 2026-11-02)
+**Đọc trước:**
+- `AGENTS.md` (RULE D0/D1).
+- File này: Phần A (hiện trạng), C1 (đã làm), C2 (đặc tả S4).
+- `VIEC_CAN_LAM.md`: danh sách việc duy nhất, gồm cả việc PO.
+
+**Quy tắc làm việc:**
+- Luật chơi là hàm thuần ở `src/domain/*`, có bản sao SQL trong `supabase/migrations/NNNN_*.sql`. Sửa thì sửa cả 2 phía + test.
+- Migration chỉ thêm, không DROP bảng hay cột, không đổi ID catalog.
+- Seed sinh bằng `npm run seed:catalog`.
+- Kiểm tra: `npm run typecheck && npm test && npm run build` (+ `npm run test:sql`, + `npm run test:art`).
+- Giai đoạn mở:
+  - Client: `src/config/features.ts`. Production = 1, dev / vitest = 6.
+  - Server: `app_game_stage()` = 1.
+- Dừng chờ PO khi đụng DB, kinh tế hoặc core loop.
+
+**Đã làm (theo thứ tự):**
+- S0: build, CI, auth, `0003`.
+- S1: vòng chơi GĐ1 trên server, `0004` / `0005`.
+- Quyết định kinh tế: thuế 5%, bảo hiểm 80%, PK −5⚡, Chó 50%, cửa sổ trộm 2 phút.
+- S2:
+  - Tách store / modal.
+  - Khai hoang 5×5 (`0006`); mục tiêu nhiệm vụ (`0007`).
+  - HUD màn thấp; analytics (`0008`).
+- S3: tutorial.
+- Art tạm 64 màu: `tools/art/*`, `npm run art:all`.
+- Bản chạy thử GĐ1: `npm run build:preview` → Artifact https://claude.ai/artifact/8R1sgtQahsaAaGgG3DB36h (v2).
+- Sửa CI `sql`. Dọn tài liệu D.
+- Vá lỗ hổng Bách Khoa: `canCraftOrBuy`.
+- S4-1, S4-2 (trên).
+- Supabase thật: đã chạy `0001 → 0008`, chưa chạy `0009`.
+
+**Bẫy cần tránh:**
+- Python `open(p,'w').write(open(p).read())` làm file bị xóa trắng.
+- `pkill -f vite` giết luôn shell; dùng `fuser -k PORT/tcp`.
+- Quên `seed:catalog` thì test seed đỏ.
+- Vitest có GĐ = 6, nên nhánh GĐ1 phải test ở domain.
+- Cuối script bash không viết `[ … ] && …`.
+- UPDATE bị RLS chặn không báo lỗi (chỉ 0 dòng).
+- Supabase `apply_migration` treo khi gặp DROP POLICY: nhờ PO dán SQL.
+- Không dán / commit key. Không tạo PR mới (đang dùng PR #1).
+
+**Việc tiếp theo cho AI:** S4-3 → S4-5 (`VIEC_CAN_LAM.md` mục B), rồi S5 Lán Thợ.
+
 ---
 
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
