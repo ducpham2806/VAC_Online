@@ -44,8 +44,12 @@ for f in supabase/migrations/000[2-9]_*.sql; do "${PSQL[@]}" -d "$DB" -f "$f" >/
 run supabase/seed/master_catalog_seed.sql
 run supabase/seed/quest_catalog_seed.sql
 run supabase/seed/master_catalog_seed.sql
+run supabase/seed/recipe_seed.sql
+run supabase/seed/recipe_seed.sql
 echo "→ supabase/tests/farm_core.test.sql"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/farm_core.test.sql
+echo "→ supabase/tests/kitchen.test.sql"
+"${PSQL[@]}" -d "$DB" -f supabase/tests/kitchen.test.sql
 # Không viết `[ … ] && echo …` ở cuối script: khi điều kiện sai (CI có PGHOST → STARTED_LOCAL=0)
 # lệnh cuối trả về 1 và cả script thoát mã 1 dù mọi test đã PASS (lỗi CI job `sql` từ S1).
 if [ "$STARTED_LOCAL" = 1 ]; then echo "(Postgres tạm đã dừng)"; fi
