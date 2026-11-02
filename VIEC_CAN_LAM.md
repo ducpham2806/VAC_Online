@@ -13,7 +13,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Bật Anonymous Sign-ins~~ ✅ 2026-11-01
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
-- [ ] Chạy `0009_kitchen.sql` → `master_catalog_seed.sql` → `recipe_seed.sql` trong SQL Editor (Bếp Quê S4; chưa ai dùng được tới khi mở GĐ2). Hoặc cho phép AI áp qua Supabase connector.
+- [x] ~~Chạy `0009_kitchen.sql` (PO) + `recipe_seed.sql` (AI qua connector)~~ ✅ 2026-11-02 (AI đã kiểm: 3 bảng, 5 RPC Bếp, 34 dòng công thức, Security Advisor 0 ERROR)
 - [ ] (Không gấp) Chạy lại `supabase/seed/master_catalog_seed.sql` trong SQL Editor để cập nhật chữ mô tả Chó Phú Quốc 50% / Ngỗng 70% trên DB (luật không đổi).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
@@ -90,3 +90,15 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Sprint S1: vòng chơi GĐ1 trên server (`0004`), Kho/HTX, persist, khóa theo Giai đoạn~~ ✅ 2026-11-01
 - [x] ~~Áp dụng Claude-Code-Game-Studios: rule, skill `vac-*`, hook~~ ✅ 2026-11-01
 - [x] ~~`0005` sửa Security Advisor + smoke test thật~~ ✅ 2026-11-01
+
+---
+
+## F. Nhật ký việc đã làm (RULE bắt buộc — `AGENTS.md` mục 1.5)
+Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra — còn dở**. Mới nhất ở dưới cùng. Không xóa.
+
+- **2026-11-02** — S4-1 luật Bếp Quê dạng hàm thuần `src/domain/cooking.ts` + công thức theo ID (`machineId`, `recipe`) trong `GAME_CATALOG` + seed `recipe_seed.sql` — commit `e3ae998` — 22 test domain PASS.
+- **2026-11-02** — S4-2 migration `0009_kitchen.sql` (3 bảng, 5 RPC `rpc_build_machine/start_craft/collect_craft/eat_dish/cook_pot`, snapshot có `machines`/`recipes`) + `supabase/tests/kitchen.test.sql`; `test-sql.sh` chạy thêm seed công thức và test bếp — commit `7c62a5a` — `npm run test:sql` PASS.
+- **2026-11-02** — S4-3 client: `src/store/slices/kitchenSlice.ts`, `CookingModal` 3 tab (Xưởng / Sổ Tay / Nồi Đất), nút "🍚 Ăn" trong Kho, `cookRandomDish` / `craftOrBuyCatalogItem` giữ tên nhưng theo luật mới, QC `TC-04.2a` viết lại; tài liệu `17` C2, `03` — commit `65a4803` — typecheck + 147 test + build + test:sql PASS; chụp 1280×720 & 844×390.
+- **2026-11-02** — PO chạy `0009` trên Supabase thật; AI chạy `recipe_seed.sql` qua connector và kiểm: 3 bảng mới, 22 RPC (5 RPC Bếp), `anon` không gọi được, 14 món / 34 dòng công thức, `app_game_stage() = 1` (Bếp chưa mở cho người chơi). Security Advisor: 0 ERROR, WARN như cũ.
+- **2026-11-02** — Thêm RULE bắt buộc ghi nhật ký vào `AGENTS.md` mục 1.5 + mục F này.
+

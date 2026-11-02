@@ -68,6 +68,7 @@ Tài liệu này được nạp tự động cho các AI Coding Agents (**Antigr
 
 ## 1.5. Trạng Thái Thực Tế & Agent/Skill Có Thật (đọc trước khi làm bất kỳ task nào)
 * **Danh sách việc duy nhất: `VIEC_CAN_LAM.md`** (việc của PO trước, sprint đang làm, lộ trình, backlog tài liệu). Xong việc nào thì đánh dấu `[x]` + gạch đi, không xóa.
+* **🚨 RULE BẮT BUỘC — GHI NHẬT KÝ (PO yêu cầu 2026-11-02):** mọi việc AI làm xong (code, migration, áp DB thật, tài liệu, kiểm tra, quyết định của PO) **phải ghi ngay** vào mục **`F. Nhật ký việc đã làm`** của `VIEC_CAN_LAM.md` **trước khi báo xong / kết thúc lượt**. Mỗi dòng gồm: ngày, việc đã làm, file/commit chính, kết quả kiểm tra, việc còn dang dở. Ghi cả việc làm dở (ghi rõ "dừng ở đâu") để phiên sau đọc là làm tiếp được. Không xóa dòng cũ.
 * **Hiện trạng code ≠ tài liệu.** Trước khi tin một con số trong `00 ➔ 16` (155 thực thể, 37 TC, 11 bảng, 7 RPC, `SocialPlazaScene`…), đối chiếu `17_PROJECT_AUDIT` mục A1 và Phụ lục 1.
 * **Sprint S0 đã xong** (`17` Phần C): build chạy, có vitest + CI, auth chỉ qua Supabase, migration `0003` khóa RPC bằng `auth.uid()`, công cụ debug chỉ hiện ở DEV, dữ liệu `unlockWave` 5 Đợt. **Sprint S1 đã xong phần code** (`17` mục C1):
   * Vòng chơi GĐ1 tính trên server (`0004_farm_core.sql`). Luật chung đặt ở `src/domain/`, **sửa luật thì phải sửa cả SQL**.
