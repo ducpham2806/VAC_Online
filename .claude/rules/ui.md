@@ -5,14 +5,9 @@ paths:
   - "src/components/**"
   - "src/game/**"
 ---
-
-# Giao diện & Phaser — chuyển thể từ CCGS `ui-code`
-
-- UI **không sở hữu state game**: chỉ đọc store (dùng selector `useGameStore((s) => s.x)`) và gọi action. Không tính tiền hay luật trong component.
-- **2-Thumb Landscape** (`06_MASTER_UI_UX`): nút chạm ≥ 44px (`.touch-btn`), chừa `safe-area-inset-*`, chất liệu gỗ/tre/giấy dó. Phải kiểm ở **1280×720 và 844×390**.
-- Công cụ debug chỉ hiện sau `import.meta.env.DEV`. Tính năng của giai đoạn sau phải bọc `isStageOpen(n)` (`src/config/features.ts`).
-- Phaser:
-  - Gỡ mọi `subscribe` / `EventBus.on` / timer khi scene `shutdown`/`destroy`.
-  - Thao tác chạm phải qua `pressedOnCanvas()`, vì click lên nút HTML không được xuyên xuống ô đất.
-  - Đồng hồ dùng `Date.now() + clockOffsetMs`.
-- Component mới đặt trong `src/ui/hud` hoặc `src/ui/modals`, không nhồi thêm vào `App.tsx`.
+# Giao diện & Phaser
+- UI không sở hữu state game: đọc store bằng selector, gọi action; không tính luật trong component.
+- HUD 2 ngón cầm ngang (`06`): `.touch-btn` ≥ 44px, `safe-area-inset-*`, gỗ/tre/giấy dó; kiểm ở 1280×720 và 844×390.
+- Debug chỉ sau `import.meta.env.DEV`; tính năng GĐ sau bọc `isStageOpen(n)`.
+- Phaser: gỡ `subscribe`/`EventBus.on`/timer khi `shutdown`; chạm qua `pressedOnCanvas()`; đồng hồ `Date.now() + clockOffsetMs`.
+- Component mới ở `src/ui/hud` hoặc `src/ui/modals`, không nhồi vào `App.tsx`.

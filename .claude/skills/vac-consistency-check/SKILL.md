@@ -5,30 +5,10 @@ argument-hint: "[full | file:<tên> | topic:<chủ đề>]"
 allowed-tools: Read, Grep, Glob, Bash(npx vitest run *), Bash(grep *), Bash(ls *), Bash(wc *)
 ---
 
-# /vac-consistency-check — kiểm RULE D0 (chuyển thể từ CCGS `consistency-check`)
+# /vac-consistency-check (RULE D0)
+Chỉ báo cáo; sửa khi PO đồng ý.
+1. **Sự thật từ code** (ghi FOUND + lệnh, hoặc ABSENT): số thực thể/loài/Đợt (`masterData.ts`, `npx vitest run src/data`); số test (`npx vitest run`, số `runCase(` trong `qcTestRunner.ts`, số `t.eq|t.expect_error` trong `supabase/tests/`); bảng/RPC (grep `CREATE TABLE IF NOT EXISTS`, `CREATE OR REPLACE FUNCTION public.rpc_` trong migrations); trạng thái module (`17` Phụ lục 1).
+2. **Grep tài liệu** `0*_*.md 1*_*.md AGENTS.md`: `155|166|146 thực thể`, `81 loài`, `23 ➔ 45`, `37 Test|TC`, `11 Bảng`, `7 .*RPC`, `C1 ➔ C1[24]`, `v9\.[0-9]`, tên GĐ, prefix lạ `TREE_|DISH_|DEC_|ITEM_`. Chỉ đọc đoạn quanh dòng trúng.
+3. **Phân loại:** SAI HIỆN TRẠNG (sửa theo `17`) · THIẾT KẾ ĐÍCH (giữ, ghi rõ "đích") · MÂU THUẪN THIẾT KẾ (PO chọn; `01`/`02`/`04` thắng `13`–`16`).
 
-Chỉ **báo cáo**, không tự sửa. Sửa chỉ khi PO đồng ý.
-
-## Bước 1 — Lấy "sự thật" từ code (không đoán)
-Mỗi giá trị ghi **FOUND** (kèm lệnh/đường dẫn) hoặc **ABSENT**:
-- Số thực thể, loài V-A-C và lũy kế Đợt: `src/data/masterData.ts`, `src/data/catalog.test.ts` (chạy `npx vitest run src/data`).
-- Số test: `npx vitest run` (tổng), số `runCase(` trong `src/services/qcTestRunner.ts`, số assertion `t.eq|t.expect_error` trong `supabase/tests/`.
-- Bảng / RPC: grep `CREATE TABLE IF NOT EXISTS` và `CREATE OR REPLACE FUNCTION public.rpc_` trong `supabase/migrations/`.
-- Module xong chưa: Phụ lục 1 của `17_PROJECT_AUDIT…md`.
-
-## Bước 2 — Grep tài liệu, không đọc cả file
-Chạy `grep -n` trong `0*_*.md 1*_*.md AGENTS.md` theo các mẫu:
-`155|166|146 thực thể`, `81 loài`, `23 ➔ 45`, `37 Test|TC`, `11 Bảng|bảng`, `7 .*RPC`, `C1 ➔ C1[24]`, `v9\.[0-9]`, tên giai đoạn, ID prefix (`TREE_|DISH_|DEC_|ITEM_`).
-Chỉ đọc đoạn quanh dòng trúng (offset/limit) khi cần hiểu ngữ cảnh.
-
-## Bước 3 — Phân loại từng chỗ lệch
-- **SAI HIỆN TRẠNG:** tài liệu nói về code hiện tại nhưng khác code. Sửa về số trong file 17.
-- **THIẾT KẾ ĐÍCH:** mục tiêu tương lai (ví dụ 11 bảng ở GĐ6). Giữ nguyên, nhưng phải ghi rõ là "đích".
-- **MÂU THUẪN THIẾT KẾ:** 2 tài liệu nói 2 điều khác nhau về cùng một luật. Cần PO chọn; `01`/`02`/`04` thắng `13`–`16`.
-
-## Bước 4 — Báo cáo
-| File:dòng | Nội dung | Sự thật (nguồn) | Loại | Đề xuất |
-|---|---|---|---|---|
-
-Kết luận: **NHẤT QUÁN**, **CÓ LỆCH (n chỗ)** hoặc **NOT ASSESSED** (nếu thiếu dữ liệu ở Bước 1; nói rõ thiếu gì).
-Agent phù hợp: `vac-qa` (rà soát), `vac-designer` (chọn phương án cho mâu thuẫn thiết kế).
+Báo cáo bảng `File:dòng | Nội dung | Sự thật (nguồn) | Loại | Đề xuất`; kết luận **NHẤT QUÁN** / **CÓ LỆCH (n)** / **NOT ASSESSED** (nói thiếu gì). Agent: `vac-qa`, `vac-designer`.

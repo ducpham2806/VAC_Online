@@ -5,24 +5,9 @@ argument-hint: "<yêu cầu mới>"
 allowed-tools: Read, Grep, Glob
 ---
 
-# /vac-scope-check (chuyển thể từ CCGS `scope-check`)
+# /vac-scope-check
+1. **Phạm vi gốc:** `17` Phần C (sprint hiện tại) + `VIEC_CAN_LAM.md` mục B + runbook GĐ đang mở (`src/config/features.ts`).
+2. **Phân loại:** Trong phạm vi · Kéo sớm (sprint/GĐ sau) · Ngoài lộ trình (không có trong `00`–`17`) · Cờ đỏ (core VAC, kinh tế, DB).
+3. **Ước lượng (1 người + AI):** số lớp phải đụng (domain, SQL, store, UI, art, tài liệu), cần migration/asset không, rủi ro hồi quy.
 
-## Bước 1 — Phạm vi gốc
-Đọc Phần C trong `17_PROJECT_AUDIT…md` (bảng sprint và mục C của sprint hiện tại), kèm runbook giai đoạn đang mở (`GAME_STAGE` trong `src/config/features.ts`).
-
-## Bước 2 — Phân loại yêu cầu mới
-- **Trong phạm vi:** thuộc sprint hiện tại.
-- **Kéo sớm:** thuộc sprint hoặc giai đoạn sau.
-- **Ngoài lộ trình:** không có trong `00`–`17`.
-- **Đụng cờ đỏ:** core loop VAC, kinh tế hoặc DB (RULE D1).
-
-## Bước 3 — Ước lượng (1 người + AI)
-Cho mỗi yêu cầu: số file/lớp phải đụng (domain, SQL, store, UI, art, tài liệu), có cần migration không, có cần asset không, rủi ro hồi quy.
-
-## Báo cáo
-| Yêu cầu | Loại | Công sức (S/M/L) | Ảnh hưởng tới sprint | Đề xuất |
-|---|---|---|---|---|
-
-**Mức phình** = công sức thêm ÷ công sức sprint gốc. Trên 20% thì phải đề xuất cắt hoặc hoãn thứ khác.
-Kết luận: **NHẬN** / **NHẬN NHƯNG CẮT X** / **HOÃN SANG Sn** / **TỪ CHỐI**. PO quyết.
-Agent: `vac-designer`.
+Báo cáo bảng `Yêu cầu | Loại | Công sức S/M/L | Ảnh hưởng sprint | Đề xuất`. Mức phình = công sức thêm ÷ sprint gốc; > 20% → đề xuất cắt/hoãn. Kết luận **NHẬN** / **NHẬN NHƯNG CẮT X** / **HOÃN SANG Sn** / **TỪ CHỐI**; PO quyết. Agent: `vac-designer`.

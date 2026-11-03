@@ -4,11 +4,8 @@ paths:
   - "1*_*.md"
   - "AGENTS.md"
 ---
-
-# Tài liệu — RULE D0 (chuyển thể từ CCGS `design-docs`)
-
-- `00 → 16` mô tả **thiết kế đích**. **Hiện trạng thật** (số thực thể, test, bảng/RPC, module xong chưa) chỉ ghi ở `17_PROJECT_AUDIT…md`. Không sửa số hiện trạng rải rác ở file khác.
-- Không chép lại bảng giữa các file; dẫn link tới file gốc (Single Source of Truth trong `AGENTS.md`).
-- Công thức phải có định nghĩa biến, khoảng giá trị và ví dụ. Edge case phải nói rõ chuyện gì xảy ra. Tiêu chí nghiệm thu phải kiểm được đúng/sai.
-- Tài liệu lớn (>30 KB): đọc theo đoạn (offset/limit), không đọc cả file; hook `read-guard` sẽ nhắc.
-- Đổi con số trong `01`/`02` thì chạy `/vac-propagate-change`. Định kỳ chạy `/vac-consistency-check`.
+# Tài liệu (RULE D0)
+- `00`→`16` là thiết kế đích; số hiện trạng (thực thể, test, bảng/RPC, module) chỉ ghi ở `17`.
+- Không chép bảng giữa các file, dẫn link tới nguồn duy nhất.
+- Công thức có định nghĩa biến, khoảng giá trị, ví dụ; edge case nói rõ kết quả; tiêu chí nghiệm thu kiểm được đúng/sai.
+- Đổi số trong `01`/`02` → `/vac-propagate-change`; định kỳ `/vac-consistency-check`.
