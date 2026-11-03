@@ -20,7 +20,7 @@ Bản rút gọn (2026-11-03). Bản đầy đủ cũ: `docs_archive_merged/AGEN
 3. **Gốc gọn:** chỉ giữ `00`→`17`, `README.md`, `AGENTS.md`, `VIEC_CAN_LAM.md`; file gộp/cũ chuyển vào `docs_archive_merged/`.
 
 ### RULE D1 — Giữ hướng game, không phá cái cũ, cảnh báo sớm
-1. **Core gameplay:** trung tâm là Vườn–Ao–Chuồng 3 miền (70% chung / 30% độc quyền), 5 Đợt theo 10 Chương Gia Phả, năng lượng Bát Cơm `⚡` (`0⚡` cho trồng/thu/tưới tại nhà và Sảnh Chung; PK `-5⚡`/trận). PK, Loạn Chiến, Máy Thùng, Lễ hội chỉ bổ trợ, không phá kinh tế nông trại (trần Hyper-Casual ≤ 1.500/ngày, thuế Sới Đình 10% zero-sum).
+1. **Core gameplay:** trung tâm là Vườn–Ao–Chuồng 3 miền (70% chung / 30% độc quyền), 5 Đợt theo 10 Chương Gia Phả, năng lượng Bát Cơm `⚡` (`0⚡` cho trồng/thu/tưới tại nhà và Sảnh Chung; PK `-5⚡`/trận). PK, Loạn Chiến, Máy Thùng, Lễ hội chỉ bổ trợ, không phá kinh tế nông trại (trần Hyper-Casual ≤ 1.500 🏮 Xu Hội Làng/ngày, thuế Sới Đình 10% zero-sum).
 2. **Art & UI:** theo `05`/`06` — 64 màu, góc 3/4 top-down, lưới 32×32 (ô đất 168×80), viền ấm `#3D2314` (cấm `#000000`), 8–12 frame; chất liệu gỗ/tre/giấy dó, HUD 2 ngón cầm ngang, `.touch-btn` ≥ 38–44px, `safe-area-inset-*`.
 3. **Code:** TypeScript strict, 0 `any`, data-driven từ `GAME_CATALOG` (`src/data/masterData.ts`). Không đổi chữ ký hàm, state hay luồng đang chạy ổn.
 4. **Database additive-only:** chỉ `CREATE … IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS … DEFAULT`, `CREATE OR REPLACE`. Cấm `DROP TABLE/COLUMN`, đổi tên cột đang dùng, đổi ID thực thể (`CROP_ ANI_ AQUA_ PROD_ MAC_ WORK_ PET_ FASH_ BM_ NEW_ CRAFT_ IAP_ DEF_ TRAP_`). `localStorage` cũng phải tương thích ngược.

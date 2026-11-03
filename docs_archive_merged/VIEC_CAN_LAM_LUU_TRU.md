@@ -69,6 +69,24 @@ Chỉ thêm vào cuối, không xóa dòng. Việc còn mở và nhật ký mớ
 - [x] ~~Áp dụng Claude-Code-Game-Studios: rule, skill `vac-*`, hook~~ ✅ 2026-11-01
 - [x] ~~`0005` sửa Security Advisor + smoke test thật~~ ✅ 2026-11-01
 
+### A2. Quyết định thiết kế / kinh tế (PO chốt 2026-11-03)
+- [x] ~~Duyệt 2 mặc định: PK `-5⚡`/trận, Máy Thùng Hyper-Casual `0⚡`~~ ✅ 2026-11-03
+- [x] ~~Trần thưởng 1.500/ngày: Xu Hội Làng hay 🪙?~~ ✅ 2026-11-03: **🏮 Xu Hội Làng**
+- [x] ~~Mâu thuẫn `17` A4~~ ✅ 2026-11-03:
+  - [x] ~~Phòng Sảnh Chung~~ → **30 CCU**
+  - [x] ~~Đình Làng~~ → **solo 5k/15k/50k**
+  - [x] ~~Lễ cưới~~ → **1.000 điểm thân mật**
+  - [x] ~~Nồi Bánh Chưng~~ → **12h cả làng**
+  - [x] ~~Số món ăn~~ → **27**
+- [x] ~~Đường cong XP `round(60 × L^1.5)`, tối đa Lv.60~~ ✅ 2026-11-03 (xem lại khi có beta)
+- [x] ~~Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK~~ ✅ 2026-11-03: PO xác nhận chỉ dùng tiền trong game (🪙/💎/🏮)
+- [x] ~~Chọn nguồn ảnh sprite đẹp~~ ✅ 2026-11-03: PO tự tạo bằng ChatGPT, AI nhập + hậu kỳ
+- [x] ~~Duyệt sửa 2 lỗi cân bằng trước GĐ2 (Bùn Phù Sa, Cà Phê Muối)~~ ✅ 2026-11-03 (`0016`)
+
+### A1 / B / C (2026-11-03)
+- [x] ~~Merge nhánh GĐ2 `ccr-0f19bfc4-fkqi1b`~~ ✅ (PR #2 đã merge)
+- [x] ~~`/vac-balance-check` Đợt 2 trước khi mở GĐ2~~ ✅ 2026-11-03 (`17` C4)
+
 ---
 
 ## 2. Nhật ký việc đã làm (cũ, mới nhất ở dưới)
@@ -94,3 +112,5 @@ Chỉ thêm vào cuối, không xóa dòng. Việc còn mở và nhật ký mớ
 - **2026-11-03** — AI áp `0013_craft_gear` + seed (2 dòng `master_catalog` đồ thợ, `machine_id` + 4 dòng công thức, mục tiêu Ch.7) lên Supabase thật. Kiểm: 26 RPC, 38 dòng công thức, `anon` không gọi được `rpc_equip_worker_gear`, snapshot có `gear_until`. Kiểm kinh tế đồ thợ: làm rồi bán HTX lời 0–10🪙/mẻ (không phải nguồn in tiền). **Tiếp theo:** Phụ Cấp Ngày Mùa (300🪙 → 24h thợ tưới cắt 25% thay 15% — AI tự quy đổi "+25% tốc độ", chờ PO duyệt con số).
 - **2026-11-03** — Phụ Cấp Ngày Mùa: domain `giveBonus` (300🪙, 24h, tưới cắt 25%) + 2 test; store `giveWorkerBonus` thật (cloud `rpc_give_worker_bonus`); UI nút thưởng trong Lán Thợ; `0014_worker_bonus.sql` (cột `bonus_until`, `_tick_workers` + snapshot); test SQL trong `crafts.test.sql`. Tài liệu `02`, `17` C3. Kiểm: typecheck, 178 test, test:sql PASS. Chưa áp `0014` lên DB thật. **Tiếp theo:** chuẩn bị mở GĐ2 (công tắc giai đoạn ở DB, bản chạy thử GĐ2, sprite Lán Thợ).
 - **2026-11-03** — Chuẩn bị mở GĐ2: sprite tạm Lán Thợ + Chú Tư + Cô Năm (`tools/art/codeart_world.py`, atlas `world` 62 khung, 0 pixel đen, `test:art` OK) + FarmScene dùng sprite/hoạt ảnh; `0015_app_config_stage.sql` (công tắc giai đoạn trong bảng `app_config`) + `stage_switch.test.sql`; save mẫu bản chạy thử (`PREVIEW_PRESET=gd2`, chỉ khi `VITE_OFFLINE_DEMO=1`) + `npm run build:preview:gd2` + `make_preview_page.py` nhận tên trang. Đăng Artifact riêng tư https://claude.ai/artifact/Ujwb3Y19GPA24rTgxCt7vP; chạy thử bằng Playwright: xây Bếp → nấu Cơm → thuê Chú Tư, vàng khớp, 0 lỗi. Áp `0014` lên DB thật (27 RPC, `anon` bị chặn); `0015` CHƯA áp (Supabase hỏi xác nhận, hết 60 giây). Kiểm: typecheck, 178 test, build, test:sql (7 file), test:art PASS. **Dừng ở:** chờ PO xác nhận áp `0015`, rồi merge + deploy + bật GĐ2.
+- **2026-11-03** — Rút gọn `VIEC_CAN_LAM.md` (20,5 KB → ~6 KB): chuyển 50 việc đã xong + 21 dòng nhật ký cũ sang `docs_archive_merged/VIEC_CAN_LAM_LUU_TRU.md`; gộp 2 dòng "Mở GĐ2" trùng nhau ở B/C; sửa quy tắc ở `AGENTS.md` 1.5 (việc xong thì chuyển sang lưu trữ). Chỉ đụng tài liệu, không đụng code/DB. Còn dở: không.
+- **2026-11-03** — Rút gọn toàn bộ quy tắc nạp vào phiên: `AGENTS.md` 19,9 → 5,6 KB (giữ đủ RULE D0/D1, ghi nhật ký, lệnh kiểm tra, vòng 6 bước; bản cũ lưu ở `docs_archive_merged/AGENTS_v9.3_ban_day_du.md`); `.claude/rules/` 7,4 → 4,6 KB; `.claude/agents/` 9,1 → 5,7 KB (sửa số cũ: 8 van, thuế Chợ 5% / Sới Đình 10%, backend áp DB qua connector khi PO cho phép); `.claude/skills/vac-*` 12,8 → 8,9 KB (giữ nguyên các bước). Chỉ đụng tài liệu/cấu hình AI. Còn dở: không.
