@@ -23,7 +23,10 @@ export const DEFAULT_YIELD = 2;
 /** Buff Mùa Nước Nổi (miền Nam): +1 sản lượng khi thu hoạch thủy sản. */
 export const SOUTH_AQUA_BONUS = 1;
 export const DREDGE_STAMINA = 3;
-export const DREDGE_MUD_GAIN = 3;
+/** Vét ao: số xô bùn = bộ đếm bùn ao (tối đa MAX_POND_MUD), chỉ tăng khi thu thủy sản (PO 2026-11-03, `17` C4). */
+export function dredgeMudGain(pondMudCounter: number): number {
+  return Math.max(0, Math.min(MAX_POND_MUD, Math.floor(pondMudCounter)));
+}
 export const DREDGE_XP = 20;
 export const EXPAND_STAMINA = 5;
 export const EXPAND_GOLD = 500;
@@ -165,6 +168,7 @@ export function applyMud(save: FarmSave, tileId: string, now: number, rng: () =>
   if (!tile?.itemId) return fail('⚠️ Ô này chưa gieo gì để bón bùn!');
   if (tile.mudApplied) return fail('🪣 Ô này đã bón Bùn Phù Sa rồi!');
   if (isMature(tile, now)) return fail('🌾 Đã chín rồi, hãy thu hoạch!');
+  if (findItem(tile.itemId)?.category === 'TREE') return fail('🌳 Cây lâu năm không bón Bùn Phù Sa được — hãy bón cho cây ruộng hoặc vật nuôi!');
   const mudQty = save.inventory[MUD_ITEM_ID] ?? 0;
   if (mudQty <= 0) {
     return fail('🪣 Đã hết Bùn Phù Sa! Hãy bấm nút [🪣 Vét Bùn Ao] để lấy thêm nhé!');
@@ -190,7 +194,8 @@ export function harvestQty(item: CatalogItem, tile: FarmTileEntity, region: Regi
 }
 
 export function pondMudAfterHarvest(item: CatalogItem, tile: FarmTileEntity, pondMudCounter: number): number {
-  return item.category === 'AQUA' || tile.zoneType === 'POND' ? Math.min(MAX_POND_MUD, pondMudCounter + 1) : pondMudCounter;
+  // 2026-11-03 (`17` C4): chỉ thủy sản làm đầy bùn ao — cây trồng ở hàng ô Ao không còn tính (tránh in bùn bằng Lúa 2 phút).
+  return item.category === 'AQUA' ? Math.min(MAX_POND_MUD, pondMudCounter + 1) : pondMudCounter;
 }
 
 /** Ô sau khi thu tại thời điểm `at`: còn lứa thì bắt đầu lứa mới, hết lứa thì dọn ô. */
@@ -262,8 +267,10 @@ function spendStamina(save: FarmSave, amount: number, now: number): FarmSave | n
 export function dredgePond(save: FarmSave, now: number): FarmResult {
   const s = spendStamina(save, DREDGE_STAMINA, now);
   if (!s) return fail(`⚡ Cần ${DREDGE_STAMINA} Năng lượng để Vét Bùn Đáy Ao!`);
+  const gain = dredgeMudGain(save.pondMudCounter);
+  if (gain <= 0) return fail('🐟 Ao chưa có bùn! Thả cá / tôm ở Ao, mỗi lần thu thủy sản +1 xô bùn (tối đa 10).');
   const progress = addXp(s, DREDGE_XP);
-  const mud = (s.inventory[MUD_ITEM_ID] ?? 0) + DREDGE_MUD_GAIN;
+  const mud = (s.inventory[MUD_ITEM_ID] ?? 0) + gain;
   return {
     ok: true,
     save: {
@@ -274,7 +281,7 @@ export function dredgePond(save: FarmSave, now: number): FarmResult {
       inventory: { ...s.inventory, [MUD_ITEM_ID]: mud },
       counters: bumpCounter(s.counters, COUNTER.DREDGE),
     },
-    message: `🪣 Đã Vét Bùn Đáy Ao (-${DREDGE_STAMINA} ⚡): +${DREDGE_MUD_GAIN} Xô Bùn Phù Sa (Đang có: ${mud} xô) & +${DREDGE_XP} XP!`,
+    message: `🪣 Đã Vét Bùn Đáy Ao (-${DREDGE_STAMINA} ⚡): +${gain} Xô Bùn Phù Sa (Đang có: ${mud} xô) & +${DREDGE_XP} XP!`,
   };
 }
 

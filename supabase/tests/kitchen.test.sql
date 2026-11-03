@@ -134,13 +134,14 @@ RESET ROLE;
 UPDATE public.inventories SET quantity = 3 WHERE user_id = 'c0000000-0000-0000-0000-00000000000c' AND item_id = 'CROP_01';
 SET ROLE authenticated;
 SELECT t.expect_error('SELECT public.rpc_cook_pot(ARRAY[''CROP_01'', ''CROP_01'', ''CROP_01''])', '📖 Đã biết món [%] rồi%');
--- Cà Phê Muối (Đợt 2 nhưng cần Cà Phê Đợt 4): không khám phá được, nấu thì báo khóa
+-- Cà Phê Muối: 0016 đổi sang Đậu Phộng + Sữa Bò + Mía (Đợt ≤ 2) → hết khóa Đợt 4, chỉ còn cần khám phá
 SELECT t.expect_error('SELECT public.rpc_start_craft(''MAC_04'', ''PROD_C01'')', '🏭 Hãy xây xưởng này trước!');
 RESET ROLE;
 UPDATE public.profiles SET gold = 5000 WHERE id = 'c0000000-0000-0000-0000-00000000000c';
 SET ROLE authenticated;
 SELECT public.rpc_build_machine('MAC_04');
-SELECT t.expect_error('SELECT public.rpc_start_craft(''MAC_04'', ''PROD_C01'')', '🔒 Cần [%] — mở ở Đợt 4!');
+SELECT t.expect_error('SELECT public.rpc_start_craft(''MAC_04'', ''PROD_C01'')', '📖 Chưa biết công thức%');
+SELECT t.eq((SELECT count(*) FROM public.recipe_ingredients WHERE product_id = 'PROD_C01' AND item_id = 'CROP_C05')::INT, 0, '0016: Cà Phê Muối không còn cần Cà Phê Đợt 4');
 -- Nước Mía mở ở Lv.12: hạ cấp xuống 4 thì báo khóa cấp
 RESET ROLE;
 UPDATE public.profiles SET level = 4 WHERE id = 'c0000000-0000-0000-0000-00000000000c';

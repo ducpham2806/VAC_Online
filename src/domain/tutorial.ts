@@ -68,7 +68,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   {
     id: 'MUD',
     speech: 'Bí mật đáy ao: bùn phù sa bón vào là cây chín ngay, có khi nổ Hoàng Kim!',
-    hint: '🪣 Bấm "Vét Bùn Ao" (-3⚡), rồi chạm ô đang trồng để bón bùn.',
+    hint: '🐟 Thả Cá Rô ở Ao, thu cá để ao có bùn; rồi bấm "Vét Bùn Ao" (-3⚡) và chạm ô ruộng đang trồng để bón.',
     done: (v) => count(v, 'DREDGE') > 0 && count(v, 'APPLY_MUD') > 0,
   },
   {

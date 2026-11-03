@@ -103,10 +103,11 @@ describe('Khai hoang thêm ô thật (offline)', () => {
     expect(plant(save(12), 'TILE_13', 'CROP_01', 1, NOW).ok).toBe(false);
   });
 
-  it('thu hoạch ở ô Ao mới (hàng 5) cũng tăng độ bùn', () => {
+  // 2026-11-03 (`17` C4): chỉ thủy sản làm đầy bùn ao → thử bằng Cá Rô ở ô Ao mới.
+  it('thu thủy sản ở ô Ao mới (hàng 5) cũng tăng độ bùn', () => {
     const base = save(21);
     const tiles = base.tiles.map((t) =>
-      t.id === 'TILE_21' ? { ...t, itemId: 'CROP_01', matureAt: NOW - 1, totalYield: 2, remainingYield: 2 } : t
+      t.id === 'TILE_21' ? { ...t, itemId: 'AQUA_01', matureAt: NOW - 1, totalYield: 1, remainingYield: 1, harvestsLeft: 1 } : t
     );
     const r = harvest({ ...base, tiles }, 'TILE_21', NOW);
     if (!r.ok) throw new Error(r.message);

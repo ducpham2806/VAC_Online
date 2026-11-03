@@ -194,7 +194,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
    - Sổ Tay hiện "???" kèm 1 nguyên liệu gợi ý cho món chưa khám phá. Phải khám phá món trước khi nấu ở xưởng.
 2. **Giữ dữ liệu gốc:**
    - `PROD_11` cần Chè `CROP_N02` (chỉ miền Bắc trồng; miền khác chờ Chợ GĐ3).
-   - `PROD_C01` cần Cà Phê `CROP_C05` (Đợt 4, Lv.22) nên hiện khóa "cần Cà Phê – Đợt 4".
+   - ~~`PROD_C01` cần Cà Phê `CROP_C05` (Đợt 4)~~ → 2026-11-03 đổi sang Đậu Phộng + Sữa Bò + Mía (`C4`, `0016`).
 3. **Giữ giá catalog.** 10/13 món có giá bán < giá nguyên liệu: Bếp là nơi đổi nông sản lấy ⚡/XP và là van hút hàng. Xem lại bằng `/vac-balance-check` sau beta.
 4. **Mở ở GĐ2** (`01` mục 3.2 đã ghi chú). `CRAFT_MIN_STAGE = 2`.
 
@@ -227,7 +227,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 | PROD_11 Trà Đá Kẹo Lạc | MAC_04 | CROP_N02 + CROP_10 + CROP_09 |
 | PROD_12 Ốc Hấp Sả | MAC_02 | AQUA_03 + CROP_11 |
 | PROD_N01 Cốm Làng Vòng | MAC_03 | 2 CROP_15 + CROP_19 |
-| PROD_C01 Cà Phê Muối | MAC_04 | CROP_C05 + ANI_07 + CROP_09 (khóa tới Đợt 4) |
+| PROD_C01 Cà Phê Muối | MAC_04 | CROP_10 + ANI_07 + CROP_09 (đổi 2026-11-03, `C4`) |
 
 **Server `0009_kitchen.sql`** (additive-only):
 - Bảng:
@@ -360,7 +360,9 @@ Mô phỏng 12 ô, chơi bình thường (không bùn), mỗi lần ghé trồng
 4. 🟡 Loài Đợt 2 kém Lúa Lv.1 tính theo phút, nhưng lãi **mỗi lần ghé** tăng theo cấp (Lúa 6 → Chuối 196🪙/ô) — chấp nhận được với lối chơi ghé thăm.
 5. 🟢 Tân thủ chơi 4 lần/ngày cần ~4 ngày lên Lv.3 (chỉ có Lúa, 1 XP/lần thu); chơi liền 30 phút thì ~1 ngày. Xem lại khi có beta.
 
-**Đề xuất chờ PO duyệt (đụng kinh tế + SQL):** (a) bùn chỉ lấy được khi ao đầy: `DREDGE_MUD_GAIN = pond_mud_counter` (tối đa 10, +1 mỗi lần thu ao), hoặc giới hạn bón bùn N lần/ngày; và/hoặc bùn không dùng cho `TREE`; (b) đổi nguyên liệu `PROD_C01` sang loài Đợt ≤ 2 (vd Mía `CROP_09` + Sữa Bò `ANI_07` + Đậu Phộng `CROP_10`) hoặc dời món sang Đợt 4. Chưa sửa số nào.
+**✅ PO duyệt 2026-11-03, đã làm (`0016_pond_mud_fix.sql`):** số xô vét = Độ Bùn Ao (≤ 10, ao rỗng thì từ chối, không mất ⚡); Độ Bùn chỉ tăng khi thu **thủy sản** (cây ở hàng ô Ao không còn tính — nếu không, Lúa 2 phút ở 4 ô Ao vẫn cho ~67 xô/giờ); không bón bùn cho `TREE`; `PROD_C01` = `CROP_10` + `ANI_07` + `CROP_09` (bán 170 > nguyên liệu 112, lãi 58🪙/mẻ 30 phút — theo dõi ở beta). Hướng dẫn tân thủ + Ch.2 đổi gợi ý: thả Cá Rô (Lv.3) rồi vét. Ước tính sau sửa ~10.000–13.000🪙/ngày ở Lv.15 (4 lần ghé). Chưa áp lên DB thật.
+
+**Đề xuất ban đầu (lưu lại):** (a) bùn chỉ lấy được khi ao đầy: `DREDGE_MUD_GAIN = pond_mud_counter` (tối đa 10, +1 mỗi lần thu ao), hoặc giới hạn bón bùn N lần/ngày; và/hoặc bùn không dùng cho `TREE`; (b) đổi nguyên liệu `PROD_C01` sang loài Đợt ≤ 2 (vd Mía `CROP_09` + Sữa Bò `ANI_07` + Đậu Phộng `CROP_10`) hoặc dời món sang Đợt 4. Chưa sửa số nào.
 
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
 

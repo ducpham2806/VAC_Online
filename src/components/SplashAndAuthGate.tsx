@@ -27,7 +27,7 @@ interface SplashAndAuthGateProps {
 const FOLK_PROVERBS = [
   '💡 Ca dao: "Chuồn chuồn bay thấp thì mưa, bay cao thì nắng, bay vừa thì râm" — Trời Mưa Rào tự động tưới ướt 100% ô ruộng!',
   '💡 Mẹo Nhà Nông: Tưới nước Giếng Làng giảm ngay 15% thời gian chín hoàn toàn miễn phí ⚡ Năng lượng!',
-  '💡 Tuần hoàn VAC: Thu đủ 10 mẻ cá dưới Ao rồi bấm Vét Bùn Ao sẽ nhận 3 Xô Bùn Phù Sa kích nổ Nông sản Hoàng Kim ⭐ (x3 giá)!',
+  '💡 Tuần hoàn VAC: Mỗi mẻ cá dưới Ao +1 Độ Bùn (tối đa 10), Vét Bùn Ao nhận đủ số Xô Bùn Phù Sa đó để kích nổ Nông sản Hoàng Kim ⭐ (x3 giá)!',
   '💡 Lán Thợ Đồng Quê: Khi Độ No của 6 Nhân công giảm dưới 35%, họ sẽ tự đi bộ về Bàn Ăn Lán Thợ ăn cơm hồi 100% sức!',
 ];
 

@@ -61,7 +61,7 @@ VALUES
   ('PROD_12', 'CROP_11', 1),
   ('PROD_N01', 'CROP_15', 2),
   ('PROD_N01', 'CROP_19', 1),
-  ('PROD_C01', 'CROP_C05', 1),
+  ('PROD_C01', 'CROP_10', 1),
   ('PROD_C01', 'ANI_07', 1),
   ('PROD_C01', 'CROP_09', 1),
   ('CRAFT_01', 'CROP_24', 1),

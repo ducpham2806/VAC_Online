@@ -1436,7 +1436,7 @@ export const GAME_CATALOG: CatalogItem[] = [
     staminaDelta: 0,
     emoji: '🐟',
     tags: ['FISH', 'PROTEIN'],
-    description: 'Mỗi lần kéo lưới tăng +1 Độ Bùn Ao (Đủ 10/10 vét được 3 Xô Bùn Phù Sa).',
+    description: 'Mỗi lần kéo lưới tăng +1 Độ Bùn Ao (tối đa 10); vét ao nhận số Xô Bùn Phù Sa bằng Độ Bùn.',
   },
   {
     id: 'AQUA_02',
@@ -2369,9 +2369,10 @@ export const GAME_CATALOG: CatalogItem[] = [
     maxMarketGold: 340,
     growOrCraftMinutes: 30,
     yieldCount: 1,
-    inputIngredients: '1 Cà Phê (Trung) + 1 Sữa Bò + 1 Mía',
+    inputIngredients: '1 Đậu Phộng + 1 Sữa Bò + 1 Mía',
     machineId: 'MAC_04',
-    recipe: [{ itemId: 'CROP_C05', qty: 1 }, { itemId: 'ANI_07', qty: 1 }, { itemId: 'CROP_09', qty: 1 }],
+    // 2026-11-03 (PO, `17` C4): bỏ Cà Phê CROP_C05 (Đợt 4) để nấu được từ GĐ2.
+    recipe: [{ itemId: 'CROP_10', qty: 1 }, { itemId: 'ANI_07', qty: 1 }, { itemId: 'CROP_09', qty: 1 }],
     xpReward: 28,
     staminaDelta: 25,
     emoji: '☕',

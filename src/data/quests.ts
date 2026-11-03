@@ -67,7 +67,7 @@ export const STORY_QUESTS: StoryQuest[] = [
       title: 'Vét Bùn Phù Sa & Đỏ Lửa Bếp Củi Quê Mẹ',
       npcSpeaker: '👴 Bác Trưởng Thôn Bảy',
       npcQuote: '"Mùi cá kho riềng sả bốc lên làm bác nhớ bà nội cháu xưa kia quá... Bát đầu tiên mới ra lò, cháu tính đem biếu ai trước?"',
-      desc: 'Vét Bùn Đáy Ao lấy 3 Xô Phù Sa rồi bón Bùn Phù Sa cho 1 ô cây để tìm lại Trang Gia Phả #2.',
+      desc: 'Thả cá ở Ao cho đáy ao có bùn, Vét Bùn Đáy Ao rồi bón Bùn Phù Sa cho 1 ô ruộng để tìm lại Trang Gia Phả #2.',
       choiceEmpLabel: '🤝 Biếu Bác Bảy & Lớp học làng (+30 Phong Thủy)',
       choicePragLabel: '🪙 Bán mở hàng Quán Nước đầu làng (+350 🪙)',
       rewardGold: 900,

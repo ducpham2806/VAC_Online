@@ -154,17 +154,39 @@ describe('sellToHtx', () => {
 });
 
 describe('dredgePond / expandLand', () => {
-  it('vét ao: -3⚡, +3 bùn, reset bộ đếm, +20 XP', () => {
+  // 2026-11-03 (PO, `17` C4): số xô = bộ đếm bùn ao (trước đây cố định 3 xô).
+  it('vét ao: -3⚡, số xô = bộ đếm bùn ao, reset bộ đếm, +20 XP', () => {
     const r = ok(dredgePond(save({ pondMudCounter: 7 }), NOW));
     expect(r.save.stamina).toBe(47);
-    expect(r.save.inventory[MUD_ITEM_ID]).toBe(3);
+    expect(r.save.inventory[MUD_ITEM_ID]).toBe(7);
     expect(r.save.pondMudCounter).toBe(0);
     expect(r.save.xp).toBe(20);
   });
   it('năng lượng hồi theo thời gian trước khi tiêu', () => {
-    const tired = save({ stamina: 1, staminaUpdatedAt: NOW - 2 * STAMINA_REGEN_MS });
+    const tired = save({ stamina: 1, staminaUpdatedAt: NOW - 2 * STAMINA_REGEN_MS, pondMudCounter: 3 });
     expect(ok(dredgePond(tired, NOW)).save.stamina).toBe(0);
-    expect(dredgePond(save({ stamina: 2 }), NOW).ok).toBe(false);
+    expect(dredgePond(save({ stamina: 2, pondMudCounter: 3 }), NOW).ok).toBe(false);
+  });
+  it('vét ao: ao chưa có bùn thì từ chối, không trừ ⚡; tối đa 10 xô', () => {
+    const empty = dredgePond(save({ pondMudCounter: 0 }), NOW);
+    expect(empty.ok).toBe(false);
+    expect(empty.ok ? '' : empty.message).toContain('Ao chưa có bùn');
+    expect(ok(dredgePond(save({ pondMudCounter: 25 }), NOW)).save.inventory[MUD_ITEM_ID]).toBe(10);
+  });
+  it('bộ đếm bùn ao chỉ tăng khi thu thủy sản, không tăng khi thu cây ở hàng ô Ao', () => {
+    const pondTile = save().tiles.find((t) => t.zoneType === 'POND');
+    if (!pondTile) throw new Error('thiếu ô Ao');
+    const withItem = (itemId: string) =>
+      save({ level: 20, tiles: save().tiles.map((t) => (t.id === pondTile.id ? { ...t, itemId, matureAt: NOW - 1, harvestsLeft: 1 } : t)) });
+    expect(ok(harvest(withItem('CROP_01'), pondTile.id, NOW)).save.pondMudCounter).toBe(0);
+    expect(ok(harvest(withItem('AQUA_01'), pondTile.id, NOW)).save.pondMudCounter).toBe(1);
+  });
+  it('bón bùn: cây lâu năm (TREE) bị từ chối, không trừ bùn', () => {
+    const base = save({ level: 20, inventory: { [MUD_ITEM_ID]: 2 } });
+    const s = ok(plant(base, 'T1', 'CROP_23', 1, NOW)).save;
+    const r = applyMud(s, 'T1', NOW, () => 0);
+    expect(r.ok).toBe(false);
+    expect(r.ok ? '' : r.message).toContain('Cây lâu năm');
   });
   it('khai hoang: -5⚡ -500🪙, tối đa 25', () => {
     const r = ok(expandLand(save(), NOW));

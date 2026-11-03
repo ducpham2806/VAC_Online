@@ -72,11 +72,12 @@ describe('dữ liệu công thức S4 (17 mục C2)', () => {
     }
   });
 
-  it('nguyên liệu thuộc Đợt ≤ Đợt của món — trừ duy nhất Cà Phê Muối (PO chốt: chờ Cà Phê Đợt 4)', () => {
+  // 2026-11-03 (PO, `17` C4): Cà Phê Muối đổi sang Đậu Phộng + Sữa Bò + Mía → không còn ngoại lệ.
+  it('mọi nguyên liệu thuộc Đợt ≤ Đợt của món (không ngoại lệ)', () => {
     const late = KITCHEN_RECIPES.filter((r) =>
       (r.recipe ?? []).some((ing) => (kitchenItem(ing.itemId)?.unlockWave ?? 99) > (r.unlockWave ?? 0))
     ).map((r) => r.id);
-    expect(late).toEqual(['PROD_C01']);
+    expect(late).toEqual([]);
   });
 
   it('không có 2 món trùng hệt công thức (Nồi Đất phải nhận ra đúng 1 món)', () => {
@@ -88,12 +89,14 @@ describe('dữ liệu công thức S4 (17 mục C2)', () => {
 });
 
 describe('recipeLock', () => {
-  it('GĐ1 khóa, GĐ2 mở; thiếu cấp; nguyên liệu Đợt 4 khóa Cà Phê Muối', () => {
+  it('GĐ1 khóa, GĐ2 mở; thiếu cấp; nguyên liệu thuộc Đợt chưa mở thì khóa', () => {
     expect(recipeLock(item('PROD_01'), 20, 1)).toEqual({ ok: false, reason: 'STAGE_LOCKED', stage: 2 });
     expect(recipeLock(item('PROD_01'), 20, GD2)).toEqual({ ok: true });
     expect(recipeLock(item('PROD_01'), 1, GD2)).toEqual({ ok: false, reason: 'LEVEL_LOCKED' });
-    expect(recipeLock(item('PROD_C01'), 30, GD2)).toEqual({ ok: false, reason: 'INGREDIENT_LOCKED', itemId: 'CROP_C05', wave: 4 });
-    expect(recipeLock(item('PROD_C01'), 30, 4)).toEqual({ ok: true });
+    expect(recipeLock(item('PROD_C01'), 30, GD2)).toEqual({ ok: true });
+    const lateDish = { ...item('PROD_C01'), recipe: [{ itemId: 'CROP_C05', qty: 1 }] };
+    expect(recipeLock(lateDish, 30, GD2)).toEqual({ ok: false, reason: 'INGREDIENT_LOCKED', itemId: 'CROP_C05', wave: 4 });
+    expect(recipeLock(lateDish, 30, 4)).toEqual({ ok: true });
     expect(recipeLock(item('CROP_01'), 30, GD2)).toEqual({ ok: false, reason: 'NOT_RECIPE' });
   });
 });
@@ -140,7 +143,7 @@ describe('startCraft / collectCraft (M04.3)', () => {
     expect(s.machines.MAC_02.readyAt).toBe(NOW + Math.round(5 * 60_000 * 0.9));
   });
 
-  it('từ chối: chưa xây, xưởng bận, sai xưởng, chưa khám phá, thiếu nguyên liệu, GĐ1, thiếu cấp, nguyên liệu Đợt 4', () => {
+  it('từ chối: chưa xây, xưởng bận, sai xưởng, chưa khám phá, thiếu nguyên liệu, GĐ1, thiếu cấp; Cà Phê Muối nấu được ở GĐ2', () => {
     expect(startCraft(save({ inventory: { CROP_01: 5 } }), 'MAC_02', 'PROD_01', GD2, NOW).ok).toBe(false);
     const busy = ok(startCraft(withKitchen(), 'MAC_02', 'PROD_01', GD2, NOW));
     expect(startCraft(busy, 'MAC_02', 'PROD_01', GD2, NOW).ok).toBe(false);
@@ -155,10 +158,10 @@ describe('startCraft / collectCraft (M04.3)', () => {
     const cafe = save({
       machines: { MAC_04: { craftItemId: null, readyAt: null } },
       discoveredRecipes: ['PROD_C01'],
-      inventory: { CROP_C05: 1, ANI_07: 1, CROP_09: 1 },
+      inventory: { CROP_10: 1, ANI_07: 1, CROP_09: 1 },
     });
     const c = startCraft(cafe, 'MAC_04', 'PROD_C01', GD2, NOW);
-    expect(c.ok ? '' : c.message).toContain('Đợt 4');
+    expect(c.ok).toBe(true);
   });
 
   it('lấy món khi xưởng rảnh bị từ chối', () => {

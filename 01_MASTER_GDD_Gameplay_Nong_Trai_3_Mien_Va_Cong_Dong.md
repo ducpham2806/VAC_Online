@@ -22,7 +22,7 @@ Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**
    * Góc nhìn `3/4 Top-Down Oblique` trên lưới `32x32 px`. Mọi thao tác sản xuất cốt lõi tại nhà (*Gieo hạt, Tưới nước Giếng Làng, Thu hoạch, Cho vật nuôi ăn, Nấu ăn Bếp Quê, Tiếp củi Bánh Chưng giúp bạn, Dựng giàn cây sau bão*) và **mọi ván chơi giải trí tại Sảnh Chung / Hyper-Casual Arcade (trừ trận PK Võ Đài & Loạn Chiến)** đều **HOÀN TOÀN MIỄN PHÍ NĂNG LƯỢNG (`0 ⚡`)**.
 2. **Chế độ Mở rộng, Khám phá & Tương tác Đặc biệt (RPG – Tốn `⚡ Năng lượng`):**
    * Thanh **Năng lượng (`⚡ 50/50`, hồi `+1 ⚡` mỗi 3 phút hoặc ăn món ăn Bếp Quê)** dùng cho:
-     * **🪣 Vét Bùn Đáy Ao (`-3 ⚡`):** Thu `3 Xô Bùn Phù Sa` (`ITEM_BUN_PHU_SA`) bón cây nổ Hoàng Kim `⭐` (`x3 giá trị`) + cơ hội nhặt **Kỷ Vật Tuổi Thơ 8x–9x**.
+     * **🪣 Vét Bùn Đáy Ao (`-3 ⚡`):** Mỗi lần thu **thủy sản** `+1 Độ Bùn Ao` (tối đa `10`); vét nhận số `Xô Bùn Phù Sa` (`ITEM_BUN_PHU_SA`) bằng Độ Bùn, ao rỗng thì không vét được. Bón cho cây ruộng / vật nuôi (**không bón cây lâu năm**): chín ngay, 45% nổ Hoàng Kim `⭐` (`x3 sản lượng`) + cơ hội nhặt **Kỷ Vật Tuổi Thơ 8x–9x**.
      * **🪓 Khai Hoang Mở Rộng Đất (`-5 ⚡` + `500 🪙`):** Mở khóa từ `12/25` lên tối đa `25/25` phân khu bản đồ. Lưới 5×5: lần lượt cột 5 của 3 hàng Ruộng/Vườn/Ao → hàng 4 Ruộng → hàng 5 Ao; ô kế tiếp hiện mờ trên bản đồ, chạm để khai hoang (bố cục chuẩn: `src/domain/farmGrid.ts`).
      * **🎋 Thám Hiểm Rừng Trúc & Bãi Bồi (`-6 ⚡`):** Đào măng rừng, tìm phấn hoa đột biến & săn **12 Kỷ Vật Tuổi Thơ** (`+5 💎`).
      * **🥁 Chèo Thuyền Rồng Hợp Tác Xã & Đua Trâu Vàng (`-4 ⚡`):** Thi đấu thể thao làng quê nhận Vàng, Ngọc & Cúp vinh danh.

@@ -104,7 +104,13 @@ SELECT t.expect_error('SELECT public.rpc_sell_to_htx(''CROP_01'', 1)', 'Kho khô
 SELECT t.expect_error('SELECT public.rpc_sell_to_htx(''CROP_01'', 0)', '%không hợp lệ%');
 
 -- Vét ao → bùn → Hoàng Kim / chín ngay
-SELECT t.eq((public.rpc_dredge_pond()->'inventory'->>'ITEM_BUN_PHU_SA')::INT, 3, 'vét ao +3 bùn');
+-- 0016: ao chưa có bùn thì không vét được, không mất ⚡; số xô = bộ đếm bùn ao
+SELECT t.expect_error('SELECT public.rpc_dredge_pond()', 'Ao chưa có bùn%');
+SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'stamina')::INT, 50, 'vét ao rỗng không trừ năng lượng');
+RESET ROLE;
+UPDATE public.profiles SET pond_mud_counter = 3 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
+SET ROLE authenticated;
+SELECT t.eq((public.rpc_dredge_pond()->'inventory'->>'ITEM_BUN_PHU_SA')::INT, 3, 'vét ao: bộ đếm 3 → +3 bùn');
 SELECT t.eq((public.rpc_get_my_farm()->'profile'->>'stamina')::INT, 47, 'vét ao -3 năng lượng');
 SELECT public.rpc_plant(1, 0, 'CROP_01');
 SELECT t.eq((public.rpc_apply_mud(1, 0)->'inventory'->>'ITEM_BUN_PHU_SA')::INT, 2, 'bón bùn trừ 1 xô');
@@ -127,7 +133,7 @@ RESET ROLE;
 UPDATE public.farm_entities SET mature_at = NOW() - INTERVAL '1 second'
 WHERE user_id = 'a0000000-0000-0000-0000-00000000000a' AND tile_x = 0 AND tile_y = 4;
 SET ROLE authenticated;
-SELECT t.eq((public.rpc_harvest(0, 4)->'profile'->>'pond_mud_counter')::INT, 1, 'thu hoạch ở ô Ao hàng 5 tăng bùn');
+SELECT t.eq((public.rpc_harvest(0, 4)->'profile'->>'pond_mud_counter')::INT, 0, '0016: thu CÂY ở ô Ao hàng 5 không tăng bùn (chỉ thủy sản)');
 SELECT t.eq((SELECT count(*) FROM public.farm_entities WHERE tile_x = 4 AND tile_y = 0)::INT, 1, 'ô (4,0) vẫn còn cây của A');
 RESET ROLE;
 UPDATE public.profiles SET wild_plots_unlocked = 25 WHERE id = 'a0000000-0000-0000-0000-00000000000a';
@@ -270,6 +276,19 @@ RESET ROLE;
 SELECT set_config('request.jwt.claim.sub', '', false);
 SET ROLE anon;
 SELECT t.expect_error('SELECT count(*) FROM public.analytics_economy', '%permission denied%');
+RESET ROLE;
+
+-- 0016: vét tối đa 10 xô; cây lâu năm không bón bùn được
+UPDATE public.profiles SET level = 20, gold = 5000, stamina = 50, stamina_updated_at = NOW(), pond_mud_counter = 15
+WHERE id = 'b0000000-0000-0000-0000-00000000000b';
+DELETE FROM public.farm_entities WHERE user_id = 'b0000000-0000-0000-0000-00000000000b';
+DELETE FROM public.inventories WHERE user_id = 'b0000000-0000-0000-0000-00000000000b' AND item_id = 'ITEM_BUN_PHU_SA';
+SELECT set_config('request.jwt.claim.sub', 'b0000000-0000-0000-0000-00000000000b', false);
+SET ROLE authenticated;
+SELECT t.eq((public.rpc_dredge_pond()->'inventory'->>'ITEM_BUN_PHU_SA')::INT, 10, 'vét ao: tối đa 10 xô');
+SELECT public.rpc_plant(0, 0, 'CROP_23');
+SELECT t.expect_error('SELECT public.rpc_apply_mud(0, 0)', 'Cây lâu năm không bón%');
+SELECT t.eq((public.rpc_get_my_farm()->'inventory'->>'ITEM_BUN_PHU_SA')::INT, 10, 'bón cây lâu năm bị từ chối, không mất bùn');
 RESET ROLE;
 
 \o

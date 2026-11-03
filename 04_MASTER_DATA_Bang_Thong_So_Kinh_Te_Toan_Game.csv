@@ -104,7 +104,7 @@ Product_Mid,PROD_16,Cá Lóc Nướng Trui Cuốn Lá Sen,All,18,40,176,1 Cá L�
 Product_Mid,PROD_17,Dưa Cải & Cà Pháo Muối Chua,All,20,35,62,2 Cải Xanh + 1 Cà + 1 Ớt,1,55,110,24,48,1.37,12,+14 Energy / +35 Độ No Thợ,0,Xưởng Muối Dưa & Đồ Khô,3
 Product_Mid,PROD_18,Bánh Chưng Xanh / Bánh Tét Tết,All,20,90,180,2 Nếp Cái + 1 Đậu Xanh + 1 Thịt Heo,1,155,310,65,130,1.44,32,+35 Energy / +100 Độ No Thợ,0,Thưởng Tết cho toàn bộ Lán Thợ!,5
 Product_CrossRegion,PROD_N01,Cốm Làng Vòng Gói Lá Sen (Bắc),North_Recipe,12,35,88,2 Nếp Non + 1 Lá Sen,1,80,160,36,72,2.06,16,+20 Energy,0,Quà biếu NPC tăng +60 Điểm Thân Mật,2
-Product_CrossRegion,PROD_C01,Cà Phê Muối Cố Đô (Trung),Central_Recipe,15,30,192,1 Cà Phê (Trung) + 1 Sữa Bò + 1 Mía,1,170,340,74,148,4.93,28,+25 Energy / +30 Tinh Thần Thợ,0,Tăng tốc chạy +15% trong 15 phút,2
+Product_CrossRegion,PROD_C01,Cà Phê Muối Cố Đô (Trung),Central_Recipe,15,30,192,1 Đậu Phộng + 1 Sữa Bò + 1 Mía,1,170,340,74,148,4.93,28,+25 Energy / +30 Tinh Thần Thợ,0,Tăng tốc chạy +15% trong 15 phút,2
 Product_CrossRegion,PROD_S01,Bánh Pía Sầu Riêng Trứng Muối (Nam),South_Recipe,16,45,232,1 Sầu Riêng (Nam) + 1 Trứng Vịt (Nam) + 1 Đậu Xanh,1,205,410,89,178,3.96,35,+32 Energy / +35 Tinh Thần Thợ,0,Đặc sản bánh kẹo Nam Bộ bán chạy nhất Chợ,3
 Product_CrossRegion,PROD_19,Gỏi Gà Đông Tảo Măng Cụt (Bắc + Nam),All_Cross,19,50,248,1 Gà Đông Tảo (Bắc) + 1 Măng Cụt (Nam) + 1 Hành Ớt,1,220,440,96,192,3.84,38,+35 Energy,0,Món Hot Trend kết hợp Gà Bắc & Măng Cụt Nam!,3
 Product_CrossRegion,PROD_20,Bún Bò Huế Giò Heo Cay Nồng (Trung + Bắc),All_Cross,19,55,220,2 Lúa + 1 Thịt Móng Cái (Bắc) + 1 Sả Tỏi Lý Sơn (Trung),1,195,390,85,170,3.09,35,+34 Energy / +100 Độ No Thợ,0,Quầy Bún Phở Gia Truyền,3

@@ -130,9 +130,11 @@ export const createFarmSlice = (set: StoreSet, get: StoreGet, { runCloud, applyL
   dredgePondMud: () => {
     const state = get();
     if (state.farmMode === 'cloud') {
-      void runCloud('rpc_dredge_pond', {}, (snap) =>
-        `🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): +3 Xô Bùn Phù Sa (Đang có: ${snap.inventory[MUD_ITEM_ID] ?? 0} xô) & +20 XP!`
-      );
+      const before = state.inventory[MUD_ITEM_ID] ?? 0;
+      void runCloud('rpc_dredge_pond', {}, (snap) => {
+        const now = snap.inventory[MUD_ITEM_ID] ?? 0;
+        return `🪣 Đã Vét Bùn Đáy Ao (-3 ⚡): +${Math.max(0, now - before)} Xô Bùn Phù Sa (Đang có: ${now} xô) & +20 XP!`;
+      });
       return;
     }
     applyLocal(dredgePond(toFarmSave(state), Date.now()));
