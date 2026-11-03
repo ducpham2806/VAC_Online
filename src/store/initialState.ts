@@ -417,6 +417,7 @@ export function toWorkersSave(s: GameData): WorkersSave {
     workers: s.workerRecords ?? {},
     tableMeals: s.lodgeDiningTableMeals,
     pantry: s.workerPantry ?? {},
+    counters: s.progressCounters,
   };
 }
 
@@ -431,6 +432,7 @@ export function fromWorkersSave(save: WorkersSave, now: number): Partial<GameDat
     workerPantry: save.pantry,
     workerPantryCount: pantryTotal(save.pantry),
     workers: workersView(INITIAL_WORKERS, save.workers, now),
+    progressCounters: save.counters ?? {},
   };
 }
 
@@ -469,6 +471,7 @@ export function toKitchenSave(s: GameData): KitchenSave {
     inventory: s.inventory,
     machines: s.machines ?? {},
     discoveredRecipes: s.discoveredRecipes ?? [],
+    counters: s.progressCounters,
   };
 }
 
@@ -483,6 +486,7 @@ export function fromKitchenSave(save: KitchenSave): Partial<GameData> {
     inventory: save.inventory,
     machines: save.machines,
     discoveredRecipes: save.discoveredRecipes,
+    progressCounters: save.counters ?? {},
   };
 }
 

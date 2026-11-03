@@ -131,6 +131,7 @@ describe('startCraft / collectCraft (M04.3)', () => {
     expect(done.inventory.PROD_01).toBe(1);
     expect(done.xp).toBe(item('PROD_01').xpReward);
     expect(done.machines.MAC_02).toEqual({ craftItemId: null, readyAt: null });
+    expect(done.counters?.COOK).toBe(1); // mục tiêu Ch.3
   });
 
   it('miền Trung nấu nhanh hơn 10%', () => {
@@ -250,3 +251,10 @@ describe('discoverRecipe — Nồi Đất (M04.2)', () => {
     expect(recipeHint(item('PROD_03'))).toEqual({ firstItemId: 'AQUA_01', totalQty: 4 });
   });
 });
+
+describe('bộ đếm nhiệm vụ Ch.3', () => {
+  it('xây Bếp Củi +BUILD:MAC_02', () => {
+    expect(ok(buildMachine(save(), 'MAC_02', GD2)).counters?.['BUILD:MAC_02']).toBe(1);
+  });
+});
+

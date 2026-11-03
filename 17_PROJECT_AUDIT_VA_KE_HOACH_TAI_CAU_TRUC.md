@@ -306,7 +306,9 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 - ✅ 2026-11-03 **S5b số liệu thợ:** `WORK_01` Lv.13, 200🪙/ngày; `WORK_02` Lv.15, 275🪙/ngày (catalog, `INITIAL_WORKERS`, CSV `04`, `01`, `02` mục 3.2 + bảng GĐ2, seed). Mô tả Chú Tư bỏ "tự gieo hạt". ⏳ PO chạy lại `master_catalog_seed.sql` để DB có số mới.
 
 - ✅ 2026-11-03 **S5c Lán Thợ:** domain `src/domain/workers.ts` (+12 test) → `0011_workers.sql` (+`supabase/tests/workers.test.sql`) → `workersSlice.ts` viết lại (giữ tên action; thêm `serveLodgeMeal`) → `WorkersModal` mới (Bàn Ăn dọn món từ Kho, Giỏ Thợ hàng thật, thuê/gia hạn). Đã bỏ 3 nguồn in tiền của stub. QC `TC-05.1a/2a/5a` viết lại theo luật mới. Kiểm 1280×720 & 844×390.
-  - ⏳ PO chạy `0011`. Còn lại: S5d (xưởng nghề `MAC_07/08`, đồ thợ `CRAFT_01..02`, phụ cấp), mục tiêu Ch.3/6/7, sprite Lán Thợ + 2 thợ trên bản đồ.
+- ✅ 2026-11-03 **Mục tiêu Ch.3 & Ch.6:** bộ đếm `BUILD:<MAC>`, `COOK`, `HIRE:<WORK>`, `SERVE_MEAL` (domain `cooking.ts` / `workers.ts` + `0012_quest_counters_s5.sql`); Ch.3 = xây Bếp Củi + nấu 1 món; Ch.6 = thuê Chú Tư + dọn 1 món. Cấp chương trong code đưa về đúng `01`: Ch.6 Lv.13, Ch.7 Lv.15. Test `supabase/tests/quests_s5.test.sql`.
+  - ⚠️ Còn lệch chờ PO: Ch.3 code Lv.6 vs `01` Lv.9.
+  - ⏳ PO chạy `0011` → `0012` → `quest_catalog_seed.sql`. Còn lại: S5d (xưởng nghề `MAC_07/08`, đồ thợ `CRAFT_01..02`, phụ cấp), mục tiêu Ch.3/6/7, sprite Lán Thợ + 2 thợ trên bản đồ.
 
 **RULE D1 (sơ bộ):**
 1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).

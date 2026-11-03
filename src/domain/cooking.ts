@@ -2,6 +2,7 @@ import { GAME_CATALOG } from '../data/masterData';
 import { CatalogItem, RecipeIngredient, RegionType } from '../data/types';
 import { CRAFT_MIN_STAGE, applyXp, canCraftOrBuy, maxUnlockedWave } from './progression';
 import { regenStamina } from './stamina';
+import { COUNTER, Counters, bumpCounter } from './quests';
 
 /**
  * Bếp Quê & Xưởng (S4 — M04.1..M04.3), dạng hàm thuần. Đặc tả + quyết định PO: `17` mục C2.
@@ -45,6 +46,8 @@ export interface KitchenSave {
   machines: Record<string, MachineState>;
   /** Món đã khám phá ở Nồi Đất (không gồm món mở sẵn). */
   discoveredRecipes: string[];
+  /** Bộ đếm nhiệm vụ (Ch.3: BUILD:MAC_02, COOK). Thiếu = rỗng. */
+  counters?: Counters;
 }
 
 export type KitchenResult = { ok: true; save: KitchenSave; message: string } | { ok: false; message: string };
@@ -133,6 +136,7 @@ export function buildMachine(save: KitchenSave, machineId: string, gameStage: nu
     ...save,
     gold: save.gold - item.buyCostGold,
     machines: { ...save.machines, [machineId]: { craftItemId: null, readyAt: null } },
+    counters: bumpCounter(save.counters, COUNTER.build(machineId)),
   };
   const { save: next, levelUp } = withXp(paid, item.xpReward);
   return {
@@ -189,6 +193,7 @@ export function collectCraft(save: KitchenSave, machineId: string, now: number):
     ...save,
     inventory: { ...save.inventory, [item.id]: (save.inventory[item.id] ?? 0) + 1 },
     machines: { ...save.machines, [machineId]: { craftItemId: null, readyAt: null } },
+    counters: bumpCounter(save.counters, COUNTER.COOK),
   };
   const { save: next, levelUp } = withXp(collected, item.xpReward);
   return { ok: true, save: next, message: `🍽️ Đã nấu xong [${item.emoji} ${item.name}]: +1 vào Kho, +${item.xpReward} XP${levelUp}` };

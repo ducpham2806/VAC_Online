@@ -49,7 +49,7 @@ run supabase/seed/quest_catalog_seed.sql
 run supabase/seed/master_catalog_seed.sql
 run supabase/seed/recipe_seed.sql
 run supabase/seed/recipe_seed.sql
-for t in farm_core kitchen livestock workers; do
+for t in farm_core kitchen livestock workers quests_s5; do
   echo "→ supabase/tests/$t.test.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/tests/$t.test.sql"
 done

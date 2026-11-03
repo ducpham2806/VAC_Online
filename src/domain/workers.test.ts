@@ -163,3 +163,11 @@ describe('tickWorkers (M05.2, M05.4, M05.5)', () => {
     expect(tickWorkers(once, NOW + HOUR)).toEqual(once);
   });
 });
+
+describe('bộ đếm nhiệm vụ Ch.6', () => {
+  it('thuê +HIRE:WORK_01, dọn món +SERVE_MEAL', () => {
+    const h = ok(hireWorker(save({ inventory: { PROD_01: 1 } }), 'WORK_01', 2, NOW));
+    expect(h.save.counters?.['HIRE:WORK_01']).toBe(1);
+    expect(ok(serveLodgeMeal(h.save, 'PROD_01', 2)).save.counters?.SERVE_MEAL).toBe(1);
+  });
+});

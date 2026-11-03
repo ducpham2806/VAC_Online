@@ -2,6 +2,7 @@ import { GAME_CATALOG } from '../data/masterData';
 import { CatalogItem, FarmTileEntity, RegionType } from '../data/types';
 import { CRAFT_MIN_STAGE } from './progression';
 import { WATER_TIME_CUT, harvestQty, pondMudAfterHarvest, tileAfterHarvest } from './farm';
+import { COUNTER, Counters, bumpCounter } from './quests';
 
 /**
  * Lán Thợ (S5c — M05.1, M05.2, M05.4, M05.5), dạng hàm thuần. Đặc tả + quyết định PO: `17` mục C3.
@@ -60,6 +61,8 @@ export interface WorkersSave {
   tableMeals: number;
   /** Giỏ Thợ: hàng thợ thu, chưa vào Kho. */
   pantry: Record<string, number>;
+  /** Bộ đếm nhiệm vụ (Ch.6: HIRE:WORK_01, SERVE_MEAL). Thiếu = rỗng. */
+  counters?: Counters;
 }
 
 export type WorkersResult = { ok: true; save: WorkersSave; message: string } | { ok: false; message: string };
@@ -104,7 +107,12 @@ export function hireWorker(save: WorkersSave, workerId: string, gameStage: numbe
     : { contractUntil: now + CONTRACT_DAYS * DAY_MS, belly: MAX_BELLY, tickAt: now };
   return {
     ok: true,
-    save: { ...ticked, gold: ticked.gold - cost, workers: { ...ticked.workers, [workerId]: rec } },
+    save: {
+      ...ticked,
+      gold: ticked.gold - cost,
+      workers: { ...ticked.workers, [workerId]: rec },
+      counters: bumpCounter(ticked.counters, COUNTER.hire(workerId)),
+    },
     message: `🪙 Đã trả lương 3 ngày (-${cost.toLocaleString()} 🪙, rẻ hơn 12%) cho [${worker.emoji} ${worker.name}]!`,
   };
 }
@@ -123,6 +131,7 @@ export function serveLodgeMeal(save: WorkersSave, dishId: string, gameStage: num
       ...save,
       inventory: { ...save.inventory, [dishId]: have - 1 },
       tableMeals: save.tableMeals + portions,
+      counters: bumpCounter(save.counters, COUNTER.SERVE_MEAL),
     },
     message: `🍚 Đã dọn [${dish.emoji} ${dish.name}] lên Bàn Ăn Lán Thợ: +${portions} suất (đang có ${save.tableMeals + portions})`,
   };

@@ -10,6 +10,11 @@ export const COUNTER = {
   DREDGE: 'DREDGE',
   APPLY_MUD: 'APPLY_MUD',
   harvest: (itemId: string) => `HARVEST:${itemId}`,
+  /** S4–S5: Bếp Quê & Lán Thợ (mục tiêu Ch.3 / Ch.6, migration 0012). */
+  build: (machineId: string) => `BUILD:${machineId}`,
+  COOK: 'COOK',
+  hire: (workerId: string) => `HIRE:${workerId}`,
+  SERVE_MEAL: 'SERVE_MEAL',
 } as const;
 
 export type Counters = Record<string, number>;

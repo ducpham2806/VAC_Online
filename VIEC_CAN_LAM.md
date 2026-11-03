@@ -15,7 +15,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
 - [x] ~~Chạy `0009_kitchen.sql` (PO) + `recipe_seed.sql` (AI qua connector)~~ ✅ 2026-11-02 (AI đã kiểm: 3 bảng, 5 RPC Bếp, 34 dòng công thức, Security Advisor 0 ERROR)
 - [ ] Chạy `0010_livestock_cycles.sql` (vật nuôi nhiều lứa, chỉ thêm) — hoặc cho phép AI áp qua connector. **Không chạy lại `0009` sau `0010`.**
-- [ ] Chạy `0011_workers.sql` (Lán Thợ, chỉ thêm) SAU `0010`. Thứ tự luôn tăng dần; không chạy lại file cũ sau file mới.
+- [ ] Chạy `0011_workers.sql` (Lán Thợ) → `0012_quest_counters_s5.sql` (mục tiêu Ch.3/6) → `quest_catalog_seed.sql`, SAU `0010`. Thứ tự luôn tăng dần; không chạy lại file cũ sau file mới.
 - [ ] Chạy lại `supabase/seed/master_catalog_seed.sql` (mô tả Chó Phú Quốc + **số liệu thợ mới S5b**: Lv.13/15, lương 200/275🪙).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
@@ -37,6 +37,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
   - [ ] Lễ cưới: 1.000 điểm thân mật (`15`) hay 10 tim?
   - [ ] Nồi Bánh Chưng: 12h cả làng (`15`) hay 6h tối đa 5 bạn?
   - [ ] Số món ăn: 22 hay 27?
+  - [ ] Chương 3 mở ở Lv.6 (code) hay Lv.9 (`01`)?
   - [x] ~~Cửa sổ trộm: 2 phút~~ ✅ 2026-11-02
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
 - [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
@@ -53,7 +54,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Tách 11 modal khỏi `App.tsx` (2.084 → 699 dòng), dùng selector Zustand~~ ✅ 2026-11-01
 - [x] ~~Khai hoang thật: lưới 5×5, mỗi lần khai hoang mở 1 ô trồng được (`farmGrid.ts`, migration `0006`)~~ ✅ 2026-11-01
 - [x] ~~Kiểm mục tiêu nhiệm vụ trên server: Ch.1 tưới + thu Lúa, Ch.2 vét bùn + bón bùn (`0007`)~~ ✅ 2026-11-01
-- [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 (hiện chỉ kiểm cấp).
+- [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 — ✅ Ch.3, Ch.6 (2026-11-03); còn Ch.7 (chờ S5d đồ thợ), Ch.4–5, 8–10.
 - [x] ~~HUD màn hình ngang thấp (844×390, 667×375): khay giống không che ruộng, footer 1 hàng~~ ✅ 2026-11-02
 - [x] ~~Đường ống asset + atlas tạm 23 loài Đợt 1 × 4 giai đoạn + VFX nông trại~~ ✅ 2026-11-02
 - [ ] Thay hình tạm Đợt 1 bằng ảnh vẽ đẹp (chờ PO chọn nguồn ảnh — mục A2).
@@ -113,3 +114,4 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 - **2026-11-03** — S5c-1 luật Lán Thợ dạng hàm thuần `src/domain/workers.ts` (`hireWorker`, `serveLodgeMeal`, `claimPantry`, `tickWorkers` lazy-tick) + 12 test; tách `harvestQty` / `tileAfterHarvest` / `pondMudAfterHarvest` trong `farm.ts` để thợ và người chơi dùng chung. Số liệu: hợp đồng 528 / 726🪙, Độ No hao 60 / 75 mỗi ngày, 1 suất = 25 Độ No, món = ⚡÷5 suất, chờ 5 phút, Giỏ 120. Chưa nối store/server. **Dừng ở:** viết `0011_workers.sql`.
 - **2026-11-03** — S5c-2 server Lán Thợ `0011_workers.sql`: dùng lại `hired_workers` (+ cột `belly` số lẻ) và `profiles.worker_pantry_items`; thêm `profiles.lodge_meals`; `_tick_workers` (lazy-tick) chạy trong `rpc_get_my_farm`; RPC mới `rpc_hire_worker`, `rpc_serve_lodge_meal`, `rpc_claim_worker_pantry`; snapshot có `workers` / `lodge_meals` / `worker_pantry`. Test `supabase/tests/workers.test.sql` (anon chặn, GĐ1 khóa, thuê/gia hạn, thu ≥5 phút, không gieo, không XP, tưới, đói ăn, nhiều lứa, hết hợp đồng, RLS). `npm run test:sql` PASS. **Dừng ở:** nối store (`workersSlice`) + UI `WorkersModal`.
 - **2026-11-03** — S5c-3 client Lán Thợ: `workersSlice.ts` viết lại (offline dùng domain, online gọi RPC `0011`; cloud tick tối đa 1 lần/phút qua `rpc_get_my_farm`); state mới `workerRecords`, `workerPantry` (persist; save cũ tự mặc định rỗng); `workers` là bản hiển thị suy ra từ hợp đồng; action mới `serveLodgeMeal`; `addMealsToLodgeTable` / `feedWorker` / `equipWorkerGear` / `giveWorkerBonus` giữ tên (đồ thợ + phụ cấp chờ S5d, không trừ vàng). Bỏ 3 nguồn in tiền (Giỏ quy vàng, offline +10⚡/h, tự gieo miễn phí) + cheat ⏩ cộng Giỏ. `WorkersModal` mới. QC `TC-05.1a/2a/5a` viết lại. Tài liệu `02` 3.2, `17` C3. Kiểm: typecheck, 166 test, build, test:sql (4 file) PASS; chụp 1280×720 & 844×390. Chờ PO chạy `0011`. **Tiếp theo:** S5d xưởng nghề + đồ thợ, mục tiêu Ch.3/6/7.
+- **2026-11-03** — Mục tiêu Ch.3 (xây Bếp Củi + nấu 1 món) & Ch.6 (thuê Chú Tư + dọn 1 món lên Bàn Ăn): bộ đếm mới trong `src/domain/quests.ts`, tăng ở `cooking.ts` / `workers.ts` và `0012_quest_counters_s5.sql`; `src/data/quests.ts` thêm mục tiêu, Ch.6 Lv.14→13, Ch.7 Lv.16→15 (khớp `01`, theo quyết định hạ cấp thợ); seed nhiệm vụ sinh lại. Sửa test `quests.test.ts` (test cũ khóa "GĐ2+ chưa có mục tiêu" — nay cố ý đổi). Test SQL `quests_s5.test.sql`. Ghi `01` Ch.3/Ch.6, `17` C3. Kiểm: typecheck, 169 test, build, test:sql (5 file) PASS. Hỏi PO: Ch.3 Lv.6 hay Lv.9. **Tiếp theo:** S5d xưởng nghề + đồ thợ (cần PO chọn nguyên liệu thật cho `CRAFT_01/02` và tác dụng đồ thợ).
