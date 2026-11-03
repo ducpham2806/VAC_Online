@@ -9,7 +9,7 @@
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 5 (CHAPTER 5: TRẦU CAU NÊN DUYÊN, MÁI ẤM GIA ĐÌNH & ĐÊM GIAO THỪA ĐỎ LỬA)
 - **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Sau 4 mùa mưa nắng cùng nhau dựng xây nông trại từ mảnh vườn hoang của Nội, mối tình quê mộc mạc đã đến ngày đơm hoa kết trái! Giàn **Trầu Không quấn quýt thân Cau** trước ngõ đã xanh mướt, đôi **Cá Chép Koi Ngũ Sắc** bơi lượn trong hồ, và mâm **Đại Tiệc Cưới Quê 3 Miền** (*Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau*) đã sẵn sàng đón họ hàng hai bên. Sau đám cưới rộn ràng rước dâu bằng thuyền hoa/kiệu cổ, hai vợ chồng đón **Bé Tiểu Đồng Gia Bảo** lon ton phụ nhặt trứng ngoài sân, mở **Khu Du Lịch Sinh Thái Homestay** đón du khách phương xa, cùng bà con canh **Nồi Bánh Chưng Tết Đỏ Lửa** đêm Giao Thừa và nhận tấm **Bằng Khen Gia Đình Văn Hóa & Nông Dân Tiêu Biểu** treo trang trọng giữa nhà!
 - **Mục tiêu sản phẩm & KPI:**
-  - Hoàn thiện **100% Hệ sinh thái 81 Sinh vật & 22 Công thức Chế biến** (mở khóa 5 loài Đỉnh cao Đợt 5 + *Mâm Cỗ Cưới / Mâm Ngũ Quả*).
+  - Hoàn thiện **100% Hệ sinh thái 81 Sinh vật & 27 Công thức Chế biến** (mở khóa 5 loài Đỉnh cao Đợt 5 + *Mâm Cỗ Cưới / Mâm Ngũ Quả*).
   - Ra mắt trọn vẹn vòng lặp End-game ấm áp: **Lễ Cưới Làng Quê & Nuôi Con Nhỏ (`MarriageFamilyModal`)**, **Khu Nghỉ Dưỡng Homestay (`HomestayModal`)**, **Sự Kiện Nấu Bánh Chưng Tết Cộng Đồng**, và **Máy Xuất Ảnh Bằng Khen `.PNG` (`certificateExporter.ts`)** để chia sẻ lên Facebook.
   - Đạt tỷ lệ **Viral Share > 15% DAU** (nhờ tính năng xuất ảnh Bằng Khen & Thiệp Cưới Làng Quê).
 
@@ -26,13 +26,13 @@
    - *Cua Biển Cà Mau (`AQUA_15` - Nam, nuôi vuông tôm rừng ngập mặn)*.
    - *Cá Chép Koi Ngũ Sắc (`AQUA_10` - Cá cảnh phong thủy thả hồ trước nhà, tăng **+10% Điểm Hạnh Phúc Tổ Ấm & Hấp dẫn Du khách Homestay**)*.
 
-### 2.2. Dây Chuyền Chế Biến Đợt 5 (+1 Tuyệt Phẩm = Hoàn Thiện 22/22 Công Thức) & Tổng Quản VIP
-- Mở khóa công thức thứ 22 đỉnh cao: **Mâm Cỗ Cưới / Mâm Ngũ Quả Đoàn Viên (`PROD_22`)** tại **Nhà Hàng Ẩm Thực 3 Miền (`MACH_08`)** — kết tinh nông thủy hải sản 3 Miền.
+### 2.2. Dây Chuyền Chế Biến Đợt 5 (+2 Món Đỉnh Cao = Hoàn Thiện 27/27 Công Thức) & Tổng Quản VIP
+- Mở khóa công thức đỉnh cao (danh sách 2 món Đợt 5 chuẩn xem `01_MASTER_GDD` mục 3.2): **Mâm Cỗ Cưới / Mâm Ngũ Quả Đoàn Viên (`PROD_22`)** tại **Nhà Hàng Ẩm Thực 3 Miền (`MACH_08`)** — kết tinh nông thủy hải sản 3 Miền.
 - Mở khóa **Gia Nhân Thứ 6 (Tổng Quản VIP):** **Ông Quản Gia Cửu (`WORK_06`)** — Điều phối đồng bộ cả 5 Gia nhân trước đó, tự động tối ưu hóa lịch gieo trồng – chế biến – đóng kiện Tàu Hỏa và tiếp đón đoàn khách Homestay.
 
 ### 2.3. Lễ Cưới Làng Quê, Tổ Ấm Gia Đình, Du Lịch Homestay, Nồi Bánh Chưng Tết & Bằng Khen `.PNG`
 - **Lễ Cưới Làng Quê & Tổ Ấm Gia Đình (`MarriageFamilyModal.tsx`):**
-  - Khi đạt **1.000 Điểm Hảo Cảm (Trái Tim Tri Kỷ)** với NPC Ý Trung Nhân (*Mai, Lan, Cúc, Trúc, Nam, Minh, Khôi...*) hoặc Bạn Đời Co-op: Trao **Trầu Cau Tín Vật + Nhẫn Cỏ Đồng Nội** để tổ chức **Lễ Rước Dâu 3 Miền** (bạn bè trong Đình Làng vào dự tiệc, thả pháo giấy hồng & nhận lì xì hỷ sự).
+  - Khi đạt **1.000 điểm thân mật (Trái Tim Tri Kỷ)** với NPC Ý Trung Nhân (*Mai, Lan, Cúc, Trúc, Nam, Minh, Khôi...*) hoặc Bạn Đời Co-op: Trao **Trầu Cau Tín Vật + Nhẫn Cỏ Đồng Nội** để tổ chức **Lễ Rước Dâu 3 Miền** (bạn bè trong Đình Làng vào dự tiệc, thả pháo giấy hồng & nhận lì xì hỷ sự).
   - Mở khóa **Sổ Gia Đình & Bé Tiểu Đồng Gia Bảo**: Bé lớn lên qua 3 giai đoạn (*Nằm nôi ➔ Tập đi ➔ Tiểu đồng hiếu thảo*), tự động đi nhặt trứng gà, hái hoa và gửi những câu thoại ngộ nghĩnh ấm lòng bố mẹ.
 - **Khu Du Lịch Sinh Thái Homestay (`HomestayModal.tsx`):**
   - Xây dựng **Nhà Sàn Tre / Biệt Thự Đầm Sen** đón 6 nhóm Du khách đặc biệt (*Nhiếp ảnh gia săn ảnh mùa vàng, Việt kiều về thăm quê, Blogger ẩm thực, Đoàn học sinh dã ngoại...*).
@@ -69,7 +69,7 @@
 | **2. Backend & Co-op Family** | `@backend-architect` | - Viết **Migration Additive-Only** cho bảng `marriages`, `homestay_bookings`, `tet_cauldron_sessions`.<br>- Viết RPC `propose_marriage` và `tend_tet_cauldron` (châm củi cộng điểm nhiệt độ chung cho cả Đình Làng). | File SQL Migration Giai đoạn 5 + 2 RPCs. |
 | **3. Art, Animation & VFX** | `@generate2dsprite` + `@video2dsprite` + `@generate2dmap` + `@codeart2d` + `@technical-artist` | - Sản xuất Cây Cau Trầu Không, 4 Thủy hải sản VIP, Cổng cưới, Homestay 2 cấp, Nồi bánh chưng Tết.<br>- Tạo animation `Wedding_Bow`, `Heir_Helper_Walk`, `Koi_Figure8_Swim` và VFX `fx_wedding_confetti`, `fx_banh_chung_fire`. | Atlas `farm_stage5_wedding_homestay.json/.png`. |
 | **4. Frontend & Certificate Exporter** | `@frontend-developer` + `@ui-designer` | - Hoàn thiện `MarriageFamilyModal.tsx`, `HomestayModal.tsx` và `src/services/certificateExporter.ts` (xuất ảnh `.PNG` `960x540`). | UI Modals + Canvas PNG Certificate Exporter. |
-| **5. Audio & QA** | `@game-audio-engineer` + `@code-reviewer` | - Gắn nhạc nền Lễ Cưới / Đêm Tết Đoàn Viên (`night` & `festival` pentatonic) + tiếng pháo giấy hỷ sự.<br>- Kiểm tra tổng thể 81/81 loài và 22/22 công thức chế biến hoạt động trơn tru. | Báo cáo Audit `RULE D0 & D1` Giai đoạn 5. |
+| **5. Audio & QA** | `@game-audio-engineer` + `@code-reviewer` | - Gắn nhạc nền Lễ Cưới / Đêm Tết Đoàn Viên (`night` & `festival` pentatonic) + tiếng pháo giấy hỷ sự.<br>- Kiểm tra tổng thể 81/81 loài và 27/27 công thức chế biến hoạt động trơn tru. | Báo cáo Audit `RULE D0 & D1` Giai đoạn 5. |
 
 ---
 
@@ -78,7 +78,7 @@
 ### Cách 1: Prompt Giao AI Triển Khai Toàn Bộ Giai Đoạn 5 (Full-Stack Execution)
 ```markdown
 Hãy đóng vai đội ngũ phát triển dự án "Nông Trại Tình Yêu & Gia Đình 3 Miền" và triển khai GIAI ĐOẠN 5 (v2.0 - Lễ Cưới Làng Quê, Tổ Ấm Gia Đình, Homestay & Tết Đoàn Viên) theo đúng file `15_PLAN_GIAI_DOAN_5_v2.0_Le_Cuoi_Va_Homestay.md`:
-1. BƯỚC 1 (Khai báo Tác động chéo theo RULE D0 & D1): Kiểm tra tính toàn vẹn của toàn bộ 81 sinh vật & 22 công thức chế biến, đảm bảo Database Additive-Only.
+1. BƯỚC 1 (Khai báo Tác động chéo theo RULE D0 & D1): Kiểm tra tính toàn vẹn của toàn bộ 81 sinh vật & 27 công thức chế biến, đảm bảo Database Additive-Only.
 2. BƯỚC 2 (Database & Economy - @economy-designer + @backend-architect): Tạo migration SQL cho `marriages`, `homestay_bookings`, `tet_cauldron_sessions` và mở khóa 5 loài Đợt 5 (`CROP_30` Trầu Cau, `AQUA_10, 13..15`) cùng công thức thứ 22 (`PROD_22` Mâm Cỗ Cưới) và Tổng quản `WORK_06`.
 3. BƯỚC 3 (Gameplay, UI & Xuất Bằng Khen - @frontend-developer + @ui-designer): Hoàn thiện `MarriageFamilyModal.tsx`, `HomestayModal.tsx`, sự kiện Nồi Bánh Chưng Tết và `src/services/certificateExporter.ts` (xuất ảnh Bằng Khen Gia Đình Văn Hóa `.PNG` 960x540).
 4. BƯỚC 4 (QA & Nghiệm thu - @code-reviewer): Kiểm tra xuất ảnh `.PNG` trên mọi trình duyệt và nghiệm thu theo Checklist Mục 5.
@@ -96,6 +96,6 @@ Hãy kích hoạt chuỗi kỹ năng `@generate2dsprite`, `@video2dsprite`, `@ge
 ---
 
 ## 5. CHECKLIST NGHIỆM THU GIAI ĐOẠN 5 (`DEFINITION OF DONE`)
-- [ ] **Nghiệm thu RULE D0 & D1:** Đạt mốc 100% hệ sinh thái nông trại (81/81 loài, 22/22 công thức, 6/6 Gia nhân) đồng bộ tuyệt đối giữa `00_MASTER_BIBLE`, `01_MASTER_GDD`, `02_MASTER_ECONOMY` và Codebase.
+- [ ] **Nghiệm thu RULE D0 & D1:** Đạt mốc 100% hệ sinh thái nông trại (81/81 loài, 27/27 công thức, 6/6 Gia nhân) đồng bộ tuyệt đối giữa `00_MASTER_BIBLE`, `01_MASTER_GDD`, `02_MASTER_ECONOMY` và Codebase.
 - [ ] **Nghiệm thu Asset, Animation & VFX Đợt 5:** Animation `Wedding_Bow`, `Heir_Helper_Walk` và `Koi_Figure8_Swim` mượt 60fps; mưa hoa giấy `fx_wedding_confetti` và lửa nồi bánh chưng `fx_banh_chung_fire` ấm áp.
 - [ ] **Nghiệm thu Xuất Bằng Khen `.PNG`:** File ảnh tải về từ `certificateExporter.ts` đúng kích thước `960x540 px`, hiển thị rõ nét tiếng Việt có dấu và con dấu đỏ.

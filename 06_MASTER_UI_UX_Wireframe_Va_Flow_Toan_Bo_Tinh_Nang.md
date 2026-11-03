@@ -63,7 +63,7 @@ flowchart TD
 
 ### 2.5. Màn Hình 4 (MỚI – GIAI ĐOẠN 6): Giao Diện Sảnh Chung Đa Người Chơi "Chợ Đình Ba Miền" (`SocialPlazaScene`)
 
-* **Mục đích UX (`@ui-designer`):** Cho phép người chơi điều khiển nhân vật bằng **2 ngón cái** đi dạo giữa 25–30 người chơi khác, bật biểu cảm múa sạp/múa lân, chat hiện bong bóng trên đầu và bước vào các cổng PK / Loạn Chiến / Máy Thùng Hyper-Casual.
+* **Mục đích UX (`@ui-designer`):** Cho phép người chơi điều khiển nhân vật bằng **2 ngón cái** đi dạo giữa tối đa 30 người chơi khác, bật biểu cảm múa sạp/múa lân, chat hiện bong bóng trên đầu và bước vào các cổng PK / Loạn Chiến / Máy Thùng Hyper-Casual.
 
 ```
 +====================================================================================================+
@@ -93,12 +93,12 @@ flowchart TD
 
 ### 2.6. Màn Hình 5 (MỚI – GIAI ĐOẠN 6): Giao Diện Võ Đài PK / Loạn Chiến & Máy Thùng Hyper-Casual (`MinigameHostModal`)
 
-* **Đặc điểm Công thái học 2 Ngón Cái (`2-Thumb Action HUD`):** Mọi trò chơi PK 1v1, Loạn Chiến 8P hoặc Hyper-Casual Đơn đều dùng chung một khung vỏ HUD gọn gàng, hiển thị **Đồng hồ đếm ngược lớn ở chính giữa đỉnh màn hình**, **Trần thưởng vàng hàng ngày (`Daily Cap: 900 / 1,500 🪙`)** và các nút thao tác phản xạ cực nhạy ở 2 góc dưới:
+* **Đặc điểm Công thái học 2 Ngón Cái (`2-Thumb Action HUD`):** Mọi trò chơi PK 1v1, Loạn Chiến 8P hoặc Hyper-Casual Đơn đều dùng chung một khung vỏ HUD gọn gàng, hiển thị **Đồng hồ đếm ngược lớn ở chính giữa đỉnh màn hình**, **Trần thưởng Xu Hội hàng ngày (`Daily Cap: 900 / 1.500 🏮`)** và các nút thao tác phản xạ cực nhạy ở 2 góc dưới:
 
 ```
 +====================================================================================================+
 | 🎋 VÕ ĐÀI 1V1: ĐI CẦU TRE ĐẤU GẬY BÔNG (Hiệp 2/3)      ⏱️ [ 00:34 ]      [🏳️ Rời Bàn]             |
-| Quỹ Thưởng Sới Đình: 540 🪙 (Đã trừ 10% thuế) + 25 🏮 Xu Hội Làng | Trần Arcade Ngày: 900/1,500 🪙  |
+| Quỹ Thưởng Sới Đình: 540 🪙 (Đã trừ 10% thuế) + 25 🏮 Xu Hội Làng | Trần Arcade Ngày: 900/1.500 🏮  |
 +----------------------------------------------------------------------------------------------------+
 |  👧 TƯ HẬU (Bắc Bộ - Thắng 1)                              👦 A PÁO (Trung Bộ - Thắng 0)           |
 |  Độ Thăng Bằng: [██████████░░] 85%                         Độ Thăng Bằng: [████░░░░░░░░] 35% (Chao đảo!)|

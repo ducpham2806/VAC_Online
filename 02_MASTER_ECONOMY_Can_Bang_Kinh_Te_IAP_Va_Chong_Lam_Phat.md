@@ -16,7 +16,7 @@
 | **4** | **Dư thừa Nông sản, Món ăn & Xu Vàng khi người chơi lên Cấp Cao (Lv 14 – 30+)** | 🔒 **Hệ thống "Lán Thợ Đồng Quê" (4 Tầng Sink Liên Hoàn):** Thuê 1–6 Nhân công tiêu thụ **`13.900 – 16.700 Xu/ngày`** qua: *Trả lương cứng + Nấu 2 bữa Cơm Thợ/ngày + Cấp phát Áo Quần Bảo Hộ (hao mòn 72h) + Thưởng Phụ Cấp Ngày Mùa*. |
 | **5** | **Lạm phát từ 17 Tính năng Benchmark & 6 Sự kiện Lễ hội** | 🔒 **Cơ chế "Đổi Tài Nguyên Tồn Kho Lấy Giá Trị Danh Vọng / Sưu Tầm" (`Resource-to-Prestige Conversion`):** Tiêu hủy Nếp, Đậu xanh, Hạt sen, Đặc sản 3 miền và Món ăn mỗi ngày qua *Thương Đội Liên Gia, Thực Khách Bí Ẩn, Nồi Bánh Chưng & Lò Bánh Trung Thu*. |
 | **6** | **Phá vỡ độc quyền Đặc sản 3 Miền từ Hạt Giống Giao Thoa (`FEAT_01`)** | 🔒 **Giới hạn Sinh thái 3 Vụ (`3-Harvest Decay Cap`):** Hạt giống đặc sản miền bạn nhận từ *Thương Đội Liên Gia* chỉ trồng được **đúng 3 vụ** rồi tự thoái hóa. |
-| **7** | **Cày tiền vô hạn (Bot Farming) từ game PK / Loạn Chiến / Hyper-Casual (`Giai Đoạn 6`)** | 🔒 **Khóa Kép "Trần Thưởng Hàng Ngày (`Daily Arcade Cap: 1,500 🪙/ngày`) + Quỹ Cược Võ Đài Zero-Sum Thu Thuế `10%`"** + **PK tốn năng lượng `-5 ⚡`/trận** (1v1, 3v3, Loạn Chiến; Máy Thùng Hyper-Casual vẫn `0⚡`) + Giới hạn tối đa 3 trận tính thưởng với cùng 1 đối thủ/ngày. |
+| **7** | **Cày tiền vô hạn (Bot Farming) từ game PK / Loạn Chiến / Hyper-Casual (`Giai Đoạn 6`)** | 🔒 **Khóa Kép "Trần Thưởng Hàng Ngày (`Daily Arcade Cap: 1.500 🏮/ngày` — trả bằng Xu Hội, không trả 🪙) + Quỹ Cược Võ Đài Zero-Sum Thu Thuế `10%`"** + **PK tốn năng lượng `-5 ⚡`/trận** (1v1, 3v3, Loạn Chiến; Máy Thùng Hyper-Casual vẫn `0⚡`) + Giới hạn tối đa 3 trận tính thưởng với cùng 1 đối thủ/ngày. |
 | **8** | **Loãng kho hàng, Ngợp lựa chọn & Đứt gãy chuỗi cung ứng nếu mở toàn bộ 81 loài ngay từ Giai đoạn 1 (`MỚI`)** | 🔒 **Cơ chế "Phân Bổ Sinh Thái 5 Đợt Theo Cốt Truyện & Giai Đoạn Update" (`5-Wave Story & Stage Gating`):**<br>• Không tung cả 81 loài trồng & nuôi vào Giai đoạn 1. Mỗi Giai đoạn Update (`GĐ 1 ➔ GĐ 5`) và mỗi Chương Gia Phả (`Chương 1 ➔ 10`) chỉ mở khóa một nhóm **Nông – Thủy – Hải sản + Xưởng chế biến + Món ăn + Gia nhân khớp khít nhân quả với nhau** (`23 ➔ 45 ➔ 63 ➔ 76 ➔ 81 loài`).<br>• **Bộ lọc Đơn hàng Thông minh (`Stage-Aware Order Generator`):** Bảng đơn Hợp Tác Xã, Toa Tàu Hỏa, Thương Lái Giá Sốt và Câu đố Cụ Đồ Vũ Bằng **chỉ yêu cầu các mặt hàng thuộc những Đợt Giai đoạn đã mở khóa**, tuyệt đối không bao giờ đòi mặt hàng của Giai đoạn sau! |
 
 ---
@@ -28,7 +28,7 @@
    * **Chi phí Ngọc Bỏ Qua Thời Gian Chờ:** $\text{Cost}(T_{\text{phút}}) = \text{Ceil}\left( 0.8 \times T^{0.62} \right)$.
    * **Chi phí Mua Năng Lượng (+50 ⚡) Lũy Tiến Trong Ngày:** Lần 1: `10 💎` $\rightarrow$ Lần 2: `15 💎` $\rightarrow$ Lần 3: `25 💎` $\rightarrow$ Lần 4–5: `40 💎`.
    * **Quy đổi Động `1 💎 Ngọc -> 🪙 Xu Vàng` Theo Cấp Độ:** $\text{Xu} = \min(400, 35 + 12 \times \text{Level})$.
-3. **🏮 Xu Hội Làng (`Festival & Arena Token` — Mở ở Giai Đoạn 6):** Nhận từ PK Võ Đài 1v1, 3v3, Loạn Chiến 8–12P và 5 ván Hyper-Casual đầu ngày (Trần `100 – 250 🏮/ngày`), dùng đổi Danh hiệu Phát sáng, Biểu cảm Múa Lân và Bùn Phù Sa.
+3. **🏮 Xu Hội Làng (`Festival & Arena Token` — Mở ở Giai Đoạn 6):** Nhận từ PK Võ Đài 1v1, 3v3, Loạn Chiến 8–12P và 5 ván Hyper-Casual đầu ngày (Trần `1.500 🏮/ngày`), dùng đổi Danh hiệu Phát sáng, Biểu cảm Múa Lân và Bùn Phù Sa.
 
 ---
 
@@ -81,7 +81,7 @@
 >
 > **Đã chốt** (PO duyệt, đã ghi ở các mục khác của file này):
 > * Thuế Chợ P2P `5%`, bảo hiểm trộm `80%`: Van 2–3 (Phần 1).
-> * Trần thưởng Hyper-Casual `1.500/ngày`: Van 7. Còn chờ PO chốt đơn vị là 🪙 hay 🏮, xem `VIEC_CAN_LAM.md` A2.
+> * Trần thưởng Hyper-Casual `1.500 🏮/ngày` (Xu Hội Làng, không trả 🪙 — PO 2026-11-03): Van 7.
 > * Thuế Sới Đình `10% Zero-Sum`: Phần 5.
 > * PK `-5⚡`/trận: `01_MASTER_GDD` mục 1.2.
 >
@@ -98,6 +98,6 @@
 | **Giai đoạn 3 (`63/81` loài V-A-C • 8 Xưởng • 23 Món • 4 Thợ)** | `22.000 – 35.000 🪙` | `7.500 – 12.000 🪙` *(Xây Quầy Bún Phở, Xưởng Mắm; trồng 6 vườn cây Đặc sản Bậc 3–4; thả Cá Trắm/Trai Ngọc)* | **`6.640 – 8.040 🪙/ngày`** *(Thêm Anh Sáu & Dì Bảy)* | `6.500 – 13.000 🪙` *(Thuế Chợ 5%, Thương Đội Liên Gia, Cột mốc Lưu bút)* | **95% – 102%** |
 | **Giai đoạn 4 (`76/81` loài V-A-C • Đột biến • 25 Món • 5 Thợ)** | `38.000 – 55.000 🪙` | `10.000 – 15.000 🪙` *(Trồng Bưởi Diễn/Cà Phê/Sầu Riêng Ri6; nuôi Hươu Sao/Nhà Yến/Ghẹ Ô Loan)* | **`9.780 – 11.830 🪙/ngày`** *(Thêm Chú Tám Mộc)* | `16.000 – 28.000 🪙` *(Đình Làng 70K, Chiết cành Đột biến, Đổi Kỷ vật 8x–9x, Đua Trâu, Bánh Trung Thu)* | **97% – 108%** |
 | **Giai đoạn 5 (`81/81` loài V-A-C • Hải sản VIP • 27 Món • 6 Thợ)** | `52.000 – 72.000 🪙` | `12.000 – 18.000 🪙` *(Trồng Cau Trầu; thả Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau, Cá Koi)* | **`13.920 – 16.770 🪙/ngày`** *(Đủ 6 Gia nhân)* | `24.000 – 38.000 🪙` *(Lễ Cưới 50K, Homestay 165K, Nồi Bánh Chưng Tết)* | **98% – 110%** |
-| **Giai đoạn 6 (Sảnh Chung, Võ Đài PK & Hyper-Casual)** | `+1.500 🪙/ngày` *(Trần thưởng 5 ván Hyper-Casual đầu ngày)* | *Giữ nguyên* | *Giữ nguyên* | **`+2.000 – 5.500 🪙/ngày` đốt thêm** *(10% Thuế Sới Đình PK/Loạn Chiến + Trà đá/Pháo hoa Sảnh Chung + Vé Đua Top)* | **99% – 112%** *(Chống lạm phát tuyệt đối!)* |
+| **Giai đoạn 6 (Sảnh Chung, Võ Đài PK & Hyper-Casual)** | `+0 🪙` *(Hyper-Casual không trả vàng; trần thưởng `1.500 🏮/ngày` Xu Hội Làng)* | *Giữ nguyên* | *Giữ nguyên* | **`+2.000 – 5.500 🪙/ngày` đốt thêm** *(10% Thuế Sới Đình PK/Loạn Chiến + Trà đá/Pháo hoa Sảnh Chung + Vé Đua Top)* | **99% – 112%** *(Chống lạm phát tuyệt đối!)* |
 
 > **Số đo thực tế (từ migration `0008`):** view `analytics_economy` (tỉ lệ Sink/Source theo ngày), xem bằng `npm run supabase -- report`. Các tỉ lệ trong bảng trên là thiết kế đích; khi có số liệu beta thì cân lại theo số đo thực (`/vac-balance-check`).

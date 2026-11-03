@@ -103,7 +103,7 @@
 Để hàng trăm người chơi cùng vào **Sảnh Chung Chợ Đình** mà không gây nghẽn băng thông WebSockets hay tụt FPS trên điện thoại tầm trung:
 
 1. **Phân Kênh Tự Động (`Spatial Room Sharding: vac_plaza_room_01..99`):**
-   * Mỗi phòng Sảnh Chung giới hạn tối đa **`25 – 30 người chơi hiển thị đồng thời (Max 30 CCU/Shard)`**. Khi phòng `01` đạt `25/30`, người chơi mới tự động được định tuyến sang phòng `02` (vẫn cho phép bấm chọn đổi kênh thủ công để hội ngộ bạn bè).
+   * Mỗi phòng Sảnh Chung giới hạn tối đa **`30 người chơi hiển thị đồng thời (Max 30 CCU/Shard)`**. Khi phòng `01` đạt `25/30`, người chơi mới tự động được định tuyến sang phòng `02` (vẫn cho phép bấm chọn đổi kênh thủ công để hội ngộ bạn bè).
 2. **Tần Số Đồng Bộ `10Hz` Kết Hợp Nội Suy Tuyến Tính `60 FPS` (`10Hz Broadcast + Client LERP`):**
    * Client của người chơi chỉ gửi gói tin vị trí rút gọn `PlazaStatePacket` mỗi **`100ms` (`10 gói/giây`)** khi nhân vật thực sự di chuyển hoặc tung biểu cảm:
      ```ts
@@ -156,7 +156,7 @@ export interface IHyperCasualCartridge {
 > **Quy trình để thêm 1 game Hyper-Casual mới bất kỳ trong tương lai:**
 > 1. Tạo 1 file mới trong `src/game/minigames/` implement `IHyperCasualCartridge` (`< 200 dòng`).
 > 2. Đăng ký mã game vào mảng `HYPER_CASUAL_REGISTRY` trong `MinigameHostScene.ts`.
-> 3. Toàn bộ UI đếm ngược, tính điểm, chống hack trần `1,500 🪙/ngày`, cộng `🏮 Xu Hội Làng` và Bảng Xếp Hạng tự động hoạt động 100% mà không cần sửa lại `App.tsx` hay Database!
+> 3. Toàn bộ UI đếm ngược, tính điểm, chống hack trần `1.500 🏮/ngày`, cộng `🏮 Xu Hội Làng` và Bảng Xếp Hạng tự động hoạt động 100% mà không cần sửa lại `App.tsx` hay Database!
 
 ---
 

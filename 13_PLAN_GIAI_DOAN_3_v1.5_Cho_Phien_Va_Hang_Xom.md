@@ -29,7 +29,7 @@
 3. **5 Thủy sản Đợt 3 (Khép kín chuỗi nuôi trồng mặt nước 3 Miền):**
    - *Cá Trắm Đen (`AQUA_03` - Bắc), Cá Bống Sông Trà (`AQUA_05` - Trung), Bè Nuôi Trai Ngọc (`AQUA_06` - Trung), Cá Linh Mùa Nước Nổi (`AQUA_07` - Nam), Bè Cá Bớp (`AQUA_08` - Nam)*.
 
-### 2.2. Dây Chuyền Chế Biến Đợt 3 (+9 Món = Lũy Kế 19/22 Công Thức)
+### 2.2. Dây Chuyền Chế Biến Đợt 3 (+9 Món = Lũy Kế 23/27 Công Thức)
 - Mở thêm **Xưởng Thủ Công Tre Mây (`MACH_05`)** & **Quầy Chè - Giải Khát (`MACH_06`)**:
   - *Mật Ong Rừng Hoa Nhãn (`PROD_05`), Vải Thiều Sấy Khô (`PROD_06`), Đậu Phụ Làng Mơ (`PROD_07`), Đường Phèn Kết Tinh (`PROD_11`), Rượu Vang Nho Phan Rang (`PROD_12`), Kẹo Dừa Bến Tre (`PROD_16`), Sinh Tố Măng Cụt (`PROD_17`), Bánh Tráng Trảng Bàng (`PROD_18`), Mứt Dừa Non (`PROD_19`)*.
 

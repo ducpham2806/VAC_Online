@@ -7,17 +7,17 @@
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 6 (CHAPTER 6: BẾN ĐÌNH HỘI TỤ & SỚI VẬT TRẨY HỘI BỐN PHƯƠNG)
-- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, 20–30 người chơi có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Khi nông trại quê nhà đã trù phú và gia đình êm ấm, **Bến Đình Sông Quê** chính thức mở tuyến đò ngang đưa bà con nông dân từ khắp mọi miền đổ về **Sảnh Chung Chợ Đình (Social Plaza `48x32 Tiles`)**! Tại đây, tối đa 30 người chơi/phòng có thể trực tiếp điều khiển nhân vật đi dạo dưới gốc đa cổ thụ, ngồi quán nước chè xanh chém gió, cùng nhau **Múa Sạp, Múa Lân**, bước lên **Cầu Tre Đấu Gậy 1v1**, tham gia **Loạn Chiến Bắt Vịt Hoàng Kim** dưới ao bùn hay ghé **Lều Máy Thùng Tuổi Thơ** giải trí siêu tốc 30–45 giây trong lúc chờ lúa chín!
 - **Mục tiêu sản phẩm & Ràng buộc Thiết kế (`RULE D1` Core Guardrail):**
   - Mở khóa không gian **Real-time Multiplayer Social Plaza** (`SocialPlazaScene.ts`) tách biệt hoàn toàn với `FarmScene.ts` (chuyển cảnh qua cổng Đình Làng hoặc nút HUD `🎪 Sảnh Đình`, đảm bảo nông trại chính luôn nhẹ và mượt).
   - **Cơ chế PK Dân Gian Không Máu Me (Slapstick Folk Arena):** Tuyệt đối không chém giết bạo lực; mọi đòn đánh là **Đấu Gậy Bông Đẩy Cầu Tre, Đấu Vật Đẩy Khỏi Vòng Vôi, Ném Bóng Nước/Cà Chua Chín & Tranh Cờ/Bắt Vịt**.
-  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK tiêu thụ **`-5 ⚡` Năng lượng Bát Cơm/trận** (hồi bằng Bánh Chưng / Cơm Nắm Bếp Quê; Máy Thùng Hyper-Casual `0⚡`) và trả thưởng bằng **Xu Hội Làng (`🪙 Xu Hội`)** có trần **1.500 Xu/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
+  - **Kinh tế Khép Kín Chống Cày Tiền (Anti-Bot Farming):** PK tiêu thụ **`-5 ⚡` Năng lượng Bát Cơm/trận** (hồi bằng Bánh Chưng / Cơm Nắm Bếp Quê; Máy Thùng Hyper-Casual `0⚡`) và trả thưởng bằng **Xu Hội Làng (`🏮 Xu Hội`)** có trần **1.500 🏮/ngày** — giữ cho Nông Trại luôn là trái tim kinh tế duy nhất của game (`RULE D1`).
 
 ---
 
 ## 2. DANH MỤC TÍNH NĂNG & PHẠM VI TRIỂN KHAI GIAI ĐOẠN 6 (`WHAT TO BUILD`)
 
-### 2.1. Sảnh Chung Chợ Đình (`SocialPlazaScene.ts` — Bản Đồ `48x32 Tiles`, 20–30 Players/Room)
+### 2.1. Sảnh Chung Chợ Đình (`SocialPlazaScene.ts` — Bản Đồ `48x32 Tiles`, 30 CCU/Room)
 - **5 Phân khu Tương tác Trực tiếp:**
   1. **Quảng Trường Cây Đa & Quán Nước Chè Đầu Cổng:** Nơi người chơi xuất hiện, ngồi ghế đẩu uống trà xanh (hồi nhẹ Stamina), bật bong bóng chat trên đầu và gõ lệnh nối vần **Ca Dao – Tục Ngữ**.
   2. **Sân Khấu Múa Sạp & Múa Lân Đồng Đội:** Nhảy vào vòng sạp tre hoặc lập đội 2 người (1 người múa Đầu Lân + 1 người đánh Trống/Ông Địa) để biểu diễn nhận mưa tim từ khán giả.
@@ -65,7 +65,7 @@
 | Bộ phận | Kỹ năng AI sử dụng | Nhiệm vụ cụ thể trong Giai đoạn 6 | Đầu ra nghiệm thu (`Deliverables`) |
 | :--- | :--- | :--- | :--- |
 | **1. Game Design & Economy** | `@game-designer` + `@economy-designer` + `@level-designer` | - Thiết kế layout `48x32 Tiles` cho Sảnh Chung Chợ Đình (luồng di chuyển từ Bến Đò ➔ Cây Đa ➔ Sới Vật ➔ Lều Máy Thùng).<br>- Cân bằng năng lượng tiêu thụ (`-5 ⚡`/trận PK) và trần **1.500 Xu Hội Làng/ngày** + Shop Đổi Thưởng Hội Làng. | Bản vẽ Layout `48x32` + `STAGE6_ARENA_ECONOMY_CONFIG`. |
-| **2. Multiplayer & Backend** | `@backend-architect` + `@godot-multiplayer-engineer` (tư duy netcode) | - Thiết kế kênh **Supabase Realtime Broadcast + Presence** (`plaza_room_1..N`, tối đa 25 CCU/phòng, gói tin vị trí nén `< 120 bytes` ở tần số `10Hz`).<br>- Viết **Migration Additive-Only** cho bảng `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards` và RPC `claim_plaza_reward` (kiểm tra trần 1.500 Xu/ngày + chống giả mạo điểm số). | File SQL Migration Giai đoạn 6 + `PlazaRealtimeService.ts` + RPC `claim_plaza_reward`. |
+| **2. Multiplayer & Backend** | `@backend-architect` + `@godot-multiplayer-engineer` (tư duy netcode) | - Thiết kế kênh **Supabase Realtime Broadcast + Presence** (`plaza_room_1..N`, tối đa 30 CCU/phòng, gói tin vị trí nén `< 120 bytes` ở tần số `10Hz`).<br>- Viết **Migration Additive-Only** cho bảng `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards` và RPC `claim_plaza_reward` (kiểm tra trần 1.500 Xu/ngày + chống giả mạo điểm số). | File SQL Migration Giai đoạn 6 + `PlazaRealtimeService.ts` + RPC `claim_plaza_reward`. |
 | **3. Art, Tilemap & VFX** | `@generate2dmap` + `@generate2dsprite` + `@video2dsprite` + `@codeart2d` + `@technical-artist` | - Sản xuất Tilemap `48x32` Sảnh Chung, Lều Máy Thùng, Bộ đạo cụ `PROP_ARENA`.<br>- Tạo 7 bộ animation PK & Giao lưu (`8–12 frames`) khớp Paper-Doll + 4 VFX (`fx_arena_impact`, `fx_water_splash_plaza`, `fx_blade_trail`, `fx_mud_splatter`). | Atlas `plaza_stage6_arena_arcade.json/.png` (Lazy-loaded). |
 | **4. Frontend, Scene & Arcade** | `@frontend-developer` + `@ui-designer` | - Xây dựng `src/game/scenes/SocialPlazaScene.ts` (di chuyển Joystick/WASD + nội suy vị trí người chơi khác + bong bóng chat/emote).<br>- Xây dựng `SocialPlazaModal.tsx` và `HyperCasualArcadeModal.tsx` (4 mini-game 30–45s). | `SocialPlazaScene.ts` + 2 UI Modals + 4 Hyper-Casual Modules. |
 | **5. Audio & QA** | `@game-audio-engineer` + `@code-reviewer` | - Gắn nhạc nền Sảnh Đình & tiếng gậy bông va chạm, tiếng nước bắn, tiếng chẻ tre giòn tan.<br>- Kiểm tra tải mạng khi 25 người chơi di chuyển cùng lúc (đảm bảo FPS >= 60 và không rò rỉ bộ nhớ khi chuyển qua lại giữa `FarmScene` ⇄ `SocialPlazaScene`). | Báo cáo Audit `RULE D0 & D1` Giai đoạn 6. |
@@ -78,7 +78,7 @@
 ```markdown
 Hãy đóng vai đội ngũ phát triển dự án "Nông Trại Tình Yêu & Gia Đình 3 Miền" và triển khai GIAI ĐOẠN 6 (v3.0 - Sảnh Chung Chợ Đình, PK Dân Gian & Khu Trò Chơi Hyper-Casual) theo đúng file `16_PLAN_GIAI_DOAN_6_v3.0_Sanh_Chung_PK_Va_Hyper_Casual.md`:
 1. BƯỚC 1 (Khai báo Tác động chéo theo RULE D0 & D1): Đảm bảo `SocialPlazaScene.ts` tách biệt hoàn toàn với `FarmScene.ts`, lazy-load tài nguyên và kinh tế PK khóa trần 1.500 Xu Hội Làng/ngày không gây lạm phát Vàng nông trại.
-2. BƯỚC 2 (Realtime Netcode & Database - @backend-architect): Tạo migration SQL Additive-Only cho `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards`, RPC `claim_plaza_reward` và `PlazaRealtimeService.ts` (Supabase Realtime Broadcast 10Hz + Presence 25 người/phòng + Linear Interpolation).
+2. BƯỚC 2 (Realtime Netcode & Database - @backend-architect): Tạo migration SQL Additive-Only cho `arena_elo_ratings`, `plaza_match_history`, `arcade_leaderboards`, RPC `claim_plaza_reward` và `PlazaRealtimeService.ts` (Supabase Realtime Broadcast 10Hz + Presence 30 người/phòng + Linear Interpolation).
 3. BƯỚC 3 (Scene Sảnh Chung, PK & Hyper-Casual - @frontend-developer + @ui-designer): Xây dựng `SocialPlazaScene.ts` (48x32 tiles, Joystick/WASD, Emote Múa Sạp/Múa Lân, Đấu Gậy Cầu Tre 1v1, Đấu Vật, Cướp Cờ 3v3, Bắt Vịt Hoàng Kim 8 người) và `HyperCasualArcadeModal.tsx` (Chẻ Tre, Nhảy Bao Bố, Bắn Bi Ve, Hứng Dừa).
 4. BƯỚC 4 (QA & Nghiệm thu - @code-reviewer): Kiểm tra giải phóng bộ nhớ khi chuyển cảnh `FarmScene ⇄ SocialPlazaScene` và nghiệm thu theo Checklist Mục 5.
 ```
@@ -97,4 +97,4 @@ Hãy kích hoạt chuỗi kỹ năng `@generate2dmap`, `@generate2dsprite`, `@vi
 ## 5. CHECKLIST NGHIỆM THU GIAI ĐOẠN 6 (`DEFINITION OF DONE`)
 - [ ] **Nghiệm thu RULE D0 & D1:** `FarmScene.ts` hoàn toàn không bị nặng thêm (Atlas Giai đoạn 6 được lazy-load riêng); PK mang tính dân gian vui nhộn, không máu me; trần 1.500 Xu Hội Làng/ngày hoạt động chuẩn xác.
 - [ ] **Nghiệm thu Asset, Tilemap & VFX Đợt 6:** Bản đồ `48x32 Tiles` không có lỗi va chạm (seam/collision); 7 động tác PK & Múa Sạp/Múa Lân khớp hoàn hảo với các bộ trang phục Paper-Doll; VFX `fx_arena_impact` và `fx_blade_trail` mượt 60fps.
-- [ ] **Nghiệm thu Multiplayer & 4 Game Hyper-Casual:** Di chuyển 25 người/phòng mượt mà nhờ `lerp` 10Hz; cả 4 trò chơi Hyper-Casual chơi gọn trong 30–45 giây trên cả cảm ứng và chuột/phím.
+- [ ] **Nghiệm thu Multiplayer & 4 Game Hyper-Casual:** Di chuyển 30 người/phòng mượt mà nhờ `lerp` 10Hz; cả 4 trò chơi Hyper-Casual chơi gọn trong 30–45 giây trên cả cảm ứng và chuột/phím.

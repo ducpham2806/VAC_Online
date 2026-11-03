@@ -1,17 +1,17 @@
 # 🏮 PLAN TRIỂN KHAI CHI TIẾT GIAI ĐOẠN 4: HỘI LÀNG ĐÌNH CHUNG, CÂY ĐỘT BIẾN, KỶ VẬT & THỜI TRANG (`v1.8`)
 **Phiên bản:** `1.1 (Stage 4 Execution Plan & AI Delegation Playbook — Bổ sung Kế Hoạch Sản Xuất Chi Tiết Asset, Animation 8–12f, Paper-Doll & VFX)`  
-**Mốc phát hành:** Tháng 4 (Tuần 7–8 — Bản cập nhật Cộng đồng Đình Làng, Sưu tầm chuyên sâu & Cá nhân hóa Thời trang)  
+**Mốc phát hành:** Tháng 4 (Tuần 7–8 — Bản cập nhật Trùng tu Đình Làng, Sưu tầm chuyên sâu & Cá nhân hóa Thời trang)  
 **Tài liệu tham chiếu gốc:** `00_MASTER_BIBLE` ➔ `01_MASTER_GDD` ➔ `02_MASTER_ECONOMY` ➔ `03_MASTER_TECH` ➔ `04_MASTER_DATA` ➔ `05_MASTER_ART` ➔ `06_MASTER_UI_UX`  
 **Quy tắc bắt buộc:** Thực thi nghiêm ngặt **`RULE D0`** (Đối chiếu khử trùng lặp) & **`RULE D1`** (Bảo toàn Core Gameplay, Nhất quán Art `#3D2314`/Code/DB Additive-Only & Cảnh báo tác động chéo ngay tại Bước 1).
 
 ---
 
 ## 1. MỤC TIÊU CỐT LÕI & CÂU CHUYỆN GIAI ĐOẠN 4 (CHAPTER 4: TRỐNG HỘI ĐÌNH LÀNG & MÙA HOA ĐỘT BIẾN)
-- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Tiếng trống cái từ **Đình Làng Tam Miền** vang vọng khắp xóm! Cả làng cùng góp gạch ngói, gỗ lim và nông sản để trùng tu ngôi Đình cổ 3 cấp. Nhờ mạch nước ngầm cổ dưới chân Đình khơi thông và lớp bùn phù sa đặc biệt của *Chú Tám Mộc*, những giống cây trồng quý hiếm bắt đầu kết trái **Đột Biến Ngũ Sắc** rực rỡ. Mỗi tối cuối tuần, sân Đình lại rộn ràng **3 trò chơi dân gian Hội Làng**, và bà con diện những bộ **Áo Dài, Áo Tứ Thân, Áo Bà Ba** đẹp nhất đi trẩy hội!
+- **Bối cảnh cốt truyện (`01_MASTER_GDD` Chương 4 — Mục 4.2):** Tiếng trống cái từ **Đình Làng Tam Miền** vang vọng khắp xóm! Người chơi tự góp công đức gạch ngói, gỗ lim để trùng tu ngôi Đình cổ 3 cấp. Nhờ mạch nước ngầm cổ dưới chân Đình khơi thông và lớp bùn phù sa đặc biệt của *Chú Tám Mộc*, những giống cây trồng quý hiếm bắt đầu kết trái **Đột Biến Ngũ Sắc** rực rỡ. Mỗi tối cuối tuần, sân Đình lại rộn ràng **3 trò chơi dân gian Hội Làng**, và bà con diện những bộ **Áo Dài, Áo Tứ Thân, Áo Bà Ba** đẹp nhất đi trẩy hội!
 - **Mục tiêu sản phẩm & KPI:**
-  - Mở khóa **Đình Làng Cộng Đồng (Co-op Guild 20–30 thành viên)**, **3 Minigame Lễ Hội Dân Gian**, **Hệ thống Lai Tạo Cây Đột Biến Ngũ Sắc**, **Bảo Tàng Kỷ Vật Tuổi Thơ 8x–9x (12 món)**, và **Tủ Đồ Thời Trang 12 Lớp Paper-Doll**.
+  - Mở khóa **Trùng Tu Đình Làng (chơi đơn, 3 cột mốc `5.000/15.000/50.000 🪙`)**, **3 Minigame Lễ Hội Dân Gian**, **Hệ thống Lai Tạo Cây Đột Biến Ngũ Sắc**, **Bảo Tàng Kỷ Vật Tuổi Thơ 8x–9x (12 món)**, và **Tủ Đồ Thời Trang 12 Lớp Paper-Doll**.
   - Nâng tổng hệ sinh thái sinh vật từ **63 loài lên 76 loài (+13 loài quý hiếm Bậc 4–5)**.
-  - Tăng chỉ số **D30 Retention > 18%** và kích hoạt **Sink Vàng/Nông sản lớn nhất Mid-game** (Quyên góp Đình Làng + Ghép Kỷ Vật + Mở Tủ Đồ).
+  - Tăng chỉ số **D30 Retention > 18%** và kích hoạt **Sink Vàng/Nông sản lớn nhất Mid-game** (Công đức Đình Làng + Ghép Kỷ Vật + Mở Tủ Đồ).
 
 ---
 
@@ -26,15 +26,15 @@
 3. **4 Thủy sản Đặc sản Đợt 4:**
    - *Ba Ba Ao Quê (`AQUA_04` - Bắc), Cá Anh Vũ Tiến Vua (`AQUA_09` - Bắc), Ghẹ Đầm Ô Loan (`AQUA_11` - Trung), Cá Tai Tượng Chiên Xù (`AQUA_12` - Nam)*.
 
-### 2.2. Dây Chuyền Chế Biến Đợt 4 (+2 Món Thượng Hạng = Lũy Kế 21/22 Công Thức)
+### 2.2. Dây Chuyền Chế Biến Đợt 4 (+2 Món Thượng Hạng = Lũy Kế 25/27 Công Thức)
 - Mở khóa **Xưởng Tinh Chế Đặc Sản (`MACH_07`)**:
   - *Cà Phê Phin Sữa Đá (`PROD_13` - Tăng +15% tốc độ di chuyển nhân vật & gia nhân trong 30 phút)* và *Bánh Pía Sầu Riêng Trứng Muối (`PROD_20` - Món quà tặng NPC tăng +40 điểm Hảo cảm)*.
 - Mở khóa **Gia Nhân Thứ 5:** **Chú Tám Mộc (`WORK_05`)** — Tự động nạo vét bùn ao, ủ phân hữu cơ và bón *Bùn Ao Phù Sa* kích thích tỷ lệ ra Cây Đột Biến (+3% xác suất).
 
-### 2.3. Đình Làng Cộng Đồng, 3 Minigame Hội Làng, Bảo Tàng Kỷ Vật & Thời Trang
-- **Đình Làng Cộng Đồng (`VillageGuildModal.tsx`):**
-  - Bang hội 20–30 nông dân cùng quyên góp Vàng + Nông sản theo tiến độ 3 Cấp Đình Làng (*Cấp 1: Mái Ngói Rêu Phong ➔ Cấp 2: Cột Lim Chạm Rồng ➔ Cấp 3: Đại Đình Tam Miền*).
-  - Mở khóa **Cây Đa Thần Nông** ban phúc lợi toàn bang (+5% Vàng đơn hàng, giảm 5% thời gian chín cây trồng).
+### 2.3. Trùng Tu Đình Làng, 3 Minigame Hội Làng, Bảo Tàng Kỷ Vật & Thời Trang
+- **Trùng Tu Đình Làng (chơi đơn — action `contributeDinhLang`, cột `dinh_lang_stage` 0–3):**
+  - Người chơi tự công đức Vàng qua 3 cột mốc `5.000 ➔ 15.000 ➔ 50.000 🪙` (tổng `70.000 🪙`) (*Cấp 1: Mái Ngói Rêu Phong ➔ Cấp 2: Cột Lim Chạm Rồng ➔ Cấp 3: Đại Đình Tam Miền*). Không có bang hội/nhóm (PO 2026-11-03).
+  - Đủ Cấp 3: buff vĩnh viễn **+5% sản lượng toàn trang trại**; mỗi lần lên cấp phát Loa Phường.
 - **3 Minigame Lễ Hội Dân Gian (`FestivalMinigamesModal.tsx`):**
   - **Đua Thuyền Rồng Trên Sông** (Bấm nhịp Trống Đình Làng cùng đồng đội).
   - **Đua Trâu Cày Ruộng Lầy** (Điều hướng Trâu tránh vũng bùn sâu & gom bó mạ vàng).
@@ -60,7 +60,7 @@
 
 ### B. Quy Trình Kỹ Thuật & Kiểm Định Paper-Doll Giai Đoạn 4 (`RULE D1`)
 1. **Chuẩn Hóa Z-Index Paper-Doll 4 Lớp:** `Layer 0: Back Hair/Cloak` ➔ `Layer 1: Base Body (32x48)` ➔ `Layer 2: Outfit (Áo Dài/Tứ Thân/Bà Ba)` ➔ `Layer 3: Hat (Nón Lá/Nón Quai Thao/Khăn Đóng)` ➔ `Layer 4: Aura VFX (fx_firefly_halo)`. Tất cả 4 lớp dùng chung bảng frame offset `(dx, dy)` để không bao giờ bị lệch pixel khi nhân vật cúi cuốc đất hay múa hội.
-2. **Đóng gói Atlas Giai Đoạn 4:** Xuất vào `assets/atlases/farm_stage4_guild_fashion.json` + `.png` (`<= 2048x2048 px`).
+2. **Đóng gói Atlas Giai Đoạn 4:** Xuất vào `assets/atlases/farm_stage4_dinh_fashion.json` + `.png` (`<= 2048x2048 px`).
 
 ---
 
@@ -68,10 +68,10 @@
 
 | Bộ phận | Kỹ năng AI sử dụng | Nhiệm vụ cụ thể trong Giai đoạn 4 | Đầu ra nghiệm thu (`Deliverables`) |
 | :--- | :--- | :--- | :--- |
-| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` | - Thiết kế ma trận lai tạo Cây Đột Biến (kết hợp 2 cây Sao Vàng ⭐ liền kề + Bùn Ao Phù Sa).<br>- Cân bằng bảng Quyên góp Đình Làng 3 cấp (Vàng + Nông sản theo tuần) để hút lượng Vàng dư thừa từ Giai đoạn 3.<br>- Thiết kế chỉ số Buff sưu tầm 12 Kỷ vật tuổi thơ. | `STAGE4_MUTATION_TABLE`, `GUILD_UPGRADE_COSTS` & `RELIC_BUFF_CONFIG`. |
-| **2. Backend & Guild System** | `@backend-architect` | - Viết **Migration Additive-Only** cho bảng `guilds`, `guild_members`, `guild_donations`, `player_relics`, `player_wardrobe`.<br>- Viết **Supabase RPC** `donate_to_guild` (atomic cộng điểm cống hiến & tự động nâng cấp Đình Làng khi đủ mốc). | File SQL Migration Giai đoạn 4 + RPC `donate_to_guild`. |
-| **3. Art, Paper-Doll & VFX** | `@generate2dsprite` + `@video2dsprite` + `@generate2dmap` + `@codeart2d` + `@technical-artist` | - Sản xuất 24 frames cây Đợt 4 (gồm 3 cây đột biến ngũ sắc), 7 loài vật nuôi/thủy sản quý, Đình Làng 3 cấp.<br>- Cắt và căn chỉnh tọa độ **12 bộ trang phục Paper-Doll** khớp chuẩn 8–12 frames nhân vật.<br>- Tạo VFX `fx_mutant_aura`, `fx_claypot_shatter`, `fx_firefly_halo`. | Atlas `farm_stage4_guild_fashion.json/.png` + Paper-Doll Anchor Map. |
-| **4. Frontend & Minigames** | `@frontend-developer` + `@ui-designer` | - Xây dựng `VillageGuildModal.tsx`, `FestivalMinigamesModal.tsx` (3 minigame mượt 60fps), `ChildhoodMuseumModal.tsx` và `FashionWardrobeModal.tsx`.<br>- Nâng cấp renderer nhân vật trong `FarmScene.ts` hỗ trợ ghép 4 lớp Paper-Doll. | 4 UI Modals + Multi-layer Character Sprite Renderer. |
+| **1. Game Design & Economy** | `@game-designer` + `@economy-designer` | - Thiết kế ma trận lai tạo Cây Đột Biến (kết hợp 2 cây Sao Vàng ⭐ liền kề + Bùn Ao Phù Sa).<br>- Cân bằng 3 cột mốc công đức Đình Làng (`5.000/15.000/50.000 🪙`, chơi đơn) để hút lượng Vàng dư thừa từ Giai đoạn 3.<br>- Thiết kế chỉ số Buff sưu tầm 12 Kỷ vật tuổi thơ. | `STAGE4_MUTATION_TABLE`, `DINH_LANG_STAGE_COSTS` & `RELIC_BUFF_CONFIG`. |
+| **2. Backend & Đình Làng** | `@backend-architect` | - Viết **Migration Additive-Only** cho bảng `player_relics`, `player_wardrobe` (Đình Làng dùng cột có sẵn `profiles.dinh_lang_stage`, không tạo bảng bang hội).<br>- Viết **Supabase RPC** `contribute_dinh_lang` (atomic trừ Vàng & nâng `dinh_lang_stage` khi đủ mốc `5.000/15.000/50.000 🪙`). | File SQL Migration Giai đoạn 4 + RPC `contribute_dinh_lang`. |
+| **3. Art, Paper-Doll & VFX** | `@generate2dsprite` + `@video2dsprite` + `@generate2dmap` + `@codeart2d` + `@technical-artist` | - Sản xuất 24 frames cây Đợt 4 (gồm 3 cây đột biến ngũ sắc), 7 loài vật nuôi/thủy sản quý, Đình Làng 3 cấp.<br>- Cắt và căn chỉnh tọa độ **12 bộ trang phục Paper-Doll** khớp chuẩn 8–12 frames nhân vật.<br>- Tạo VFX `fx_mutant_aura`, `fx_claypot_shatter`, `fx_firefly_halo`. | Atlas `farm_stage4_dinh_fashion.json/.png` + Paper-Doll Anchor Map. |
+| **4. Frontend & Minigames** | `@frontend-developer` + `@ui-designer` | - Xây dựng `DinhLangModal.tsx`, `FestivalMinigamesModal.tsx` (3 minigame mượt 60fps), `ChildhoodMuseumModal.tsx` và `FashionWardrobeModal.tsx`.<br>- Nâng cấp renderer nhân vật trong `FarmScene.ts` hỗ trợ ghép 4 lớp Paper-Doll. | 4 UI Modals + Multi-layer Character Sprite Renderer. |
 | **5. Audio & QA** | `@game-audio-engineer` + `@code-reviewer` | - Gắn nhạc nền lễ hội rộn ràng & tiếng trống Đình Làng, tiếng mảnh niêu đất vỡ giòn tan.<br>- Kiểm tra hiệu năng render khi 10+ nhân vật mặc đồ Paper-Doll + Aura xuất hiện trên màn hình. | Báo cáo Audit `RULE D0 & D1` Giai đoạn 4. |
 
 ---
@@ -82,8 +82,8 @@
 ```markdown
 Hãy đóng vai đội ngũ phát triển dự án "Nông Trại Tình Yêu & Gia Đình 3 Miền" và triển khai GIAI ĐOẠN 4 (v1.8 - Hội Làng Đình Chung, Cây Đột Biến, Kỷ Vật & Thời Trang) theo đúng file `14_PLAN_GIAI_DOAN_4_v1.8_Hoi_Lang_Va_Thoi_Trang.md`:
 1. BƯỚC 1 (Khai báo Tác động chéo theo RULE D0 & D1): Kiểm tra tác động lên `FarmScene.ts` (logic mọc cây đột biến & Paper-Doll renderer) và xác nhận Database Additive-Only trước khi code.
-2. BƯỚC 2 (Database & Economy - @economy-designer + @backend-architect): Tạo migration SQL cho `guilds`, `guild_members`, `guild_donations`, `player_relics`, `player_wardrobe` và RPC `donate_to_guild`. Mở khóa 13 loài Đợt 4 (lũy kế 76 loài), 12 Kỷ vật (`RELIC_01..12`) và 12 Thời trang (`FASH_01..12`).
-3. BƯỚC 3 (Gameplay & UI - @frontend-developer + @ui-designer): Xây dựng `VillageGuildModal.tsx`, `FestivalMinigamesModal.tsx` (Đua thuyền, Đua trâu, Đập niêu), `ChildhoodMuseumModal.tsx` và `FashionWardrobeModal.tsx` (khung gỗ #3D2314, giấy #FFFDF5).
+2. BƯỚC 2 (Database & Economy - @economy-designer + @backend-architect): Tạo migration SQL cho `player_relics`, `player_wardrobe` và RPC `contribute_dinh_lang` (Đình Làng chơi đơn, mốc `5.000/15.000/50.000 🪙`, dùng cột `dinh_lang_stage`). Mở khóa 13 loài Đợt 4 (lũy kế 76 loài), 12 Kỷ vật (`RELIC_01..12`) và 12 Thời trang (`FASH_01..12`).
+3. BƯỚC 3 (Gameplay & UI - @frontend-developer + @ui-designer): Xây dựng `DinhLangModal.tsx`, `FestivalMinigamesModal.tsx` (Đua thuyền, Đua trâu, Đập niêu), `ChildhoodMuseumModal.tsx` và `FashionWardrobeModal.tsx` (khung gỗ #3D2314, giấy #FFFDF5).
 4. BƯỚC 4 (QA & Nghiệm thu - @code-reviewer): Kiểm tra tỷ lệ lai tạo cây đột biến, Paper-Doll Z-index và đánh dấu hoàn thành Checklist Mục 5.
 ```
 
@@ -93,7 +93,7 @@ Hãy kích hoạt chuỗi kỹ năng `@generate2dsprite`, `@video2dsprite`, `@ge
 1. Tuân thủ tuyệt đối RULE D1 Art Lock: Góc nhìn 3/4 Top-Down Oblique, viền ấm `#3D2314` (cấm `#000000`), nền `#FF00FF`, Anchor `(0.5, 0.9)`.
 2. Tạo 6 dải Sprite Cây trồng Đợt 4 (`CROP_10, 18, 26` và 3 Cây Đột Biến Ngũ Sắc `CROP_27..29` = 24 frames), cùng 7 loài vật nuôi/thủy sản quý (`ANIM_07, 09..11`, `AQUA_04, 09, 11, 12`) và Gia nhân *Chú Tám Mộc (`WORK_05`)*.
 3. Tạo kiến trúc Đình Làng 3 Cấp (`bldg_dinh` `210x74 px`), Đạo cụ 3 Minigame (`Row_DragonBoat` 8f, `Buffalo_Plow_Race` 8f, Dây Niêu Đất) và 12 Icon Kỷ Vật 8x–9x (`RELIC_01..12` `32x32 px`).
-4. Thiết kế 12 Bộ Trang Phục Paper-Doll (`FASH_01..12` `32x48 px`) tách lớp Áo/Nón/Hào quang khớp tuyệt đối từng frame với nhân vật gốc, kèm 3 Particle VFX (`fx_mutant_aura`, `fx_claypot_shatter`, `fx_firefly_halo`), đóng gói vào Atlas `farm_stage4_guild_fashion.json/.png`.
+4. Thiết kế 12 Bộ Trang Phục Paper-Doll (`FASH_01..12` `32x48 px`) tách lớp Áo/Nón/Hào quang khớp tuyệt đối từng frame với nhân vật gốc, kèm 3 Particle VFX (`fx_mutant_aura`, `fx_claypot_shatter`, `fx_firefly_halo`), đóng gói vào Atlas `farm_stage4_dinh_fashion.json/.png`.
 ```
 
 ---
@@ -101,4 +101,4 @@ Hãy kích hoạt chuỗi kỹ năng `@generate2dsprite`, `@video2dsprite`, `@ge
 ## 5. CHECKLIST NGHIỆM THU GIAI ĐOẠN 4 (`DEFINITION OF DONE`)
 - [ ] **Nghiệm thu RULE D0 & D1:** Không phá vỡ save-game Giai đoạn 1–3; Thời trang hoàn toàn không cộng chỉ số Pay-to-Win; bảng SQL mới Additive-Only.
 - [ ] **Nghiệm thu Asset, Paper-Doll & VFX Đợt 4:** 12 bộ trang phục Paper-Doll không bị lệch pixel ở bất kỳ frame nào; Cây Đột Biến hiển thị hào quang `fx_mutant_aura` mượt mà.
-- [ ] **Nghiệm thu Đình Làng & Minigame:** Quyên góp Đình Làng cộng điểm realtime; 3 Minigame Hội Làng chơi mượt 60fps trên cả Desktop & Mobile.
+- [ ] **Nghiệm thu Đình Làng & Minigame:** Công đức Đình Làng (chơi đơn) lên đúng 3 mốc `5.000/15.000/50.000 🪙`; 3 Minigame Hội Làng chơi mượt 60fps trên cả Desktop & Mobile.
