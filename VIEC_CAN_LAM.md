@@ -15,6 +15,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
 - [x] ~~Chạy `0009_kitchen.sql` (PO) + `recipe_seed.sql` (AI qua connector)~~ ✅ 2026-11-02 (AI đã kiểm: 3 bảng, 5 RPC Bếp, 34 dòng công thức, Security Advisor 0 ERROR)
 - [ ] Chạy `0010_livestock_cycles.sql` (vật nuôi nhiều lứa, chỉ thêm) — hoặc cho phép AI áp qua connector. **Không chạy lại `0009` sau `0010`.**
+- [ ] Chạy `0011_workers.sql` (Lán Thợ, chỉ thêm) SAU `0010`. Thứ tự luôn tăng dần; không chạy lại file cũ sau file mới.
 - [ ] Chạy lại `supabase/seed/master_catalog_seed.sql` (mô tả Chó Phú Quốc + **số liệu thợ mới S5b**: Lv.13/15, lương 200/275🪙).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
