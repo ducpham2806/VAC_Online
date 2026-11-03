@@ -15,7 +15,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
 - [x] ~~Chạy `0009_kitchen.sql` (PO) + `recipe_seed.sql` (AI qua connector)~~ ✅ 2026-11-02 (AI đã kiểm: 3 bảng, 5 RPC Bếp, 34 dòng công thức, Security Advisor 0 ERROR)
 - [ ] Chạy `0010_livestock_cycles.sql` (vật nuôi nhiều lứa, chỉ thêm) — hoặc cho phép AI áp qua connector. **Không chạy lại `0009` sau `0010`.**
-- [ ] (Không gấp) Chạy lại `supabase/seed/master_catalog_seed.sql` trong SQL Editor để cập nhật chữ mô tả Chó Phú Quốc 50% / Ngỗng 70% trên DB (luật không đổi).
+- [ ] Chạy lại `supabase/seed/master_catalog_seed.sql` (mô tả Chó Phú Quốc + **số liệu thợ mới S5b**: Lv.13/15, lương 200/275🪙).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
 - [ ] Thêm `{{ .Token }}` vào email template **Reset Password** (game dùng OTP 6 số). Có thể chạy `npm run supabase -- auth-config --apply` khi có `SUPABASE_ACCESS_TOKEN`.
@@ -83,7 +83,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Điền 2 placeholder rỗng (`02` Phần 4, `08` Phần 5)~~ ✅ 2026-11-02
 - [x] ~~Đồng bộ 7/8 van chống lạm phát (= 8, theo `02`)~~ ✅ 2026-11-02
 - [x] ~~Lệch số quy tắc code (14), số phiên bản Bible / UI~~ ✅ 2026-11-02
-- [ ] Cấp mở khóa lệch: `WORK_02` Lv.16 vs Chương 6 Lv.13; `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (`17` mục A4). Đụng dữ liệu catalog nên để làm cùng lúc mở GĐ tương ứng.
+- [ ] Cấp mở khóa lệch: ~~`WORK_02` Lv.16 vs Chương 6 Lv.13~~ ✅ 2026-11-03 (Lv.13 / Lv.15); `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (`17` mục A4). Đụng dữ liệu catalog nên để làm cùng lúc mở GĐ tương ứng.
 
 ## E. Đã xong trước đó
 - [x] ~~Phân tích dự án, lập file `17` và kế hoạch sprint~~ ✅ 2026-10-31
@@ -108,3 +108,4 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 - **2026-11-02** — Viết đặc tả **nháp S5 Lán Thợ** (`17` mục C3) + RULE D1 sơ bộ. **Dừng ở đây: chờ PO trả lời 4 câu hỏi** (cách thợ làm việc, mức lương, sửa vật nuôi lỗ, lệch cấp Chương 6–7). Chưa viết code S5.
 - **2026-11-03** — PO duyệt 4 quyết định S5 (đều phương án khuyên dùng): thợ chỉ thu + tưới; lương còn 25% (200 / 275🪙); vật nuôi + thủy sản nuôi nhiều lứa; hạ cấp Chú Tư Lv.13, Cô Năm Lv.15. Ghi vào `17` C3 + mục A2. Bắt đầu S5a.
 - **2026-11-03** — S5a vật nuôi / thủy sản nuôi nhiều lứa: `src/domain/farm.ts` (`harvestCycles`, `harvest`), `0010_livestock_cycles.sql`, `supabase/tests/livestock.test.sql`, `farmGateway` + FarmScene hiện "còn N lứa", tài liệu `01` 1.1b / `02` 3.1b / `17` C3. Sửa `scripts/test-sql.sh` (lần chạy lại bỏ sót migration ≥ `0010`). Kiểm: typecheck, 151 test, build, test:sql PASS. Chờ PO chạy `0010`. Tiếp theo: S5b số liệu thợ.
+- **2026-11-03** — S5b số liệu thợ theo PO: Chú Tư `WORK_01` Lv.13 / 200🪙, Cô Năm `WORK_02` Lv.15 / 275🪙 (hợp đồng 3 ngày 528 / 726🪙). Sửa `masterData.ts` (catalog + `INITIAL_WORKERS`), CSV `04`, `01`, `02` (mục 3.2 + bảng GĐ2 Worker Sinks ~935–1.435🪙/ngày), seed sinh lại. Kiểm: typecheck + 151 test PASS. Chờ PO chạy lại `master_catalog_seed.sql`. Tiếp theo: S5c Lán Thợ (domain → `0011` → store → UI).

@@ -65,7 +65,7 @@
 
 - ~~**Tham chiếu sai:** `13 → 16` dẫn `04_MASTER_NARRATIVE`; `16` dẫn "GDD Mục 9".~~ ✅ 2026-11-02: đổi thành `01_MASTER_GDD` Chương 4 (cốt truyện đã gộp vào `01`), `04_MASTER_DATA`, và `16` dẫn đúng `01` Chương 6 / `02` Phần 4 / `03` Phần 3 / `06` Mục 2.5–2.6.
 - **Số tổng không khớp:** ~~7 hay 8 van chống lạm phát~~ (✅ 2026-11-02: `00`, `AGENTS.md` theo `02` = 8 van); ~~12 hay 14 quy tắc code; Bible v9.2 vs AGENTS v9.3; UI v7.0 vs v7.1~~ (✅ 2026-11-02: mọi nơi đã ghi `C1 ➔ C14`, Bible `9.3`, đầu file `06` đổi thành `7.1` cho khớp mục lục); nhãn build trong bảng `00` (dòng 44–49) ghi "v1.1 …" cho cả 6 giai đoạn.
-- **Cấp độ mở khóa lệch:** `WORK_02` Lv.16 vs Chương 6 thuê ở Lv.13; `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (Lv.21+).
+- **Cấp độ mở khóa lệch:** ~~`WORK_02` Lv.16 vs Chương 6 thuê ở Lv.13~~ (sửa 2026-11-03: Chú Tư Lv.13, Cô Năm Lv.15); `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (Lv.21+).
 - ~~**Soạn thảo:** ký tự Trung, lỗi gõ, checklist GĐ1–2 tick sai, 2 placeholder rỗng.~~ ✅ 2026-11-02:
   - Đã xóa ký tự lạ và sửa lỗi gõ ("VõBếp" → "Vỏ Quýt `PROD_24`").
   - Checklist `11`: còn tick 3/6 mục đạt thật. Checklist `12`: bỏ tick cả 5 mục.
@@ -303,6 +303,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - Sửa luôn `scripts/test-sql.sh`: lần chạy lại kiểm idempotent trước đây dùng mẫu `000[2-9]` nên bỏ sót `0010`+.
   - Công thức ghi ở `02` mục 3.1b, luật ở `01` mục 1.1b.
   - ⏳ PO chạy `0010` trên Supabase (sau `0009`; không chạy lại `0009` sau `0010` vì sẽ đè snapshot).
+- ✅ 2026-11-03 **S5b số liệu thợ:** `WORK_01` Lv.13, 200🪙/ngày; `WORK_02` Lv.15, 275🪙/ngày (catalog, `INITIAL_WORKERS`, CSV `04`, `01`, `02` mục 3.2 + bảng GĐ2, seed). Mô tả Chú Tư bỏ "tự gieo hạt". ⏳ PO chạy lại `master_catalog_seed.sql` để DB có số mới.
 
 **RULE D1 (sơ bộ):**
 1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).

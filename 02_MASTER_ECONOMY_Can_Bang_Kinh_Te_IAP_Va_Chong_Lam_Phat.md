@@ -59,11 +59,12 @@
 * Lãi/phút vật nuôi (`0,1 – 0,4 🪙`) vẫn thấp hơn cây ruộng (`0,75 – 3 🪙`) vì ít thao tác hơn (không phải gieo lại). Xem lại sau beta bằng `/vac-balance-check`.
 
 ### 3.2. Chi Phí Vận Hành 6 Nhân Công Lán Thợ Theo Lộ Trình Mở Khóa (`WORK_01` – `WORK_06`)
+> **2026-11-03:** `/vac-balance-check` cho thấy thu nhập thật GĐ2 chỉ ~3.000🪙/ngày (thấp hơn giả định 12.000–20.000 ở mục 5). PO duyệt hạ lương `WORK_01/02` còn 25% và hạ cấp mở (Lv.13 / Lv.15). `WORK_03..06` giữ nguyên, xem lại khi mở GĐ3.
 
 | Mã ID | Tên Nhân Công & Chuyên Môn | Giai Đoạn & Cấp Mở | Lương 1 Ngày | Hợp Đồng 3 Ngày (-12%) | Tiêu Thụ "Mâm Cơm Thợ" / Ngày | Hao Mòn Áo Quần / 3 Ngày | Phụ Cấp Hăng Say (+25% Tốc Độ) | Tổng Giá Trị Hút Khỏi Kinh Tế / Ngày |
 | :--- | :--- | :---: | :---: | :---: | :--- | :--- | :--- | :---: |
-| `WORK_01` | **🌾 Chú Tư Cày** *(Làm vườn)* | **GĐ 2** *(Lv 14)* | **800 🪙** | **2.100 🪙** | `60 Độ No` (~140 🪙) | *Nón Lá + Áo Nâu* (~60 🪙/ngày) | **+200 🪙** *(Hoặc Trà Đá)* | **~1.000 – 1.200 🪙** |
-| `WORK_02` | **🐄 Cô Năm Thảo** *(Chăn nuôi)* | **GĐ 2** *(Lv 16)* | **1.100 🪙** | **2.900 🪙** | `75 Độ No` (~180 🪙) | *Khăn Rằn + Áo Bà Ba* (~80 🪙/ngày) | **+300 🪙** *(Hoặc Bánh Cuốn)* | **~1.360 – 1.660 🪙** |
+| `WORK_01` | **🌾 Chú Tư Cày** *(Làm vườn)* | **GĐ 2** *(Lv 13)* | **200 🪙** *(PO 2026-11-03: 25%)* | **528 🪙** | `60 Độ No` (~140 🪙) | *Nón Lá + Áo Nâu* (~60 🪙/ngày) | **+200 🪙** *(Hoặc Trà Đá)* | **~400 – 600 🪙** |
+| `WORK_02` | **🐄 Cô Năm Thảo** *(Chăn nuôi)* | **GĐ 2** *(Lv 15)* | **275 🪙** *(PO 2026-11-03: 25%)* | **726 🪙** | `75 Độ No` (~180 🪙) | *Khăn Rằn + Áo Bà Ba* (~80 🪙/ngày) | **+300 🪙** *(Hoặc Bánh Cuốn)* | **~535 – 835 🪙** |
 | `WORK_03` | **🐟 Anh Sáu Kình** *(Ao cá & Vét bùn)* | **GĐ 3** *(Lv 18)* | **1.500 🪙** | **4.000 🪙** | `90 Độ No` (~240 🪙) | *Áo Tơi + Ủng Cao Su* (~110 🪙/ngày) | **+400 🪙** *(Hoặc Ốc Hấp)* | **~1.850 – 2.250 🪙** |
 | `WORK_04` | **🍲 Dì Bảy Bếp** *(Chạy máy & Nấu cơm)* | **GĐ 3** *(Lv 20)* | **2.000 🪙** | **5.400 🪙** | `100 Độ No` (~290 🪙) | *Tạp Dề Hoa Sen* (~140 🪙/ngày) | **+500 🪙** *(Hoặc Cốm Vòng)* | **~2.430 – 2.930 🪙** |
 | `WORK_05` | **🪵 Chú Tám Mộc** *(18 Cây lâu năm)* | **GĐ 4** *(Lv 22)* | **2.600 🪙** | **7.000 🪙** | `120 Độ No` (~360 🪙) | *Mũ Cối + Áo Chàm* (~180 🪙/ngày) | **+650 🪙** *(Hoặc Bánh Pía)* | **~3.140 – 3.790 🪙** |
@@ -90,7 +91,7 @@
 | Giai Đoạn & Quy Mô Sinh Thái Mở Khóa | Tổng Thu Nhập Xu / Ngày (`Sources`) | Chi Tiêu Mua Máy, Cây, Con Giống Mới Mở (`Base Sinks`) | Chi Phí Nuôi Gia Nhân Theo Đợt (`Worker Sinks`) | Chi Phí Lễ Hội, Đình Làng, Thuế Chợ 5% / Sới Đình 10% (`Event & Arena Sinks`) | Tỷ Lệ Hút Tiền (`Sink / Source Ratio`) |
 | :--- | :--- | :--- | :--- | :--- | :---: |
 | **Giai đoạn 1 (`23/81` loài V-A-C • 3 Xưởng • 5 Món)** | `2.500 – 7.500 🪙` | `2.200 – 5.500 🪙` *(Mua 3 xưởng sơ cấp, giống lúa/rau/gà/cá rô)* | *Chưa mở Lán Thợ* | `500 – 1.800 🪙` *(Khai hoang 6 phân khu đầu)* | **95% – 102%** |
-| **Giai đoạn 2 (`45/81` loài V-A-C • 6 Xưởng • 14 Món • 2 Thợ)** | `12.000 – 20.000 🪙` | `4.500 – 7.500 🪙` *(Xây Quán nước, Đan lát, Khung cửi; nuôi Tằm, Bò sữa, Gà Đông Tảo)* | **`2.360 – 2.860 🪙/ngày`** *(Thuê Chú Tư & Cô Năm)* | `4.000 – 8.500 🪙` *(Đố Ca dao Cụ Đồ, khai hoang tiếp)* | **94% – 100%** |
+| **Giai đoạn 2 (`45/81` loài V-A-C • 6 Xưởng • 14 Món • 2 Thợ)** | `12.000 – 20.000 🪙` | `4.500 – 7.500 🪙` *(Xây Quán nước, Đan lát, Khung cửi; nuôi Tằm, Bò sữa, Gà Đông Tảo)* | **`~935 – 1.435 🪙/ngày`** *(Thuê Chú Tư & Cô Năm — lương 25% theo PO 2026-11-03; xem lại khi có số liệu beta)* | `4.000 – 8.500 🪙` *(Đố Ca dao Cụ Đồ, khai hoang tiếp)* | **94% – 100%** |
 | **Giai đoạn 3 (`63/81` loài V-A-C • 8 Xưởng • 23 Món • 4 Thợ)** | `22.000 – 35.000 🪙` | `7.500 – 12.000 🪙` *(Xây Quầy Bún Phở, Xưởng Mắm; trồng 6 vườn cây Đặc sản Bậc 3–4; thả Cá Trắm/Trai Ngọc)* | **`6.640 – 8.040 🪙/ngày`** *(Thêm Anh Sáu & Dì Bảy)* | `6.500 – 13.000 🪙` *(Thuế Chợ 5%, Thương Đội Liên Gia, Cột mốc Lưu bút)* | **95% – 102%** |
 | **Giai đoạn 4 (`76/81` loài V-A-C • Đột biến • 25 Món • 5 Thợ)** | `38.000 – 55.000 🪙` | `10.000 – 15.000 🪙` *(Trồng Bưởi Diễn/Cà Phê/Sầu Riêng Ri6; nuôi Hươu Sao/Nhà Yến/Ghẹ Ô Loan)* | **`9.780 – 11.830 🪙/ngày`** *(Thêm Chú Tám Mộc)* | `16.000 – 28.000 🪙` *(Đình Làng 70K, Chiết cành Đột biến, Đổi Kỷ vật 8x–9x, Đua Trâu, Bánh Trung Thu)* | **97% – 108%** |
 | **Giai đoạn 5 (`81/81` loài V-A-C • Hải sản VIP • 27 Món • 6 Thợ)** | `52.000 – 72.000 🪙` | `12.000 – 18.000 🪙` *(Trồng Cau Trầu; thả Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau, Cá Koi)* | **`13.920 – 16.770 🪙/ngày`** *(Đủ 6 Gia nhân)* | `24.000 – 38.000 🪙` *(Lễ Cưới 50K, Homestay 165K, Nồi Bánh Chưng Tết)* | **98% – 110%** |
