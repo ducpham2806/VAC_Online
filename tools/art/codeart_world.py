@@ -7,6 +7,7 @@
 Gồm: ô đất 168x80 (ruộng khô/ướt, vườn, ao 3 khung, đất hoang), nền cỏ & đường làng (tile 32px),
 nhà chính 3 gian, giếng làng, lô "sắp mở", cảnh trang trí (cỏ, hoa, đá, tre, chuối, rơm, rào tre, cây đa),
 nhân vật 48x64 (điền chủ nam/nữ: đứng 2, đi 4, làm việc 2; Bác Bảy đứng 2), mây, bướm, chim.
+GĐ2 (S5): Lán Thợ mái tranh 140x100; thợ Chú Tư / Cô Năm 48x64 (đứng 2, đi 4).
 Ảnh thật nhập bằng import_sprite.py / thay file cùng tên sẽ thay khung tương ứng.
 """
 import math
@@ -284,13 +285,15 @@ def banyan() -> Image.Image:
 
 
 # ----------------------------------------------------------------------------- nhân vật 48x64
-def person(frame: str, i: int, female: bool, elder: bool = False) -> Image.Image:
+def person(frame: str, i: int, female: bool, elder: bool = False, shirt_override=None, scarf=None) -> Image.Image:
     im, d = canvas(48, 64)
     shirt = PINK if female else c("A0673A")
     shirt_d = c("B23A8A") if female else WOOD_D
     pants = c("2A180C") if not elder else SLATE_D
     if elder:
         shirt, shirt_d = STONE, STONE_D
+    if shirt_override:
+        shirt, shirt_d = shirt_override
     bob = (i % 2) if frame == "idle" else (1 if frame == "walk" and i % 2 else 0)
     # bóng
     d.ellipse((12, 58, 36, 63), fill=c("23192D"))
@@ -343,11 +346,57 @@ def person(frame: str, i: int, female: bool, elder: bool = False) -> Image.Image
     if elder:
         d.line((20, hy + 12, 28, hy + 12), fill=WHITE)
         d.rectangle((19, hy + 12, 29, hy + 15), fill=WHITE)
+    # khăn rằn quàng cổ (thợ)
+    if scarf:
+        d.rectangle((17, top - 1, 31, top + 2), fill=scarf[0])
+        for x in range(18, 31, 3):
+            d.point((x, top), fill=scarf[1])
     # nón lá
     d.polygon([(8, hy + 5), (40, hy + 5), (24, hy - 9)], fill=BAMBOO)
     d.line((12, hy + 3, 36, hy + 3), fill=c("C88A4B"))
     d.line((17, hy - 1, 31, hy - 1), fill=c("C88A4B"))
     return add_outline(im)
+
+
+def lodge() -> Image.Image:
+    """Lán Thợ mái tranh (GĐ2): cột tre, mái rơm vàng, bàn ăn chung + giỏ tre phía trước."""
+    im, d = canvas(140, 100)
+    d.ellipse((4, 86, 136, 99), fill=c("4E8222"))
+    # nền đất nện + vách tre
+    d.rectangle((16, 50, 124, 88), fill=SAND)
+    for x in range(18, 124, 6):
+        d.line((x, 52, x, 86), fill=BAMBOO)
+    d.rectangle((54, 60, 84, 88), fill=WOOD_D)  # cửa lán
+    for x in (16, 52, 88, 124):
+        d.rectangle((x - 3, 46, x + 1, 88), fill=c("4E8222"))  # cột tre xanh
+        for y in (54, 66, 78):
+            d.line((x - 3, y, x + 1, y), fill=c("2F5F1E"))
+    # mái tranh vàng nhiều lớp
+    d.polygon([(0, 52), (140, 52), (116, 12), (24, 12)], fill=GOLD)
+    for y in range(16, 52, 5):
+        span = (y - 12) * 0.6
+        d.line((24 - span, y, 116 + span, y), fill=GOLD_D)
+    for x in range(10, 132, 7):
+        d.line((x, 50, x + 2, 55), fill=STRAW)
+    d.line((24, 12, 116, 12), fill=GOLD_L, width=2)
+    # bàn ăn chung + giỏ tre
+    d.rectangle((90, 76, 132, 80), fill=WOOD)
+    d.rectangle((94, 80, 97, 90), fill=WOOD_D)
+    d.rectangle((125, 80, 128, 90), fill=WOOD_D)
+    for x in (98, 110, 122):
+        d.ellipse((x - 4, 71, x + 4, 77), fill=WHITE)  # bát cơm
+        d.ellipse((x - 3, 70, x + 3, 74), fill=CREAM)
+    d.ellipse((6, 76, 24, 90), fill=BAMBOO)  # giỏ tre
+    d.line((8, 80, 22, 80), fill=c("C88A4B"))
+    d.line((8, 85, 22, 85), fill=c("C88A4B"))
+    return add_outline(im)
+
+
+# Thợ GĐ2 (S5): Chú Tư áo nâu sồng + khăn nâu; Cô Năm áo bà ba xanh lá + khăn rằn đỏ.
+WORKERS = {
+    "worker_tu": dict(female=False, shirt_override=(c("8A5638"), WOOD_D), scarf=(c("6E4121"), STRAW)),
+    "worker_nam": dict(female=True, shirt_override=(c("4E8222"), c("2F5F1E")), scarf=(RED, WHITE)),
+}
 
 
 # ----------------------------------------------------------------------------- môi trường
@@ -429,6 +478,12 @@ def build() -> dict[str, Image.Image]:
             out[f"{who}_walk_{i}"] = person("walk", i, female)
     for i in range(2):
         out[f"bacbay_idle_{i}"] = person("idle", i, False, elder=True)
+    out["lodge"] = lodge()
+    for who, kw in WORKERS.items():
+        for i in range(2):
+            out[f"{who}_idle_{i}"] = person("idle", i, **kw)
+        for i in range(4):
+            out[f"{who}_walk_{i}"] = person("walk", i, **kw)
     return out
 
 

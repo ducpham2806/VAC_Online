@@ -1,5 +1,7 @@
 /** Trạng thái khởi tạo, save offline ↔ luật domain, ảnh chụp server (tách từ useGameStore.ts — S2). */
 import { FarmTileEntity } from '../data/types';
+import { PREVIEW_PRESET } from '../config/features';
+import { BASE_PLOTS, createPlotTiles } from '../domain/farmGrid';
 import { INITIAL_MARKET_LISTINGS, INITIAL_WORKERS } from '../data/masterData';
 import { STORY_QUESTS } from '../data/quests';
 import { FarmSave } from '../domain/farm';
@@ -278,10 +280,23 @@ export function createDemoState(): GameData {
   };
 }
 
+/** Save mẫu bản chạy thử GĐ2 (PREVIEW_PRESET='gd2'): đủ cấp + nguyên liệu để thử Bếp Quê, Xưởng, Lán Thợ. */
+const PREVIEW_GD2: Partial<GameData> = {
+  playerName: 'Điền Chủ Thử GĐ2',
+  level: 15,
+  gold: 12_000,
+  gems: 80,
+  wildPlotsUnlocked: 16,
+  inventory: {
+    CROP_01: 12, CROP_03: 4, CROP_04: 6, CROP_05: 4, CROP_06: 4, CROP_07: 6, CROP_09: 6, CROP_10: 2,
+    CROP_11: 2, CROP_17: 2, CROP_19: 2, CROP_24: 2, ANI_05: 1, ANI_06: 2, AQUA_01: 3, AQUA_02: 2, AQUA_03: 2,
+  },
+};
+
 /** Người chơi mới thật sự (production): Lv.1, 2.500 🪙, Đợt 1 — khớp mặc định bảng profiles. */
 export function createFreshState(): GameData {
   const demo = createDemoState();
-  return {
+  const fresh: GameData = {
     ...demo,
     playerName: 'Điền Chủ Mới',
     accountType: 'GUEST',
@@ -320,6 +335,8 @@ export function createFreshState(): GameData {
     lodgeDiningTableMeals: 0,
     workers: workersView(INITIAL_WORKERS, {}, Date.now()),
   };
+  if (PREVIEW_PRESET !== 'gd2') return fresh;
+  return { ...fresh, ...PREVIEW_GD2, tiles: createPlotTiles(PREVIEW_GD2.wildPlotsUnlocked ?? BASE_PLOTS) };
 }
 
 export const USE_DEMO_SAVE = import.meta.env.DEV;

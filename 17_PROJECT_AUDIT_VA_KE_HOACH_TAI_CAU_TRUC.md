@@ -320,6 +320,13 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - ✅ Đã áp `0013` + seed lên Supabase thật (2026-11-03).
 - ✅ 2026-11-03 **Phụ Cấp Ngày Mùa** (PO giữ 300🪙): `giveBonus` + `0014_worker_bonus.sql` (cột `hired_workers.bonus_until`, `rpc_give_worker_bonus`); 24 giờ Hăng Say, thợ tưới cắt 25% thay 15% (AI quy đổi, chờ PO duyệt con số). Chưa áp lên DB thật.
 
+- ✅ 2026-11-03 **Chuẩn bị mở GĐ2:**
+  - Sprite tạm (code-art, 64 màu, viền `#3D2314`): Lán Thợ mái tranh `lodge` 140×100, Chú Tư `worker_tu_*` & Cô Năm `worker_nam_*` (đứng 2 + đi 4 khung) trong atlas `world`; FarmScene dùng khi mở GĐ2 (thợ đi lại, đói thì đứng ở Lán).
+  - Công tắc giai đoạn ở DB: `0015_app_config_stage.sql` — bảng `app_config` (`game_stage` mặc định 1), `app_game_stage()` đọc từ bảng; mở GĐ2 = 1 lệnh `UPDATE`, quay lại được. Test `supabase/tests/stage_switch.test.sql`.
+  - Bản chạy thử GĐ2 (offline, save mẫu Lv.15): `npm run build:preview:gd2` → Artifact riêng tư https://claude.ai/artifact/Ujwb3Y19GPA24rTgxCt7vP. Đã chạy thử: xây Bếp Củi → nấu Cơm → thuê Chú Tư → thợ đi trên bản đồ, vàng khớp (12.000 − 350 − 528 = 11.122), 0 lỗi.
+  - Supabase thật: đã áp `0014`; `0015` CHƯA áp (Supabase hỏi xác nhận vì có `DROP POLICY IF EXISTS`, không ai trả lời trong 60 giây).
+  - Mở GĐ2 khi PO sẵn sàng: (1) áp `0015`; (2) merge nhánh + deploy Vercel với `VITE_GAME_STAGE=2`; (3) `UPDATE public.app_config SET value = '2' WHERE key = 'game_stage';`.
+
 **RULE D1 (sơ bộ):**
 1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).
 2. Kinh tế 🔴: lương lệch thu nhập; vật nuôi / thủy sản đang lỗ (lỗi có từ GĐ1).

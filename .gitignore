@@ -10,3 +10,4 @@ dist-ssr
 __pycache__/
 *.pyc
 dist-preview
+dist-preview-gd2

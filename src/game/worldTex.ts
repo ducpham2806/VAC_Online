@@ -29,6 +29,11 @@ export function createWorldAnims(scene: Phaser.Scene): void {
     make(`${who}_act`, [`${who}_act_0`, `${who}_act_1`], 5);
   }
   make('bacbay_idle', ['bacbay_idle_0', 'bacbay_idle_1'], 2);
+  // GĐ2 (S5): thợ Lán Thợ
+  for (const who of ['worker_tu', 'worker_nam']) {
+    make(`${who}_idle`, [`${who}_idle_0`, `${who}_idle_1`], 2);
+    make(`${who}_walk`, [0, 1, 2, 3].map((i) => `${who}_walk_${i}`), 7);
+  }
   make('butterfly_fly', ['butterfly_0', 'butterfly_1'], 10);
   make('bird_fly', ['bird_0', 'bird_1'], 6);
   make('pond_ripple', ['tile_pond_0', 'tile_pond_1', 'tile_pond_2'], 3);
