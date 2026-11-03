@@ -14,6 +14,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Cấp quyền Supabase connector cho AI~~ ✅ 2026-11-01
 - [x] ~~Chạy `0006` → `0007` → seed nhiệm vụ → `0008` trong SQL Editor~~ ✅ 2026-11-02 (AI đã kiểm: đủ hàm/bảng/view, Security Advisor 0 ERROR)
 - [x] ~~Chạy `0009_kitchen.sql` (PO) + `recipe_seed.sql` (AI qua connector)~~ ✅ 2026-11-02 (AI đã kiểm: 3 bảng, 5 RPC Bếp, 34 dòng công thức, Security Advisor 0 ERROR)
+- [ ] Chạy `0010_livestock_cycles.sql` (vật nuôi nhiều lứa, chỉ thêm) — hoặc cho phép AI áp qua connector. **Không chạy lại `0009` sau `0010`.**
 - [ ] (Không gấp) Chạy lại `supabase/seed/master_catalog_seed.sql` trong SQL Editor để cập nhật chữ mô tả Chó Phú Quốc 50% / Ngỗng 70% trên DB (luật không đổi).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
@@ -39,6 +40,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
 - [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
 - [ ] **Chọn nguồn ảnh cho sprite đẹp:** (1) anh tự tạo bằng ChatGPT / Gemini theo `art/prompts/wave1_species.md` rồi bỏ vào `art/source/inbox/`, hoặc (2) thêm `OPENAI_API_KEY` / `GEMINI_API_KEY` vào cài đặt môi trường cloud để AI tự tạo hàng loạt (tốn phí API). Không dán key vào chat.
+- [x] ~~S5 Lán Thợ: thợ chỉ thu + tưới; lương 25%; vật nuôi nhiều lứa; hạ cấp thợ (Lv.13 / Lv.15)~~ ✅ 2026-11-03 (`17` C3)
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
 - [x] ~~Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ**~~ ✅ 2026-11-01
 
@@ -65,7 +67,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~S4: đặc tả Bếp Quê & Xưởng + 4 quyết định PO (Nồi Đất khám phá, giữ dữ liệu gốc, giữ giá, mở GĐ2) — `17` mục C2~~ ✅ 2026-11-02
 - [x] ~~S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu)~~ ✅ 2026-11-02 (chờ PO chạy `0009` + seed)
 - [ ] Mở GĐ2: đặt mục tiêu Chương 3 (Bếp Quê), `/vac-balance-check`, migration đổi `app_game_stage()` = 2, `VITE_GAME_STAGE=2` trên Vercel.
-- [ ] S5: Lán Thợ (Cối Xay Cám, Đan Lát, Khung Cửi, đồ thợ, lazy-tick ở server).
+- [ ] S5: Lán Thợ theo `17` C3: S5a nuôi nhiều lứa → S5b số liệu thợ → S5c Lán Thợ + lazy-tick server → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7.
 - [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.
 - [ ] S11–S12: GĐ5, đóng gói Capacitor, soft launch.
@@ -104,3 +106,5 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 
 - **2026-11-02** — `/vac-balance-check` Đợt 1–2 (chỉ phân tích). Phát hiện: vật nuôi `ANI_01..07` và thủy sản `AQUA_01..06` đều **lỗ mỗi lứa** (chỉ có XP); thu nhập trần ~3.240🪙/ngày (12 ô Lúa, 90 phút) so với `02` giả định 12.000–20.000🪙/ngày → lương Lán Thợ lớn hơn thu nhập. Ghi vào `17` mục C3.
 - **2026-11-02** — Viết đặc tả **nháp S5 Lán Thợ** (`17` mục C3) + RULE D1 sơ bộ. **Dừng ở đây: chờ PO trả lời 4 câu hỏi** (cách thợ làm việc, mức lương, sửa vật nuôi lỗ, lệch cấp Chương 6–7). Chưa viết code S5.
+- **2026-11-03** — PO duyệt 4 quyết định S5 (đều phương án khuyên dùng): thợ chỉ thu + tưới; lương còn 25% (200 / 275🪙); vật nuôi + thủy sản nuôi nhiều lứa; hạ cấp Chú Tư Lv.13, Cô Năm Lv.15. Ghi vào `17` C3 + mục A2. Bắt đầu S5a.
+- **2026-11-03** — S5a vật nuôi / thủy sản nuôi nhiều lứa: `src/domain/farm.ts` (`harvestCycles`, `harvest`), `0010_livestock_cycles.sql`, `supabase/tests/livestock.test.sql`, `farmGateway` + FarmScene hiện "còn N lứa", tài liệu `01` 1.1b / `02` 3.1b / `17` C3. Sửa `scripts/test-sql.sh` (lần chạy lại bỏ sót migration ≥ `0010`). Kiểm: typecheck, 151 test, build, test:sql PASS. Chờ PO chạy `0010`. Tiếp theo: S5b số liệu thợ.

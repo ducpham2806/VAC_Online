@@ -634,7 +634,9 @@ export class FarmScene extends Phaser.Scene {
       if (!atlas) vis.cropSprite.setScale(0.85);
 
       vis.label.setText(
-        `${spec?.emoji ?? '🌱'} ${spec?.name ?? tile.itemId}${tile.isGolden ? ' ⭐' : ''}`
+        `${spec?.emoji ?? '🌱'} ${spec?.name ?? tile.itemId}${tile.isGolden ? ' ⭐' : ''}${
+          (tile.harvestsLeft ?? 1) > 1 ? ` (còn ${tile.harvestsLeft} lứa)` : ''
+        }`
       );
 
       if (tile.isTiltedByStorm) {

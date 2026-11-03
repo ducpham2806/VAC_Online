@@ -64,6 +64,8 @@ export interface FarmTileEntity {
   isTiltedByStorm?: boolean;
   totalYield: number;
   remainingYield: number;
+  /** Số lứa còn thu được, tính cả lứa đang nuôi (vật nuôi / thủy sản nuôi nhiều lứa — S5a). Thiếu = 1. */
+  harvestsLeft?: number;
 }
 
 export interface HiredWorkerState {

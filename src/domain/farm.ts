@@ -29,6 +29,21 @@ export const EXPAND_STAMINA = 5;
 export const EXPAND_GOLD = 500;
 export const EXPAND_XP = 45;
 export const EXPAND_FENG_SHUI = 25;
+/**
+ * Vật nuôi / thủy sản nuôi nhiều lứa (PO duyệt 2026-11-03, `17` mục C3): mua con giống 1 lần, thu N lứa.
+ * N = ⌈LIVESTOCK_RETURN × giá giống ÷ (giá bán × sản lượng 1 lứa)⌉, tối thiểu 2 → nuôi hết lứa lãi 50% vốn.
+ * SQL: public._harvest_cycles trong migration 0010.
+ */
+export const LIVESTOCK_RETURN = 1.5;
+export const MIN_LIVESTOCK_CYCLES = 2;
+
+/** Số lứa thu được của 1 lần gieo/thả. Cây trồng: 1. */
+export function harvestCycles(item: CatalogItem): number {
+  if (item.category !== 'ANIMAL' && item.category !== 'AQUA') return 1;
+  const perCycle = item.baseSellGold * (item.yieldCount ?? DEFAULT_YIELD);
+  if (perCycle <= 0) return 1;
+  return Math.max(MIN_LIVESTOCK_CYCLES, Math.ceil((LIVESTOCK_RETURN * item.buyCostGold) / perCycle));
+}
 
 /** Phần trạng thái game mà luật nông trại đọc/ghi. */
 export interface FarmSave {
@@ -77,6 +92,7 @@ function emptyTilePatch(): Partial<FarmTileEntity> {
     watered: false,
     mudApplied: false,
     isGolden: false,
+    harvestsLeft: undefined,
   };
 }
 
@@ -115,6 +131,7 @@ export function plant(save: FarmSave, tileId: string, itemId: string, gameStage:
         isGolden: false,
         totalYield: total,
         remainingYield: total,
+        harvestsLeft: harvestCycles(item),
       }),
     },
     message: `🌱 Đã thả/gieo [${item.emoji} ${item.name}] (-${item.buyCostGold} 🪙, 0 ⚡) - Chạm lần nữa để Chăm sóc / Tưới nước!`,
@@ -180,6 +197,12 @@ export function harvest(save: FarmSave, tileId: string, now: number): FarmResult
     item.category === 'AQUA' || tile.zoneType === 'POND'
       ? Math.min(MAX_POND_MUD, save.pondMudCounter + 1)
       : save.pondMudCounter;
+  // Còn lứa: con giống ở lại, bắt đầu lứa mới (chưa tưới, chưa bón bùn); hết lứa thì dọn ô.
+  const left = (tile.harvestsLeft ?? 1) - 1;
+  const nextTile: Partial<FarmTileEntity> =
+    left > 0
+      ? { plantedAt: now, matureAt: now + growMs(item, save.region), watered: false, mudApplied: false, isGolden: false, harvestsLeft: left }
+      : emptyTilePatch();
   return {
     ok: true,
     save: {
@@ -189,11 +212,11 @@ export function harvest(save: FarmSave, tileId: string, now: number): FarmResult
       pondMudCounter,
       inventory: { ...save.inventory, [item.id]: (save.inventory[item.id] ?? 0) + qty },
       counters: bumpCounter(save.counters, COUNTER.harvest(item.id)),
-      tiles: withTile(save, tileId, emptyTilePatch()),
+      tiles: withTile(save, tileId, nextTile),
     },
     message: `🧺 Thu hoạch [${item.emoji} ${item.name}${tile.isGolden ? ' HOÀNG KIM ⭐ ×3' : ''}]: +${qty} vào Kho, +${item.xpReward} XP${
-      progress.levelsGained > 0 ? ` — 🎉 LÊN CẤP ${progress.level}!` : ''
-    }`,
+      left > 0 ? ` — còn ${left} lứa` : ''
+    }${progress.levelsGained > 0 ? ` — 🎉 LÊN CẤP ${progress.level}!` : ''}`,
   };
 }
 

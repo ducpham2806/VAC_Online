@@ -13,6 +13,10 @@
 **"Bỏ phố về quê, từng bước khôi phục 10 Chương Gia Phả Ba Miền từ luống rau, con cá rô đầu tiên đến đại điền trang và Sảnh Chung Chợ Đình."**  
 Người chơi rời đô thị ồn ào trở về quê hương (**Bắc Bộ**, **Trung Bộ – Tây Nguyên**, hoặc **Nam Bộ**) tiếp quản mảnh đất tổ tiên cùng chiếc tráp gỗ lim của Ông Nội để lại. Bên trong là **Cuốn Sổ Gia Phả Nông Nghiệp Ba Miền bị thất lạc 9 trang** và tờ khế ước thế chấp đất `50,000 🪙 Xu Vàng` của **Thương Nhân Bá Kiến**. Thay vì mở sẵn toàn bộ cây trồng vật nuôi ngay từ đầu gây ngợp, hệ sinh thái **81 loài Vườn – Ao – Chuồng (+5 Thú cưng), 8 Xưởng chế biến, 27 Món ăn và 6 Gia nhân** được **chia nhỏ thành 5 Đợt Xuất Hiện (`5 Content Waves`) gắn liền với từng Trang Gia Phả được tìm thấy và từng Giai Đoạn Update (`Giai đoạn 1 ➔ Giai đoạn 5`)**, trước khi hội tụ tranh tài tại **Sảnh Chung Chợ Đình (`Giai đoạn 6`)**.
 
+### 1.1b. Chuồng & Ao Nuôi Nhiều Lứa
+* Vật nuôi (Chuồng) và thủy sản (Ao) mua con giống **một lần** rồi thu **nhiều lứa** (Gà đẻ nhiều lứa trứng, Cá cho nhiều mẻ). Ô hiện "còn N lứa"; thu lứa cuối thì ô trống để thả con mới.
+* Cây trồng (Vườn) thu một lần rồi gieo lại. Công thức số lứa: `02_MASTER_ECONOMY` mục 3.1b.
+
 ### 1.2. Quy Tắc Vàng Lối Chơi Hybrid & Năng Lượng "Bát Cơm" (`⚡ Stamina`)
 1. **Chế độ Quản lý Trang trại & Giải trí Sảnh Chung (Tycoon & Casual Arcade – Tốn `0 ⚡ Năng lượng`, trừ PK):**
    * Góc nhìn `3/4 Top-Down Oblique` trên lưới `32x32 px`. Mọi thao tác sản xuất cốt lõi tại nhà (*Gieo hạt, Tưới nước Giếng Làng, Thu hoạch, Cho vật nuôi ăn, Nấu ăn Bếp Quê, Tiếp củi Bánh Chưng giúp bạn, Dựng giàn cây sau bão*) và **mọi ván chơi giải trí tại Sảnh Chung / Hyper-Casual Arcade (trừ trận PK Võ Đài & Loạn Chiến)** đều **HOÀN TOÀN MIỄN PHÍ NĂNG LƯỢNG (`0 ⚡`)**.

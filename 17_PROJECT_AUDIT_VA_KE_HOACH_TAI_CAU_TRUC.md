@@ -260,7 +260,7 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 - Chưa có: sprite xưởng trên bản đồ (S5), icon riêng cho món (đang dùng emoji).
 
 
-### C3. Đặc tả S5 — Lán Thợ & Xưởng nghề (M05.1–M05.5) — NHÁP, chờ PO duyệt (2026-11-02)
+### C3. Đặc tả S5 — Lán Thợ & Xưởng nghề (M05.1–M05.5) — PO duyệt 4 quyết định 2026-11-03
 **Hiện trạng code (`workersSlice.ts`) là stub, có 3 nguồn in tiền:**
 - `claimWorkerPantry` cộng 18🪙/món + tặng cố định 15 Lúa, 8 Trứng, 6 Cá, 3 Bùn mỗi lần thu Giỏ.
 - `simulateOfflineWorkerProgress` hồi +10⚡/giờ offline.
@@ -287,6 +287,22 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 4. Xưởng nghề `MAC_07` / `MAC_08` + đồ thợ `CRAFT_01..02`: công thức theo ID như S4 (cần map "Tre Trúc", "Kén Tơ Tằm"… sang ID có thật). Đồ thợ 72h: +15% tốc độ (giảm mốc chờ 5 phút / tăng Độ No).
 5. Mục tiêu chương: Ch.3 = xây Bếp Củi + nấu 1 món (PO đã chốt Bếp dời sang Ch.3 ở S2); Ch.6 = thuê Chú Tư + dọn 1 mâm cơm; Ch.7 = cấp 1 đồ thợ.
 6. `MAC_01` Cối Xay Cám: chưa có luật cho vật nuôi ăn cám → hoãn tới khi sửa vật nuôi (câu hỏi 3).
+
+**Quyết định PO (2026-11-03) — đều chọn phương án khuyên dùng:**
+1. **Thợ chỉ thu + tưới**, không tự gieo lại. Hàng thật vào Giỏ Thợ 120, bấm Thu Giỏ về Kho.
+2. **Lương còn 25%:** Chú Tư `WORK_01` 200🪙/ngày, Cô Năm `WORK_02` 275🪙/ngày; hợp đồng 3 ngày −12% giữ nguyên. Thợ GĐ3+ xem lại khi mở GĐ3.
+3. **Vật nuôi / thủy sản nuôi nhiều lứa:** mua con giống 1 lần, thu nhiều lứa rồi mới hết (sửa lỗi lỗ có từ GĐ1).
+4. **Hạ cấp thợ cho khớp chương:** Chú Tư Lv.13, Cô Năm Lv.15. Ch.6 = thuê Chú Tư; Ch.7 = cấp đồ thợ.
+
+**Thứ tự làm:** S5a nuôi nhiều lứa (domain → `0010` → client) → S5b số liệu thợ (catalog, CSV `04`, `02`) → S5c Lán Thợ (domain → `0011` lazy-tick → store → UI) → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7.
+
+**Tiến độ:**
+- ✅ 2026-11-03 **S5a nuôi nhiều lứa:**
+  - Code: `harvestCycles` + `harvest` giữ con giống (`src/domain/farm.ts`); cột `farm_entities.harvests_left` (mặc định 1); `_harvest_cycles`, `_grow_ms`, `rpc_plant` / `rpc_harvest` / `_farm_snapshot` viết lại ở `0010_livestock_cycles.sql`; ô hiện "còn N lứa".
+  - Kiểm tra: test domain + `supabase/tests/livestock.test.sql`.
+  - Sửa luôn `scripts/test-sql.sh`: lần chạy lại kiểm idempotent trước đây dùng mẫu `000[2-9]` nên bỏ sót `0010`+.
+  - Công thức ghi ở `02` mục 3.1b, luật ở `01` mục 1.1b.
+  - ⏳ PO chạy `0010` trên Supabase (sau `0009`; không chạy lại `0009` sau `0010` vì sẽ đè snapshot).
 
 **RULE D1 (sơ bộ):**
 1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).

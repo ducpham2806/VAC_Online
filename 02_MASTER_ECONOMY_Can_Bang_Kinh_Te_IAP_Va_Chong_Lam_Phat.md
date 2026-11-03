@@ -51,6 +51,13 @@
 | **Đợt 4 — Giai Đoạn 4 (`v1.8`)**<br>*Đình Làng & Đột Biến* | **Chương 8–9**<br>*(Lv.21–24)* | **`+13 loài`**<br>*(Lũy kế `76/81`)* | • **2 Món Đại Tiệc:** `PROD_22..23`<br>• **Đồ thợ VIP:** `CRAFT_04`<br>• **Thợ:** `WORK_05` (*Chú Tám Mộc*)<br>• **12 Ô Thời trang & 12 Kỷ vật** | `380 🪙 ➔ 8,000 🪙` | `+60 🪙 ➔ +1,120 🪙` | Trùng tu Đình Làng 3 cấp (`70,000 🪙`), chiết cành **3 Giống Đột Biến (`2,000–8,000 🪙/lần`)**, nuôi *Hươu Sao / Nhà Yến / Ghẹ Ô Loan*, thuê *Chú Tám Mộc (`2,600 🪙/ngày`)*, Đua Trâu Vàng (`1,000 🪙/lượt`). |
 | **Đợt 5 — Giai Đoạn 5 (`v2.0`)**<br>*Lễ Cưới, Hải Sản VIP & Homestay* | **Chương 10**<br>*(Lv.25–30+)*| **`+5 loài`**<br>*(Đủ `81/81` loài)* | • **2 Món Đỉnh Cao:** `PROD_18, 24` (*Bánh Chưng Tết & Chả Rươi Tôm Hùm*)<br>• **Tổng Quản:** `WORK_06`<br>• **Homestay 2 Cấp** | `340 🪙 ➔ 500 🪙` | `+80 🪙 ➔ +830 🪙` | Thả **3 Thủy Hải Sản VIP (`Rươi Tứ Kỳ, Tôm Hùm Phú Yên, Cua Cà Mau`)** & *Cá Chép Koi*, tổ chức Lễ Cưới (`50,000 🪙`), xây Homestay 2 cấp (`165,000 🪙`), thuê trọn 6 Gia nhân (`~15,000 🪙/ngày`). |
 
+### 3.1b. Vật Nuôi & Thủy Sản Nuôi Nhiều Lứa (PO duyệt 2026-11-03 — code: `src/domain/farm.ts harvestCycles`, SQL `0010`)
+* Trước đây mọi `ANIMAL` / `AQUA` thu 1 lần rồi mất con giống nên **lỗ mỗi lứa** (vd Gà `ANI_01`: mua `40 🪙`, bán `14 🪙 × 1`).
+* Luật mới: mua con giống 1 lần, thu **N lứa**, mỗi lứa ra `yieldCount` sản phẩm (cộng Hoàng Kim / buff miền Nam như cũ), giữa các lứa chờ lại `growOrCraftMinutes`.
+* **`N = max(2, ⌈1,5 × buyCostGold ÷ (baseSellGold × yieldCount)⌉)`** → nuôi hết lứa lãi ≥ 50% vốn. Cây trồng: `N = 1`.
+* Ví dụ: Gà `ANI_01` 5 lứa (lãi 30 🪙 / 75 phút), Cá Rô `AQUA_01` 3 lứa, Heo `ANI_05` 9 lứa, Bò Sữa `ANI_07` 15 lứa.
+* Lãi/phút vật nuôi (`0,1 – 0,4 🪙`) vẫn thấp hơn cây ruộng (`0,75 – 3 🪙`) vì ít thao tác hơn (không phải gieo lại). Xem lại sau beta bằng `/vac-balance-check`.
+
 ### 3.2. Chi Phí Vận Hành 6 Nhân Công Lán Thợ Theo Lộ Trình Mở Khóa (`WORK_01` – `WORK_06`)
 
 | Mã ID | Tên Nhân Công & Chuyên Môn | Giai Đoạn & Cấp Mở | Lương 1 Ngày | Hợp Đồng 3 Ngày (-12%) | Tiêu Thụ "Mâm Cơm Thợ" / Ngày | Hao Mòn Áo Quần / 3 Ngày | Phụ Cấp Hăng Say (+25% Tốc Độ) | Tổng Giá Trị Hút Khỏi Kinh Tế / Ngày |

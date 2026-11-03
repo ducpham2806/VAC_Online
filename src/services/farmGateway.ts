@@ -39,6 +39,8 @@ interface SnapshotTile {
   is_golden: boolean;
   total_yield: number;
   remaining_yield: number;
+  /** Số lứa còn lại (migration 0010). Server cũ chưa có → undefined = 1. */
+  harvests_left?: number;
 }
 
 export interface FarmSnapshot {
@@ -139,6 +141,7 @@ export function tilesFromSnapshot(snapshot: FarmSnapshot): FarmTileEntity[] {
       isGolden: s.is_golden,
       totalYield: s.total_yield,
       remainingYield: s.remaining_yield,
+      harvestsLeft: s.harvests_left ?? 1,
     };
   });
 }
