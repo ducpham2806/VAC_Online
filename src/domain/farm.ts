@@ -183,6 +183,24 @@ export function applyMud(save: FarmSave, tileId: string, now: number, rng: () =>
   };
 }
 
+/** Sản lượng 1 lần thu (Hoàng Kim ×3; miền Nam +1 thủy sản). Dùng chung cho người chơi và thợ (workers.ts). */
+export function harvestQty(item: CatalogItem, tile: FarmTileEntity, region: RegionType): number {
+  const southBonus = region === 'SOUTH' && item.category === 'AQUA' ? SOUTH_AQUA_BONUS : 0;
+  return (item.yieldCount ?? DEFAULT_YIELD) * (tile.isGolden ? GOLDEN_YIELD_MULTIPLIER : 1) + southBonus;
+}
+
+export function pondMudAfterHarvest(item: CatalogItem, tile: FarmTileEntity, pondMudCounter: number): number {
+  return item.category === 'AQUA' || tile.zoneType === 'POND' ? Math.min(MAX_POND_MUD, pondMudCounter + 1) : pondMudCounter;
+}
+
+/** Ô sau khi thu tại thời điểm `at`: còn lứa thì bắt đầu lứa mới, hết lứa thì dọn ô. */
+export function tileAfterHarvest(tile: FarmTileEntity, item: CatalogItem, region: RegionType, at: number): FarmTileEntity {
+  const left = (tile.harvestsLeft ?? 1) - 1;
+  return left > 0
+    ? { ...tile, plantedAt: at, matureAt: at + growMs(item, region), watered: false, mudApplied: false, isGolden: false, harvestsLeft: left }
+    : { ...tile, ...emptyTilePatch() };
+}
+
 /** Thu hoạch: nông sản vào Kho (Hoàng Kim ⭐ ×3 sản lượng), cộng XP. Không cộng vàng — bán ở HTX. */
 export function harvest(save: FarmSave, tileId: string, now: number): FarmResult {
   const tile = save.tiles.find((t) => t.id === tileId);
@@ -190,19 +208,11 @@ export function harvest(save: FarmSave, tileId: string, now: number): FarmResult
   if (!isMature(tile, now)) return fail('⏳ Chưa chín, hãy chờ thêm hoặc tưới nước!');
   const item = findItem(tile.itemId);
   if (!item) return fail('⚠️ Không xác định được nông sản!');
-  const southBonus = save.region === 'SOUTH' && item.category === 'AQUA' ? SOUTH_AQUA_BONUS : 0;
-  const qty = (item.yieldCount ?? DEFAULT_YIELD) * (tile.isGolden ? GOLDEN_YIELD_MULTIPLIER : 1) + southBonus;
+  const qty = harvestQty(item, tile, save.region);
   const progress = addXp(save, item.xpReward);
-  const pondMudCounter =
-    item.category === 'AQUA' || tile.zoneType === 'POND'
-      ? Math.min(MAX_POND_MUD, save.pondMudCounter + 1)
-      : save.pondMudCounter;
-  // Còn lứa: con giống ở lại, bắt đầu lứa mới (chưa tưới, chưa bón bùn); hết lứa thì dọn ô.
-  const left = (tile.harvestsLeft ?? 1) - 1;
-  const nextTile: Partial<FarmTileEntity> =
-    left > 0
-      ? { plantedAt: now, matureAt: now + growMs(item, save.region), watered: false, mudApplied: false, isGolden: false, harvestsLeft: left }
-      : emptyTilePatch();
+  const pondMudCounter = pondMudAfterHarvest(item, tile, save.pondMudCounter);
+  const nextTile = tileAfterHarvest(tile, item, save.region, now);
+  const left = nextTile.harvestsLeft ?? 0;
   return {
     ok: true,
     save: {
@@ -212,7 +222,7 @@ export function harvest(save: FarmSave, tileId: string, now: number): FarmResult
       pondMudCounter,
       inventory: { ...save.inventory, [item.id]: (save.inventory[item.id] ?? 0) + qty },
       counters: bumpCounter(save.counters, COUNTER.harvest(item.id)),
-      tiles: withTile(save, tileId, nextTile),
+      tiles: save.tiles.map((t) => (t.id === tileId ? nextTile : t)),
     },
     message: `🧺 Thu hoạch [${item.emoji} ${item.name}${tile.isGolden ? ' HOÀNG KIM ⭐ ×3' : ''}]: +${qty} vào Kho, +${item.xpReward} XP${
       left > 0 ? ` — còn ${left} lứa` : ''
