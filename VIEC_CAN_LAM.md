@@ -37,12 +37,13 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
   - [ ] Lễ cưới: 1.000 điểm thân mật (`15`) hay 10 tim?
   - [ ] Nồi Bánh Chưng: 12h cả làng (`15`) hay 6h tối đa 5 bạn?
   - [ ] Số món ăn: 22 hay 27?
-  - [ ] Chương 3 mở ở Lv.6 (code) hay Lv.9 (`01`)?
+  - [x] ~~Chương 3 mở ở Lv.6 (code) hay Lv.9 (`01`)?~~ ✅ 2026-11-03: Lv.9
   - [x] ~~Cửa sổ trộm: 2 phút~~ ✅ 2026-11-02
 - [ ] Duyệt đường cong XP `round(60 × L^1.5)`, tối đa Lv.60 (xem lại khi có số liệu beta).
 - [x] ~~Chốt **bảng 64 màu**~~ ✅ 2026-11-02 (`art/palette/vac_base.gpl`, `05` mục 1.3)
 - [ ] **Chọn nguồn ảnh cho sprite đẹp:** (1) anh tự tạo bằng ChatGPT / Gemini theo `art/prompts/wave1_species.md` rồi bỏ vào `art/source/inbox/`, hoặc (2) thêm `OPENAI_API_KEY` / `GEMINI_API_KEY` vào cài đặt môi trường cloud để AI tự tạo hàng loạt (tốn phí API). Không dán key vào chat.
 - [x] ~~S5 Lán Thợ: thợ chỉ thu + tưới; lương 25%; vật nuôi nhiều lứa; hạ cấp thợ (Lv.13 / Lv.15)~~ ✅ 2026-11-03 (`17` C3)
+- [x] ~~S5d: đồ thợ dùng loài Đợt 2 có sẵn; tác dụng Độ No hao chậm 25%; AI áp 0010→0012 qua connector~~ ✅ 2026-11-03 (`17` C3)
 - [ ] Kiểm tra pháp lý Gacha Đập Niêu, Xổ số 18h, cược PK trước GĐ4.
 - [x] ~~Duyệt thiết kế **khai hoang thật** và **kiểm mục tiêu nhiệm vụ**~~ ✅ 2026-11-01
 
@@ -115,3 +116,4 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 - **2026-11-03** — S5c-2 server Lán Thợ `0011_workers.sql`: dùng lại `hired_workers` (+ cột `belly` số lẻ) và `profiles.worker_pantry_items`; thêm `profiles.lodge_meals`; `_tick_workers` (lazy-tick) chạy trong `rpc_get_my_farm`; RPC mới `rpc_hire_worker`, `rpc_serve_lodge_meal`, `rpc_claim_worker_pantry`; snapshot có `workers` / `lodge_meals` / `worker_pantry`. Test `supabase/tests/workers.test.sql` (anon chặn, GĐ1 khóa, thuê/gia hạn, thu ≥5 phút, không gieo, không XP, tưới, đói ăn, nhiều lứa, hết hợp đồng, RLS). `npm run test:sql` PASS. **Dừng ở:** nối store (`workersSlice`) + UI `WorkersModal`.
 - **2026-11-03** — S5c-3 client Lán Thợ: `workersSlice.ts` viết lại (offline dùng domain, online gọi RPC `0011`; cloud tick tối đa 1 lần/phút qua `rpc_get_my_farm`); state mới `workerRecords`, `workerPantry` (persist; save cũ tự mặc định rỗng); `workers` là bản hiển thị suy ra từ hợp đồng; action mới `serveLodgeMeal`; `addMealsToLodgeTable` / `feedWorker` / `equipWorkerGear` / `giveWorkerBonus` giữ tên (đồ thợ + phụ cấp chờ S5d, không trừ vàng). Bỏ 3 nguồn in tiền (Giỏ quy vàng, offline +10⚡/h, tự gieo miễn phí) + cheat ⏩ cộng Giỏ. `WorkersModal` mới. QC `TC-05.1a/2a/5a` viết lại. Tài liệu `02` 3.2, `17` C3. Kiểm: typecheck, 166 test, build, test:sql (4 file) PASS; chụp 1280×720 & 844×390. Chờ PO chạy `0011`. **Tiếp theo:** S5d xưởng nghề + đồ thợ, mục tiêu Ch.3/6/7.
 - **2026-11-03** — Mục tiêu Ch.3 (xây Bếp Củi + nấu 1 món) & Ch.6 (thuê Chú Tư + dọn 1 món lên Bàn Ăn): bộ đếm mới trong `src/domain/quests.ts`, tăng ở `cooking.ts` / `workers.ts` và `0012_quest_counters_s5.sql`; `src/data/quests.ts` thêm mục tiêu, Ch.6 Lv.14→13, Ch.7 Lv.16→15 (khớp `01`, theo quyết định hạ cấp thợ); seed nhiệm vụ sinh lại. Sửa test `quests.test.ts` (test cũ khóa "GĐ2+ chưa có mục tiêu" — nay cố ý đổi). Test SQL `quests_s5.test.sql`. Ghi `01` Ch.3/Ch.6, `17` C3. Kiểm: typecheck, 169 test, build, test:sql (5 file) PASS. Hỏi PO: Ch.3 Lv.6 hay Lv.9. **Tiếp theo:** S5d xưởng nghề + đồ thợ (cần PO chọn nguyên liệu thật cho `CRAFT_01/02` và tác dụng đồ thợ).
+- **2026-11-03** — PO duyệt lần 2: đồ thợ dùng loài Đợt 2 có sẵn (Nón Lá = Dừa Xiêm + Sen ở `MAC_07`; Áo Cánh Nâu = Kén Tằm + Khoai Môn ở `MAC_08`); đồ thợ 72h = Độ No hao chậm 25%; Ch.3 mở Lv.9; AI được áp `0010`→`0012` + seed qua connector. Ghi `17` C3.

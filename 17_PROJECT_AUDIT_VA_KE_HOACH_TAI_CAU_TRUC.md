@@ -294,6 +294,12 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 3. **Vật nuôi / thủy sản nuôi nhiều lứa:** mua con giống 1 lần, thu nhiều lứa rồi mới hết (sửa lỗi lỗ có từ GĐ1).
 4. **Hạ cấp thợ cho khớp chương:** Chú Tư Lv.13, Cô Năm Lv.15. Ch.6 = thuê Chú Tư; Ch.7 = cấp đồ thợ.
 
+**Quyết định PO lần 2 (2026-11-03):**
+5. **Đồ thợ dùng loài Đợt 2 có sẵn:** Nón Lá `CRAFT_01` ở Đan Lát `MAC_07` = 1 Dừa Xiêm `CROP_24` + 1 Sen `CROP_19`. Áo Cánh Nâu `CRAFT_02` ở Khung Cửi `MAC_08` = 1 Kén Tằm `ANI_06` + 1 Khoai Môn & Củ Sắn `CROP_17`. Không thêm thực thể.
+6. **Tác dụng đồ thợ 72h:** Độ No hao chậm 25%.
+7. **Chương 3 mở Lv.9** (theo `01`).
+8. **AI áp `0010` → `0012` + seed lên Supabase thật** qua connector.
+
 **Thứ tự làm:** S5a nuôi nhiều lứa (domain → `0010` → client) → S5b số liệu thợ (catalog, CSV `04`, `02`) → S5c Lán Thợ (domain → `0011` lazy-tick → store → UI) → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7.
 
 **Tiến độ:**

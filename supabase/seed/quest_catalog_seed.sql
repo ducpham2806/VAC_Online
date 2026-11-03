@@ -8,7 +8,7 @@ INSERT INTO public.quest_catalog (id, chapter_no, unlock_stage, min_level, rewar
 VALUES
   ('Q_CH1', 1, 1, 1, 600, 15, 'Chương 1 (Lv.1): Bức Thư Trong Chiếc Tráp Gỗ Lim', '[{"counter":"WATER","target":1,"label":"💧 Tưới nước Giếng Làng"},{"counter":"HARVEST:CROP_01","target":1,"label":"🌾 Thu hoạch Lúa Nước"}]'::jsonb),
   ('Q_CH2', 2, 1, 3, 900, 20, 'Chương 2 (Lv.3): Mùi Khói Bếp Của Mẹ & Bí Mật Đáy Ao', '[{"counter":"DREDGE","target":1,"label":"🪣 Vét bùn đáy ao"},{"counter":"APPLY_MUD","target":1,"label":"🟫 Bón bùn phù sa cho 1 ô"}]'::jsonb),
-  ('Q_CH3', 3, 2, 6, 1200, 25, 'Chương 3 (Lv.6): Chuyến Xe Hợp Tác Xã & Đêm Mưa Giông', '[{"counter":"BUILD:MAC_02","target":1,"label":"🍲 Xây Bếp Củi Quê Mẹ"},{"counter":"COOK","target":1,"label":"🍚 Nấu xong 1 món ở Bếp Quê"}]'::jsonb),
+  ('Q_CH3', 3, 2, 9, 1200, 25, 'Chương 3 (Lv.9): Chuyến Xe Hợp Tác Xã & Đêm Mưa Giông', '[{"counter":"BUILD:MAC_02","target":1,"label":"🍲 Xây Bếp Củi Quê Mẹ"},{"counter":"COOK","target":1,"label":"🍚 Nấu xong 1 món ở Bếp Quê"}]'::jsonb),
   ('Q_CH4', 4, 3, 9, 1500, 30, 'Chương 4 (Lv.9): Bóng Đêm Rình Rập & Chó Phú Quốc', '[]'::jsonb),
   ('Q_CH5', 5, 3, 12, 2000, 35, 'Chương 5 (Lv.12): Tiếng Còi Tàu Thống Nhất Bắc – Nam', '[]'::jsonb),
   ('Q_CH6', 6, 2, 13, 2500, 40, 'Chương 6 (Lv.13): Lán Thợ Đồng Quê & Giọt Mồ Hôi Chú Tư', '[{"counter":"HIRE:WORK_01","target":1,"label":"👨‍🌾 Thuê Chú Tư Cày"},{"counter":"SERVE_MEAL","target":1,"label":"🍚 Dọn 1 món lên Bàn Ăn Chung"}]'::jsonb),
