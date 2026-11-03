@@ -1,6 +1,16 @@
-/** Slice Workers của useGameStore (tách S2 — thân hàm giữ nguyên). */
-import { GAME_CATALOG } from '../../data/masterData';
+/**
+ * Slice Lán Thợ (S5c — `17` mục C3). Chỉ điều phối:
+ *  - offline: áp luật thuần ở `src/domain/workers.ts`;
+ *  - online: gọi RPC của migration 0011 (server tự tick thợ trong rpc_get_my_farm).
+ * Giữ tên mọi action cũ (RULE D1). Đã bỏ 3 nguồn in tiền của bản stub: Giỏ Thợ quy ra 18🪙/món + quà cố định,
+ * offline hồi +10⚡/giờ, thợ tự gieo lại không tốn giống.
+ */
+import { GAME_STAGE } from '../../config/features';
+import { claimPantry, hireWorker, pantryTotal, serveLodgeMeal as serveLodgeMealRule, tickWorkers } from '../../domain/workers';
+import { findItem } from '../../domain/farm';
+import { STARTER_RECIPE_ID } from '../../domain/cooking';
 import type { GameState } from '../gameTypes';
+import { fromWorkersSave, toWorkersSave } from '../initialState';
 import type { StoreGet, StoreHelpers, StoreSet } from '../storeHelpers';
 
 export type WorkersActions = Pick<
@@ -14,278 +24,136 @@ export type WorkersActions = Pick<
   | 'giveWorkerBonus'
   | 'simulateOfflineWorkerProgress'
   | 'addMealsToLodgeTable'
+  | 'serveLodgeMeal'
 >;
 
-export const createWorkersSlice = (set: StoreSet, get: StoreGet, _helpers: StoreHelpers): WorkersActions => ({
-  tickWorkerAutomation: () => {
-    const state = get();
-    if (!state.workerAutoTickEnabled) return;
+/** Online: mỗi lần tick tự động chỉ đồng bộ server tối đa 1 lần / phút. */
+const CLOUD_TICK_MIN_MS = 60_000;
+let lastCloudTick = 0;
 
-    const now = Date.now();
-    let nextPantry = state.workerPantryCount;
-    let nextMudCounter = state.pondMudCounter;
-    let nextMealsOnTable = state.lodgeDiningTableMeals;
-    const nextInv = { ...state.inventory };
-    const actionsLog: string[] = [];
+export const createWorkersSlice = (set: StoreSet, get: StoreGet, { runCloud }: StoreHelpers): WorkersActions => {
+  const now = (): number => Date.now() + get().clockOffsetMs;
 
-    // 1. Dì Bảy Bếp (WORK_04) tự động nấu thêm cơm nếu bàn ăn còn < 3 suất
-    const diBay = state.workers.find((w) => w.code === 'WORK_04' && w.isHired && w.belly >= 25);
-    if (diBay && nextMealsOnTable < 3) {
-      nextMealsOnTable += 2;
-      actionsLog.push('Dì Bảy Bếp dọn +2 suất cơm nóng lên Bàn Ăn Lán Thợ');
-    }
+  /** Offline: tick thợ rồi trả về save đã tick. */
+  const tickedLocal = () => tickWorkers(toWorkersSave(get()), now());
 
-    // 2. Nhân công đói bụng (< 35%) tự động về Bàn Ăn Lán Thợ ăn cơm
-    const updatedWorkers = state.workers.map((w) => {
-      if (!w.isHired || w.contractDaysLeft <= 0) return w;
-      let belly = Math.max(10, w.belly - 2);
-      let statusText = w.statusText;
-      if (belly < 35 && nextMealsOnTable > 0) {
-        nextMealsOnTable -= 1;
-        belly = 100;
-        statusText = `Vừa ăn cơm tại Bàn Lán Thợ (No 100% 🤩) - Đang làm việc hăng say!`;
-        actionsLog.push(`${w.name} đã ăn 1 suất cơm tại Bàn Ăn Lán Thợ (Hồi 100% Độ No)`);
+  return {
+    tickWorkerAutomation: () => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        if (Date.now() - lastCloudTick < CLOUD_TICK_MIN_MS || state.farmBusy) return;
+        lastCloudTick = Date.now();
+        void state.syncFarmFromServer();
+        return;
       }
-      return { ...w, belly, statusText };
-    });
-
-    // 3. Chú Tư Cày (WORK_01), Anh Sáu Kình (WORK_03), Chú Tám Mộc (WORK_05) chăm sóc ô đất/ao
-    const chuTu = updatedWorkers.find((w) => w.code === 'WORK_01' && w.isHired && w.belly >= 25);
-    const anhSau = updatedWorkers.find((w) => w.code === 'WORK_03' && w.isHired && w.belly >= 25);
-    const chuTam = updatedWorkers.find((w) => w.code === 'WORK_05' && w.isHired && w.belly >= 25);
-
-    const updatedTiles = state.tiles.map((t) => {
-      // Tự động thu hoạch ô đã chín (vào Giỏ Kho Lán Thợ, tối đa 120)
-      if (t.itemId && t.matureAt && now >= t.matureAt && nextPantry < 120) {
-        const canHarvestLand = (t.zoneType === 'LAND' || t.zoneType === 'ORCHARD') && (chuTu || chuTam);
-        const canHarvestPond = t.zoneType === 'POND' && anhSau;
-        if (canHarvestLand || canHarvestPond) {
-          nextPantry = Math.min(120, nextPantry + 2);
-          if (t.zoneType === 'POND') {
-            nextMudCounter = Math.min(10, nextMudCounter + 1);
-          }
-          const replantId = t.itemId;
-          const spec = GAME_CATALOG.find((c) => c.id === replantId);
-          actionsLog.push(`Thu tự động [${spec?.name ?? replantId}] vào Giỏ Thợ & gieo vụ mới`);
-          return {
-            ...t,
-            plantedAt: now,
-            matureAt: now + Math.max(2, spec?.growOrCraftMinutes ?? 5) * 60_000,
-            watered: Boolean(chuTu) || state.weather === 'RAINY',
-            mudApplied: false,
-            isGolden: false,
-          };
-        }
-      }
-
-      // Tự động tưới nước Giếng Làng bởi Chú Tư Cày
-      if (t.itemId && !t.watered && t.matureAt && chuTu) {
-        return {
-          ...t,
-          watered: true,
-          matureAt: t.matureAt - Math.floor((t.matureAt - now) * 0.15),
-        };
-      }
-
-      // Tự động bón Bùn Phù Sa cho Cây ăn quả bởi Chú Tám Mộc
-      if (t.itemId && t.zoneType === 'ORCHARD' && !t.mudApplied && chuTam && (nextInv.ITEM_BUN_PHU_SA ?? 0) > 0) {
-        nextInv.ITEM_BUN_PHU_SA = (nextInv.ITEM_BUN_PHU_SA ?? 1) - 1;
-        actionsLog.push('Chú Tám Mộc bón Bùn Phù Sa kích nổ Trái Cây Hoàng Kim ⭐');
-        return {
-          ...t,
-          mudApplied: true,
-          isGolden: true,
-        };
-      }
-
-      return t;
-    });
-
-    // 4. Anh Sáu Kình (WORK_03) tự động Vét Bùn Ao khi đầy 10/10 (Miễn phí ⚡ cho chủ nhà!)
-    if (anhSau && nextMudCounter >= 10) {
-      nextMudCounter = 0;
-      nextInv.ITEM_BUN_PHU_SA = (nextInv.ITEM_BUN_PHU_SA ?? 0) + 3;
-      actionsLog.push('Anh Sáu Kình tự động Vét Bùn Đáy Ao (0 ⚡) nhận +3 Xô Bùn Phù Sa!');
-    }
-
-    set({
-      tiles: updatedTiles,
-      workers: updatedWorkers,
-      workerPantryCount: nextPantry,
-      pondMudCounter: nextMudCounter,
-      lodgeDiningTableMeals: nextMealsOnTable,
-      inventory: nextInv,
-      ...(actionsLog.length > 0
-        ? { toastMessage: `🛖 [Lán Thợ Tự Động]: ${actionsLog[0]}!` }
-        : {}),
-    });
-  },
-
-  toggleWorkerAutoTick: () => {
-    const next = !get().workerAutoTickEnabled;
-    set({
-      workerAutoTickEnabled: next,
-      toastMessage: next
-        ? '🟢 Đã BẬT chế độ Tự Động Hóa 6 Nhân Công Lán Thợ (Tự tưới, tự thu vào Giỏ Thợ & tự ăn cơm)!'
-        : '⏸️ Đã TẠM DỪNG Nhân công tự động để bạn tự tay thu hoạch!',
-    });
-  },
-
-  claimWorkerPantry: () => {
-    const state = get();
-    if (state.workerPantryCount <= 0) {
-      set({ toastMessage: '🧺 Giỏ Kho Lán Thợ hiện đang trống!' });
-      return;
-    }
-    const bonusGold = state.workerPantryCount * 18;
-    set({
-      workerPantryCount: 0,
-      gold: state.gold + bonusGold,
-      xp: state.xp + 35,
-      inventory: {
-        ...state.inventory,
-        CROP_01: (state.inventory.CROP_01 ?? 0) + 15,
-        ANI_01: (state.inventory.ANI_01 ?? 0) + 8,
-        AQUA_01: (state.inventory.AQUA_01 ?? 0) + 6,
-        ITEM_BUN_PHU_SA: (state.inventory.ITEM_BUN_PHU_SA ?? 0) + 3,
-      },
-      toastMessage: `📥 Đã thu toàn bộ ${state.workerPantryCount} Nông sản/Trứng/Cá + 3 Xô Bùn Phù Sa từ Giỏ Kho Lán Thợ (Trị giá +${bonusGold} 🪙)!`,
-    });
-  },
-
-  feedWorker: (workerCode, mealName, bellyGain) => {
-    const state = get();
-    set({
-      workers: state.workers.map((w) =>
-        w.code === workerCode
-          ? {
-              ...w,
-              belly: Math.min(100, w.belly + bellyGain),
-              morale: Math.min(100, w.morale + 15),
-              statusText: `Vừa ăn no [${mealName}] - Đang làm việc hăng say 100%!`,
-            }
-          : w
-      ),
-      toastMessage: `🍚 Đã dọn [${mealName}] lên Bàn Ăn Lán Thợ! Nhân công hồi +${bellyGain} Độ No & +15 Tinh thần!`,
-    });
-  },
-
-  equipWorkerGear: (workerCode, gearId) => {
-    const state = get();
-    const gear = GAME_CATALOG.find((g) => g.id === gearId);
-    const cost = gear?.buyCostGold ?? 120;
-    if (state.gold < cost) {
-      set({ toastMessage: '⚠️ Không đủ Xu Vàng để may trang bị bảo hộ!' });
-      return;
-    }
-    set({
-      gold: state.gold - cost,
-      workers: state.workers.map((w) =>
-        w.code === workerCode
-          ? {
-              ...w,
-              equippedGearId: gearId,
-              gearHoursLeft: 72,
-              statusText: `Đã mặc [${gear?.name ?? 'Đồ Bảo Hộ Mới'}] (Độ bền 72/72 giờ - Tăng tốc +15~25%)`,
-            }
-          : w
-      ),
-      toastMessage: `👕 Đã cấp phát [${gear?.name}] (Độ bền 72 giờ) cho nhân công (-${cost} 🪙)!`,
-    });
-  },
-
-  payWorkerSalary: (workerCode) => {
-    const state = get();
-    const target = state.workers.find((w) => w.code === workerCode);
-    if (!target) return;
-    const threeDayCost = Math.round(target.dailySalaryGold * 3 * 0.88);
-    if (state.gold < threeDayCost) {
-      set({ toastMessage: '⚠️ Không đủ Xu Vàng để trả lương hợp đồng 3 ngày!' });
-      return;
-    }
-    set({
-      gold: state.gold - threeDayCost,
-      workers: state.workers.map((w) =>
-        w.code === workerCode
-          ? {
-              ...w,
-              isHired: true,
-              contractDaysLeft: w.contractDaysLeft + 3,
-              statusText: 'Đã nhận lương Hợp đồng 3 ngày - Sẵn sàng tự động hóa!',
-            }
-          : w
-      ),
-      toastMessage: `🪙 Đã trả lương Hợp đồng 3 ngày (-${threeDayCost} 🪙, tiết kiệm 12%) cho ${target.name}!`,
-    });
-  },
-
-  giveWorkerBonus: (workerCode) => {
-    const state = get();
-    if (state.gold < 300) {
-      set({ toastMessage: '⚠️ Cần 300 Xu Vàng để thưởng Phụ Cấp Ngày Mùa!' });
-      return;
-    }
-    set({
-      gold: state.gold - 300,
-      workers: state.workers.map((w) =>
-        w.code === workerCode
-          ? {
-              ...w,
-              morale: 100,
-              statusText: '🔥 HĂNG SAY 100% (Tốc độ x1.25 & +15% rơi sản lượng phụ/Vật tư Kho!)',
-            }
-          : w
-      ),
-      toastMessage: '🧧 Đã thưởng Phụ Cấp Ngày Mùa (-300 🪙)! Tinh thần nhân công đạt 100% Hăng Say!',
-    });
-  },
-
-  simulateOfflineWorkerProgress: (hoursOffline) => {
-    const state = get();
-    const cleanHours = Math.max(1, Math.min(24, Math.floor(hoursOffline)));
-    const activeWorkers = state.workers.filter((w) => w.isHired && w.contractDaysLeft > 0);
-    if (activeWorkers.length === 0) {
+      if (!state.workerAutoTickEnabled) return;
+      const before = pantryTotal(state.workerPantry ?? {});
+      const next = tickedLocal();
+      const gained = pantryTotal(next.pantry) - before;
       set({
-        toastMessage: '🛖 Chưa có nhân công nào đang trong hợp đồng làm việc khi Offline!',
+        ...fromWorkersSave(next, now()),
+        ...(gained > 0 ? { toastMessage: `🛖 Thợ vừa thu +${gained} vào Giỏ Thợ (${pantryTotal(next.pantry)}/120)!` } : {}),
       });
-      return;
-    }
-    const mealsNeeded = Math.min(state.lodgeDiningTableMeals, Math.ceil((activeWorkers.length * cleanHours) / 3));
-    const rawHarvestGain = activeWorkers.length * cleanHours * 4;
-    const nextPantry = Math.min(120, state.workerPantryCount + rawHarvestGain);
-    const actualAdded = nextPantry - state.workerPantryCount;
+    },
 
-    const updatedWorkers = state.workers.map((w) => {
-      if (!w.isHired) return w;
-      const nextGear = Math.max(0, w.gearHoursLeft - cleanHours);
-      const nextBelly = mealsNeeded > 0 ? Math.max(45, w.belly - cleanHours * 4 + 30) : Math.max(10, w.belly - cleanHours * 8);
-      return {
-        ...w,
-        belly: Math.min(100, nextBelly),
-        gearHoursLeft: nextGear,
-        statusText: `Vừa hoàn thành ${cleanHours}h làm việc Offline (+${Math.floor(rawHarvestGain / activeWorkers.length)} sản phẩm vào Giỏ Thợ)`,
+    toggleWorkerAutoTick: () => {
+      const next = !get().workerAutoTickEnabled;
+      set({
+        workerAutoTickEnabled: next,
+        toastMessage: next
+          ? '🟢 Đã BẬT Lán Thợ: thợ tự tưới và thu ô chín ≥ 5 phút vào Giỏ Thợ (bạn vẫn tự gieo).'
+          : '⏸️ Đã TẠM DỪNG Lán Thợ (chỉ ở chế độ offline).',
+      });
+    },
+
+    claimWorkerPantry: () => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        const before = state.workerPantryCount;
+        void runCloud('rpc_claim_worker_pantry', {}, (snap, prev) => {
+          const got = Object.entries(snap.inventory).reduce((a, [id, n]) => a + Math.max(0, n - (prev.inventory[id] ?? 0)), 0);
+          return `📥 Đã thu ${got || before} món từ Giỏ Thợ về Kho!`;
+        });
+        return;
+      }
+      const r = claimPantry(tickedLocal());
+      if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
+      else set({ toastMessage: r.message });
+    },
+
+    // Giữ chữ ký cũ. Từ S5c thợ tự ăn ở Bàn Ăn — không còn "cho ăn miễn phí" (+Độ No không tốn gì).
+    feedWorker: () => {
+      set({ toastMessage: '🍚 Dọn món Bếp Quê lên Bàn Ăn Chung — thợ đói (< 35) sẽ tự về ăn!' });
+    },
+
+    // Đồ thợ & phụ cấp làm ở S5d (xưởng nghề). Không trừ vàng khi chưa có tác dụng thật.
+    equipWorkerGear: () => {
+      set({ toastMessage: '👕 Đồ bảo hộ 72h mở cùng Xưởng Đan Lát / Khung Cửi ở bản sau!' });
+    },
+    giveWorkerBonus: () => {
+      set({ toastMessage: '🧧 Phụ Cấp Ngày Mùa mở cùng đồ bảo hộ ở bản sau!' });
+    },
+
+    /** Thuê / gia hạn hợp đồng 3 ngày (M05.1). */
+    payWorkerSalary: (workerCode) => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        const w = findItem(workerCode);
+        void runCloud('rpc_hire_worker', { p_worker_id: workerCode }, (snap, prev) =>
+          `🪙 Đã trả lương 3 ngày (-${(prev.gold - snap.profile.gold).toLocaleString()} 🪙, rẻ hơn 12%) cho [${w?.emoji ?? ''} ${w?.name ?? workerCode}]!`
+        );
+        return;
+      }
+      const r = hireWorker(toWorkersSave(state), workerCode, GAME_STAGE, now());
+      if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
+      else set({ toastMessage: r.message });
+    },
+
+    /** Chỉ dùng thử ở chế độ offline: lùi đồng hồ ô đất + thợ `hoursOffline` giờ rồi tick (M05.5). */
+    simulateOfflineWorkerProgress: (hoursOffline) => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        set({ toastMessage: '🌙 Giả lập offline chỉ dùng ở chế độ offline (server tính giờ thật).' });
+        return;
+      }
+      const shift = Math.max(1, Math.min(24, Math.floor(hoursOffline))) * 3_600_000;
+      const base = toWorkersSave(state);
+      const rewound = {
+        ...base,
+        tiles: base.tiles.map((t) =>
+          t.itemId ? { ...t, plantedAt: (t.plantedAt ?? 0) - shift, matureAt: (t.matureAt ?? 0) - shift } : t
+        ),
+        workers: Object.fromEntries(Object.entries(base.workers).map(([id, w]) => [id, { ...w, tickAt: w.tickAt - shift }])),
       };
-    });
+      const next = tickWorkers(rewound, now());
+      set({
+        ...fromWorkersSave(next, now()),
+        toastMessage: `🌙 [Offline ${shift / 3_600_000} giờ]: Giỏ Thợ ${pantryTotal(next.pantry)}/120, Bàn Ăn còn ${next.tableMeals} suất.`,
+      });
+    },
 
-    set({
-      lodgeDiningTableMeals: Math.max(0, state.lodgeDiningTableMeals - mealsNeeded),
-      workerPantryCount: nextPantry,
-      stamina: Math.min(state.maxStamina, state.stamina + cleanHours * 10),
-      workers: updatedWorkers,
-      toastMessage: `🌙 [LAZY-TICK OFFLINE ${cleanHours} GIỜ]: ${activeWorkers.length} Nhân công đã ăn ${mealsNeeded} suất cơm, tự thu hoạch +${actualAdded} Nông sản vào Giỏ Thợ (${nextPantry}/120) & hồi đầy ⚡!`,
-    });
-  },
+    // Giữ chữ ký cũ: dọn `portions` món Cơm Trắng từ Kho lên Bàn Ăn (không còn mua cơm bằng vàng; costGold bỏ qua).
+    addMealsToLodgeTable: (portions) => {
+      for (let i = 0; i < Math.max(1, portions); i += 1) {
+        const before = get().lodgeDiningTableMeals;
+        get().serveLodgeMeal(STARTER_RECIPE_ID);
+        if (get().farmMode === 'cloud' || get().lodgeDiningTableMeals === before) break;
+      }
+    },
 
-  addMealsToLodgeTable: (portions, costGold) => {
-    const state = get();
-    if (state.gold < costGold) {
-      set({ toastMessage: '⚠️ Không đủ Xu Vàng để dọn thêm mâm cơm lên Bàn Ăn Lán Thợ!' });
-      return;
-    }
-    set({
-      gold: state.gold - costGold,
-      lodgeDiningTableMeals: state.lodgeDiningTableMeals + portions,
-      toastMessage: `🍚 Đã dọn thêm +${portions} suất cơm nóng lên Bàn Ăn Chung Lán Thợ (Tổng: ${state.lodgeDiningTableMeals + portions} suất)!`,
-    });
-  },
-});
+    /** Dọn 1 món Bếp Quê từ Kho lên Bàn Ăn (M05.2). */
+    serveLodgeMeal: (dishId) => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        const dish = findItem(dishId);
+        void runCloud('rpc_serve_lodge_meal', { p_dish_id: dishId }, (snap, prev) =>
+          `🍚 Đã dọn [${dish?.emoji ?? ''} ${dish?.name ?? dishId}] lên Bàn Ăn: +${(snap.lodge_meals ?? 0) - prev.lodgeDiningTableMeals} suất`
+        );
+        return;
+      }
+      const r = serveLodgeMealRule(toWorkersSave(state), dishId, GAME_STAGE);
+      if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
+      else set({ toastMessage: r.message });
+    },
+  };
+};

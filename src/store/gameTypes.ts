@@ -11,6 +11,7 @@ import type { GuestbookEntry } from '../services/realtimeService';
 import type { StoryQuest } from '../data/quests';
 import type { FarmMode } from '../services/farmGateway';
 import type { MachineState } from '../domain/cooking';
+import type { WorkerRecord } from '../domain/workers';
 
 export type ActiveModalType =
   | null
@@ -116,6 +117,10 @@ export interface GameState {
   machines: Record<string, MachineState>;
   /** Món đã khám phá ở Nồi Đất (Cơm Trắng mở sẵn, không nằm trong danh sách). */
   discoveredRecipes: string[];
+  /** Hợp đồng + Độ No của thợ đã thuê (S5c, `src/domain/workers.ts`). `workers` là bản hiển thị suy ra từ đây. */
+  workerRecords: Record<string, WorkerRecord>;
+  /** Giỏ Thợ: hàng thợ thu, chưa vào Kho. `workerPantryCount` = tổng. */
+  workerPantry: Record<string, number>;
   /** Mốc thời gian (ms) để tính hồi năng lượng +1⚡/3 phút. */
   staminaUpdatedAt: number;
   /** Ngày nhận Quà Tân Thủ gần nhất (YYYY-MM-DD, giờ Việt Nam). */
@@ -173,6 +178,7 @@ export interface GameState {
   collectKitchenCraft: (machineId: string) => void;
   eatDish: (productId: string) => void;
   tryCookingPot: (ingredientIds: string[]) => void;
+  serveLodgeMeal: (dishId: string) => void;
   prayAtTotem: () => void;
   contributeDinhLang: () => void;
   breedMutantCrop: (targetMutantId: string, costGold: number, baseChance: number, pityLimit: number) => void;

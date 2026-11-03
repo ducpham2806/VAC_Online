@@ -187,3 +187,50 @@ describe('Bếp Quê & Xưởng (S4) — offline qua kitchenSlice', () => {
     expect(Array.isArray(store.getState().discoveredRecipes)).toBe(true);
   });
 });
+
+describe('Lán Thợ (S5c) — offline qua workersSlice', () => {
+  beforeEach(() => {
+    store.setState({ ...createFreshState(), level: 15, gold: 2000, inventory: { PROD_03: 1 } });
+  });
+
+  it('người chơi mới: chưa thuê ai, Giỏ Thợ rỗng, Bàn Ăn 0 suất', () => {
+    const s = store.getState();
+    expect(s.workers.every((w) => !w.isHired)).toBe(true);
+    expect(s.workerPantryCount).toBe(0);
+    expect(s.lodgeDiningTableMeals).toBe(0);
+  });
+
+  it('thuê Chú Tư → dọn món lên Bàn Ăn → thợ thu Lúa vào Giỏ → thu Giỏ về Kho (không ra vàng)', () => {
+    store.getState().payWorkerSalary('WORK_01');
+    expect(store.getState().gold).toBe(2000 - 528);
+    expect(store.getState().workers.find((w) => w.code === 'WORK_01')?.isHired).toBe(true);
+
+    store.getState().serveLodgeMeal('PROD_03');
+    expect(store.getState().lodgeDiningTableMeals).toBe(3);
+    expect(store.getState().inventory.PROD_03).toBe(0);
+
+    const now = Date.now();
+    store.setState({
+      tiles: store.getState().tiles.map((t, i) =>
+        i === 0 ? { ...t, itemId: 'CROP_01', plantedAt: now - 600_000, matureAt: now - 400_000, watered: true } : t
+      ),
+    });
+    store.getState().tickWorkerAutomation();
+    expect(store.getState().workerPantry.CROP_01).toBe(2);
+    expect(store.getState().workerPantryCount).toBe(2);
+    expect(store.getState().tiles[0].itemId).toBeNull();
+
+    const gold = store.getState().gold;
+    store.getState().claimWorkerPantry();
+    expect(store.getState().inventory.CROP_01).toBe(2);
+    expect(store.getState().workerPantryCount).toBe(0);
+    expect(store.getState().gold).toBe(gold);
+  });
+
+  it('đồ thợ / phụ cấp chưa mở: không trừ vàng; cho ăn miễn phí đã bỏ', () => {
+    store.getState().equipWorkerGear('WORK_01', 'CRAFT_01');
+    store.getState().giveWorkerBonus('WORK_01');
+    store.getState().feedWorker('WORK_01', 'Cơm', 85);
+    expect(store.getState().gold).toBe(2000);
+  });
+});

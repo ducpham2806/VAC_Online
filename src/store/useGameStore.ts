@@ -13,6 +13,9 @@ import {
   createFreshState,
 } from './initialState';
 import { createStoreHelpers } from './storeHelpers';
+import { INITIAL_WORKERS } from '../data/masterData';
+import { pantryTotal } from '../domain/workers';
+import { workersView } from './initialState';
 import { createEconomySlice } from './slices/economySlice';
 import { createFarmSlice } from './slices/farmSlice';
 import { createKitchenSlice } from './slices/kitchenSlice';
@@ -59,6 +62,8 @@ export const useGameStore = create<GameState>()(
       merge: (persisted, current) => {
         const save = (persisted ?? {}) as PersistedSave;
         const merged: GameState = { ...current, ...save };
+        const workerRecords = merged.workerRecords ?? {};
+        const workerPantry = merged.workerPantry ?? {};
         return {
           ...merged,
           tiles: normalizePlotTiles(merged.tiles, merged.wildPlotsUnlocked),
@@ -66,6 +71,11 @@ export const useGameStore = create<GameState>()(
           // Save trước S4 chưa có Bếp Quê.
           machines: merged.machines ?? {},
           discoveredRecipes: merged.discoveredRecipes ?? [],
+          // S5c: thợ tính từ hợp đồng thật; Giỏ Thợ là hàng thật (save cũ chỉ có con số → bỏ).
+          workerRecords,
+          workerPantry,
+          workerPantryCount: pantryTotal(workerPantry),
+          workers: workersView(INITIAL_WORKERS, workerRecords, Date.now()),
         };
       },
     }

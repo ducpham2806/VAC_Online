@@ -26,7 +26,10 @@ export type FarmRpcName =
   | 'rpc_start_craft'
   | 'rpc_collect_craft'
   | 'rpc_eat_dish'
-  | 'rpc_cook_pot';
+  | 'rpc_cook_pot'
+  | 'rpc_hire_worker'
+  | 'rpc_serve_lodge_meal'
+  | 'rpc_claim_worker_pantry';
 
 interface SnapshotTile {
   x: number;
@@ -75,6 +78,10 @@ export interface FarmSnapshot {
   machines?: Record<string, { craft_item_id: string | null; ready_at: number | null }>;
   /** Món đã khám phá ở Nồi Đất (migration 0009). */
   recipes?: string[];
+  /** Lán Thợ (migration 0011). Server cũ chưa có → undefined. */
+  workers?: Record<string, { contract_until: number; belly: number; tick_at: number }>;
+  lodge_meals?: number;
+  worker_pantry?: Record<string, number>;
 }
 
 export type RpcResult = { ok: true; snapshot: FarmSnapshot } | { ok: false; message: string; missing?: boolean };

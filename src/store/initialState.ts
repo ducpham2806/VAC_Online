@@ -4,6 +4,8 @@ import { INITIAL_MARKET_LISTINGS, INITIAL_WORKERS } from '../data/masterData';
 import { STORY_QUESTS } from '../data/quests';
 import { FarmSave } from '../domain/farm';
 import type { KitchenSave, MachineState } from '../domain/cooking';
+import { DAY_MS, WorkerRecord, WorkersSave, isWorking, pantryTotal } from '../domain/workers';
+import type { HiredWorkerState } from '../data/types';
 import { FarmSnapshot, createEmptyTiles, tilesFromSnapshot } from '../services/farmGateway';
 import type { GameData } from './gameTypes';
 
@@ -131,7 +133,9 @@ export function createDemoState(): GameData {
     },
 
     tiles: createDemoTiles(),
-    workers: INITIAL_WORKERS,
+    workerRecords: DEMO_WORKER_RECORDS,
+    workerPantry: { CROP_01: 40, ANI_01: 16, AQUA_01: 12 },
+    workers: workersView(INITIAL_WORKERS, DEMO_WORKER_RECORDS, Date.now()),
     marketListings: INITIAL_MARKET_LISTINGS,
 
     guestbookEntries: [
@@ -310,6 +314,11 @@ export function createFreshState(): GameData {
     progressCounters: {},
     machines: {},
     discoveredRecipes: [],
+    workerRecords: {},
+    workerPantry: {},
+    workerPantryCount: 0,
+    lodgeDiningTableMeals: 0,
+    workers: workersView(INITIAL_WORKERS, {}, Date.now()),
   };
 }
 
@@ -366,6 +375,79 @@ export function todayInVietnam(): string {
 }
 
 /** Ảnh chụp từ server → state client (server là nguồn chân lý ở chế độ online). */
+const DEMO_WORKER_RECORDS: Record<string, WorkerRecord> = {
+  WORK_01: { contractUntil: Date.now() + 3 * DAY_MS, belly: 85, tickAt: Date.now() },
+  WORK_02: { contractUntil: Date.now() + 2 * DAY_MS, belly: 65, tickAt: Date.now() },
+};
+
+/** Bản hiển thị 6 thợ (`HiredWorkerState`) suy ra từ hợp đồng thật (S5c). Tên / lương / cấp lấy từ dữ liệu gốc. */
+export function workersView(
+  base: readonly HiredWorkerState[],
+  records: Record<string, WorkerRecord>,
+  now: number
+): HiredWorkerState[] {
+  return base.map((w) => {
+    const rec = records[w.code];
+    if (!rec) return { ...w, isHired: false, contractDaysLeft: 0, belly: 100, statusText: 'Chưa thuê' };
+    const hired = rec.contractUntil > now;
+    const belly = Math.round(rec.belly);
+    return {
+      ...w,
+      isHired: hired,
+      contractDaysLeft: hired ? Math.ceil((rec.contractUntil - now) / DAY_MS) : 0,
+      belly,
+      statusText: !hired
+        ? 'Hết hợp đồng — gia hạn để thợ làm tiếp'
+        : isWorking(rec, now)
+        ? 'Đang làm: tưới ô chưa tưới, thu ô chín ≥ 5 phút vào Giỏ Thợ'
+        : 'Đói bụng — dọn món Bếp Quê lên Bàn Ăn!',
+    };
+  });
+}
+
+/** Phần save mà luật Lán Thợ đọc/ghi (src/domain/workers.ts). */
+export function toWorkersSave(s: GameData): WorkersSave {
+  return {
+    region: s.region,
+    level: s.level,
+    gold: s.gold,
+    pondMudCounter: s.pondMudCounter,
+    inventory: s.inventory,
+    tiles: s.tiles,
+    workers: s.workerRecords ?? {},
+    tableMeals: s.lodgeDiningTableMeals,
+    pantry: s.workerPantry ?? {},
+  };
+}
+
+export function fromWorkersSave(save: WorkersSave, now: number): Partial<GameData> {
+  return {
+    gold: save.gold,
+    pondMudCounter: save.pondMudCounter,
+    inventory: save.inventory,
+    tiles: save.tiles,
+    workerRecords: save.workers,
+    lodgeDiningTableMeals: save.tableMeals,
+    workerPantry: save.pantry,
+    workerPantryCount: pantryTotal(save.pantry),
+    workers: workersView(INITIAL_WORKERS, save.workers, now),
+  };
+}
+
+function workersFromSnapshot(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
+  const records: Record<string, WorkerRecord> = Object.fromEntries(
+    Object.entries(snap.workers ?? {}).map(([id, w]) => [id, { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at }])
+  );
+  const pantry = snap.worker_pantry ?? {};
+  return {
+    workerRecords: records,
+    workerPantry: pantry,
+    workerPantryCount: pantryTotal(pantry),
+    lodgeDiningTableMeals: snap.lodge_meals ?? prev.lodgeDiningTableMeals,
+    workers: workersView(INITIAL_WORKERS, records, snap.server_now),
+  };
+}
+
 /** Xưởng từ ảnh chụp server (0009) sang dạng domain. */
 export function machinesFromSnapshot(snap: FarmSnapshot): Record<string, MachineState> {
   return Object.fromEntries(
@@ -428,6 +510,7 @@ export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<Gam
     progressCounters: snap.counters ?? {},
     machines: machinesFromSnapshot(snap),
     discoveredRecipes: snap.recipes ?? [],
+    ...workersFromSnapshot(snap, prev),
     storyQuests: prev.storyQuests.map((q) => {
       const choice = snap.quests[q.id];
       return choice ? { ...q, completed: true, selectedChoice: choice } : { ...q, completed: false };
@@ -462,6 +545,9 @@ export const PERSISTED_KEYS = [
   'progressCounters',
   'machines',
   'discoveredRecipes',
+  'workerRecords',
+  'workerPantry',
+  'lodgeDiningTableMeals',
   'selectedSeedId',
   'farmMode',
 ] as const satisfies ReadonlyArray<keyof GameData>;
