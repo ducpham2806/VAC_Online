@@ -32,6 +32,13 @@ export const PANTRY_CAP = 120;
 /** Đồ thợ (S5d, PO 2026-11-03): mặc 72 giờ, Độ No hao chậm 25%. */
 export const GEAR_MS = 72 * 60 * 60 * 1000;
 export const GEAR_BELLY_FACTOR = 0.75;
+/**
+ * Phụ Cấp Ngày Mùa (PO giữ 300🪙, 2026-11-03): 24 giờ "Hăng Say" — thợ tưới cắt 25% thời gian còn lại
+ * (thường 15%). Quy đổi "+25% tốc độ" của `02` mục 3.2 thành con số đo được; không đổi mốc chờ 5 phút.
+ */
+export const BONUS_GOLD = 300;
+export const BONUS_MS = 24 * 60 * 60 * 1000;
+export const BONUS_WATER_CUT = 0.25;
 
 type Category = CatalogItem['category'];
 
@@ -53,6 +60,8 @@ export interface WorkerRecord {
   /** Đồ thợ đang mặc (CRAFT_…) và hạn dùng (ms). Thiếu = không mặc. */
   gearId?: string | null;
   gearUntil?: number | null;
+  /** Hết "Hăng Say" (Phụ Cấp Ngày Mùa) lúc (ms). Thiếu = không. */
+  bonusUntil?: number | null;
 }
 
 export interface WorkersSave {
@@ -164,6 +173,24 @@ export function equipGear(save: WorkersSave, workerId: string, gearId: string, g
   };
 }
 
+/** M05.3 — Phụ Cấp Ngày Mùa: −300🪙, thợ đang làm "Hăng Say" 24 giờ (thay mốc cũ, không cộng dồn). */
+export function giveBonus(save: WorkersSave, workerId: string, gameStage: number, now: number): WorkersResult {
+  if (gameStage < CRAFT_MIN_STAGE) return fail(`🔒 Lán Thợ mở ở Giai đoạn ${CRAFT_MIN_STAGE}!`);
+  if (save.gold < BONUS_GOLD) return fail(`⚠️ Cần ${BONUS_GOLD} 🪙 để thưởng Phụ Cấp Ngày Mùa!`);
+  const ticked = tickWorkers(save, now);
+  const rec = ticked.workers[workerId];
+  if (!rec || rec.contractUntil <= now) return fail('👷 Hãy thuê / gia hạn thợ này trước khi thưởng!');
+  return {
+    ok: true,
+    save: {
+      ...ticked,
+      gold: ticked.gold - BONUS_GOLD,
+      workers: { ...ticked.workers, [workerId]: { ...rec, bonusUntil: now + BONUS_MS } },
+    },
+    message: `🧧 Đã thưởng Phụ Cấp Ngày Mùa (-${BONUS_GOLD} 🪙): 24 giờ Hăng Say — tưới cắt 25% thời gian chờ!`,
+  };
+}
+
 /** M05.2 — Dọn 1 món Bếp Quê từ Kho lên Bàn Ăn Chung. */
 export function serveLodgeMeal(save: WorkersSave, dishId: string, gameStage: number): WorkersResult {
   if (gameStage < CRAFT_MIN_STAGE) return fail(`🔒 Lán Thợ mở ở Giai đoạn ${CRAFT_MIN_STAGE}!`);
@@ -247,7 +274,8 @@ export function tickWorkers(save: WorkersSave, now: number): WorkersSave {
       tiles = tiles.map((t) => {
         const item = t.itemId ? BY_ID.get(t.itemId) : undefined;
         if (!item || !spec.categories.includes(item.category) || t.watered || t.matureAt === null || now >= t.matureAt) return t;
-        return { ...t, watered: true, matureAt: t.matureAt - Math.floor((t.matureAt - now) * WATER_TIME_CUT) };
+        const cut = (next.bonusUntil ?? 0) > now ? BONUS_WATER_CUT : WATER_TIME_CUT;
+        return { ...t, watered: true, matureAt: t.matureAt - Math.floor((t.matureAt - now) * cut) };
       });
     }
   }

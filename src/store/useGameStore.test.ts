@@ -227,7 +227,7 @@ describe('Lán Thợ (S5c) — offline qua workersSlice', () => {
     expect(store.getState().gold).toBe(gold);
   });
 
-  it('đồ thợ / phụ cấp chưa mở: không trừ vàng; cho ăn miễn phí đã bỏ', () => {
+  it('chưa thuê thợ: cấp đồ / phụ cấp bị từ chối, không trừ vàng; cho ăn miễn phí đã bỏ', () => {
     store.getState().equipWorkerGear('WORK_01', 'CRAFT_01');
     store.getState().giveWorkerBonus('WORK_01');
     store.getState().feedWorker('WORK_01', 'Cơm', 85);

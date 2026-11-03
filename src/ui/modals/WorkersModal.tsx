@@ -4,6 +4,7 @@ import { GAME_CATALOG } from '../../data/masterData';
 import { HiredWorkerState } from '../../data/types';
 import {
   BELLY_PER_MEAL,
+  BONUS_GOLD,
   HUNGRY_BELLY,
   PANTRY_CAP,
   WORKER_SPECS,
@@ -37,6 +38,8 @@ export function WorkersModal() {
   const payWorkerSalary = useGameStore((s) => s.payWorkerSalary);
   const serveLodgeMeal = useGameStore((s) => s.serveLodgeMeal);
   const equipWorkerGear = useGameStore((s) => s.equipWorkerGear);
+  const giveWorkerBonus = useGameStore((s) => s.giveWorkerBonus);
+  const workerRecords = useGameStore((s) => s.workerRecords);
   const simulateOfflineWorkerProgress = useGameStore((s) => s.simulateOfflineWorkerProgress);
   const [selected, setSelected] = useState<HiredWorkerState['code']>('WORK_01');
   const current = workers.find((w) => w.code === selected) ?? workers[0];
@@ -190,6 +193,21 @@ export function WorkersModal() {
                   {currentLock ??
                     `🪙 ${current.isHired ? 'Gia hạn' : 'Thuê'} 3 ngày (-${cost.toLocaleString()} 🪙, rẻ 12%)${gold < cost ? ' – thiếu vàng' : ''}`}
                 </button>
+                <div className="bg-[#fbe9e7] border-l-4 border-[#b83224] p-2 rounded space-y-1">
+                  <div className="font-bold">
+                    🧧 Phụ Cấp Ngày Mùa:{' '}
+                    {(workerRecords[current.code]?.bonusUntil ?? 0) > Date.now()
+                      ? `Hăng Say còn ${Math.ceil(((workerRecords[current.code]?.bonusUntil ?? 0) - Date.now()) / 3_600_000)} giờ`
+                      : 'chưa thưởng'}
+                  </div>
+                  <button
+                    disabled={farmBusy || !current.isHired || gold < BONUS_GOLD}
+                    onClick={() => giveWorkerBonus(current.code)}
+                    className="touch-btn min-h-[44px] bg-[#b83224] text-white font-bold px-2.5 py-1 rounded-lg cursor-pointer disabled:opacity-60"
+                  >
+                    🧧 Thưởng {BONUS_GOLD} 🪙 → 24 giờ tưới cắt 25% thời gian chờ
+                  </button>
+                </div>
                 <div className="bg-[#fff8e1] border-l-4 border-[#f5b82e] p-2 rounded space-y-1">
                   <div className="font-bold">
                     👕 Đồ bảo hộ:{' '}

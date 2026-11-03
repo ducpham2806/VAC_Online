@@ -60,6 +60,28 @@ SET ROLE authenticated;
 SELECT t.eq(ROUND((public.rpc_get_my_farm()->'workers'->'WORK_01'->>'belly')::NUMERIC, 1), 47.5::NUMERIC, '12 giờ có đồ (−22,5) + 12 giờ không (−30)');
 RESET ROLE;
 
+-- 0014: Phụ Cấp Ngày Mùa
+UPDATE public.profiles SET gold = 299 WHERE id = 'a2000000-0000-0000-0000-0000000000a2';
+SET ROLE authenticated;
+SELECT t.expect_error('SELECT public.rpc_give_worker_bonus(''WORK_01'')', '⚠️ Cần 300 🪙%');
+RESET ROLE;
+UPDATE public.profiles SET gold = 1000 WHERE id = 'a2000000-0000-0000-0000-0000000000a2';
+SET ROLE authenticated;
+SELECT t.expect_error('SELECT public.rpc_give_worker_bonus(''WORK_02'')', '👷 Hãy thuê%');
+SELECT t.eq((public.rpc_give_worker_bonus('WORK_01')->'profile'->>'gold')::INT, 700, 'Phụ cấp −300 vàng');
+SELECT t.eq((public.rpc_get_my_farm()->'workers'->'WORK_01'->>'bonus_until') IS NOT NULL, TRUE, 'có mốc Hăng Say');
+SELECT public.rpc_plant(0, 0, 'CROP_24');
+SELECT public.rpc_get_my_farm();
+-- Dừa Xiêm 180 phút, thợ Hăng Say tưới cắt 25% → còn ~135 phút
+SELECT t.eq(
+  ((SELECT EXTRACT(EPOCH FROM mature_at - planted_at) FROM public.farm_entities WHERE user_id = 'a2000000-0000-0000-0000-0000000000a2' AND tile_x = 0 AND tile_y = 0) BETWEEN 135 * 60 - 2 AND 135 * 60 + 1),
+  TRUE, 'Hăng Say: tưới cắt 25%');
+SELECT set_config('request.jwt.claim.sub', '', false);
+RESET ROLE;
+SET ROLE anon;
+SELECT t.expect_error('SELECT public.rpc_give_worker_bonus(''WORK_01'')', '%permission denied%');
+RESET ROLE;
+
 CREATE OR REPLACE FUNCTION public.app_game_stage()
 RETURNS INT LANGUAGE sql STABLE SET search_path = public, pg_temp AS $$ SELECT 1 $$;
 

@@ -6,7 +6,7 @@
  * offline hồi +10⚡/giờ, thợ tự gieo lại không tốn giống.
  */
 import { GAME_STAGE } from '../../config/features';
-import { claimPantry, equipGear, hireWorker, pantryTotal, serveLodgeMeal as serveLodgeMealRule, tickWorkers } from '../../domain/workers';
+import { claimPantry, equipGear, giveBonus, hireWorker, pantryTotal, serveLodgeMeal as serveLodgeMealRule, tickWorkers } from '../../domain/workers';
 import { findItem } from '../../domain/farm';
 import { STARTER_RECIPE_ID } from '../../domain/cooking';
 import type { GameState } from '../gameTypes';
@@ -100,9 +100,18 @@ export const createWorkersSlice = (set: StoreSet, get: StoreGet, { runCloud }: S
       if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
       else set({ toastMessage: r.message });
     },
-    // Phụ Cấp Ngày Mùa: PO chưa chốt tác dụng / giá (lương đã hạ 25%) → chưa mở, không trừ vàng.
-    giveWorkerBonus: () => {
-      set({ toastMessage: '🧧 Phụ Cấp Ngày Mùa sẽ mở ở bản sau!' });
+    /** Phụ Cấp Ngày Mùa (PO giữ 300🪙): 24 giờ Hăng Say — thợ tưới cắt 25% thời gian chờ. */
+    giveWorkerBonus: (workerCode) => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        void runCloud('rpc_give_worker_bonus', { p_worker_id: workerCode }, () =>
+          '🧧 Đã thưởng Phụ Cấp Ngày Mùa (-300 🪙): 24 giờ Hăng Say — tưới cắt 25% thời gian chờ!'
+        );
+        return;
+      }
+      const r = giveBonus(toWorkersSave(state), workerCode, GAME_STAGE, now());
+      if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
+      else set({ toastMessage: r.message });
     },
 
     /** Thuê / gia hạn hợp đồng 3 ngày (M05.1). */

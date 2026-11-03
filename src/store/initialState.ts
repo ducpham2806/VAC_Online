@@ -443,7 +443,7 @@ function workersFromSnapshot(snap: FarmSnapshot, prev: GameData): Partial<GameDa
   const records: Record<string, WorkerRecord> = Object.fromEntries(
     Object.entries(snap.workers ?? {}).map(([id, w]) => [
       id,
-      { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at, gearId: w.gear_id ?? null, gearUntil: w.gear_until ?? null },
+      { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at, gearId: w.gear_id ?? null, gearUntil: w.gear_until ?? null, bonusUntil: w.bonus_until ?? null },
     ])
   );
   const pantry = snap.worker_pantry ?? {};

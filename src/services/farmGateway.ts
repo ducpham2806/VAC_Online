@@ -30,7 +30,8 @@ export type FarmRpcName =
   | 'rpc_hire_worker'
   | 'rpc_serve_lodge_meal'
   | 'rpc_claim_worker_pantry'
-  | 'rpc_equip_worker_gear';
+  | 'rpc_equip_worker_gear'
+  | 'rpc_give_worker_bonus';
 
 interface SnapshotTile {
   x: number;
@@ -80,7 +81,7 @@ export interface FarmSnapshot {
   /** Món đã khám phá ở Nồi Đất (migration 0009). */
   recipes?: string[];
   /** Lán Thợ (migration 0011). Server cũ chưa có → undefined. */
-  workers?: Record<string, { contract_until: number; belly: number; tick_at: number; gear_id?: string | null; gear_until?: number | null }>;
+  workers?: Record<string, { contract_until: number; belly: number; tick_at: number; gear_id?: string | null; gear_until?: number | null; bonus_until?: number | null }>;
   lodge_meals?: number;
   worker_pantry?: Record<string, number>;
 }

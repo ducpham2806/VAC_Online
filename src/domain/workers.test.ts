@@ -8,6 +8,8 @@ import {
   claimPantry,
   contractCost,
   equipGear,
+  giveBonus,
+  BONUS_MS,
   GEAR_MS,
   hireWorker,
   serveLodgeMeal,
@@ -202,6 +204,30 @@ describe('equipGear — đồ thợ 72h (M05.3, S5d)', () => {
     // Đồ còn 1 ngày, tick 2 ngày: −45 − 60 → 0 (không âm)
     const short = { ...geared, workers: { WORK_01: { ...geared.workers.WORK_01, gearUntil: NOW + DAY_MS } } };
     expect(tickWorkers(short, NOW + 2 * DAY_MS).workers.WORK_01.belly).toBe(0);
+  });
+});
+
+describe('giveBonus — Phụ Cấp Ngày Mùa (PO giữ 300🪙)', () => {
+  const hired = (patch: Partial<WorkersSave> = {}) =>
+    save({ workers: { WORK_01: { contractUntil: NOW + 3 * DAY_MS, belly: 100, tickAt: NOW } }, ...patch });
+
+  it('−300🪙, Hăng Say 24 giờ; từ chối khi thiếu vàng / chưa thuê / GĐ1', () => {
+    const r = ok(giveBonus(hired(), 'WORK_01', 2, NOW));
+    expect(r.save.gold).toBe(2000 - 300);
+    expect(r.save.workers.WORK_01.bonusUntil).toBe(NOW + BONUS_MS);
+    expect(giveBonus(hired({ gold: 299 }), 'WORK_01', 2, NOW).ok).toBe(false);
+    expect(giveBonus(hired(), 'WORK_02', 2, NOW).ok).toBe(false);
+    expect(giveBonus(hired(), 'WORK_01', 1, NOW).ok).toBe(false);
+  });
+
+  it('Hăng Say: thợ tưới cắt 25% thời gian còn lại (thường 15%)', () => {
+    const t = tile('T1', { itemId: 'CROP_24', plantedAt: NOW, matureAt: NOW + 4 * HOUR });
+    const normal = tickWorkers(hired({ tiles: [t] }), NOW);
+    expect(normal.tiles[0].matureAt).toBe(NOW + 4 * HOUR - Math.floor(4 * HOUR * 0.15));
+    const keen = ok(giveBonus(hired({ tiles: [t] }), 'WORK_01', 2, NOW)).save;
+    // giveBonus tick trước (tưới 15%) → dùng ô chưa tưới để đo
+    const k2 = tickWorkers({ ...keen, tiles: [t] }, NOW);
+    expect(k2.tiles[0].matureAt).toBe(NOW + 4 * HOUR - Math.floor(4 * HOUR * 0.25));
   });
 });
 
