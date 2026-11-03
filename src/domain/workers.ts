@@ -29,6 +29,9 @@ export const BELLY_PER_MEAL = 25;
 export const STAMINA_PER_MEAL = 5;
 export const HARVEST_GRACE_MS = 5 * 60_000;
 export const PANTRY_CAP = 120;
+/** Đồ thợ (S5d, PO 2026-11-03): mặc 72 giờ, Độ No hao chậm 25%. */
+export const GEAR_MS = 72 * 60 * 60 * 1000;
+export const GEAR_BELLY_FACTOR = 0.75;
 
 type Category = CatalogItem['category'];
 
@@ -47,6 +50,9 @@ export interface WorkerRecord {
   /** Độ No tại `tickAt` (0..100, có phần lẻ). */
   belly: number;
   tickAt: number;
+  /** Đồ thợ đang mặc (CRAFT_…) và hạn dùng (ms). Thiếu = không mặc. */
+  gearId?: string | null;
+  gearUntil?: number | null;
 }
 
 export interface WorkersSave {
@@ -91,6 +97,25 @@ export function isWorking(rec: WorkerRecord | undefined, now: number): boolean {
   return !!rec && rec.contractUntil > now && rec.belly >= HUNGRY_BELLY;
 }
 
+/** Độ No hao trong [a, b] (đồ thợ còn hạn thì ×0,75). */
+export function bellyDrain(rec: WorkerRecord, bellyPerDay: number, a: number, b: number): number {
+  if (b <= a) return 0;
+  const rate = bellyPerDay / DAY_MS;
+  const gearEnd = Math.min(b, Math.max(a, rec.gearUntil ?? a));
+  return rate * GEAR_BELLY_FACTOR * (gearEnd - a) + rate * (b - gearEnd);
+}
+
+/** Lúc Độ No chạm mức đói (35) nếu không ăn thêm. */
+export function hungryTime(rec: WorkerRecord, bellyPerDay: number, start: number): number {
+  const amount = rec.belly - HUNGRY_BELLY;
+  if (amount <= 0) return start;
+  const rate = bellyPerDay / DAY_MS;
+  const gearEnd = Math.max(start, rec.gearUntil ?? start);
+  const withGear = rate * GEAR_BELLY_FACTOR * (gearEnd - start);
+  if (amount <= withGear) return start + amount / (rate * GEAR_BELLY_FACTOR);
+  return gearEnd + (amount - withGear) / rate;
+}
+
 /** M05.1 — Thuê / gia hạn hợp đồng 3 ngày (trả trước). Gia hạn cộng nối vào hợp đồng đang chạy. */
 export function hireWorker(save: WorkersSave, workerId: string, gameStage: number, now: number): WorkersResult {
   const worker = BY_ID.get(workerId);
@@ -114,6 +139,28 @@ export function hireWorker(save: WorkersSave, workerId: string, gameStage: numbe
       counters: bumpCounter(ticked.counters, COUNTER.hire(workerId)),
     },
     message: `🪙 Đã trả lương 3 ngày (-${cost.toLocaleString()} 🪙, rẻ hơn 12%) cho [${worker.emoji} ${worker.name}]!`,
+  };
+}
+
+/** M05.3 — Cấp 1 đồ thợ trong Kho cho thợ đang làm: 72 giờ Độ No hao chậm 25% (thay đồ cũ). */
+export function equipGear(save: WorkersSave, workerId: string, gearId: string, gameStage: number, now: number): WorkersResult {
+  if (gameStage < CRAFT_MIN_STAGE) return fail(`🔒 Lán Thợ mở ở Giai đoạn ${CRAFT_MIN_STAGE}!`);
+  const gear = BY_ID.get(gearId);
+  if (!gear || gear.category !== 'CRAFT_GEAR') return fail('⚠️ Đây không phải đồ bảo hộ cho thợ!');
+  const have = save.inventory[gearId] ?? 0;
+  if (have < 1) return fail(`⚠️ Kho chưa có [${gear.name}]! Làm ở Xưởng Đan Lát / Khung Cửi trước nhé.`);
+  const ticked = tickWorkers(save, now);
+  const rec = ticked.workers[workerId];
+  if (!rec || rec.contractUntil <= now) return fail('👷 Hãy thuê / gia hạn thợ này trước khi cấp đồ!');
+  return {
+    ok: true,
+    save: {
+      ...ticked,
+      inventory: { ...ticked.inventory, [gearId]: have - 1 },
+      workers: { ...ticked.workers, [workerId]: { ...rec, gearId, gearUntil: now + GEAR_MS } },
+      counters: bumpCounter(ticked.counters, COUNTER.EQUIP_GEAR),
+    },
+    message: `👕 Đã cấp [${gear.emoji} ${gear.name}]: 72 giờ Độ No hao chậm 25%!`,
   };
 }
 
@@ -167,9 +214,7 @@ export function tickWorkers(save: WorkersSave, now: number): WorkersSave {
     const spec = WORKER_SPECS[id];
     if (!rec || !spec) continue;
     const start = Math.min(rec.tickAt, now);
-    const drainPerMs = spec.bellyPerDay / DAY_MS;
-    const hungryAt = rec.belly >= HUNGRY_BELLY ? start + (rec.belly - HUNGRY_BELLY) / drainPerMs : start;
-    const activeUntil = Math.min(rec.contractUntil, hungryAt, now);
+    const activeUntil = Math.min(rec.contractUntil, hungryTime(rec, spec.bellyPerDay, start), now);
 
     tiles = tiles.map((tile) => {
       let t = tile;
@@ -188,7 +233,7 @@ export function tickWorkers(save: WorkersSave, now: number): WorkersSave {
       return t;
     });
 
-    let belly = Math.max(0, rec.belly - drainPerMs * (now - start));
+    let belly = Math.max(0, rec.belly - bellyDrain(rec, spec.bellyPerDay, start, now));
     if (belly < HUNGRY_BELLY) {
       while (belly < EAT_UNTIL_BELLY && tableMeals > 0) {
         belly = Math.min(MAX_BELLY, belly + BELLY_PER_MEAL);

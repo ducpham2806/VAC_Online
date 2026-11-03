@@ -7,6 +7,8 @@ import {
   WorkersSave,
   claimPantry,
   contractCost,
+  equipGear,
+  GEAR_MS,
   hireWorker,
   serveLodgeMeal,
   tickWorkers,
@@ -171,3 +173,35 @@ describe('bộ đếm nhiệm vụ Ch.6', () => {
     expect(ok(serveLodgeMeal(h.save, 'PROD_01', 2)).save.counters?.SERVE_MEAL).toBe(1);
   });
 });
+
+describe('equipGear — đồ thợ 72h (M05.3, S5d)', () => {
+  const hired = (patch: Partial<WorkersSave> = {}) =>
+    save({ workers: { WORK_01: { contractUntil: NOW + 3 * DAY_MS, belly: 100, tickAt: NOW } }, inventory: { CRAFT_01: 1 }, ...patch });
+
+  it('cấp đồ: −1 trong Kho, hạn 72 giờ, +EQUIP_GEAR', () => {
+    const r = ok(equipGear(hired(), 'WORK_01', 'CRAFT_01', 2, NOW));
+    expect(r.save.inventory.CRAFT_01).toBe(0);
+    expect(r.save.workers.WORK_01).toMatchObject({ gearId: 'CRAFT_01', gearUntil: NOW + GEAR_MS });
+    expect(r.save.counters?.EQUIP_GEAR).toBe(1);
+  });
+
+  it('từ chối: GĐ1, không phải đồ thợ, hết đồ, thợ chưa thuê / hết hợp đồng', () => {
+    expect(equipGear(hired(), 'WORK_01', 'CRAFT_01', 1, NOW).ok).toBe(false);
+    expect(equipGear(hired({ inventory: { PROD_01: 1 } }), 'WORK_01', 'PROD_01', 2, NOW).ok).toBe(false);
+    expect(equipGear(hired({ inventory: {} }), 'WORK_01', 'CRAFT_01', 2, NOW).ok).toBe(false);
+    expect(equipGear(hired(), 'WORK_02', 'CRAFT_01', 2, NOW).message).toContain('thuê');
+    expect(equipGear(hired({ workers: { WORK_01: { contractUntil: NOW - 1, belly: 100, tickAt: NOW } } }), 'WORK_01', 'CRAFT_01', 2, NOW).ok).toBe(false);
+  });
+
+  it('mặc đồ: Độ No hao chậm 25%; hết hạn đồ thì hao như thường', () => {
+    const base = hired();
+    const geared = ok(equipGear(base, 'WORK_01', 'CRAFT_01', 2, NOW)).save;
+    // 1 ngày: không đồ −60, có đồ −45
+    expect(tickWorkers(base, NOW + DAY_MS).workers.WORK_01.belly).toBeCloseTo(40, 5);
+    expect(tickWorkers(geared, NOW + DAY_MS).workers.WORK_01.belly).toBeCloseTo(55, 5);
+    // Đồ còn 1 ngày, tick 2 ngày: −45 − 60 → 0 (không âm)
+    const short = { ...geared, workers: { WORK_01: { ...geared.workers.WORK_01, gearUntil: NOW + DAY_MS } } };
+    expect(tickWorkers(short, NOW + 2 * DAY_MS).workers.WORK_01.belly).toBe(0);
+  });
+});
+

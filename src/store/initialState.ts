@@ -388,11 +388,14 @@ export function workersView(
 ): HiredWorkerState[] {
   return base.map((w) => {
     const rec = records[w.code];
-    if (!rec) return { ...w, isHired: false, contractDaysLeft: 0, belly: 100, statusText: 'Chưa thuê' };
+    if (!rec) return { ...w, isHired: false, contractDaysLeft: 0, belly: 100, equippedGearId: null, gearHoursLeft: 0, statusText: 'Chưa thuê' };
     const hired = rec.contractUntil > now;
     const belly = Math.round(rec.belly);
+    const gearLeftMs = rec.gearId && rec.gearUntil ? Math.max(0, rec.gearUntil - now) : 0;
     return {
       ...w,
+      equippedGearId: gearLeftMs > 0 ? rec.gearId ?? null : null,
+      gearHoursLeft: Math.ceil(gearLeftMs / 3_600_000),
       isHired: hired,
       contractDaysLeft: hired ? Math.ceil((rec.contractUntil - now) / DAY_MS) : 0,
       belly,
@@ -438,7 +441,10 @@ export function fromWorkersSave(save: WorkersSave, now: number): Partial<GameDat
 
 function workersFromSnapshot(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
   const records: Record<string, WorkerRecord> = Object.fromEntries(
-    Object.entries(snap.workers ?? {}).map(([id, w]) => [id, { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at }])
+    Object.entries(snap.workers ?? {}).map(([id, w]) => [
+      id,
+      { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at, gearId: w.gear_id ?? null, gearUntil: w.gear_until ?? null },
+    ])
   );
   const pantry = snap.worker_pantry ?? {};
   return {

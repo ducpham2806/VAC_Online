@@ -316,6 +316,9 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
   - ✅ Ch.3 đưa về Lv.9 theo `01` (PO 2026-11-03).
   - ⏳ PO chạy `0011` → `0012` → `quest_catalog_seed.sql`. Còn lại: S5d (xưởng nghề `MAC_07/08`, đồ thợ `CRAFT_01..02`, phụ cấp), mục tiêu Ch.3/6/7, sprite Lán Thợ + 2 thợ trên bản đồ.
 
+- ✅ 2026-11-03 **S5d xưởng nghề + đồ thợ:** `cooking.ts` (`WORKSHOP_MACHINE_IDS`, `CRAFT_RECIPES`, đồ thợ biết sẵn công thức), `workers.ts` (`equipGear`, Độ No hao theo đoạn `bellyDrain` / `hungryTime`), Ch.7 = `EQUIP_GEAR`; `0013_craft_gear.sql` (+`supabase/tests/crafts.test.sql`); UI tab Xưởng có Đan Lát / Khung Cửi, Lán Thợ có mục cấp đồ. `MAC_01` Cối Xay Cám vẫn hoãn; Phụ Cấp Ngày Mùa chưa mở.
+  - ⏳ Áp `0013` + seed (`master_catalog` 2 dòng đồ thợ, `recipe_seed`, `quest_catalog_seed`) lên Supabase thật — chờ PO xác nhận.
+
 **RULE D1 (sơ bộ):**
 1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).
 2. Kinh tế 🔴: lương lệch thu nhập; vật nuôi / thủy sản đang lỗ (lỗi có từ GĐ1).

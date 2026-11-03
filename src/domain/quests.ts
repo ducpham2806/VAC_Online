@@ -15,6 +15,8 @@ export const COUNTER = {
   COOK: 'COOK',
   hire: (workerId: string) => `HIRE:${workerId}`,
   SERVE_MEAL: 'SERVE_MEAL',
+  /** Ch.7: cấp 1 đồ thợ (S5d). */
+  EQUIP_GEAR: 'EQUIP_GEAR',
 } as const;
 
 export type Counters = Record<string, number>;

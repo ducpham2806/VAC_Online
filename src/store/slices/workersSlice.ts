@@ -6,7 +6,7 @@
  * offline hồi +10⚡/giờ, thợ tự gieo lại không tốn giống.
  */
 import { GAME_STAGE } from '../../config/features';
-import { claimPantry, hireWorker, pantryTotal, serveLodgeMeal as serveLodgeMealRule, tickWorkers } from '../../domain/workers';
+import { claimPantry, equipGear, hireWorker, pantryTotal, serveLodgeMeal as serveLodgeMealRule, tickWorkers } from '../../domain/workers';
 import { findItem } from '../../domain/farm';
 import { STARTER_RECIPE_ID } from '../../domain/cooking';
 import type { GameState } from '../gameTypes';
@@ -86,12 +86,23 @@ export const createWorkersSlice = (set: StoreSet, get: StoreGet, { runCloud }: S
       set({ toastMessage: '🍚 Dọn món Bếp Quê lên Bàn Ăn Chung — thợ đói (< 35) sẽ tự về ăn!' });
     },
 
-    // Đồ thợ & phụ cấp làm ở S5d (xưởng nghề). Không trừ vàng khi chưa có tác dụng thật.
-    equipWorkerGear: () => {
-      set({ toastMessage: '👕 Đồ bảo hộ 72h mở cùng Xưởng Đan Lát / Khung Cửi ở bản sau!' });
+    /** M05.3 — Cấp 1 đồ thợ trong Kho (làm ở Xưởng Đan Lát / Khung Cửi): 72 giờ Độ No hao chậm 25%. */
+    equipWorkerGear: (workerCode, gearId) => {
+      const state = get();
+      if (state.farmMode === 'cloud') {
+        const gear = findItem(gearId);
+        void runCloud('rpc_equip_worker_gear', { p_worker_id: workerCode, p_gear_id: gearId }, () =>
+          `👕 Đã cấp [${gear?.emoji ?? ''} ${gear?.name ?? gearId}]: 72 giờ Độ No hao chậm 25%!`
+        );
+        return;
+      }
+      const r = equipGear(toWorkersSave(state), workerCode, gearId, GAME_STAGE, now());
+      if (r.ok) set({ ...fromWorkersSave(r.save, now()), toastMessage: r.message });
+      else set({ toastMessage: r.message });
     },
+    // Phụ Cấp Ngày Mùa: PO chưa chốt tác dụng / giá (lương đã hạ 25%) → chưa mở, không trừ vàng.
     giveWorkerBonus: () => {
-      set({ toastMessage: '🧧 Phụ Cấp Ngày Mùa mở cùng đồ bảo hộ ở bản sau!' });
+      set({ toastMessage: '🧧 Phụ Cấp Ngày Mùa sẽ mở ở bản sau!' });
     },
 
     /** Thuê / gia hạn hợp đồng 3 ngày (M05.1). */

@@ -17,6 +17,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Chạy `0010_livestock_cycles.sql`~~ ✅ 2026-11-03 (AI qua connector)
 - [x] ~~Chạy `0011_workers.sql` → `0012_quest_counters_s5.sql` → `quest_catalog_seed.sql`~~ ✅ 2026-11-03 (AI qua connector). Lưu ý chung: chạy migration theo thứ tự tăng dần, không chạy lại file cũ sau file mới.
 - [x] ~~Cập nhật `master_catalog` trên DB thật (Chó Phú Quốc, Ngỗng, 2 thợ S5b)~~ ✅ 2026-11-03 (AI chạy đúng 4 dòng khác biệt của seed)
+- [ ] Áp `0013_craft_gear.sql` + seed đồ thợ / nhiệm vụ Ch.7 lên Supabase (AI làm được qua connector khi anh đồng ý).
 - [ ] Bật **Leaked password protection** (Dashboard → Authentication → Providers/Policies → Password) — Security Advisor báo WARN.
 - [ ] Xóa user test **"Smoke Test"** (`f1598bb5-…`): Dashboard → Authentication → Users.
 - [ ] Thêm `{{ .Token }}` vào email template **Reset Password** (game dùng OTP 6 số). Có thể chạy `npm run supabase -- auth-config --apply` khi có `SUPABASE_ACCESS_TOKEN`.
@@ -55,7 +56,7 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~Tách 11 modal khỏi `App.tsx` (2.084 → 699 dòng), dùng selector Zustand~~ ✅ 2026-11-01
 - [x] ~~Khai hoang thật: lưới 5×5, mỗi lần khai hoang mở 1 ô trồng được (`farmGrid.ts`, migration `0006`)~~ ✅ 2026-11-01
 - [x] ~~Kiểm mục tiêu nhiệm vụ trên server: Ch.1 tưới + thu Lúa, Ch.2 vét bùn + bón bùn (`0007`)~~ ✅ 2026-11-01
-- [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 — ✅ Ch.3, Ch.6 (2026-11-03); còn Ch.7 (chờ S5d đồ thợ), Ch.4–5, 8–10.
+- [ ] Đặt mục tiêu đo được cho Chương 3–10 khi mở GĐ2–5 — ✅ Ch.3, Ch.6, Ch.7 (2026-11-03); còn Ch.4–5, 8–10 (mở GĐ3–5).
 - [x] ~~HUD màn hình ngang thấp (844×390, 667×375): khay giống không che ruộng, footer 1 hàng~~ ✅ 2026-11-02
 - [x] ~~Đường ống asset + atlas tạm 23 loài Đợt 1 × 4 giai đoạn + VFX nông trại~~ ✅ 2026-11-02
 - [ ] Thay hình tạm Đợt 1 bằng ảnh vẽ đẹp (chờ PO chọn nguồn ảnh — mục A2).
@@ -70,7 +71,8 @@ Chi tiết hiện trạng và lý do: `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC
 - [x] ~~S4: đặc tả Bếp Quê & Xưởng + 4 quyết định PO (Nồi Đất khám phá, giữ dữ liệu gốc, giữ giá, mở GĐ2) — `17` mục C2~~ ✅ 2026-11-02
 - [x] ~~S4: làm Bếp Quê & Xưởng theo `17` C2 (domain → `0009` → store → UI → tài liệu)~~ ✅ 2026-11-02 (chờ PO chạy `0009` + seed)
 - [ ] Mở GĐ2: đặt mục tiêu Chương 3 (Bếp Quê), `/vac-balance-check`, migration đổi `app_game_stage()` = 2, `VITE_GAME_STAGE=2` trên Vercel.
-- [ ] S5: Lán Thợ theo `17` C3: S5a nuôi nhiều lứa → S5b số liệu thợ → S5c Lán Thợ + lazy-tick server → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7.
+- [x] ~~S5: Lán Thợ theo `17` C3: S5a nuôi nhiều lứa → S5b số liệu thợ → S5c Lán Thợ + lazy-tick server → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7~~ ✅ 2026-11-03 (còn: sprite Lán Thợ + 2 thợ trên bản đồ, Cối Xay Cám, Phụ Cấp Ngày Mùa)
+- [ ] Mở GĐ2 cho người chơi: `/vac-balance-check` Đợt 2, migration đổi `app_game_stage()` = 2, `VITE_GAME_STAGE=2` trên Vercel, bản chạy thử GĐ2.
 - [ ] S6–S8: GĐ3 Chợ Phiên (`rpc_buy_listing` có escrow + thuế 5%), trộm trên server (viết lại `rpc_attempt_steal` theo `src/domain/social.ts`: Chó 50%, cửa sổ 2 phút, bảo hiểm 80%, bỏ tham số `p_thief_id` / `p_dog_catch_chance`), chạy lại `/vac-balance-check`.
 - [ ] S9–S10: GĐ4 Hội Làng & Thời Trang, IAP qua Edge Function.
 - [ ] S11–S12: GĐ5, đóng gói Capacitor, soft launch.
@@ -118,3 +120,4 @@ Mỗi việc xong ghi 1 dòng: **ngày — việc — file/commit — kiểm tra
 - **2026-11-03** — Mục tiêu Ch.3 (xây Bếp Củi + nấu 1 món) & Ch.6 (thuê Chú Tư + dọn 1 món lên Bàn Ăn): bộ đếm mới trong `src/domain/quests.ts`, tăng ở `cooking.ts` / `workers.ts` và `0012_quest_counters_s5.sql`; `src/data/quests.ts` thêm mục tiêu, Ch.6 Lv.14→13, Ch.7 Lv.16→15 (khớp `01`, theo quyết định hạ cấp thợ); seed nhiệm vụ sinh lại. Sửa test `quests.test.ts` (test cũ khóa "GĐ2+ chưa có mục tiêu" — nay cố ý đổi). Test SQL `quests_s5.test.sql`. Ghi `01` Ch.3/Ch.6, `17` C3. Kiểm: typecheck, 169 test, build, test:sql (5 file) PASS. Hỏi PO: Ch.3 Lv.6 hay Lv.9. **Tiếp theo:** S5d xưởng nghề + đồ thợ (cần PO chọn nguyên liệu thật cho `CRAFT_01/02` và tác dụng đồ thợ).
 - **2026-11-03** — PO duyệt lần 2: đồ thợ dùng loài Đợt 2 có sẵn (Nón Lá = Dừa Xiêm + Sen ở `MAC_07`; Áo Cánh Nâu = Kén Tằm + Khoai Môn ở `MAC_08`); đồ thợ 72h = Độ No hao chậm 25%; Ch.3 mở Lv.9; AI được áp `0010`→`0012` + seed qua connector. Ghi `17` C3.
 - **2026-11-03** — AI áp lên Supabase thật (PO cho phép): migration `0010_livestock_cycles`, `0011_workers`, `0012_quest_counters_s5` (apply_migration) + 4 dòng `master_catalog` khác biệt (PET_01, DEF_02, WORK_01, WORK_02) + toàn bộ `quest_catalog_seed`. Kiểm: 25 RPC, 3 cột mới, `_harvest_cycles` Gà 5 / Bò 15 / Lúa 1, `anon` không gọi được RPC thợ, `_tick_workers` không gọi trực tiếp được, snapshot có `harvests_left` + `worker_pantry`, Ch.3 Lv.9, Ch.6 có 2 mục tiêu, `app_game_stage() = 1`, không ô nào thiếu `harvests_left`. Security Advisor 0 ERROR (WARN như cũ). Lưu ý: luật nhiều lứa có hiệu lực ngay cho người chơi online ở GĐ1. **Tiếp theo:** S5d.
+- **2026-11-03** — S5d xưởng nghề + đồ thợ: công thức `CRAFT_01` (Dừa Xiêm + Sen, `MAC_07`) / `CRAFT_02` (Kén Tằm + Khoai Môn, `MAC_08`) trong `masterData` + CSV `04`; `cooking.ts` xây được 5 xưởng, đồ thợ biết sẵn công thức; `workers.ts` `equipGear` (72h, Độ No hao ×0,75, tính theo đoạn); Ch.7 = cấp 1 đồ thợ (`EQUIP_GEAR`); store `equipWorkerGear` thật (cloud `rpc_equip_worker_gear`); UI Xưởng + mục cấp đồ ở Lán Thợ. `0013_craft_gear.sql` + `crafts.test.sql`; sửa 2 assert cũ ở `kitchen.test.sql` (số món có công thức 14 → đếm riêng món ăn; câu báo xưởng chưa mở). Seed sinh lại. Tài liệu `01` Ch.7, `02` 3.2, `17` C3. Kiểm: typecheck, 176 test, build, test:sql (6 file) PASS; chụp 1280×720 & 844×390. **Dừng ở:** chờ PO đồng ý áp `0013` + seed lên Supabase thật. S5 xong phần luật.

@@ -159,11 +159,12 @@ export const STORY_QUESTS: StoryQuest[] = [
       title: 'Nuôi Tằm Dệt Lụa Tân Châu & Dự Thi Duyên Dáng',
       npcSpeaker: '👗 Cô Ba Tiệm May',
       npcQuote: '"Tơ tằm năm nay óng ả như nắng thu! Điền chủ muốn may áo bảo hộ cho Lán Thợ trước hay may Áo Dài Ngũ Thân dự hội?"',
-      desc: 'Cấp phát áo quần bảo hộ 72h cho nhân công và khâu ghép trang phục 12 Slots để mở Trang Gia Phả #7.',
+      desc: 'Làm 1 món đồ bảo hộ ở Xưởng Đan Lát / Khung Cửi và cấp cho thợ Lán Thợ (72 giờ) để mở Trang Gia Phả #7.',
       choiceEmpLabel: '🤝 Ưu tiên áo ấm cho 6 Gia nhân (+30 Phong Thủy)',
       choicePragLabel: '🪙 May Lễ phục dự thi Duyên Dáng (+350 🪙)',
       rewardGold: 3200,
       rewardGems: 45,
+      objectives: [{ counter: 'EQUIP_GEAR', target: 1, label: '👕 Cấp 1 đồ bảo hộ cho thợ' }],
       completed: false,
     },
     {

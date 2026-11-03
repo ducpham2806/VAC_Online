@@ -12,7 +12,7 @@ VALUES
   ('Q_CH4', 4, 3, 9, 1500, 30, 'Chương 4 (Lv.9): Bóng Đêm Rình Rập & Chó Phú Quốc', '[]'::jsonb),
   ('Q_CH5', 5, 3, 12, 2000, 35, 'Chương 5 (Lv.12): Tiếng Còi Tàu Thống Nhất Bắc – Nam', '[]'::jsonb),
   ('Q_CH6', 6, 2, 13, 2500, 40, 'Chương 6 (Lv.13): Lán Thợ Đồng Quê & Giọt Mồ Hôi Chú Tư', '[{"counter":"HIRE:WORK_01","target":1,"label":"👨‍🌾 Thuê Chú Tư Cày"},{"counter":"SERVE_MEAL","target":1,"label":"🍚 Dọn 1 món lên Bàn Ăn Chung"}]'::jsonb),
-  ('Q_CH7', 7, 2, 15, 3200, 45, 'Chương 7 (Lv.15): Bí Truyền Khung Cửi Lụa & Áo Mới', '[]'::jsonb),
+  ('Q_CH7', 7, 2, 15, 3200, 45, 'Chương 7 (Lv.15): Bí Truyền Khung Cửi Lụa & Áo Mới', '[{"counter":"EQUIP_GEAR","target":1,"label":"👕 Cấp 1 đồ bảo hộ cho thợ"}]'::jsonb),
   ('Q_CH8', 8, 4, 18, 4000, 50, 'Chương 8 (Lv.18): Hạt Giống Ngũ Sắc Trong Rừng Trúc Cổ', '[]'::jsonb),
   ('Q_CH9', 9, 4, 22, 6000, 60, 'Chương 9 (Lv.22): Đại Tiệc Tiến Vua Cảm Hóa Bá Kiến', '[]'::jsonb),
   ('Q_CH10', 10, 5, 25, 10000, 100, 'Chương 10 (Lv.25+): Trầu Cau Nên Duyên & Gia Bảo Truyền Đời', '[]'::jsonb)

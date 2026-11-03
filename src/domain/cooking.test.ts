@@ -106,7 +106,7 @@ describe('buildMachine (M04.1)', () => {
     expect(s.machines.MAC_02).toEqual({ craftItemId: null, readyAt: null });
   });
 
-  it('từ chối: GĐ1, thiếu cấp, đã có, thiếu vàng, xưởng của Lán Thợ, mã sai', () => {
+  it('từ chối: GĐ1, thiếu cấp, đã có, thiếu vàng, Cối Xay Cám (hoãn), mã sai', () => {
     expect(buildMachine(save(), 'MAC_02', 1).ok).toBe(false);
     expect(buildMachine(save({ level: 3 }), 'MAC_02', GD2).ok).toBe(false);
     const built = ok(buildMachine(save(), 'MAC_02', GD2));
@@ -258,3 +258,29 @@ describe('bộ đếm nhiệm vụ Ch.3', () => {
   });
 });
 
+
+describe('xưởng nghề + đồ thợ (S5d, PO 2026-11-03)', () => {
+  it('công thức đồ thợ dùng loài Đợt 2 có sẵn', () => {
+    expect(item('CRAFT_01')).toMatchObject({ machineId: 'MAC_07', recipe: [{ itemId: 'CROP_24', qty: 1 }, { itemId: 'CROP_19', qty: 1 }] });
+    expect(item('CRAFT_02')).toMatchObject({ machineId: 'MAC_08', recipe: [{ itemId: 'ANI_06', qty: 1 }, { itemId: 'CROP_17', qty: 1 }] });
+  });
+
+  it('xây Đan Lát → làm Nón Lá (biết sẵn, không cần Nồi Đất) → lấy vào Kho', () => {
+    const built = ok(buildMachine(save(), 'MAC_07', GD2));
+    expect(built.gold).toBe(5000 - 2200);
+    const s = ok(startCraft({ ...built, inventory: { CROP_24: 1, CROP_19: 1 } }, 'MAC_07', 'CRAFT_01', GD2, NOW));
+    expect(s.inventory).toEqual({ CROP_24: 0, CROP_19: 0 });
+    const done = ok(collectCraft(s, 'MAC_07', NOW + 45 * 60_000));
+    expect(done.inventory.CRAFT_01).toBe(1);
+  });
+
+  it('đồ thợ không khám phá được ở Nồi Đất và không ăn được', () => {
+    const s = save({ machines: { MAC_02: { craftItemId: null, readyAt: null } }, inventory: { CROP_24: 1, CROP_19: 1, CRAFT_01: 1 } });
+    expect(discoverRecipe(s, ['CROP_24', 'CROP_19'], GD2).ok).toBe(false);
+    expect(eatDish(s, 'CRAFT_01', GD2, NOW).ok).toBe(false);
+  });
+
+  it('Khung Cửi cần Lv.15', () => {
+    expect(buildMachine(save({ level: 14 }), 'MAC_08', GD2).message).toContain('Cấp 15');
+  });
+});

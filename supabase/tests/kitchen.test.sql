@@ -11,7 +11,7 @@ INSERT INTO auth.users (id, raw_user_meta_data, is_anonymous) VALUES
 ON CONFLICT DO NOTHING;
 
 -- Dữ liệu seed đã có
-SELECT t.eq((SELECT count(DISTINCT product_id) FROM public.recipe_ingredients)::INT, 14, 'seed 14 món có công thức');
+SELECT t.eq((SELECT count(DISTINCT ri.product_id) FROM public.recipe_ingredients ri JOIN public.master_catalog m ON m.id = ri.product_id WHERE m.category = 'RECIPE')::INT, 14, 'seed 14 món ăn có công thức (+2 đồ thợ từ S5d)');
 SELECT t.eq((SELECT machine_id FROM public.master_catalog WHERE id = 'PROD_09'), 'MAC_04', 'seed machine_id');
 
 -- ---------------------------------------------------------------------------
@@ -45,7 +45,7 @@ RETURNS INT LANGUAGE sql STABLE SET search_path = public, pg_temp AS $$ SELECT 2
 -- ---------------------------------------------------------------------------
 SET ROLE authenticated;
 SELECT t.expect_error('SELECT public.rpc_build_machine(''CROP_01'')', '⚠️ Không có xưởng này!');
-SELECT t.expect_error('SELECT public.rpc_build_machine(''MAC_01'')', '🛖 [%] mở cùng Lán Thợ ở bản sau!');
+SELECT t.expect_error('SELECT public.rpc_build_machine(''MAC_01'')', '🛖 [%] mở ở bản sau!');
 SELECT t.expect_error('SELECT public.rpc_build_machine(''MAC_02'')', '🔒 Cần đạt Cấp 4 để xây [%]!');
 RESET ROLE;
 UPDATE public.profiles SET level = 15, xp = 0, gold = 400 WHERE id = 'c0000000-0000-0000-0000-00000000000c';

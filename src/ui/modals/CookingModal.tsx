@@ -3,8 +3,9 @@ import { GAME_STAGE } from '../../config/features';
 import { GAME_CATALOG } from '../../data/masterData';
 import type { CatalogItem } from '../../data/types';
 import {
-  KITCHEN_MACHINE_IDS,
+  CRAFT_RECIPES,
   KITCHEN_RECIPES,
+  WORKSHOP_MACHINE_IDS,
   POT_MACHINE_ID,
   POT_MAX_INGREDIENTS,
   isRecipeDiscovered,
@@ -108,11 +109,13 @@ export function CookingModal() {
 
             {tab === 'MACHINES' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                {KITCHEN_MACHINE_IDS.map((id) => {
+                {WORKSHOP_MACHINE_IDS.map((id) => {
                   const mac = kitchenItem(id);
                   if (!mac) return null;
                   const m = machines[id];
-                  const cookable = KITCHEN_RECIPES.filter((r) => r.machineId === id && isRecipeDiscovered(known, r.id));
+                  const cookable = [...KITCHEN_RECIPES, ...CRAFT_RECIPES].filter(
+                    (r) => r.machineId === id && isRecipeDiscovered(known, r.id)
+                  );
                   return (
                     <div key={id} className="bg-white border-2 border-[#c88a4b] rounded-xl p-2 flex flex-col gap-1.5">
                       <div className="font-extrabold text-[#2a180c]">
@@ -167,6 +170,8 @@ export function CookingModal() {
                                 {locked ??
                                   (missing.length
                                     ? `🧺 Thiếu: ${missing.map((x) => `${x.qty} ${nameOf(x.itemId)}`).join(', ')}`
+                                    : r.category === 'CRAFT_GEAR'
+                                    ? `🧵 Làm ${r.growOrCraftMinutes} phút · đồ thợ 72h (Độ No hao chậm 25%)`
                                     : `🔥 Nấu ${r.growOrCraftMinutes} phút · +${r.staminaDelta}⚡ khi ăn`)}
                               </span>
                             </button>

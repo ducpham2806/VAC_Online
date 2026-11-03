@@ -36,12 +36,14 @@ export function WorkersModal() {
   const claimWorkerPantry = useGameStore((s) => s.claimWorkerPantry);
   const payWorkerSalary = useGameStore((s) => s.payWorkerSalary);
   const serveLodgeMeal = useGameStore((s) => s.serveLodgeMeal);
+  const equipWorkerGear = useGameStore((s) => s.equipWorkerGear);
   const simulateOfflineWorkerProgress = useGameStore((s) => s.simulateOfflineWorkerProgress);
   const [selected, setSelected] = useState<HiredWorkerState['code']>('WORK_01');
   const current = workers.find((w) => w.code === selected) ?? workers[0];
 
   const dishes = GAME_CATALOG.filter((c) => c.category === 'RECIPE' && c.staminaDelta > 0 && (inventory[c.id] ?? 0) > 0);
   const pantryItems = Object.entries(workerPantry ?? {}).filter(([, n]) => n > 0);
+  const gears = GAME_CATALOG.filter((c) => c.category === 'CRAFT_GEAR' && (inventory[c.id] ?? 0) > 0);
   const stageOpen = GAME_STAGE >= CRAFT_MIN_STAGE;
 
   const lockOf = (code: string): string | null => {
@@ -188,7 +190,29 @@ export function WorkersModal() {
                   {currentLock ??
                     `🪙 ${current.isHired ? 'Gia hạn' : 'Thuê'} 3 ngày (-${cost.toLocaleString()} 🪙, rẻ 12%)${gold < cost ? ' – thiếu vàng' : ''}`}
                 </button>
-                <p className="text-[11px] text-[#664930]">👕 Đồ bảo hộ 72h &amp; 🧧 Phụ Cấp Ngày Mùa mở cùng Xưởng Đan Lát / Khung Cửi ở bản sau.</p>
+                <div className="bg-[#fff8e1] border-l-4 border-[#f5b82e] p-2 rounded space-y-1">
+                  <div className="font-bold">
+                    👕 Đồ bảo hộ:{' '}
+                    {current.equippedGearId
+                      ? `${GAME_CATALOG.find((c) => c.id === current.equippedGearId)?.name ?? current.equippedGearId} — còn ${current.gearHoursLeft} giờ (Độ No hao chậm 25%)`
+                      : 'chưa mặc'}
+                  </div>
+                  {gears.length === 0 && (
+                    <p className="text-[11px] text-[#664930]">Làm Nón Lá / Áo Cánh Nâu ở 🍲 Bếp Quê &amp; Xưởng (Đan Lát, Khung Cửi).</p>
+                  )}
+                  <div className="flex flex-wrap gap-1.5">
+                    {gears.map((g) => (
+                      <button
+                        key={g.id}
+                        disabled={farmBusy || !current.isHired}
+                        onClick={() => equipWorkerGear(current.code, g.id)}
+                        className="touch-btn min-h-[44px] bg-[#f5b82e] text-[#2a180c] font-bold px-2.5 py-1 rounded-lg cursor-pointer disabled:opacity-60"
+                      >
+                        {g.emoji} Cấp {g.name} ×{inventory[g.id]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </>
