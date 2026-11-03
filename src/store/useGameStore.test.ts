@@ -136,3 +136,101 @@ describe('tilesFromSnapshot', () => {
     expect(tiles.filter((t) => t.itemId).length).toBe(1);
   });
 });
+
+// vitest chạy DEV → GAME_STAGE = 6 nên Bếp Quê mở; nhánh GĐ1 test ở src/domain/cooking.test.ts.
+describe('Bếp Quê & Xưởng (S4) — offline qua kitchenSlice', () => {
+  beforeEach(() => {
+    store.setState({ ...createFreshState(), level: 15, gold: 1000, inventory: { CROP_01: 4 } });
+  });
+
+  it('xây Bếp Củi → nấu Cơm (trừ 3 Lúa, 0⚡) → lấy món → ăn hồi ⚡', () => {
+    store.getState().craftOrBuyCatalogItem('MAC_02'); // đường cũ (Bách Khoa) dẫn tới xây xưởng
+    expect(store.getState().gold).toBe(650);
+    expect(store.getState().machines.MAC_02).toEqual({ craftItemId: null, readyAt: null });
+
+    store.getState().craftOrBuyCatalogItem('PROD_01'); // không còn "mua" món bằng vàng
+    let s = store.getState();
+    expect(s.gold).toBe(650);
+    expect(s.inventory.CROP_01).toBe(1);
+    expect(s.stamina).toBe(50);
+    expect(s.machines.MAC_02.craftItemId).toBe('PROD_01');
+
+    store.setState({ machines: { MAC_02: { craftItemId: 'PROD_01', readyAt: Date.now() - 1 } } });
+    store.getState().collectKitchenCraft('MAC_02');
+    expect(store.getState().inventory.PROD_01).toBe(1);
+
+    store.setState({ stamina: 40, staminaUpdatedAt: Date.now() });
+    store.getState().eatDish('PROD_01');
+    s = store.getState();
+    expect(s.stamina).toBe(45);
+    expect(s.inventory.PROD_01).toBe(0);
+  });
+
+  it('Nồi Đất qua cookRandomDish (tên cũ): cần Bếp Củi, sai không thưởng, đúng +10 💎', () => {
+    store.setState({ inventory: { CROP_09: 2 } });
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    expect(store.getState().toastMessage).toContain('Bếp Củi');
+    store.setState({ machines: { MAC_02: { craftItemId: null, readyAt: null } } });
+    store.getState().cookRandomDish(['CROP_09']);
+    expect(store.getState().gems).toBe(50);
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    expect(store.getState().gems).toBe(60);
+    expect(store.getState().discoveredRecipes).toEqual(['PROD_09']);
+    expect(store.getState().inventory.CROP_09).toBe(2);
+  });
+
+  it('save cũ (trước S4) thiếu machines / discoveredRecipes vẫn mở được', async () => {
+    localStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify({ state: { level: 7, gold: 900 }, version: 1 }));
+    await store.persist.rehydrate();
+    expect(store.getState().level).toBe(7);
+    expect(store.getState().machines).toBeDefined();
+    expect(Array.isArray(store.getState().discoveredRecipes)).toBe(true);
+  });
+});
+
+describe('Lán Thợ (S5c) — offline qua workersSlice', () => {
+  beforeEach(() => {
+    store.setState({ ...createFreshState(), level: 15, gold: 2000, inventory: { PROD_03: 1 } });
+  });
+
+  it('người chơi mới: chưa thuê ai, Giỏ Thợ rỗng, Bàn Ăn 0 suất', () => {
+    const s = store.getState();
+    expect(s.workers.every((w) => !w.isHired)).toBe(true);
+    expect(s.workerPantryCount).toBe(0);
+    expect(s.lodgeDiningTableMeals).toBe(0);
+  });
+
+  it('thuê Chú Tư → dọn món lên Bàn Ăn → thợ thu Lúa vào Giỏ → thu Giỏ về Kho (không ra vàng)', () => {
+    store.getState().payWorkerSalary('WORK_01');
+    expect(store.getState().gold).toBe(2000 - 528);
+    expect(store.getState().workers.find((w) => w.code === 'WORK_01')?.isHired).toBe(true);
+
+    store.getState().serveLodgeMeal('PROD_03');
+    expect(store.getState().lodgeDiningTableMeals).toBe(3);
+    expect(store.getState().inventory.PROD_03).toBe(0);
+
+    const now = Date.now();
+    store.setState({
+      tiles: store.getState().tiles.map((t, i) =>
+        i === 0 ? { ...t, itemId: 'CROP_01', plantedAt: now - 600_000, matureAt: now - 400_000, watered: true } : t
+      ),
+    });
+    store.getState().tickWorkerAutomation();
+    expect(store.getState().workerPantry.CROP_01).toBe(2);
+    expect(store.getState().workerPantryCount).toBe(2);
+    expect(store.getState().tiles[0].itemId).toBeNull();
+
+    const gold = store.getState().gold;
+    store.getState().claimWorkerPantry();
+    expect(store.getState().inventory.CROP_01).toBe(2);
+    expect(store.getState().workerPantryCount).toBe(0);
+    expect(store.getState().gold).toBe(gold);
+  });
+
+  it('chưa thuê thợ: cấp đồ / phụ cấp bị từ chối, không trừ vàng; cho ăn miễn phí đã bỏ', () => {
+    store.getState().equipWorkerGear('WORK_01', 'CRAFT_01');
+    store.getState().giveWorkerBonus('WORK_01');
+    store.getState().feedWorker('WORK_01', 'Cơm', 85);
+    expect(store.getState().gold).toBe(2000);
+  });
+});

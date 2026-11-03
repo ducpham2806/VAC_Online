@@ -1,6 +1,7 @@
 /** Slice Economy của useGameStore (tách S2 — thân hàm giữ nguyên). */
 import { GAME_STAGE } from '../../config/features';
 import { GAME_CATALOG } from '../../data/masterData';
+import { KITCHEN_MACHINE_IDS } from '../../domain/cooking';
 import { canCraftOrBuy } from '../../domain/progression';
 import { vacRealtime } from '../../services/realtimeService';
 import type { GameState } from '../gameTypes';
@@ -22,24 +23,9 @@ export type EconomyActions = Pick<
 >;
 
 export const createEconomySlice = (set: StoreSet, get: StoreGet, _helpers: StoreHelpers): EconomyActions => ({
-  cookRandomDish: (ingredients) => {
-    const state = get();
-    if (ingredients.length < 3) {
-      set({ toastMessage: '🍲 Hãy chọn đủ ít nhất 3 nguyên liệu bỏ vào Nồi Đất để thử nghiệm!' });
-      return;
-    }
-    set({
-      gems: state.gems + 10,
-      xp: state.xp + 50,
-      stamina: Math.min(state.maxStamina, state.stamina + 25),
-      inventory: {
-        ...state.inventory,
-        PROD_22: (state.inventory.PROD_22 ?? 0) + 1,
-      },
-      toastMessage:
-        '🎉 KHÁM PHÁ CÔNG THỨC MỚI: [Cá Kho Tộ Vũ Đại - Mỹ Vị 3 Miền ⭐⭐⭐]! Thưởng nóng +10 💎 Ngọc, +50 XP & +25 ⚡!',
-    });
-  },
+  // S4: không còn stub "nấu bừa ra Cá Kho Tộ" — chuyển sang Nồi Đất khám phá thật (cooking.ts).
+  // Giữ tên action cũ (RULE D1); `ingredients` là danh sách ID nguyên liệu trong Kho.
+  cookRandomDish: (ingredients) => get().tryCookingPot(ingredients),
 
   craftOrBuyCatalogItem: (itemId) => {
     const state = get();
@@ -72,6 +58,17 @@ export const createEconomySlice = (set: StoreSet, get: StoreGet, _helpers: Store
       return;
     }
 
+    // S4: món ăn nấu ở xưởng (trừ nguyên liệu), xưởng ăn uống xây 1 lần — không còn "mua" món bằng vàng.
+    if (spec.category === 'RECIPE') {
+      if (spec.machineId && KITCHEN_MACHINE_IDS.includes(spec.machineId)) get().startKitchenCraft(spec.machineId, spec.id);
+      else set({ toastMessage: `🍲 [${spec.name}] sẽ nấu được ở bản cập nhật sau!` });
+      return;
+    }
+    if (KITCHEN_MACHINE_IDS.includes(spec.id)) {
+      get().buildKitchenMachine(spec.id);
+      return;
+    }
+
     const cost = Math.max(0, spec.buyCostGold);
     if (state.gold < cost) {
       set({ toastMessage: `⚠️ Cần ${cost.toLocaleString()} 🪙 Xu Vàng để chế biến/mua [${spec.name}]!` });
@@ -82,7 +79,7 @@ export const createEconomySlice = (set: StoreSet, get: StoreGet, _helpers: Store
     const styleGain = spec.category === 'FASHION' ? 80 : 0;
 
     set({
-      gold: state.gold - cost + (spec.category === 'RECIPE' ? spec.baseSellGold : 0),
+      gold: state.gold - cost,
       xp: state.xp + spec.xpReward,
       stamina: Math.min(state.maxStamina, state.stamina + staminaGain),
       styleScore: state.styleScore + styleGain,
@@ -90,10 +87,7 @@ export const createEconomySlice = (set: StoreSet, get: StoreGet, _helpers: Store
         ...state.inventory,
         [spec.id]: (state.inventory[spec.id] ?? 0) + 1,
       },
-      toastMessage:
-        spec.category === 'RECIPE'
-          ? `🍲 Đã chế biến xong [${spec.emoji} ${spec.name}] (+1 vào Kho, +${spec.xpReward} XP${staminaGain > 0 ? `, hồi +${staminaGain} ⚡` : ''})!`
-          : `✨ Đã sở hữu/chế tác [${spec.emoji} ${spec.name}] (+1 vào Kho, +${spec.xpReward} XP${styleGain > 0 ? `, +${styleGain} Phong Cách` : ''})!`,
+      toastMessage: `✨ Đã sở hữu/chế tác [${spec.emoji} ${spec.name}] (+1 vào Kho, +${spec.xpReward} XP${styleGain > 0 ? `, +${styleGain} Phong Cách` : ''})!`,
     });
   },
 

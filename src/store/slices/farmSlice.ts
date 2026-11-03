@@ -255,11 +255,10 @@ export const createFarmSlice = (set: StoreSet, get: StoreGet, { runCloud, applyL
     const now = Date.now();
     set({
       tiles: state.tiles.map((t) => (t.itemId ? { ...t, matureAt: now - 1000 } : t)),
-      workerPantryCount: Math.min(120, state.workerPantryCount + 18),
       pondMudCounter: 10,
       stamina: state.maxStamina,
       toastMessage:
-        '⏩ [DEV CHEAT x60]: Toàn bộ cây/cá đã chín rộ, Độ bùn ao đạt 10/10, hồi đầy 50 ⚡ & 6 Nhân công thu +18 Nông sản vào Giỏ Lán Thợ!',
+        '⏩ [DEV CHEAT x60]: Toàn bộ cây/cá đã chín rộ, Độ bùn ao đạt 10/10, hồi đầy 50 ⚡!',
     });
   },
 });

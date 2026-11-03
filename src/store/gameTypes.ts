@@ -10,6 +10,8 @@ import type {
 import type { GuestbookEntry } from '../services/realtimeService';
 import type { StoryQuest } from '../data/quests';
 import type { FarmMode } from '../services/farmGateway';
+import type { MachineState } from '../domain/cooking';
+import type { WorkerRecord } from '../domain/workers';
 
 export type ActiveModalType =
   | null
@@ -111,6 +113,14 @@ export interface GameState {
 
   /** Bộ đếm hành động cho mục tiêu nhiệm vụ Gia Phả (WATER, HARVEST:<id>, DREDGE, APPLY_MUD…). */
   progressCounters: Record<string, number>;
+  /** Xưởng Bếp Quê đã xây (MAC_02/03/04) và món đang nấu — S4, `src/domain/cooking.ts`. */
+  machines: Record<string, MachineState>;
+  /** Món đã khám phá ở Nồi Đất (Cơm Trắng mở sẵn, không nằm trong danh sách). */
+  discoveredRecipes: string[];
+  /** Hợp đồng + Độ No của thợ đã thuê (S5c, `src/domain/workers.ts`). `workers` là bản hiển thị suy ra từ đây. */
+  workerRecords: Record<string, WorkerRecord>;
+  /** Giỏ Thợ: hàng thợ thu, chưa vào Kho. `workerPantryCount` = tổng. */
+  workerPantry: Record<string, number>;
   /** Mốc thời gian (ms) để tính hồi năng lượng +1⚡/3 phút. */
   staminaUpdatedAt: number;
   /** Ngày nhận Quà Tân Thủ gần nhất (YYYY-MM-DD, giờ Việt Nam). */
@@ -163,6 +173,12 @@ export interface GameState {
   giveWorkerBonus: (workerCode: HiredWorkerState['code']) => void;
   cookRandomDish: (ingredients: string[]) => void;
   craftOrBuyCatalogItem: (itemId: string) => void;
+  buildKitchenMachine: (machineId: string) => void;
+  startKitchenCraft: (machineId: string, productId: string) => void;
+  collectKitchenCraft: (machineId: string) => void;
+  eatDish: (productId: string) => void;
+  tryCookingPot: (ingredientIds: string[]) => void;
+  serveLodgeMeal: (dishId: string) => void;
   prayAtTotem: () => void;
   contributeDinhLang: () => void;
   breedMutantCrop: (targetMutantId: string, costGold: number, baseChance: number, pityLimit: number) => void;

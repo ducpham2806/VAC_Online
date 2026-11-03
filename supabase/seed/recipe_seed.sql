@@ -3,7 +3,7 @@
 -- Sinh lại bằng: npm run seed:catalog
 -- Chạy trong Supabase SQL Editor SAU migration 0009 và master_catalog_seed.sql.
 -- Idempotent: UPDATE + INSERT ... ON CONFLICT DO UPDATE — không xóa dòng nào.
--- Số món có công thức: 14
+-- Số món có công thức: 16
 -- =============================================================================
 
 UPDATE public.master_catalog AS m
@@ -22,7 +22,9 @@ FROM (VALUES
   ('PROD_11', 'MAC_04'),
   ('PROD_12', 'MAC_02'),
   ('PROD_N01', 'MAC_03'),
-  ('PROD_C01', 'MAC_04')
+  ('PROD_C01', 'MAC_04'),
+  ('CRAFT_01', 'MAC_07'),
+  ('CRAFT_02', 'MAC_08')
 ) AS v(id, machine_id)
 WHERE m.id = v.id;
 
@@ -61,5 +63,9 @@ VALUES
   ('PROD_N01', 'CROP_19', 1),
   ('PROD_C01', 'CROP_C05', 1),
   ('PROD_C01', 'ANI_07', 1),
-  ('PROD_C01', 'CROP_09', 1)
+  ('PROD_C01', 'CROP_09', 1),
+  ('CRAFT_01', 'CROP_24', 1),
+  ('CRAFT_01', 'CROP_19', 1),
+  ('CRAFT_02', 'ANI_06', 1),
+  ('CRAFT_02', 'CROP_17', 1)
 ON CONFLICT (product_id, item_id) DO UPDATE SET qty = EXCLUDED.qty;

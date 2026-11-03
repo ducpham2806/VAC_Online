@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY?: string;
   /** '1' = bản chạy thử offline (npm run build:preview). */
   readonly VITE_OFFLINE_DEMO?: string;
+  readonly VITE_PREVIEW_PRESET?: string;
 }
 
 interface ImportMeta {

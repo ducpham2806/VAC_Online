@@ -80,6 +80,10 @@ export function runFullQCTestSuite(): QCTestResult[] {
     trainCrates: initialState.trainCrates,
     storyQuests: initialState.storyQuests,
     chatMessages: initialState.chatMessages,
+    machines: initialState.machines,
+    discoveredRecipes: initialState.discoveredRecipes,
+    workerRecords: initialState.workerRecords,
+    workerPantry: initialState.workerPantry,
   });
 
   const runCase = (
@@ -350,62 +354,74 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 13. EPIC 04: Nồi Đất Phối Món Ngẫu Nhiên (Random Alchemy >= 3 nguyên liệu)
-  runCase('TC-04.2a', 'EPIC 04', 'Bếp Củi Ngẫu Nhiên chặn nấu khi < 3 nguyên liệu & thưởng +10 💎 khi đủ', () => {
-    const gemsBefore = store.getState().gems;
-    store.getState().cookRandomDish(['Cá Trắm', 'Hồ Tiêu']);
-    const blocked = store.getState().gems === gemsBefore;
-    store.getState().cookRandomDish(['Cá Trắm', 'Hồ Tiêu', 'Nước Dừa']);
-    const gemsAfter = store.getState().gems;
-    return {
-      passed: blocked && gemsAfter === gemsBefore + 10,
-      expected: 'Chặn khi 2 nguyên liệu, cộng +10 💎 khi đủ 3 nguyên liệu',
-      actual: `Blocked(2)=${blocked}, Gems: ${gemsBefore} ➔ ${gemsAfter}`,
-    };
-  });
-
-  // 14. EPIC 05: Chiết khấu 12% Lương Hợp đồng 3 Ngày cho Nhân công
-  runCase('TC-05.1a', 'EPIC 05', 'Gia hạn Hợp đồng 3 ngày Nhân công chiết khấu chuẩn 12%', () => {
-    store.setState({ gold: 20000 });
-    store.getState().payWorkerSalary('WORK_05');
-    const spent = 20000 - store.getState().gold;
-    return {
-      passed: spent === 6864,
-      expected: 'Trừ đúng 6,864 🪙 (2600 * 3 * 0.88)',
-      actual: `Đã trừ: ${spent} 🪙`,
-    };
-  });
-
-  // 15. EPIC 05: Tự động ăn cơm từ Bàn Ăn Chung Lán Thợ khi Đói (< 35%)
-  runCase('TC-05.2a', 'EPIC 05', 'Nhân công tự động ăn 1 suất cơm trên Bàn Lán Thợ khi Độ No < 35%', () => {
+  // 13. EPIC 04: Nồi Đất khám phá công thức (S4 — 17 mục C2; thay stub "≥ 3 nguyên liệu" cũ)
+  runCase('TC-04.2a', 'EPIC 04', 'Nồi Đất: sai công thức không thưởng; đúng thì mở món +10 💎 và không tiêu nguyên liệu', () => {
     store.setState({
+      level: 15,
+      machines: { MAC_02: { craftItemId: null, readyAt: null } },
+      discoveredRecipes: [],
+      inventory: { ...store.getState().inventory, CROP_09: 2 },
+    });
+    const gemsBefore = store.getState().gems;
+    store.getState().cookRandomDish(['CROP_09']);
+    const blocked = store.getState().gems === gemsBefore;
+    store.getState().cookRandomDish(['CROP_09', 'CROP_09']);
+    const s = store.getState();
+    const found = s.discoveredRecipes.includes('PROD_09');
+    return {
+      passed: blocked && found && s.gems === gemsBefore + 10 && s.inventory.CROP_09 === 2,
+      expected: '1 Mía: không thưởng; 2 Mía: mở Nước Mía, +10 💎, Kho còn 2 Mía',
+      actual: `Blocked=${blocked}, Mở=${found}, Gems: ${gemsBefore} ➔ ${s.gems}, Mía=${s.inventory.CROP_09}`,
+    };
+  });
+
+  // 14. EPIC 05: Hợp đồng 3 ngày −12% (lương 25% theo PO 2026-11-03: Chú Tư 200🪙/ngày)
+  runCase('TC-05.1a', 'EPIC 05', 'Thuê Chú Tư 3 ngày trừ đúng lương × 3 × 0,88', () => {
+    store.setState({ gold: 20000, level: 15, workerRecords: {} });
+    store.getState().payWorkerSalary('WORK_01');
+    const spent = 20000 - store.getState().gold;
+    const hired = store.getState().workers.find((w) => w.code === 'WORK_01')?.isHired === true;
+    return {
+      passed: spent === 528 && hired,
+      expected: 'Trừ đúng 528 🪙 (200 × 3 × 0,88), Chú Tư đang làm',
+      actual: `Đã trừ: ${spent} 🪙, đang làm = ${hired}`,
+    };
+  });
+
+  // 15. EPIC 05: Đói (< 35) tự ăn ở Bàn Ăn Chung tới ≥ 85
+  runCase('TC-05.2a', 'EPIC 05', 'Thợ đói tự ăn ở Bàn Ăn (1 suất = 25 Độ No) tới khi no ≥ 85', () => {
+    store.setState({
+      workerAutoTickEnabled: true,
       lodgeDiningTableMeals: 5,
-      workers: store.getState().workers.map((w) =>
-        w.code === 'WORK_03' ? { ...w, isHired: true, contractDaysLeft: 2, belly: 20 } : w
-      ),
+      workerRecords: { WORK_01: { contractUntil: Date.now() + 86_400_000, belly: 20, tickAt: Date.now() } },
     });
     store.getState().tickWorkerAutomation();
-    const w3 = store.getState().workers.find((w) => w.code === 'WORK_03')!;
+    const belly = store.getState().workerRecords.WORK_01?.belly ?? 0;
     const mealsLeft = store.getState().lodgeDiningTableMeals;
     return {
-      passed: w3.belly === 100 && mealsLeft === 4,
-      expected: 'Độ No hồi lên 100% & Bàn ăn giảm từ 5 xuống 4 suất',
-      actual: `Độ No = ${w3.belly}%, Suất cơm còn = ${mealsLeft}`,
+      passed: Math.round(belly) === 95 && mealsLeft === 2,
+      expected: 'Độ No 20 → 95 (3 suất), Bàn Ăn 5 → 2 suất',
+      actual: `Độ No = ${Math.round(belly)}, Suất cơm còn = ${mealsLeft}`,
     };
   });
 
-  // 16. EPIC 05: Mô phỏng Lazy-Tick Offline Calculator cho Lán Thợ
-  runCase('TC-05.5a', 'EPIC 05', 'Lazy-Tick Offline 4 Giờ tự động thu nông sản vào Giỏ Thợ & trừ suất cơm', () => {
+  // 16. EPIC 05: Lazy-tick offline: thợ thu ô đã chín ≥ 5 phút vào Giỏ Thợ (hàng thật)
+  runCase('TC-05.5a', 'EPIC 05', 'Offline 4 giờ: Chú Tư thu Lúa chín vào Giỏ Thợ, không gieo lại', () => {
+    const now = Date.now();
     store.setState({
-      lodgeDiningTableMeals: 8,
-      workerPantryCount: 20,
+      workerPantry: {},
+      workerPantryCount: 0,
+      workerRecords: { WORK_01: { contractUntil: now + 86_400_000, belly: 100, tickAt: now } },
+      tiles: store.getState().tiles.map((t, i) =>
+        i === 0 ? { ...t, itemId: 'CROP_01', plantedAt: now, matureAt: now + 120_000, watered: true, harvestsLeft: 1 } : { ...t, itemId: null, plantedAt: null, matureAt: null }
+      ),
     });
     store.getState().simulateOfflineWorkerProgress(4);
     const st = store.getState();
     return {
-      passed: st.workerPantryCount > 20 && st.lodgeDiningTableMeals < 8,
-      expected: 'Giỏ Kho Thợ tăng (> 20) & Bàn ăn tiêu thụ suất cơm (< 8)',
-      actual: `Giỏ Thợ: 20 ➔ ${st.workerPantryCount}/120, Suất cơm còn: ${st.lodgeDiningTableMeals}`,
+      passed: (st.workerPantry.CROP_01 ?? 0) > 0 && st.tiles[0].itemId === null,
+      expected: 'Giỏ Thợ có Lúa, ô đã dọn (không tự gieo)',
+      actual: `Giỏ: ${JSON.stringify(st.workerPantry)}, ô 1 = ${st.tiles[0].itemId}`,
     };
   });
 

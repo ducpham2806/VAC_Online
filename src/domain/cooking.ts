@@ -2,6 +2,7 @@ import { GAME_CATALOG } from '../data/masterData';
 import { CatalogItem, RecipeIngredient, RegionType } from '../data/types';
 import { CRAFT_MIN_STAGE, applyXp, canCraftOrBuy, maxUnlockedWave } from './progression';
 import { regenStamina } from './stamina';
+import { COUNTER, Counters, bumpCounter } from './quests';
 
 /**
  * Bếp Quê & Xưởng (S4 — M04.1..M04.3), dạng hàm thuần. Đặc tả + quyết định PO: `17` mục C2.
@@ -9,8 +10,12 @@ import { regenStamina } from './stamina';
  * rpc_collect_craft, rpc_eat_dish, rpc_cook_pot). Sửa luật ở đây thì sửa cả SQL + test 2 phía.
  */
 
-/** 3 xưởng ăn uống mở ở S4. `MAC_01`, `MAC_07`, `MAC_08` mở cùng Lán Thợ (S5). */
+/** 3 xưởng ăn uống mở ở S4. */
 export const KITCHEN_MACHINE_IDS: readonly string[] = ['MAC_02', 'MAC_03', 'MAC_04'];
+/** 2 xưởng nghề làm đồ thợ (S5d): Đan Lát `MAC_07`, Khung Cửi `MAC_08`. Công thức biết sẵn, không cần Nồi Đất. */
+export const CRAFT_MACHINE_IDS: readonly string[] = ['MAC_07', 'MAC_08'];
+/** Mọi xưởng xây được. `MAC_01` Cối Xay Cám hoãn tới khi có luật cho vật nuôi ăn cám (`17` C3). */
+export const WORKSHOP_MACHINE_IDS: readonly string[] = [...KITCHEN_MACHINE_IDS, ...CRAFT_MACHINE_IDS];
 /** Nồi Đất nằm trong Bếp Củi. */
 export const POT_MACHINE_ID = 'MAC_02';
 /** Món mở sẵn để người chơi biết cách nấu (PO chốt). */
@@ -45,6 +50,8 @@ export interface KitchenSave {
   machines: Record<string, MachineState>;
   /** Món đã khám phá ở Nồi Đất (không gồm món mở sẵn). */
   discoveredRecipes: string[];
+  /** Bộ đếm nhiệm vụ (Ch.3: BUILD:MAC_02, COOK). Thiếu = rỗng. */
+  counters?: Counters;
 }
 
 export type KitchenResult = { ok: true; save: KitchenSave; message: string } | { ok: false; message: string };
@@ -61,8 +68,18 @@ export const KITCHEN_RECIPES: readonly CatalogItem[] = GAME_CATALOG.filter(
   (c) => c.category === 'RECIPE' && !!c.recipe && !!c.machineId && KITCHEN_MACHINE_IDS.includes(c.machineId)
 );
 
+/** Đồ thợ ở xưởng nghề (S5d), theo thứ tự catalog. */
+export const CRAFT_RECIPES: readonly CatalogItem[] = GAME_CATALOG.filter(
+  (c) => c.category === 'CRAFT_GEAR' && !!c.recipe && !!c.machineId && CRAFT_MACHINE_IDS.includes(c.machineId)
+);
+
+/** Món đã biết công thức: Cơm Trắng mở sẵn, đồ thợ biết sẵn, còn lại phải khám phá ở Nồi Đất. */
 export function isRecipeDiscovered(save: Pick<KitchenSave, 'discoveredRecipes'>, productId: string): boolean {
-  return productId === STARTER_RECIPE_ID || save.discoveredRecipes.includes(productId);
+  return (
+    productId === STARTER_RECIPE_ID ||
+    BY_ID.get(productId)?.category === 'CRAFT_GEAR' ||
+    save.discoveredRecipes.includes(productId)
+  );
 }
 
 export type RecipeLock =
@@ -74,7 +91,9 @@ export type RecipeLock =
 
 /** Món có nấu được ở Giai đoạn / cấp hiện tại không (chưa xét kho và khám phá). */
 export function recipeLock(item: CatalogItem, level: number, gameStage: number): RecipeLock {
-  if (item.category !== 'RECIPE' || !item.recipe || !item.machineId) return { ok: false, reason: 'NOT_RECIPE' };
+  if ((item.category !== 'RECIPE' && item.category !== 'CRAFT_GEAR') || !item.recipe || !item.machineId) {
+    return { ok: false, reason: 'NOT_RECIPE' };
+  }
   const lock = canCraftOrBuy(item, level, gameStage);
   if (!lock.ok) {
     if (lock.reason === 'STAGE_LOCKED') return { ok: false, reason: 'STAGE_LOCKED', stage: lock.stage };
@@ -118,7 +137,7 @@ function withXp(save: KitchenSave, gain: number): { save: KitchenSave; levelUp: 
 export function buildMachine(save: KitchenSave, machineId: string, gameStage: number): KitchenResult {
   const item = BY_ID.get(machineId);
   if (!item || item.category !== 'MACHINE') return fail('⚠️ Không có xưởng này!');
-  if (!KITCHEN_MACHINE_IDS.includes(machineId)) return fail(`🛖 [${item.name}] mở cùng Lán Thợ ở bản sau!`);
+  if (!WORKSHOP_MACHINE_IDS.includes(machineId)) return fail(`🛖 [${item.name}] mở ở bản sau!`);
   const lock = canCraftOrBuy(item, save.level, gameStage);
   if (!lock.ok) {
     return fail(
@@ -133,6 +152,7 @@ export function buildMachine(save: KitchenSave, machineId: string, gameStage: nu
     ...save,
     gold: save.gold - item.buyCostGold,
     machines: { ...save.machines, [machineId]: { craftItemId: null, readyAt: null } },
+    counters: bumpCounter(save.counters, COUNTER.build(machineId)),
   };
   const { save: next, levelUp } = withXp(paid, item.xpReward);
   return {
@@ -189,6 +209,7 @@ export function collectCraft(save: KitchenSave, machineId: string, now: number):
     ...save,
     inventory: { ...save.inventory, [item.id]: (save.inventory[item.id] ?? 0) + 1 },
     machines: { ...save.machines, [machineId]: { craftItemId: null, readyAt: null } },
+    counters: bumpCounter(save.counters, COUNTER.COOK),
   };
   const { save: next, levelUp } = withXp(collected, item.xpReward);
   return { ok: true, save: next, message: `🍽️ Đã nấu xong [${item.emoji} ${item.name}]: +1 vào Kho, +${item.xpReward} XP${levelUp}` };

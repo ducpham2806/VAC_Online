@@ -26,8 +26,14 @@ describe('Mục tiêu nhiệm vụ Gia Phả (M03.5)', () => {
     expect(ch('Q_CH2').map((o) => o.counter)).toEqual([COUNTER.DREDGE, COUNTER.APPLY_MUD]);
   });
 
-  it('chương thuộc GĐ chưa mở chưa có mục tiêu (chỉ kiểm cấp)', () => {
-    expect(STORY_QUESTS.filter((q) => q.unlockStage > 1).every((q) => (q.objectives ?? []).length === 0)).toBe(true);
+  it('GĐ2: Ch.3 = xây Bếp Củi + nấu 1 món; Ch.6 = thuê Chú Tư + dọn 1 món; Ch.7 = cấp 1 đồ thợ (S5, 17 C3)', () => {
+    expect(ch('Q_CH3').map((o) => o.counter)).toEqual(['BUILD:MAC_02', 'COOK']);
+    expect(ch('Q_CH6').map((o) => o.counter)).toEqual(['HIRE:WORK_01', 'SERVE_MEAL']);
+    expect(ch('Q_CH7').map((o) => o.counter)).toEqual(['EQUIP_GEAR']);
+  });
+
+  it('chương thuộc GĐ3+ chưa có mục tiêu (chỉ kiểm cấp) cho tới khi mở GĐ đó', () => {
+    expect(STORY_QUESTS.filter((q) => q.unlockStage > 2).every((q) => (q.objectives ?? []).length === 0)).toBe(true);
   });
 
   it('questProgress / isQuestComplete / firstMissingObjective', () => {

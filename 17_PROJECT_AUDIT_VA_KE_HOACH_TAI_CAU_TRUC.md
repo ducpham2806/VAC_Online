@@ -65,7 +65,7 @@
 
 - ~~**Tham chiếu sai:** `13 → 16` dẫn `04_MASTER_NARRATIVE`; `16` dẫn "GDD Mục 9".~~ ✅ 2026-11-02: đổi thành `01_MASTER_GDD` Chương 4 (cốt truyện đã gộp vào `01`), `04_MASTER_DATA`, và `16` dẫn đúng `01` Chương 6 / `02` Phần 4 / `03` Phần 3 / `06` Mục 2.5–2.6.
 - **Số tổng không khớp:** ~~7 hay 8 van chống lạm phát~~ (✅ 2026-11-02: `00`, `AGENTS.md` theo `02` = 8 van); ~~12 hay 14 quy tắc code; Bible v9.2 vs AGENTS v9.3; UI v7.0 vs v7.1~~ (✅ 2026-11-02: mọi nơi đã ghi `C1 ➔ C14`, Bible `9.3`, đầu file `06` đổi thành `7.1` cho khớp mục lục); nhãn build trong bảng `00` (dòng 44–49) ghi "v1.1 …" cho cả 6 giai đoạn.
-- **Cấp độ mở khóa lệch:** `WORK_02` Lv.16 vs Chương 6 thuê ở Lv.13; `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (Lv.21+).
+- **Cấp độ mở khóa lệch:** ~~`WORK_02` Lv.16 vs Chương 6 thuê ở Lv.13~~ (sửa 2026-11-03: Chú Tư Lv.13, Cô Năm Lv.15); `BM_DINH_01`, `NEW_EXP_01` Lv.11 nhưng thuộc GĐ4 (Lv.21+).
 - ~~**Soạn thảo:** ký tự Trung, lỗi gõ, checklist GĐ1–2 tick sai, 2 placeholder rỗng.~~ ✅ 2026-11-02:
   - Đã xóa ký tự lạ và sửa lỗi gõ ("VõBếp" → "Vỏ Quýt `PROD_24`").
   - Checklist `11`: còn tick 3/6 mục đạt thật. Checklist `12`: bỏ tick cả 5 mục.
@@ -250,6 +250,90 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 4. Code cũ 🟢: giữ chữ ký action.
 5. DB 🟡: `0009` chỉ thêm; PO dán vào SQL Editor.
 
+**Trạng thái (2026-11-02): code xong, chưa áp lên Supabase thật, chưa mở GĐ2.**
+- ✅ Domain `src/domain/cooking.ts` + 22 test; công thức theo ID trong `GAME_CATALOG`; seed `recipe_seed.sql` sinh tự động.
+- ✅ `0009_kitchen.sql` + `supabase/tests/kitchen.test.sql` (anon bị chặn, GĐ1 khóa, mọi nhánh từ chối, cô lập 2 người chơi). Server có 22 RPC.
+- ✅ Store: `kitchenSlice.ts` (offline dùng domain, online dùng RPC); `machines` + `discoveredRecipes` lưu trong save, save cũ tự thêm mặc định rỗng. `cookRandomDish` / `craftOrBuyCatalogItem` giữ tên, chuyển sang luật mới. QC `TC-04.2a` viết lại theo Nồi Đất khám phá.
+- ✅ UI: `CookingModal` 3 tab Xưởng / Sổ Tay / Nồi Đất; Kho có nút "🍚 Ăn". Kiểm ở 1280×720 và 844×390.
+- ⏳ PO: dán `0009` rồi `master_catalog_seed.sql`, `recipe_seed.sql` vào SQL Editor.
+- ⏳ Mở GĐ2 (việc riêng, cùng Đợt 2 = 45 loài): migration đổi `app_game_stage()` thành 2 + `VITE_GAME_STAGE=2` trên Vercel. Trước đó nên đặt mục tiêu Chương 3 (Bếp Quê) và chạy `/vac-balance-check`.
+- Chưa có: sprite xưởng trên bản đồ (S5), icon riêng cho món (đang dùng emoji).
+
+
+### C3. Đặc tả S5 — Lán Thợ & Xưởng nghề (M05.1–M05.5) — PO duyệt 4 quyết định 2026-11-03
+**Hiện trạng code (`workersSlice.ts`) là stub, có 3 nguồn in tiền:**
+- `claimWorkerPantry` cộng 18🪙/món + tặng cố định 15 Lúa, 8 Trứng, 6 Cá, 3 Bùn mỗi lần thu Giỏ.
+- `simulateOfflineWorkerProgress` hồi +10⚡/giờ offline.
+- Thợ tự gieo lại không tốn tiền giống. Không có gì chạy trên server.
+
+**Kiểm cân bằng (`/vac-balance-check`, dữ liệu catalog, chưa có số liệu người chơi thật):**
+
+| Nhóm Đợt 1–2 | Lãi/phút/ô | Ghi chú |
+|---|---|---|
+| Cây ruộng `CROP_01..19` | 0,75 → 3,00 🪙 | Lúa `CROP_01` (Lv.1) lãi/phút cao nhất; loài cấp cao kém loài cấp thấp |
+| Cây lâu năm `CROP_23..26` | 0,89 → 0,95 🪙 | |
+| **Vật nuôi `ANI_01..07`** | **−1,73 → −4,48 🪙 (lỗ)** | vd Gà `ANI_01` mua 40, bán 14 × 1 |
+| **Thủy sản `AQUA_01..06`** | **−0,65 → −1,73 🪙 (lỗ)** | Chỉ có XP; người chơi bị phạt khi nuôi |
+
+- Thu nhập trần: 12 ô Lúa, thu liên tục 90 phút/ngày ≈ **3.240🪙/ngày** (20 ô ≈ 5.400). Thực tế thấp hơn.
+- `02` giả định GĐ2 có Sources **12.000–20.000🪙/ngày** → lệch ~4–6 lần. Lương 2 thợ GĐ2 (800 + 1.100🪙/ngày + cơm) sẽ lớn hơn thu nhập.
+- XP: Lv.9 cần 5.044 XP; Lv.14 cần 16.056 XP (tổng từ Lv.1).
+- Sources/Sinks thực tế: **NOT ASSESSED — NO DATA** (chưa có beta).
+
+**Đề xuất mặc định (chờ PO chọn ở 4 câu hỏi):**
+1. Thợ thu ô đã chín ≥ 5 phút (chừa thời gian cho chủ tự thu) và tưới ô chưa tưới. **Không tự gieo lại.** Hàng thật vào Giỏ Thợ (tối đa 120), bấm "Thu Giỏ" mới về Kho. XP thu hoạch không cộng.
+2. Thợ chỉ làm khi còn hợp đồng và Độ No ≥ 35%. Độ No giảm theo giờ; đói thì tự ăn 1 suất ở Bàn Ăn. Mâm cơm lấy từ món Bếp Quê thật hoặc mua bằng 🪙.
+3. Tính lười (lazy-tick) ở server khi gọi `rpc_get_my_farm` / thao tác. Bỏ 3 nguồn in tiền ở trên.
+4. Xưởng nghề `MAC_07` / `MAC_08` + đồ thợ `CRAFT_01..02`: công thức theo ID như S4 (cần map "Tre Trúc", "Kén Tơ Tằm"… sang ID có thật). Đồ thợ 72h: +15% tốc độ (giảm mốc chờ 5 phút / tăng Độ No).
+5. Mục tiêu chương: Ch.3 = xây Bếp Củi + nấu 1 món (PO đã chốt Bếp dời sang Ch.3 ở S2); Ch.6 = thuê Chú Tư + dọn 1 mâm cơm; Ch.7 = cấp 1 đồ thợ.
+6. `MAC_01` Cối Xay Cám: chưa có luật cho vật nuôi ăn cám → hoãn tới khi sửa vật nuôi (câu hỏi 3).
+
+**Quyết định PO (2026-11-03) — đều chọn phương án khuyên dùng:**
+1. **Thợ chỉ thu + tưới**, không tự gieo lại. Hàng thật vào Giỏ Thợ 120, bấm Thu Giỏ về Kho.
+2. **Lương còn 25%:** Chú Tư `WORK_01` 200🪙/ngày, Cô Năm `WORK_02` 275🪙/ngày; hợp đồng 3 ngày −12% giữ nguyên. Thợ GĐ3+ xem lại khi mở GĐ3.
+3. **Vật nuôi / thủy sản nuôi nhiều lứa:** mua con giống 1 lần, thu nhiều lứa rồi mới hết (sửa lỗi lỗ có từ GĐ1).
+4. **Hạ cấp thợ cho khớp chương:** Chú Tư Lv.13, Cô Năm Lv.15. Ch.6 = thuê Chú Tư; Ch.7 = cấp đồ thợ.
+
+**Quyết định PO lần 2 (2026-11-03):**
+5. **Đồ thợ dùng loài Đợt 2 có sẵn:** Nón Lá `CRAFT_01` ở Đan Lát `MAC_07` = 1 Dừa Xiêm `CROP_24` + 1 Sen `CROP_19`. Áo Cánh Nâu `CRAFT_02` ở Khung Cửi `MAC_08` = 1 Kén Tằm `ANI_06` + 1 Khoai Môn & Củ Sắn `CROP_17`. Không thêm thực thể.
+6. **Tác dụng đồ thợ 72h:** Độ No hao chậm 25%.
+7. **Chương 3 mở Lv.9** (theo `01`).
+8. **AI áp `0010` → `0012` + seed lên Supabase thật** qua connector.
+
+**Thứ tự làm:** S5a nuôi nhiều lứa (domain → `0010` → client) → S5b số liệu thợ (catalog, CSV `04`, `02`) → S5c Lán Thợ (domain → `0011` lazy-tick → store → UI) → S5d xưởng nghề + đồ thợ → mục tiêu Ch.3/6/7.
+
+**Tiến độ:**
+- ✅ 2026-11-03 **S5a nuôi nhiều lứa:**
+  - Code: `harvestCycles` + `harvest` giữ con giống (`src/domain/farm.ts`); cột `farm_entities.harvests_left` (mặc định 1); `_harvest_cycles`, `_grow_ms`, `rpc_plant` / `rpc_harvest` / `_farm_snapshot` viết lại ở `0010_livestock_cycles.sql`; ô hiện "còn N lứa".
+  - Kiểm tra: test domain + `supabase/tests/livestock.test.sql`.
+  - Sửa luôn `scripts/test-sql.sh`: lần chạy lại kiểm idempotent trước đây dùng mẫu `000[2-9]` nên bỏ sót `0010`+.
+  - Công thức ghi ở `02` mục 3.1b, luật ở `01` mục 1.1b.
+  - ⏳ PO chạy `0010` trên Supabase (sau `0009`; không chạy lại `0009` sau `0010` vì sẽ đè snapshot).
+- ✅ 2026-11-03 **S5b số liệu thợ:** `WORK_01` Lv.13, 200🪙/ngày; `WORK_02` Lv.15, 275🪙/ngày (catalog, `INITIAL_WORKERS`, CSV `04`, `01`, `02` mục 3.2 + bảng GĐ2, seed). Mô tả Chú Tư bỏ "tự gieo hạt". ⏳ PO chạy lại `master_catalog_seed.sql` để DB có số mới.
+
+- ✅ 2026-11-03 **S5c Lán Thợ:** domain `src/domain/workers.ts` (+12 test) → `0011_workers.sql` (+`supabase/tests/workers.test.sql`) → `workersSlice.ts` viết lại (giữ tên action; thêm `serveLodgeMeal`) → `WorkersModal` mới (Bàn Ăn dọn món từ Kho, Giỏ Thợ hàng thật, thuê/gia hạn). Đã bỏ 3 nguồn in tiền của stub. QC `TC-05.1a/2a/5a` viết lại theo luật mới. Kiểm 1280×720 & 844×390.
+- ✅ 2026-11-03 **Mục tiêu Ch.3 & Ch.6:** bộ đếm `BUILD:<MAC>`, `COOK`, `HIRE:<WORK>`, `SERVE_MEAL` (domain `cooking.ts` / `workers.ts` + `0012_quest_counters_s5.sql`); Ch.3 = xây Bếp Củi + nấu 1 món; Ch.6 = thuê Chú Tư + dọn 1 món. Cấp chương trong code đưa về đúng `01`: Ch.6 Lv.13, Ch.7 Lv.15. Test `supabase/tests/quests_s5.test.sql`.
+  - ✅ Ch.3 đưa về Lv.9 theo `01` (PO 2026-11-03).
+  - ⏳ PO chạy `0011` → `0012` → `quest_catalog_seed.sql`. Còn lại: S5d (xưởng nghề `MAC_07/08`, đồ thợ `CRAFT_01..02`, phụ cấp), mục tiêu Ch.3/6/7, sprite Lán Thợ + 2 thợ trên bản đồ.
+
+- ✅ 2026-11-03 **S5d xưởng nghề + đồ thợ:** `cooking.ts` (`WORKSHOP_MACHINE_IDS`, `CRAFT_RECIPES`, đồ thợ biết sẵn công thức), `workers.ts` (`equipGear`, Độ No hao theo đoạn `bellyDrain` / `hungryTime`), Ch.7 = `EQUIP_GEAR`; `0013_craft_gear.sql` (+`supabase/tests/crafts.test.sql`); UI tab Xưởng có Đan Lát / Khung Cửi, Lán Thợ có mục cấp đồ. `MAC_01` Cối Xay Cám vẫn hoãn; Phụ Cấp Ngày Mùa chưa mở.
+  - ✅ Đã áp `0013` + seed lên Supabase thật (2026-11-03).
+- ✅ 2026-11-03 **Phụ Cấp Ngày Mùa** (PO giữ 300🪙): `giveBonus` + `0014_worker_bonus.sql` (cột `hired_workers.bonus_until`, `rpc_give_worker_bonus`); 24 giờ Hăng Say, thợ tưới cắt 25% thay 15% (AI quy đổi, chờ PO duyệt con số). Chưa áp lên DB thật.
+
+- ✅ 2026-11-03 **Chuẩn bị mở GĐ2:**
+  - Sprite tạm (code-art, 64 màu, viền `#3D2314`): Lán Thợ mái tranh `lodge` 140×100, Chú Tư `worker_tu_*` & Cô Năm `worker_nam_*` (đứng 2 + đi 4 khung) trong atlas `world`; FarmScene dùng khi mở GĐ2 (thợ đi lại, đói thì đứng ở Lán).
+  - Công tắc giai đoạn ở DB: `0015_app_config_stage.sql` — bảng `app_config` (`game_stage` mặc định 1), `app_game_stage()` đọc từ bảng; mở GĐ2 = 1 lệnh `UPDATE`, quay lại được. Test `supabase/tests/stage_switch.test.sql`.
+  - Bản chạy thử GĐ2 (offline, save mẫu Lv.15): `npm run build:preview:gd2` → Artifact riêng tư https://claude.ai/artifact/Ujwb3Y19GPA24rTgxCt7vP. Đã chạy thử: xây Bếp Củi → nấu Cơm → thuê Chú Tư → thợ đi trên bản đồ, vàng khớp (12.000 − 350 − 528 = 11.122), 0 lỗi.
+  - Supabase thật: đã áp `0014`; `0015` CHƯA áp (Supabase hỏi xác nhận vì có `DROP POLICY IF EXISTS`, không ai trả lời trong 60 giây).
+  - Mở GĐ2 khi PO sẵn sàng: (1) áp `0015`; (2) merge nhánh + deploy Vercel với `VITE_GAME_STAGE=2`; (3) `UPDATE public.app_config SET value = '2' WHERE key = 'game_stage';`.
+
+**RULE D1 (sơ bộ):**
+1. Core VAC 🟡: thợ thu hộ, cần giữ vai trò người chơi (không tự gieo).
+2. Kinh tế 🔴: lương lệch thu nhập; vật nuôi / thủy sản đang lỗ (lỗi có từ GĐ1).
+3. Art 🟡: cần sprite Lán Thợ + 2 thợ.
+4. Code 🟢: giữ tên action cũ.
+5. DB 🟡: migration `0010` chỉ thêm.
+
 ---
 
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
@@ -386,7 +470,7 @@ Chú thích: **Done** = chạy đúng spec; **Partial** = có, nhưng thiếu/sa
 | 03 | M03.3 Ao + vét bùn | Done | Server (S1) |
 | 03 | M03.4 Phù sa + Hoàng Kim x3 | Done | Thu hoạch vào Kho ×3, bán HTX (S1) |
 | 03 | M03.5 Chương 1–2 + quà 7 ngày | Done | Server kiểm cấp + mục tiêu đo được (`player_counters`, `0007`, đã chạy trên Supabase thật 2026-11-02); Hướng dẫn tân thủ 8 bước (`src/domain/tutorial.ts`, `TutorialCoach`) |
-| 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | Stub | Bếp luôn ra `PROD_22` |
+| 04 | M04.1–M04.4 Xưởng / Bếp / Sách món / Khung cửi | M04.1–M04.3 có code (S4, chờ mở GĐ2); M04.4 Stub | Xem `17` mục C2 — Khung cửi làm ở S5 |
 | 04 | M04.5 Đố Ca Dao (FEAT_02) | Missing | |
 | 05 | M05.1–M05.5 Lán Thợ, Bàn ăn, Đồ bảo hộ, Giỏ 120, Lazy-tick | Partial | Phần tốt nhất của code; vẫn client-side |
 | 06 | M06.1 Đơn HTX | Partial | |

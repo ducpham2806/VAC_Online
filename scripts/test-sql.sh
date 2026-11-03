@@ -39,13 +39,20 @@ run() { echo "→ $1"; "${PSQL[@]}" -d "$DB" -f "$1" >/dev/null; }
 
 run supabase/tests/stub_auth.sql
 for f in supabase/migrations/0*.sql; do run "$f"; done
-echo "→ chạy lại 0002..mới nhất (kiểm idempotent)"
-for f in supabase/migrations/000[2-9]_*.sql; do "${PSQL[@]}" -d "$DB" -f "$f" >/dev/null; done
+echo "→ chạy lại 0002..mới nhất (kiểm idempotent; trước đây mẫu 000[2-9] bỏ sót 0010+)"
+for f in supabase/migrations/0*.sql; do
+  case "$f" in */0001_*) continue ;; esac  # 0001 tạo bảng gốc, chỉ chạy 1 lần
+  "${PSQL[@]}" -d "$DB" -f "$f" >/dev/null
+done
 run supabase/seed/master_catalog_seed.sql
 run supabase/seed/quest_catalog_seed.sql
 run supabase/seed/master_catalog_seed.sql
-echo "→ supabase/tests/farm_core.test.sql"
-"${PSQL[@]}" -d "$DB" -f supabase/tests/farm_core.test.sql
+run supabase/seed/recipe_seed.sql
+run supabase/seed/recipe_seed.sql
+for t in farm_core kitchen livestock workers quests_s5 crafts stage_switch; do
+  echo "→ supabase/tests/$t.test.sql"
+  "${PSQL[@]}" -d "$DB" -f "supabase/tests/$t.test.sql"
+done
 # Không viết `[ … ] && echo …` ở cuối script: khi điều kiện sai (CI có PGHOST → STARTED_LOCAL=0)
 # lệnh cuối trả về 1 và cả script thoát mã 1 dù mọi test đã PASS (lỗi CI job `sql` từ S1).
 if [ "$STARTED_LOCAL" = 1 ]; then echo "(Postgres tạm đã dừng)"; fi

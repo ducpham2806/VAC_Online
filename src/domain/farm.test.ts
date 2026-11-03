@@ -8,6 +8,7 @@ import {
   expandLand,
   growMs,
   harvest,
+  harvestCycles,
   nextTileAction,
   plant,
   sellToHtx,
@@ -173,3 +174,52 @@ describe('dredgePond / expandLand', () => {
     expect(expandLand(save({ stamina: 4 }), NOW).ok).toBe(false);
   });
 });
+
+describe('vật nuôi / thủy sản nuôi nhiều lứa (S5a)', () => {
+  const item = (id: string) => {
+    const it = findItem(id);
+    if (!it) throw new Error(id);
+    return it;
+  };
+
+  it('số lứa = ⌈1,5 × giá giống ÷ tiền 1 lứa⌉, tối thiểu 2; cây trồng 1 lứa', () => {
+    expect(harvestCycles(item('CROP_01'))).toBe(1);
+    expect(harvestCycles(item('ANI_01'))).toBe(5); // 1,5 × 40 ÷ 14 = 4,3
+    expect(harvestCycles(item('AQUA_01'))).toBe(3); // 1,5 × 30 ÷ 17 = 2,6
+    expect(harvestCycles(item('ANI_07'))).toBe(15); // 1,5 × 600 ÷ 62 = 14,5
+  });
+
+  it('mọi vật nuôi / thủy sản đều lãi khi nuôi hết lứa', () => {
+    for (const it of [item('ANI_01'), item('ANI_05'), item('ANI_07'), item('AQUA_01'), item('AQUA_06')]) {
+      const revenue = it.baseSellGold * (it.yieldCount ?? 2) * harvestCycles(it);
+      expect(revenue).toBeGreaterThanOrEqual(1.5 * it.buyCostGold);
+    }
+  });
+
+  it('thu lứa giữa: con giống ở lại, lứa mới bắt đầu lại; lứa cuối: dọn ô', () => {
+    const s = save({ level: 3 });
+    let p = ok(plant(s, 'T2', 'AQUA_01', 1, NOW)).save;
+    expect(p.tiles[1].harvestsLeft).toBe(3);
+    const grow = growMs(item('AQUA_01'), 'CENTRAL');
+    let t = NOW + grow;
+    p = ok(water(p, 'T2', NOW)).save;
+    const h1 = ok(harvest(p, 'T2', t));
+    expect(h1.message).toContain('còn 2 lứa');
+    expect(h1.save.tiles[1]).toMatchObject({ itemId: 'AQUA_01', harvestsLeft: 2, plantedAt: t, matureAt: t + grow, watered: false });
+    expect(harvest(h1.save, 'T2', t + 1000).ok).toBe(false); // lứa mới chưa chín
+    t += grow;
+    const h2 = ok(harvest(h1.save, 'T2', t));
+    t += grow;
+    const h3 = ok(harvest(h2.save, 'T2', t));
+    expect(h3.save.tiles[1].itemId).toBeNull();
+    expect(h3.save.tiles[1].harvestsLeft).toBeUndefined();
+    expect(h3.save.inventory.AQUA_01).toBe(3);
+    expect(h3.save.gold).toBe(2500 - 30); // chỉ trả tiền giống 1 lần
+  });
+
+  it('save cũ chưa có harvestsLeft: thu 1 lần như trước', () => {
+    const s = save({ level: 3, tiles: [tile('T1'), tile('T2', { tileY: 2, zoneType: 'POND', itemId: 'AQUA_01', plantedAt: NOW, matureAt: NOW })] });
+    expect(ok(harvest(s, 'T2', NOW)).save.tiles[1].itemId).toBeNull();
+  });
+});
+

@@ -1,8 +1,13 @@
 /** Trạng thái khởi tạo, save offline ↔ luật domain, ảnh chụp server (tách từ useGameStore.ts — S2). */
 import { FarmTileEntity } from '../data/types';
+import { PREVIEW_PRESET } from '../config/features';
+import { BASE_PLOTS, createPlotTiles } from '../domain/farmGrid';
 import { INITIAL_MARKET_LISTINGS, INITIAL_WORKERS } from '../data/masterData';
 import { STORY_QUESTS } from '../data/quests';
 import { FarmSave } from '../domain/farm';
+import type { KitchenSave, MachineState } from '../domain/cooking';
+import { DAY_MS, WorkerRecord, WorkersSave, isWorking, pantryTotal } from '../domain/workers';
+import type { HiredWorkerState } from '../data/types';
 import { FarmSnapshot, createEmptyTiles, tilesFromSnapshot } from '../services/farmGateway';
 import type { GameData } from './gameTypes';
 
@@ -130,7 +135,9 @@ export function createDemoState(): GameData {
     },
 
     tiles: createDemoTiles(),
-    workers: INITIAL_WORKERS,
+    workerRecords: DEMO_WORKER_RECORDS,
+    workerPantry: { CROP_01: 40, ANI_01: 16, AQUA_01: 12 },
+    workers: workersView(INITIAL_WORKERS, DEMO_WORKER_RECORDS, Date.now()),
     marketListings: INITIAL_MARKET_LISTINGS,
 
     guestbookEntries: [
@@ -239,6 +246,12 @@ export function createDemoState(): GameData {
 
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
     progressCounters: {},
+    machines: {
+      MAC_02: { craftItemId: null, readyAt: null },
+      MAC_03: { craftItemId: null, readyAt: null },
+      MAC_04: { craftItemId: null, readyAt: null },
+    },
+    discoveredRecipes: ['PROD_03', 'PROD_05'],
 
     chatMessages: [
       {
@@ -267,10 +280,23 @@ export function createDemoState(): GameData {
   };
 }
 
+/** Save mẫu bản chạy thử GĐ2 (PREVIEW_PRESET='gd2'): đủ cấp + nguyên liệu để thử Bếp Quê, Xưởng, Lán Thợ. */
+const PREVIEW_GD2: Partial<GameData> = {
+  playerName: 'Điền Chủ Thử GĐ2',
+  level: 15,
+  gold: 12_000,
+  gems: 80,
+  wildPlotsUnlocked: 16,
+  inventory: {
+    CROP_01: 12, CROP_03: 4, CROP_04: 6, CROP_05: 4, CROP_06: 4, CROP_07: 6, CROP_09: 6, CROP_10: 2,
+    CROP_11: 2, CROP_17: 2, CROP_19: 2, CROP_24: 2, ANI_05: 1, ANI_06: 2, AQUA_01: 3, AQUA_02: 2, AQUA_03: 2,
+  },
+};
+
 /** Người chơi mới thật sự (production): Lv.1, 2.500 🪙, Đợt 1 — khớp mặc định bảng profiles. */
 export function createFreshState(): GameData {
   const demo = createDemoState();
-  return {
+  const fresh: GameData = {
     ...demo,
     playerName: 'Điền Chủ Mới',
     accountType: 'GUEST',
@@ -301,7 +327,16 @@ export function createFreshState(): GameData {
     tiles: createEmptyTiles(),
     storyQuests: STORY_QUESTS.map((q) => ({ ...q })),
     progressCounters: {},
+    machines: {},
+    discoveredRecipes: [],
+    workerRecords: {},
+    workerPantry: {},
+    workerPantryCount: 0,
+    lodgeDiningTableMeals: 0,
+    workers: workersView(INITIAL_WORKERS, {}, Date.now()),
   };
+  if (PREVIEW_PRESET !== 'gd2') return fresh;
+  return { ...fresh, ...PREVIEW_GD2, tiles: createPlotTiles(PREVIEW_GD2.wildPlotsUnlocked ?? BASE_PLOTS) };
 }
 
 export const USE_DEMO_SAVE = import.meta.env.DEV;
@@ -357,6 +392,127 @@ export function todayInVietnam(): string {
 }
 
 /** Ảnh chụp từ server → state client (server là nguồn chân lý ở chế độ online). */
+const DEMO_WORKER_RECORDS: Record<string, WorkerRecord> = {
+  WORK_01: { contractUntil: Date.now() + 3 * DAY_MS, belly: 85, tickAt: Date.now() },
+  WORK_02: { contractUntil: Date.now() + 2 * DAY_MS, belly: 65, tickAt: Date.now() },
+};
+
+/** Bản hiển thị 6 thợ (`HiredWorkerState`) suy ra từ hợp đồng thật (S5c). Tên / lương / cấp lấy từ dữ liệu gốc. */
+export function workersView(
+  base: readonly HiredWorkerState[],
+  records: Record<string, WorkerRecord>,
+  now: number
+): HiredWorkerState[] {
+  return base.map((w) => {
+    const rec = records[w.code];
+    if (!rec) return { ...w, isHired: false, contractDaysLeft: 0, belly: 100, equippedGearId: null, gearHoursLeft: 0, statusText: 'Chưa thuê' };
+    const hired = rec.contractUntil > now;
+    const belly = Math.round(rec.belly);
+    const gearLeftMs = rec.gearId && rec.gearUntil ? Math.max(0, rec.gearUntil - now) : 0;
+    return {
+      ...w,
+      equippedGearId: gearLeftMs > 0 ? rec.gearId ?? null : null,
+      gearHoursLeft: Math.ceil(gearLeftMs / 3_600_000),
+      isHired: hired,
+      contractDaysLeft: hired ? Math.ceil((rec.contractUntil - now) / DAY_MS) : 0,
+      belly,
+      statusText: !hired
+        ? 'Hết hợp đồng — gia hạn để thợ làm tiếp'
+        : isWorking(rec, now)
+        ? 'Đang làm: tưới ô chưa tưới, thu ô chín ≥ 5 phút vào Giỏ Thợ'
+        : 'Đói bụng — dọn món Bếp Quê lên Bàn Ăn!',
+    };
+  });
+}
+
+/** Phần save mà luật Lán Thợ đọc/ghi (src/domain/workers.ts). */
+export function toWorkersSave(s: GameData): WorkersSave {
+  return {
+    region: s.region,
+    level: s.level,
+    gold: s.gold,
+    pondMudCounter: s.pondMudCounter,
+    inventory: s.inventory,
+    tiles: s.tiles,
+    workers: s.workerRecords ?? {},
+    tableMeals: s.lodgeDiningTableMeals,
+    pantry: s.workerPantry ?? {},
+    counters: s.progressCounters,
+  };
+}
+
+export function fromWorkersSave(save: WorkersSave, now: number): Partial<GameData> {
+  return {
+    gold: save.gold,
+    pondMudCounter: save.pondMudCounter,
+    inventory: save.inventory,
+    tiles: save.tiles,
+    workerRecords: save.workers,
+    lodgeDiningTableMeals: save.tableMeals,
+    workerPantry: save.pantry,
+    workerPantryCount: pantryTotal(save.pantry),
+    workers: workersView(INITIAL_WORKERS, save.workers, now),
+    progressCounters: save.counters ?? {},
+  };
+}
+
+function workersFromSnapshot(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
+  const records: Record<string, WorkerRecord> = Object.fromEntries(
+    Object.entries(snap.workers ?? {}).map(([id, w]) => [
+      id,
+      { contractUntil: w.contract_until, belly: Number(w.belly), tickAt: w.tick_at, gearId: w.gear_id ?? null, gearUntil: w.gear_until ?? null, bonusUntil: w.bonus_until ?? null },
+    ])
+  );
+  const pantry = snap.worker_pantry ?? {};
+  return {
+    workerRecords: records,
+    workerPantry: pantry,
+    workerPantryCount: pantryTotal(pantry),
+    lodgeDiningTableMeals: snap.lodge_meals ?? prev.lodgeDiningTableMeals,
+    workers: workersView(INITIAL_WORKERS, records, snap.server_now),
+  };
+}
+
+/** Xưởng từ ảnh chụp server (0009) sang dạng domain. */
+export function machinesFromSnapshot(snap: FarmSnapshot): Record<string, MachineState> {
+  return Object.fromEntries(
+    Object.entries(snap.machines ?? {}).map(([id, m]) => [id, { craftItemId: m.craft_item_id ?? null, readyAt: m.ready_at ?? null }])
+  );
+}
+
+/** Phần save mà luật Bếp Quê đọc/ghi (src/domain/cooking.ts). */
+export function toKitchenSave(s: GameData): KitchenSave {
+  return {
+    region: s.region,
+    level: s.level,
+    xp: s.xp,
+    gold: s.gold,
+    gems: s.gems,
+    stamina: s.stamina,
+    maxStamina: s.maxStamina,
+    staminaUpdatedAt: s.staminaUpdatedAt,
+    inventory: s.inventory,
+    machines: s.machines ?? {},
+    discoveredRecipes: s.discoveredRecipes ?? [],
+    counters: s.progressCounters,
+  };
+}
+
+export function fromKitchenSave(save: KitchenSave): Partial<GameData> {
+  return {
+    level: save.level,
+    xp: save.xp,
+    gold: save.gold,
+    gems: save.gems,
+    stamina: save.stamina,
+    staminaUpdatedAt: save.staminaUpdatedAt,
+    inventory: save.inventory,
+    machines: save.machines,
+    discoveredRecipes: save.discoveredRecipes,
+    progressCounters: save.counters ?? {},
+  };
+}
+
 export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<GameData> {
   const p = snap.profile;
   return {
@@ -379,6 +535,9 @@ export function snapshotToState(snap: FarmSnapshot, prev: GameData): Partial<Gam
     inventory: snap.inventory,
     tiles: tilesFromSnapshot(snap),
     progressCounters: snap.counters ?? {},
+    machines: machinesFromSnapshot(snap),
+    discoveredRecipes: snap.recipes ?? [],
+    ...workersFromSnapshot(snap, prev),
     storyQuests: prev.storyQuests.map((q) => {
       const choice = snap.quests[q.id];
       return choice ? { ...q, completed: true, selectedChoice: choice } : { ...q, completed: false };
@@ -411,6 +570,11 @@ export const PERSISTED_KEYS = [
   'tiles',
   'storyQuests',
   'progressCounters',
+  'machines',
+  'discoveredRecipes',
+  'workerRecords',
+  'workerPantry',
+  'lodgeDiningTableMeals',
   'selectedSeedId',
   'farmMode',
 ] as const satisfies ReadonlyArray<keyof GameData>;

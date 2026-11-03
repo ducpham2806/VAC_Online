@@ -37,8 +37,10 @@ export class FarmScene extends Phaser.Scene {
   private player: FarmPlayer | null = null;
   private workerSprites: {
     workerCode?: string;
-    icon: Phaser.GameObjects.Image;
+    icon: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite;
     tag: Phaser.GameObjects.Text;
+    /** Khung atlas `world` của thợ (vd 'worker_tu'); thiếu = hình vẽ code cũ. */
+    worldKey?: string;
     baseX: number;
     baseY: number;
     speed: number;
@@ -288,7 +290,13 @@ export class FarmScene extends Phaser.Scene {
     landmarks.forEach((lm) => {
       const open = isStageOpen(lm.stage);
       // Asset thế giới: nhà chính 3 gian (GĐ1) / lô "sắp mở" có biển gỗ cho công trình chưa mở.
-      const worldFrame = open ? (lm.tex === 'bldg_house' ? 'house' : null) : 'lot_sign';
+      const worldFrame = open
+        ? lm.tex === 'bldg_house'
+          ? 'house'
+          : lm.tex === 'bldg_lodge'
+          ? 'lodge'
+          : null
+        : 'lot_sign';
       const useWorld = worldFrame !== null && hasWorldFrame(this, worldFrame);
       const sprite = (
         useWorld && worldFrame
@@ -518,8 +526,15 @@ export class FarmScene extends Phaser.Scene {
       },
     ];
 
+    // Thợ GĐ2 có sprite atlas `world` (tools/art/codeart_world.py); thợ khác vẫn dùng hình vẽ code.
+    const WORLD_WORKER: Record<string, string> = { WORK_01: 'worker_tu', WORK_02: 'worker_nam' };
     workerConfigs.forEach((wc) => {
-      const icon = this.add.image(wc.x - 68, wc.y, wc.tex).setScale(0.72).setDepth(21);
+      const worldKey = wc.workerCode ? WORLD_WORKER[wc.workerCode] : undefined;
+      const useWorld = !!worldKey && hasWorldFrame(this, `${worldKey}_walk_0`) && this.anims.exists(`${worldKey}_walk`);
+      const icon = useWorld
+        ? this.add.sprite(wc.x - 68, wc.y + 8, WORLD_ATLAS, `${worldKey}_idle_0`).setOrigin(0.5, 1).setScale(0.9).setDepth(21)
+        : this.add.image(wc.x - 68, wc.y, wc.tex).setScale(0.72).setDepth(21);
+      if (useWorld && icon instanceof Phaser.GameObjects.Sprite) icon.play(`${worldKey}_walk`);
       const tag = this.add
         .text(wc.x, wc.y, wc.text, {
           fontSize: '10px',
@@ -535,6 +550,7 @@ export class FarmScene extends Phaser.Scene {
         workerCode: wc.workerCode,
         icon,
         tag,
+        worldKey: useWorld ? worldKey : undefined,
         baseX: wc.x,
         baseY: wc.y,
         speed: wc.speed,
@@ -634,7 +650,9 @@ export class FarmScene extends Phaser.Scene {
       if (!atlas) vis.cropSprite.setScale(0.85);
 
       vis.label.setText(
-        `${spec?.emoji ?? '🌱'} ${spec?.name ?? tile.itemId}${tile.isGolden ? ' ⭐' : ''}`
+        `${spec?.emoji ?? '🌱'} ${spec?.name ?? tile.itemId}${tile.isGolden ? ' ⭐' : ''}${
+          (tile.harvestsLeft ?? 1) > 1 ? ` (còn ${tile.harvestsLeft} lứa)` : ''
+        }`
       );
 
       if (tile.isTiltedByStorm) {
@@ -712,7 +730,13 @@ export class FarmScene extends Phaser.Scene {
           w.tag.x = targetBaseX + offset;
           w.tag.y = targetBaseY - bob;
           w.icon.x = targetBaseX + offset - 62;
-          w.icon.y = targetBaseY - bob;
+          w.icon.y = targetBaseY - bob + (w.worldKey ? 22 : 0);
+          if (w.worldKey && w.icon instanceof Phaser.GameObjects.Sprite) {
+            // Đi theo hướng dao động; đứng ăn ở Lán khi đói.
+            w.icon.setFlipX(Math.cos(time * w.speed + idx) < 0);
+            const anim = isHungry ? `${w.worldKey}_idle` : `${w.worldKey}_walk`;
+            if (w.icon.anims.currentAnim?.key !== anim) w.icon.play(anim);
+          }
 
           w.tag.setText(
             isHungry

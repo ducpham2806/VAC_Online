@@ -21,7 +21,17 @@ export type FarmRpcName =
   | 'rpc_expand_land'
   | 'rpc_claim_story_quest'
   | 'rpc_claim_rookie_day'
-  | 'rpc_claim_account_bonus';
+  | 'rpc_claim_account_bonus'
+  | 'rpc_build_machine'
+  | 'rpc_start_craft'
+  | 'rpc_collect_craft'
+  | 'rpc_eat_dish'
+  | 'rpc_cook_pot'
+  | 'rpc_hire_worker'
+  | 'rpc_serve_lodge_meal'
+  | 'rpc_claim_worker_pantry'
+  | 'rpc_equip_worker_gear'
+  | 'rpc_give_worker_bonus';
 
 interface SnapshotTile {
   x: number;
@@ -34,6 +44,8 @@ interface SnapshotTile {
   is_golden: boolean;
   total_yield: number;
   remaining_yield: number;
+  /** Số lứa còn lại (migration 0010). Server cũ chưa có → undefined = 1. */
+  harvests_left?: number;
 }
 
 export interface FarmSnapshot {
@@ -64,6 +76,14 @@ export interface FarmSnapshot {
   quests: Record<string, 'EMP' | 'PRAG'>;
   /** Bộ đếm hành động cho mục tiêu nhiệm vụ (migration 0007). Server cũ chưa có → undefined. */
   counters?: Record<string, number>;
+  /** Xưởng Bếp Quê (migration 0009). Server cũ chưa có → undefined. */
+  machines?: Record<string, { craft_item_id: string | null; ready_at: number | null }>;
+  /** Món đã khám phá ở Nồi Đất (migration 0009). */
+  recipes?: string[];
+  /** Lán Thợ (migration 0011). Server cũ chưa có → undefined. */
+  workers?: Record<string, { contract_until: number; belly: number; tick_at: number; gear_id?: string | null; gear_until?: number | null; bonus_until?: number | null }>;
+  lodge_meals?: number;
+  worker_pantry?: Record<string, number>;
 }
 
 export type RpcResult = { ok: true; snapshot: FarmSnapshot } | { ok: false; message: string; missing?: boolean };
@@ -130,6 +150,7 @@ export function tilesFromSnapshot(snapshot: FarmSnapshot): FarmTileEntity[] {
       isGolden: s.is_golden,
       totalYield: s.total_yield,
       remainingYield: s.remaining_yield,
+      harvestsLeft: s.harvests_left ?? 1,
     };
   });
 }

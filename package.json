@@ -17,7 +17,8 @@
     "test:art": "python3 -m unittest discover -s tools/art -p 'test_*.py'",
     "art:wave1": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1",
     "art:all": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1 && python3 tools/art/codeart_world.py && python3 tools/art/pack_atlas.py art/source/world --name world && python3 tools/art/codeart_ui.py",
-    "build:preview": "VITE_GAME_STAGE=1 VITE_OFFLINE_DEMO=1 vite build --base=./ --outDir dist-preview --emptyOutDir && python3 tools/make_preview_page.py dist-preview"
+    "build:preview": "VITE_GAME_STAGE=1 VITE_OFFLINE_DEMO=1 vite build --base=./ --outDir dist-preview --emptyOutDir && python3 tools/make_preview_page.py dist-preview",
+    "build:preview:gd2": "VITE_GAME_STAGE=2 VITE_OFFLINE_DEMO=1 VITE_PREVIEW_PRESET=gd2 vite build --base=./ --outDir dist-preview-gd2 --emptyOutDir && python3 tools/make_preview_page.py dist-preview-gd2 'Bản Chạy Thử GĐ2'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
