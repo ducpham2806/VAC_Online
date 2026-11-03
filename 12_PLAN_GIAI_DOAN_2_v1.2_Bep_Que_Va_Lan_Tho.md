@@ -32,7 +32,7 @@
 4. **🏭 Xưởng Làng Nghề (`+3 Xưởng` ➔ `6/8 Xưởng`), Món Ăn (`+9 Món` ➔ `14/27 Món`) & Gia Nhân (`2/6 Thợ`):**
    * Mở *Quán Nước Đầu Làng (`MAC_04`), Lò Gốm & Đan Lát (`MAC_07`), Khung Cửi Dệt Lụa (`MAC_08`)*.
    * Mở 7 món quê (`PROD_06..12`), 2 món nước giải khát (`PROD_19..20`), 2 Đồ bảo hộ 72h (`CRAFT_01` *Nón Lá Tre*, `CRAFT_02` *Áo Cánh Nâu*) và 2 Gia nhân đầu (`WORK_01` *Chú Tư Cày*, `WORK_02` *Cô Năm Thảo*).
-5. **📖 Cốt Truyện Gia Phả:** Mở khóa **Chương 3 (Lv.6)**, **Chương 6 (Lv.14)** & **Chương 7 (Lv.16)**.
+5. **📖 Cốt Truyện Gia Phả:** Mở khóa **Chương 3 (Lv.9)**, **Chương 6 (Lv.13)** & **Chương 7 (Lv.15)**.
 
 ---
 
