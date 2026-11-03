@@ -336,6 +336,32 @@ Mỗi sprint kết thúc bằng: `tsc` 0 lỗi, vitest + CI xanh, smoke test in-
 
 ---
 
+### C4. Kiểm cân bằng trước khi mở GĐ2 (`/vac-balance-check wave:2`, 2026-11-03)
+Dữ liệu: `GAME_CATALOG` + `src/domain` (đã gồm nhiều lứa S5a). Dữ liệu người chơi thật: **NOT ASSESSED** (DB thật có 1 hồ sơ, `analytics_economy` rỗng).
+
+| Nhóm (lãi/phút/ô, tưới −15% chưa tính) | Đợt 1 min / trung vị / max | Đợt 2 min / trung vị / max |
+|---|---|---|
+| Cây ruộng `CROP` | 0,96 / 1,35 / 3,00 (Lúa) | 0,72 / 0,78 / 0,95 |
+| Cây lâu năm `TREE` | 0,95 | 0,89 / 0,92 / 0,93 |
+| Vật nuôi `ANIMAL` (đã nhiều lứa) | 0,23 / 0,34 / 0,40 | 0,16 / 0,24 / 0,24 |
+| Thủy sản `AQUA` | 0,31 / 0,31 / 0,35 | 0,23 / 0,27 / 0,31 |
+
+Mô phỏng 12 ô, chơi bình thường (không bùn), mỗi lần ghé trồng loài lãi nhất kịp chín:
+| Kiểu chơi | Ngày tới Lv 3 / 8 / 9 / 13 / 15 | 🪙/ngày ở Lv 9 → 15 |
+|---|---|---|
+| 4 lần ghé/ngày | 4 / 22 / 25 / 36 / 43 | 5.500 → 9.400 |
+| 8 lần ghé/ngày | 2 / 11 / 13 / 20 / 25 | ~10.900 |
+| 4 lần ghé + vét/bón bùn hết ⚡ | 1 / 2 / 3 / 4 / 5 | **29.000 → 112.000** |
+
+**Bất thường:**
+1. 🔴 **Bùn Phù Sa in tiền (đang chạy ở GĐ1 thật).** Vét bùn 3⚡ → 3 xô, không giới hạn theo `pond_mud_counter` (`dredgePond` / `rpc_dredge_pond` đặt lại bộ đếm nhưng không kiểm). Mỗi xô: chín ngay + 45% Hoàng Kim ×3 → sản lượng kỳ vọng ×1,9. Bón lên cây lâu năm: Đu Đủ `CROP_23` (Lv.8, Đợt 1) **+325🪙/xô**, Chuối `CROP_26` (Lv.14) **+570🪙/xô**, cộng 20 XP/lần vét. ⚡ hồi 20/giờ (tối đa 50) → gấp 5–10 lần mục tiêu `02` (12.000–20.000/ngày GĐ2), lên Lv.15 trong 5 ngày. GĐ2 còn tệ hơn: Cơm Trắng (3 Lúa) cho 5⚡ = 5 xô → vòng tự nhân.
+2. 🔴 **`PROD_C01` Cà Phê Muối (Đợt 2, Lv.15) cần `CROP_C05` Cà Phê (Đợt 4, Lv.22)** → không nấu được ở GĐ2.
+3. 🟡 Vật nuôi / thủy sản vẫn kém cây 3–4 lần mỗi phút (đã hết lỗ từ S5a). Cô Năm giúp vật nuôi chạy lứa khi vắng nhà: Bò `ANI_07` ~310🪙/ô/ngày so với Chuối ~780 (4 lần ghé).
+4. 🟡 Loài Đợt 2 kém Lúa Lv.1 tính theo phút, nhưng lãi **mỗi lần ghé** tăng theo cấp (Lúa 6 → Chuối 196🪙/ô) — chấp nhận được với lối chơi ghé thăm.
+5. 🟢 Tân thủ chơi 4 lần/ngày cần ~4 ngày lên Lv.3 (chỉ có Lúa, 1 XP/lần thu); chơi liền 30 phút thì ~1 ngày. Xem lại khi có beta.
+
+**Đề xuất chờ PO duyệt (đụng kinh tế + SQL):** (a) bùn chỉ lấy được khi ao đầy: `DREDGE_MUD_GAIN = pond_mud_counter` (tối đa 10, +1 mỗi lần thu ao), hoặc giới hạn bón bùn N lần/ngày; và/hoặc bùn không dùng cho `TREE`; (b) đổi nguyên liệu `PROD_C01` sang loài Đợt ≤ 2 (vd Mía `CROP_09` + Sữa Bò `ANI_07` + Đậu Phộng `CROP_10`) hoặc dời món sang Đợt 4. Chưa sửa số nào.
+
 ## PHẦN D — AGENT & SKILL THẬT (thay cho "17 AI Skills" chỉ có tên)
 
 ### D1. Ánh xạ "17 Skills" sang công cụ có thật trong Claude Code
