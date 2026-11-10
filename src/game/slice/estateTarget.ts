@@ -37,7 +37,7 @@ export interface EstateTarget {
 const REPAIRED_HINT: Record<StructureId, string> = {
   WELL: '🪣 Giếng đã sửa — kéo trên ruộng để tưới cả loạt.',
   COOP: '🌽 Chuồng đã sửa — gà về ở bản sau (P1-9).',
-  HOUSE: '🏠 Nhà đã sửa — Gia Phả Chương 1 mở ở bản sau (P1-11).',
+  HOUSE: '🏠 Nhà đã sửa — mở 📜 Gia Phả ở dưới màn hình để xem Chương 1.',
 };
 
 /** Việc điền trang ở ô (x, y); `null` nếu ô đó không phải đối tượng điền trang (ruộng, cỏ). */

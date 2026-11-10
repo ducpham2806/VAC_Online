@@ -133,7 +133,7 @@ describe('P1-7 lưu cục bộ bản thử', () => {
     const raw = stored();
     expect(raw.version).toBe(SLICE_SAVE_VERSION);
     expect(raw.state.save.tiles.find((t: { id: string }) => t.id === id0).itemId).toBe('CROP_01');
-    expect(Object.keys(raw.state).sort()).toEqual(['save', 'seasonOverride', 'seedId']);
+    expect(Object.keys(raw.state).sort()).toEqual(['save', 'seasonOverride', 'seedId', 'tut']); // P1-11: thêm cờ hướng dẫn
   });
 
   it('tải lại (rehydrate) giữ tiến trình và công tắc mùa', async () => {
@@ -247,5 +247,66 @@ describe('P1-10 điền trang trong store bản thử', () => {
     const s = useSliceStore.getState();
     expect(s.save.gold).toBe(1234);
     expect(s.save.estate).toEqual({ cleared: [], repaired: [], reclaimed: 0 });
+  });
+});
+
+describe('P1-11 NPC, Gia Phả, hướng dẫn trong store', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T08:00:00+07:00'));
+    useSliceStore.getState().reset(Date.now());
+  });
+
+  it('đứng cạnh Bác Bảy: nút hành động = nói; bấm → mở hộp thoại, +20 tim, không bật thông báo nổi', () => {
+    useSliceStore.getState().setPlayerTile({ x: 16, y: 7 });
+    expect(selectActionTool(useSliceStore.getState())).toBe('HAND');
+    const toasts = useSliceStore.getState().toasts.length;
+    useSliceStore.getState().actNear();
+    const s = useSliceStore.getState();
+    expect(s.dialog?.npcId).toBe('BAC_BAY');
+    expect(s.dialog?.line).toContain('+20 ❤️');
+    expect(s.save.npcs?.BAC_BAY?.points).toBe(20);
+    expect(s.toasts.length).toBe(toasts);
+  });
+
+  it('tặng quà trong hộp thoại: câu phản ứng hiện trong hộp thoại', () => {
+    useSliceStore.setState((s) => ({ save: { ...s.save, inventory: { CROP_01: 1 } } }));
+    useSliceStore.getState().giftTo('BAC_BAY', 'CROP_01');
+    expect(useSliceStore.getState().dialog?.line).toContain('thích lắm');
+  });
+
+  it('cờ hướng dẫn: đi khỏi chỗ xuất hiện → moved; bán HTX thành công → sold', () => {
+    const st = useSliceStore.getState();
+    st.setPlayerTile({ x: 17, y: 8 }); // chỗ xuất hiện
+    expect(useSliceStore.getState().tut.moved).toBe(false);
+    useSliceStore.getState().setPlayerTile({ x: 16, y: 8 });
+    expect(useSliceStore.getState().tut.moved).toBe(true);
+    useSliceStore.getState().sell('CROP_01', 1); // Kho trống → lỗi
+    expect(useSliceStore.getState().tut.sold).toBe(false);
+    useSliceStore.setState((s) => ({ save: { ...s.save, inventory: { CROP_01: 1 } } }));
+    useSliceStore.getState().sell('CROP_01', 1);
+    expect(useSliceStore.getState().tut.sold).toBe(true);
+  });
+
+  it('chọn hướng ở cảnh mở đầu, rồi nhận Chương 1 khi đủ mục tiêu', () => {
+    useSliceStore.getState().choosePath('EMP');
+    useSliceStore.setState((s) => ({
+      save: { ...s.save, counters: { WATER: 1, 'HARVEST:CROP_01': 1 }, estate: { cleared: [], repaired: ['HOUSE'], reclaimed: 0 } },
+    }));
+    useSliceStore.getState().claimChapter(1);
+    const s = useSliceStore.getState();
+    expect(s.save.story?.claimed).toEqual([1]);
+    expect(s.save.gold).toBe(3100);
+  });
+
+  it('bản lưu v2 (chưa có NPC, Gia Phả, cờ hướng dẫn) vẫn đọc được', async () => {
+    const v2 = { state: { save: newSliceSave(Date.now()), seedId: 'CROP_01', seasonOverride: null }, version: 2 };
+    v2.state.save.gold = 777;
+    localStorage.setItem(SLICE_SAVE_KEY, JSON.stringify(v2));
+    await useSliceStore.persist.rehydrate();
+    const s = useSliceStore.getState();
+    expect(s.save.gold).toBe(777);
+    expect(s.tut).toEqual({ moved: false, sold: false, hidden: false });
   });
 });

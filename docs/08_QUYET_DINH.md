@@ -6,7 +6,6 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-84 | P1-11: chọn 2 NPC có tim, số điểm tim, thưởng Chương 1, thứ tự hướng dẫn 15 phút đầu | P1-11 | NPC: Bác Bảy + Cô Giáo Hương (Bá Kiến chỉ xuất hiện ở cảnh mở đầu, chưa có tim). Tim 0–10, 100 điểm/tim; nói chuyện +20 (1 lần/ngày/NPC), quà thường +30, quà thích +80, quà ghét −20 (1 quà/ngày/NPC); mốc 2 tim mở 1 cảnh ngắn. Chương 1: chọn tình nghĩa/thực dụng ở cảnh mở đầu (TG-40), thưởng giữ số đang có trong `src/data/quests.ts` (600🪙 + 15💎 + 100 XP + nhánh) trả khi đủ: tưới, gặt lúa, sửa Nhà. Hướng dẫn 8 bước: đi → gieo → tưới → gặt → bán HTX → dọn đá → sửa Giếng → sửa Nhà mở Sổ Gia Phả. Chi tiết trong WORKLOG 10/11 |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -48,3 +47,4 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-81 | 10/11 | Thay QD-20 (phần DB): không tạo project mới, dùng project Supabase cũ của MVP. Dữ liệu MVP bỏ được; được viết lại schema **một lần** khi chuyển sang ADR-002, sau đó lại additive-only | `04` KY-31 |
 | QD-82 | 10/11 | Vật nuôi nhỏ thu hình về ~40×40 trong khung 48×48; cây không mang ụ bùn riêng (ô đất đã có đất). Đã áp bằng `import_sheet.py` (`fit`, `strip_soil`) | `05` AR-20, AR-50 |
 | QD-83 | 10/11 | Số liệu P1-10 theo đề xuất: vật liệu `MAT_GO`/`MAT_DA` chỉ từ dọn chướng ngại, hữu hạn trong bản thử; dọn đá 2⚡ → 3 Đá, gốc cây 4⚡ → 5 Gỗ; sửa Giếng / Chuồng gà / Nhà; Giếng mở tưới cả loạt; khai hoang theo vùng `500 × 1,25^k` | `03` KT-15, KT-18, KT-20; `01` GP-14 |
+| QD-84 | 10/11 | P1-11 theo đề xuất: 2 NPC có tim là Bác Bảy + Cô Giáo Hương (Bá Kiến chỉ ở cảnh mở đầu); tim 100 điểm, nói +20, quà thích/thường/ghét +80/+30/−20, mỗi ngày 1 lần nói + 1 quà; chọn tình nghĩa/thực dụng ở cảnh mở đầu, thưởng Chương 1 giữ số trong dữ liệu, trả khi tưới + gặt lúa + sửa Nhà; hướng dẫn 8 bước | `03` KT-19; `01` GP-50, GP-62; `02` TG-40 |

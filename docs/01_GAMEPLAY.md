@@ -143,6 +143,7 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 - **Mốc 2/4/6/8/10 tim:** mở cảnh sự kiện ngắn, công thức, giảm giá hoặc nhờ vả mới.
 - **Sở thích:** ghi trong dữ liệu NPC (`02` TG-20). Hồ sơ NPC chỉ hiện sở thích người chơi đã phát hiện.
 - **Lời thoại** theo mùa, thời tiết, số tim và chương.
+- **Chạm NPC** (hoặc nút hành động khi đứng cạnh) mở hộp thoại: chào hỏi, tặng quà từ Kho. NPC chưa chào trong ngày có 💬 trên đầu. Số điểm: KT-19.
 
 ### GP-52 · Hẹn hò và cưới (Đợt 5)
 - **Ứng viên:** có tên ở `02` TG-20. Đạt 10 tim (QD-25) và tặng tín vật Trầu Cau thì tổ chức lễ cưới ở Đình.
@@ -173,7 +174,8 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 - **Người dẫn:** Bác Bảy dẫn tối đa 8 bước trong Chương 1–2.
 - **Các bước:** đi lại, cuốc, gieo, tưới, thu, bán HTX, giao đơn đầu tiên, vét bùn và bón bùn.
 - **Cách chạy:** mỗi bước tự xong theo trạng thái game, có thể ẩn. Không chặn người chơi làm việc khác.
-- Code hiện có: `src/domain/tutorial.ts` (theo luật cũ).
+- **Bản thử (QD-84):** 8 bước — đi lại, gieo, tưới, gặt, bán HTX, dọn đá, sửa Giếng, sửa Nhà; xong thì nhắc mở Gia Phả nhận Chương 1. Mũi tên trên bản đồ chỉ chỗ cần làm; thiếu vật liệu thì chỉ chỗ lấy (`src/game/slice/sliceTutorial.ts`).
+- Code MVP cũ: `src/domain/tutorial.ts` (theo luật cũ).
 
 ### GP-63 · Nhiệm vụ
 1. **Chính tuyến:** 10 Chương Gia Phả. Mục tiêu đo được trên server; bộ đếm có sẵn: tưới, thu theo loài, vét bùn, bón bùn, xây, nấu, thuê, dọn món, cấp đồ. Mỗi chương có một lựa chọn "tình nghĩa / thực dụng" ảnh hưởng thưởng (`02` TG-30).

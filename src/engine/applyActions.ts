@@ -8,6 +8,8 @@ import type { FarmTileEntity, RegionType, Season } from '../data/types';
 import { type FarmResult, type FarmSave, findItem, harvest, plant, sellToHtx, water, withRegen } from '../domain/farm';
 import { canSowInSeason, seasonAt } from '../domain/season';
 import { type StructureId, clearObstacle, isRepaired, reclaimRegion, repairStructure } from '../domain/estate';
+import { giftItem, talk } from '../domain/npc';
+import { choosePath, claimChapter } from '../domain/story';
 
 export const MAX_ACTIONS_PER_BATCH = 50;
 export const STATE_SCHEMA_VERSION = 1;
@@ -19,7 +21,11 @@ export type Action =
   | { type: 'SELL'; itemId: string; qty: number }
   | { type: 'CLEAR'; obstacleId: string }
   | { type: 'REPAIR'; structureId: StructureId }
-  | { type: 'RECLAIM'; regionIndex: number };
+  | { type: 'RECLAIM'; regionIndex: number }
+  | { type: 'TALK'; npcId: string }
+  | { type: 'GIFT'; npcId: string; itemId: string }
+  | { type: 'CHOOSE_PATH'; path: string }
+  | { type: 'CLAIM_CHAPTER'; chapterNo: number };
 
 export interface LedgerRow {
   currency: 'GOLD' | 'GEM' | 'STAMINA';
@@ -90,6 +96,14 @@ function ref(action: Action): string {
     case 'SELL':
     case 'PLANT':
       return action.itemId;
+    case 'TALK':
+      return action.npcId;
+    case 'GIFT':
+      return `${action.npcId}:${action.itemId}`;
+    case 'CHOOSE_PATH':
+      return action.path;
+    case 'CLAIM_CHAPTER':
+      return `CH${action.chapterNo}`;
     case 'CLEAR':
       return action.obstacleId;
     case 'REPAIR':
@@ -126,6 +140,14 @@ function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
       return repairStructure(save, action.structureId);
     case 'RECLAIM':
       return reclaimRegion(save, action.regionIndex, ctx.now);
+    case 'TALK':
+      return talk(save, action.npcId, ctx.now);
+    case 'GIFT':
+      return giftItem(save, action.npcId, action.itemId, ctx.now);
+    case 'CHOOSE_PATH':
+      return choosePath(save, action.path);
+    case 'CLAIM_CHAPTER':
+      return claimChapter(save, action.chapterNo);
   }
 }
 

@@ -55,8 +55,9 @@ export function sowableSeeds(save: FarmSave, season: Season): CatalogItem[] {
 /**
  * P1-7 — phiên bản dữ liệu lưu cục bộ của bản thử. Tăng khi đổi cấu trúc, kèm nhánh `migrate`.
  * v2 (P1-10): thêm `save.estate`; bản v1 đọc được nguyên (thiếu `estate` = điền trang ban đầu).
+ * v3 (P1-11): thêm `save.npcs`, `save.story` và cờ hướng dẫn `tut`; thiếu = ban đầu (đọc qua `npcOf`, `storyOf`).
  */
-export const SLICE_SAVE_VERSION = 2;
+export const SLICE_SAVE_VERSION = 3;
 export const SLICE_SAVE_KEY = 'vac_slice_save_v1';
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;

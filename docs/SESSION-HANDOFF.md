@@ -1,4 +1,4 @@
-# Bàn giao · 10/11/2026 · P1 đang chạy (P1-1…7, P1-10 xong)
+# Bàn giao · 10/11/2026 · P1 đang chạy (P1-1…7, P1-10, P1-11 xong)
 
 ## Việc vừa làm
 Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
@@ -6,10 +6,12 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P1-4/5: chạm ô, kéo cả loạt, nút hành động, HUD lai, Kho bán HTX (`src/domain/tools.ts`, `src/store/useSliceStore.ts`, `src/ui/hud/SliceHud.tsx`).
 - P1-6/7: mùa trên bản đồ + công tắc mùa (⚙️), lưu cục bộ `vac_slice_save_v1`.
 - P1-10 (QD-83): dọn đá/gốc cây → Gỗ/Đá, sửa giếng/chuồng/nhà, khai hoang 2 vùng (`src/domain/estate.ts`, `src/game/slice/estateTarget.ts`).
+- P1-11 (QD-84): cảnh mở đầu, 2 NPC có tim, Sổ Gia Phả Chương 1, hướng dẫn 8 bước (`src/domain/npc.ts`, `story.ts`, `src/game/slice/sliceTutorial.ts`, `src/ui/hud/SliceStoryHud.tsx`).
 - Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
 
 ## Đã xác minh
-- typecheck, 250 test, build, test:art, check:docs PASS.
+- typecheck, 270 test, build, test:art, check:docs PASS.
+- `tools/qa/p1-tutorial-smoke.cjs`: người mới theo hướng dẫn đi hết 8 bước + nhận Chương 1 ở 2 cỡ, không kẹt.
 - `tools/qa/p1-slice-smoke.cjs` (cần `npx vite --port 5179`): cả vòng gieo → bán, điền trang (dọn, sửa, khai hoang, giếng mở tưới cả loạt), 4 mùa, tải lại giữ tiến trình ở 2 cỡ, 0 nút < 44 px, 0 lỗi JS.
 - Playwright `?p1` ở 1280×720 và 844×390: chạm đi tới, joystick, 0 lỗi JS. Ảnh: `docs/screenshots/p1-3-*.png`.
 
@@ -18,9 +20,9 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-11: 2 NPC có tim, Chương 1 (mở khi sửa nhà), hướng dẫn 15 phút đầu — làm được, cần impact report (core loop).
-2. P1-9: cần PO duyệt 8 loài (5 cây, 2 vật nuôi, 1 cá) 2 mùa Bắc Bộ.
-3. P1-8 khi có quyền Supabase project VAC.
+1. P1-9: cần PO duyệt 8 loài (5 cây, 2 vật nuôi, 1 cá) 2 mùa Bắc Bộ.
+2. P1-8 khi có quyền Supabase project VAC.
+3. P1-12 chơi thử 10–20 người (cần art thật cho nhà/giếng/NPC trước).
 4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên

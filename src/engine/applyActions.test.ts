@@ -90,3 +90,30 @@ describe('P1-10 engine — điền trang (GP-14, KT-15, KT-18)', () => {
     expect(r.save.tiles).toHaveLength(6 + 8);
   });
 });
+
+describe('P1-11 engine — NPC và Gia Phả (GP-50, TG-30)', () => {
+  it('chọn hướng → nói chuyện → tặng quà → nhận Chương 1: sổ cái ghi vàng và ngọc của chương', () => {
+    const s0 = {
+      ...newFarmSave('NORTH', SPRING),
+      inventory: { CROP_01: 1 },
+      counters: { WATER: 1, 'HARVEST:CROP_01': 1 },
+      estate: { cleared: [], repaired: ['HOUSE' as const], reclaimed: 0 },
+    };
+    const r = applyActions(
+      s0,
+      [
+        { type: 'CHOOSE_PATH', path: 'PRAG' },
+        { type: 'TALK', npcId: 'BAC_BAY' },
+        { type: 'GIFT', npcId: 'BAC_BAY', itemId: 'CROP_01' },
+        { type: 'CLAIM_CHAPTER', chapterNo: 1 },
+      ],
+      ctx(SPRING),
+    );
+    expect(r.results.map((x) => x.ok)).toEqual([true, true, true, true]);
+    expect(r.save.npcs?.BAC_BAY?.points).toBe(100);
+    expect(r.ledger.map((l) => [l.currency, l.delta, l.reason, l.ref])).toEqual([
+      ['GOLD', 950, 'CLAIM_CHAPTER', 'CH1'],
+      ['GEM', 15, 'CLAIM_CHAPTER', 'CH1'],
+    ]);
+  });
+});

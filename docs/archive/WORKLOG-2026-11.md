@@ -59,3 +59,9 @@
 - P1-7: `useSliceStore` lưu `vac_slice_save_v1` (version 1, chỉ lưu save + giống + công tắc mùa); bản hỏng/khác phiên bản → chơi lại; `reconcileSliceSave` khớp ô ruộng với bản đồ. Nút "Chơi lại từ đầu" có xác nhận.
 - Kiểm: typecheck, 225 test (+9), build, test:art, check:docs PASS. `tools/qa/p1-slice-smoke.cjs` 2 cỡ: 4 mùa đổi đúng (bản đồ + HUD), Đông túi hạt trống, tải lại trang giữ ô đã gieo và vàng; 0 nút < 44 px; 0 lỗi JS.
 - **Dừng ở:** P1-8 chờ quyền Supabase project VAC; P1-9 chờ PO duyệt 8 loài; P1-10 (sửa nhà/giếng/chuồng, khai hoang) làm được ngay.
+
+## 10/11/2026 · P1-10 Bước 1: đề xuất số liệu, chờ PO (QD-83) · claude/gifted-faraday-2q851c
+- Impact report: (1) core VAC: thêm vòng dọn chướng ngại → vật liệu → sửa hạng mục, không đổi gieo/tưới/gặt; (2) kinh tế: CÓ — 2 vật liệu mới `MAT_GO`/`MAT_DA`, giá sửa, ⚡ dọn đá/gốc cây (KT-20 "chốt ở P1"), khai hoang thêm 22 ô ruộng; (3) art/UI: hạng mục đổ nát/đã sửa vẽ tạm từ atlas `world` (tô tối + đống gạch), cần PO tạo ảnh thật sau; (4) module cũ: MVP không đổi, engine thêm 3 action `CLEAR`/`REPAIR`/`RECLAIM`, bản lưu bản thử lên version 2 có `migrate`; (5) DB: chưa (P1-8 BLOCKED), engine dùng chung nên không viết luật SQL riêng.
+- Tổng chi để sửa đủ 3 hạng mục: 1.200🪙 + 12 Gỗ + 6 Đá; bản đồ có 3 cụm gốc cây (15 Gỗ) và 3 tảng đá (9 Đá), dư một chút. Người mới có 2.500🪙. Vật liệu hữu hạn trong bản thử (không mọc lại).
+- Khai hoang: vùng 1 (8 ô) 500🪙, vùng 2 (14 ô) 625🪙, mỗi vùng 5⚡ +45 XP +25 Phong Thủy. Sửa hạng mục +20/30/40 Phong Thủy (giếng/chuồng/nhà); mốc thưởng Phong Thủy để sau.
+- **Dừng ở:** chờ PO duyệt QD-83 (hoặc sửa số), rồi mới code P1-10.

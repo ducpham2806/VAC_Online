@@ -7,6 +7,7 @@
  * Nhà/giếng/cây/đá đang dùng hình vẽ code của atlas `world` (tạm).
  * P1-10: đá/gốc cây dọn xong thì biến mất; hạng mục đổ nát (tô tối + đống gạch) → sửa xong hiện bình thường;
  * vùng đất hoang kế tiếp có khung mờ, khai hoang xong thành ô ruộng (GP-14).
+ * P1-11: 2 NPC đứng trên bản đồ (chạm → hộp thoại, 💬 khi hôm nay chưa chào), mũi tên chỉ bước hướng dẫn (GP-62).
  */
 import Phaser from 'phaser';
 import {
@@ -40,6 +41,9 @@ import {
 import type { Season } from '../../data/types';
 import { plotId, targetAt } from './sliceSave';
 import { TOOL_EMOJI } from './toolIcons';
+import { NPCS, NPC_IDS, type NpcId, npcAt } from '../../data/npcs';
+import { npcOf, vnDay } from '../../domain/npc';
+import { currentTutorialStep, tutorialTarget } from './sliceTutorial';
 
 export const SLICE_ATLAS = 'slice';
 const WORLD = 'world';
@@ -98,6 +102,10 @@ export class EstateScene extends Phaser.Scene {
   private hens: Phaser.GameObjects.Sprite[] = [];
   private nextRegion!: Phaser.GameObjects.Graphics;
   private shownEstate = '';
+  private npcBubbles = new Map<NpcId, Phaser.GameObjects.Text>();
+  private guide!: Phaser.GameObjects.Text;
+  private guideAt = '';
+  private guideTween: Phaser.Tweens.Tween | null = null;
 
   constructor() {
     super('EstateScene');
@@ -120,7 +128,7 @@ export class EstateScene extends Phaser.Scene {
     this.applySeason();
     this.lastFxSeq = useSliceStore.getState().fx.at(-1)?.seq ?? 0;
     this.unsubscribe = useSliceStore.subscribe((st, prev) => {
-      if (st.save !== prev.save || st.now !== prev.now) this.renderPlots();
+      if (st.save !== prev.save || st.now !== prev.now || st.tut !== prev.tut) this.renderPlots();
       if (st.fx !== prev.fx) this.playFx();
       if (st.now !== prev.now || st.seasonOverride !== prev.seasonOverride) this.applySeason();
     });
@@ -167,6 +175,40 @@ export class EstateScene extends Phaser.Scene {
     this.drawTrees();
     this.drawCoop();
     this.nextRegion = this.add2(this.add.graphics().setDepth(-940));
+    this.drawNpcs();
+    this.guide = this.add2(this.add.text(0, 0, '▼', { fontSize: '18px', color: '#f5b700', stroke: '#3d2314', strokeThickness: 4 }).setOrigin(0.5, 1).setDepth(19_000).setVisible(false));
+  }
+
+  /** NPC có tim (GP-50): hình tạm từ atlas `world`, khung đứng yên 2 nhịp; 💬 khi hôm nay chưa chào. */
+  private drawNpcs(): void {
+    for (const id of NPC_IDS) {
+      const n = NPCS[id];
+      const x = n.tile.x * TILE + TILE / 2;
+      const y = (n.tile.y + 1) * TILE - 2;
+      const spr = this.add2(this.add.sprite(x, y, WORLD, n.frame).setOrigin(0.5, 1).setDepth(y));
+      const alt = n.frame.replace(/_0$/, '_1');
+      this.time.addEvent({ delay: 700, loop: true, callback: () => spr.setFrame(spr.frame.name === n.frame ? alt : n.frame) });
+      const bubble = this.add2(this.add.text(x + 10, y - spr.displayHeight, '💬', { fontSize: '14px' }).setOrigin(0.5, 1).setDepth(y + 1));
+      this.npcBubbles.set(id, bubble);
+    }
+  }
+
+  /** 💬 trên NPC chưa chào hôm nay + mũi tên chỉ bước hướng dẫn đang làm. */
+  private syncPeople(): void {
+    const st = useSliceStore.getState();
+    const day = vnDay(Date.now());
+    for (const [id, b] of this.npcBubbles) b.setVisible(npcOf(st.save, id).talkDay !== day);
+    const view = { save: st.save, moved: st.tut.moved, sold: st.tut.sold };
+    const cur = st.save.story?.path ? currentTutorialStep(view) : null;
+    const t = !st.tut.hidden && cur ? tutorialTarget(cur.step, view) : undefined;
+    this.guide.setVisible(!!t);
+    const key = t ? `${t.x},${t.y}` : '';
+    if (!t || key === this.guideAt) return;
+    this.guideAt = key;
+    // đặt lại vị trí rồi chạy lại nhịp nhún (tween tính theo vị trí lúc bắt đầu)
+    this.guideTween?.remove();
+    this.guide.setPosition(t.x * TILE + TILE / 2, t.y * TILE - 2);
+    this.guideTween = this.tweens.add({ targets: this.guide, y: '-=6', duration: 500, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   }
 
   /** P1-10: vẽ lại phần điền trang khi `save.estate` đổi (dọn, sửa, khai hoang). */
@@ -266,6 +308,7 @@ export class EstateScene extends Phaser.Scene {
   /** Ô ruộng: đất khô/ướt + cây theo giai đoạn, vẽ lại mỗi khi trạng thái đổi hoặc mỗi giây. */
   private renderPlots(): void {
     this.syncEstate();
+    this.syncPeople();
     const { save, now } = useSliceStore.getState();
     for (const t of save.tiles) {
       let v = this.plots.get(t.id);
@@ -380,7 +423,7 @@ export class EstateScene extends Phaser.Scene {
     const free = (px: number, py: number) =>
       [-FEET_HALF_W, FEET_HALF_W].every((ox) => {
         const t = worldToTile(px + ox, py - 2);
-        return isWalkable(t.x, t.y, this.estate());
+        return isWalkable(t.x, t.y, this.estate()) && !npcAt(t.x, t.y);
       });
     if (dx !== 0 && free(this.player.x + dx, this.player.y)) this.player.x += dx;
     if (dy !== 0 && free(this.player.x, this.player.y + dy)) this.player.y += dy;
@@ -459,6 +502,17 @@ export class EstateScene extends Phaser.Scene {
   /** Chạm vào ô `t`: trong tầm thì làm, xa thì đi tới (rồi `arrive`). */
   private interact(t: TilePos, allowWalk: boolean): void {
     const st = useSliceStore.getState();
+    const npc = npcAt(t.x, t.y);
+    if (npc) {
+      // NPC (GP-50): trong tầm thì mở hộp thoại, xa thì đi tới rồi mở
+      if (!this.reaches(this.feetTile(), t)) {
+        if (allowWalk && this.walkToTile(t, true)) this.pendingTarget = t;
+        return;
+      }
+      this.face(t);
+      st.openNpc(npc);
+      return;
+    }
     const kind = targetAt(t.x, t.y, estateOf(st.save));
     const tile = kind === 'PLOT' ? st.save.tiles.find((p) => p.id === plotId(t.x, t.y)) : undefined;
     const tool = tile ? toolForPlot(tile, Date.now()) : 'NONE';
@@ -616,7 +670,7 @@ export class EstateScene extends Phaser.Scene {
   walkToTile(target: TilePos, stopInReach = false): boolean {
     const from = this.feetTile();
     const estate = this.estate();
-    const r = pathToward(from, target, (x, y) => isWalkable(x, y, estate));
+    const r = pathToward(from, target, (x, y) => isWalkable(x, y, estate) && !npcAt(x, y));
     if (!r) return false;
     let path = r.path;
     if (stopInReach) {

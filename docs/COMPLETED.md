@@ -2,6 +2,13 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-11 · NPC có tim, Chương 1, hướng dẫn · 10/11/2026 — DONE (chưa có người chơi thử)
+- Cảnh mở đầu (TG-40): Bác Bảy trao tráp, Bá Kiến ép bán đất, người chơi chọn tình nghĩa / thực dụng.
+- 2 NPC có tim (Bác Bảy, Cô Giáo Hương): nói chuyện, tặng quà mỗi ngày, mốc 2 tim có cảnh ngắn (KT-19).
+- Sổ Gia Phả Chương 1: tưới + gặt lúa + sửa Nhà → nhận 600🪙 + 15💎 + 100 XP + thưởng nhánh.
+- Hướng dẫn 8 bước của Bác Bảy có mũi tên trên bản đồ; kiểm tự động: người mới đi hết không kẹt ở 2 cỡ màn.
+- Chưa: art NPC thật (Cô Hương mượn hình nông dân nữ), cảnh tim 4–10, server. Ảnh: `docs/screenshots/p1-11-*`.
+
 ## P1-10 · Điền trang: dọn, sửa, khai hoang · 10/11/2026 — DONE (chưa có người chơi thử)
 - Dọn đá / gốc cây (tốn ⚡) lấy Gỗ, Đá; sửa Giếng, Chuồng gà, Nhà (vàng + vật liệu, hỏi lại trước khi trừ) theo QD-83, KT-18.
 - Giếng chưa sửa thì mỗi lượt kéo chỉ tưới 1 ô; sửa xong tưới cả loạt. Khai hoang theo vùng `500 × 1,25^k` (KT-15), vùng 1 +8 ô, vùng 2 +14 ô.

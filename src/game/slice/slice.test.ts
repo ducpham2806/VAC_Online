@@ -4,6 +4,8 @@ import { facing, inJoystickZone, isDrag, joystickVector, JOYSTICK_RADIUS_PX } fr
 import { findPath, pathToward } from './pathfinding';
 import { newSliceSave, plotId, reconcileSliceSave, targetAt } from './sliceSave';
 import { estateTargetAt } from './estateTarget';
+import { SLICE_TUTORIAL, currentTutorialStep, tutorialTarget } from './sliceTutorial';
+import { NPCS, NPC_IDS, npcAt } from '../../data/npcs';
 
 describe('P1-3 bản đồ điền trang', () => {
   it('mọi hàng cùng độ rộng, viền kín', () => {
@@ -123,5 +125,49 @@ describe('P1-10 bản đồ có tính điền trang', () => {
     expect(estateTargetAt(s, 15, 11)).toBeNull();
     const repaired = { ...s, estate: { cleared: [], repaired: ['WELL' as const], reclaimed: 0 } };
     expect(estateTargetAt(repaired, 18, 4)).toMatchObject({ tool: 'NONE', action: null });
+  });
+});
+
+describe('P1-11 hướng dẫn 8 bước (GP-62)', () => {
+  it('bước đang làm theo trạng thái thật; xong cả 8 → null', () => {
+    const s = newSliceSave(0);
+    const v = { save: s, moved: false, sold: false };
+    expect(currentTutorialStep(v)?.step.id).toBe('MOVE');
+    expect(currentTutorialStep({ ...v, moved: true })?.step.id).toBe('PLANT');
+    const watered = { ...s, counters: { WATER: 1 } };
+    expect(currentTutorialStep({ ...v, moved: true, save: watered })?.step.id).toBe('HARVEST');
+    const all = {
+      ...s,
+      counters: { WATER: 1, 'HARVEST:CROP_01': 1 },
+      estate: { cleared: ['R_19_10'], repaired: ['WELL' as const, 'HOUSE' as const], reclaimed: 0 },
+    };
+    expect(currentTutorialStep({ save: all, moved: true, sold: false })?.step.id).toBe('SELL');
+    expect(currentTutorialStep({ save: all, moved: true, sold: true })).toBeNull();
+    expect(SLICE_TUTORIAL.length).toBeLessThanOrEqual(8);
+  });
+
+  it('NPC đứng trên ô đi được, không trùng ô ruộng/đối tượng', () => {
+    for (const id of NPC_IDS) {
+      const { x, y } = NPCS[id].tile;
+      expect(isWalkable(x, y)).toBe(true);
+      expect(targetAt(x, y)).toBe('GROUND');
+      expect(npcAt(x, y)).toBe(id);
+    }
+  });
+});
+
+describe('P1-11 mũi tên hướng dẫn chỉ chỗ lấy vật liệu khi thiếu', () => {
+  it('bước sửa giếng: thiếu Đá → chỉ tảng đá chưa dọn; đủ → chỉ giếng', () => {
+    const s = newSliceSave(0);
+    const well = SLICE_TUTORIAL.find((x) => x.id === 'WELL')!;
+    const v = (inv: Record<string, number>, cleared: string[] = []) => ({
+      save: { ...s, inventory: inv, estate: { cleared, repaired: [], reclaimed: 0 } },
+      moved: true,
+      sold: true,
+    });
+    expect(tutorialTarget(well, v({ MAT_DA: 3 }, ['R_19_10']))).toEqual({ x: 3, y: 12 });
+    expect(tutorialTarget(well, v({ MAT_DA: 4 }))).toEqual({ x: 18, y: 4 });
+    const house = SLICE_TUTORIAL.find((x) => x.id === 'HOUSE')!;
+    expect(tutorialTarget(house, v({ MAT_DA: 2, MAT_GO: 5 }, ['T_5_1']))).toEqual({ x: 22, y: 1 });
   });
 });

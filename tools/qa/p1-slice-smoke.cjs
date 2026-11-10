@@ -1,7 +1,7 @@
 /**
  * Kiểm thử khói bản thử P1 (?p1): đi tới, gieo/tưới/gặt cả loạt, nút hành động, Kho bán HTX, thanh công cụ,
  * công tắc 4 mùa (P1-6), tải lại trang giữ tiến trình (P1-7), điền trang: dọn đá/gốc cây, sửa giếng/chuồng/nhà,
- * khai hoang, giếng mở tưới cả loạt (P1-10),
+ * khai hoang, giếng mở tưới cả loạt (P1-10), cảnh mở đầu + Gia Phả Chương 1 + NPC (P1-11),
  * chụp 1280x720 + 844x390 và báo nút < 44 px (UI-01).
  *   npx vite --port 5179 --strictPort &   (cần DEV để có window.__vacSlice)
  *   node tools/qa/p1-slice-smoke.cjs docs/screenshots
@@ -19,6 +19,10 @@ const { chromium } = require('playwright');
     await p.goto('http://localhost:5179/?p1');
     await p.waitForFunction(() => window.__vacSlice && window.__vacSlice.sys.isActive() && window.__vacSliceStore, null, { timeout: 15000 });
     await p.waitForTimeout(500);
+    // P1-11: cảnh mở đầu (TG-40) — đọc 2 trang rồi chọn tình nghĩa
+    await p.getByTestId('intro-next').click(); await p.getByTestId('intro-next').click();
+    if (w === 844) await p.screenshot({ path: `${out}/p1-11-intro-${w}x${h}.png` });
+    await p.getByTestId('choose-EMP').click(); await p.waitForTimeout(200);
     const toScreen = (tx, ty) => p.evaluate(([tx, ty]) => { const c = window.__vacSlice.cameras.main;
       return { x: (tx * 32 + 16 - c.worldView.x) * c.zoom, y: (ty * 32 + 16 - c.worldView.y) * c.zoom }; }, [tx, ty]);
     const st = () => p.evaluate(() => { const s = window.__vacSliceStore.getState(); return { gold: s.save.gold, inv: s.save.inventory,
@@ -30,7 +34,9 @@ const { chromium } = require('playwright');
     const tapUntil = async (tx, ty, cond, arg) => {
       const r = await toScreen(tx, ty);
       // ngoài màn hoặc rơi vào vùng joystick (UI-20: chạm ở đó là cần điều khiển, không phải chạm ô)
-      if (r.x < 0 || r.y < 0 || r.x > w || r.y > h || (r.x < w / 3 && r.y > h * 0.6)) await p.evaluate(([tx, ty]) => window.__vacSlice.tapWorld(tx * 32 + 16, ty * 32 + 16), [tx, ty]);
+      const onCanvas = r.x >= 0 && r.y >= 0 && r.x <= w && r.y <= h && (await p.evaluate(([x, y]) => document.elementFromPoint(x, y)?.tagName === 'CANVAS', [r.x, r.y]));
+      // ô bị nút HUD che → chạm thẳng vào thế giới (như người chơi kéo bản đồ rồi chạm)
+      if (!onCanvas || (r.x < w / 3 && r.y > h * 0.6)) await p.evaluate(([tx, ty]) => window.__vacSlice.tapWorld(tx * 32 + 16, ty * 32 + 16), [tx, ty]);
       else await p.mouse.click(r.x, r.y);
       await p.waitForFunction(cond, arg, { timeout: 15000 }).catch(async (e) => {
         console.log('tapUntil', tx, ty, JSON.stringify(r), JSON.stringify(await est()), JSON.stringify(await p.evaluate(() => window.__vacSlice.debugState())));
@@ -70,6 +76,15 @@ const { chromium } = require('playwright');
     // khai hoang vùng 1
     await tapUntil(9, 7, pendingOpen); await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(300);
     log.push(['reclaim-1', await est()]);
+    // P1-11: Gia Phả — chưa gặt nên chưa nhận được; nói chuyện + tặng Gỗ cho Cô Hương
+    await p.getByRole('button', { name: 'Gia Phả' }).click(); await p.waitForTimeout(200);
+    log.push(['giapha-goals', await p.getByTestId('giapha').innerText().then((t) => t.split('\n').filter((l) => /^[✅⬜]/.test(l)).join(' | '))]);
+    await p.getByRole('button', { name: 'Đóng' }).click();
+    await tapUntil(21, 10, () => !!window.__vacSliceStore.getState().dialog);
+    await p.getByTestId('gift-MAT_GO').click(); await p.waitForTimeout(200);
+    log.push(['npc-huong', await p.getByTestId('npc-dialog').innerText().then((t) => t.replace(/\n/g, ' ').slice(0, 160))]);
+    await p.screenshot({ path: `${out}/p1-11-npc-${w}x${h}.png` });
+    await p.getByRole('button', { name: 'Đóng' }).click();
     // quay lại ruộng, kéo tưới cả loạt (giếng đã sửa)
     await p.evaluate(() => window.__vacSlice.tapWorld(4 * 32 + 16, 8 * 32 + 16)); // cỏ sát ruộng
     await p.waitForFunction(() => !window.__vacSlice.debugState().moving, null, { timeout: 15000 }); await p.waitForTimeout(200);
@@ -89,6 +104,12 @@ const { chromium } = require('playwright');
     s = await toScreen(7, 8); await p.mouse.move(s.x, s.y); await p.mouse.down();
     for (const q of [[7, 7], [6, 7], [5, 7], [5, 8], [6, 8]]) { const r = await toScreen(...q); await p.mouse.move(r.x, r.y, { steps: 5 }); }
     await p.mouse.up(); await p.waitForTimeout(300); log.push(['drag-harvest', await st()]);
+    // 5b) P1-11: đủ mục tiêu (tưới, gặt, sửa nhà) → nhận thưởng Chương 1
+    await p.getByRole('button', { name: 'Gia Phả' }).click(); await p.waitForTimeout(200);
+    await p.getByTestId('claim-ch1').click(); await p.waitForTimeout(300);
+    log.push(['claim-ch1', await est()]);
+    await p.screenshot({ path: `${out}/p1-11-giapha-${w}x${h}.png` });
+    await p.getByRole('button', { name: 'Đóng' }).click();
     // 6) Kho → bán HTX
     await p.getByRole('button', { name: 'Kho' }).click(); await p.waitForTimeout(300);
     await p.screenshot({ path: `${out}/p1-5-kho-${w}x${h}.png` });

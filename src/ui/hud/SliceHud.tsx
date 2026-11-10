@@ -13,6 +13,8 @@ import { TOOL_EMOJI } from '../../game/slice/toolIcons';
 import { sowableSeeds } from '../../game/slice/sliceSave';
 import { effectiveSeason, itemLabel, selectActionTool, useSliceStore } from '../../store/useSliceStore';
 import { GameIcon } from '../GameIcon';
+import { Sheet, btn } from './sliceUi';
+import { GiaPhaPanel, IntroScene, NpcDialogSheet, TutorialBar } from './SliceStoryHud';
 
 const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
   XUAN: { icon: '🌸', name: 'Xuân' },
@@ -21,13 +23,13 @@ const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
   DONG: { icon: '❄️', name: 'Đông' },
 };
 const TOOL_LABEL: Record<Tool, string> = {
-  HOE: 'Cuốc', SEED: 'Gieo', WATER: 'Tưới', SICKLE: 'Gặt', FEED: 'Cho ăn', ROD: 'Câu', AXE: 'Dọn', HAMMER: 'Sửa', HAND: 'Chạm', NONE: '—',
+  HOE: 'Cuốc', SEED: 'Gieo', WATER: 'Tưới', SICKLE: 'Gặt', FEED: 'Cho ăn', ROD: 'Câu', AXE: 'Dọn', HAMMER: 'Sửa', HAND: 'Nói', NONE: '—',
 };
 /** Thanh công cụ 8 ô (UI-20): công cụ tự chọn theo đối tượng, ô ở đây chỉ để xem / mở túi hạt / túi đồ. */
 const TOOLBAR: readonly (Tool | 'BAG')[] = ['HOE', 'SEED', 'WATER', 'SICKLE', 'AXE', 'HAMMER', 'ROD', 'BAG'];
 
 const WOOD_D = '#3D2314';
-type Panel = 'none' | 'seeds' | 'kho' | 'settings';
+type Panel = 'none' | 'seeds' | 'kho' | 'settings' | 'giapha';
 
 /** Màn thấp (< 420 px, điện thoại ngang): dock chỉ hiện icon (UI-20). */
 function useShort(): boolean {
@@ -42,7 +44,6 @@ function useShort(): boolean {
   return short;
 }
 
-const btn = 'touch-btn touch-btn-44 vac-paper bg-[#f3e3c0] text-[#3D2314] pointer-events-auto select-none';
 
 export const SliceHud: React.FC = () => {
   const save = useSliceStore((s) => s.save);
@@ -167,7 +168,7 @@ export const SliceHud: React.FC = () => {
       >
         <DockBtn icon="📦" label="Kho" short={short} onClick={() => setPanel('kho')} />
         <DockBtn icon="📋" label="Đơn" short={short} onClick={() => toast('📋 Bảng đơn HTX mở ở P1-9.', false)} />
-        <DockBtn icon="📜" label="Gia Phả" short={short} onClick={() => toast('📜 Gia Phả mở ở P1-11.', false)} />
+        <DockBtn icon="📜" label="Gia Phả" short={short} onClick={() => setPanel('giapha')} />
         <DockBtn icon="👥" label="Bạn" short={short} onClick={() => toast('👥 Bạn bè mở sau bản thử.', false)} />
         <DockBtn icon="⚙️" label="" short onClick={() => setPanel('settings')} />
       </div>
@@ -175,6 +176,10 @@ export const SliceHud: React.FC = () => {
       {panel === 'seeds' && <SeedPanel onClose={() => setPanel('none')} />}
       {panel === 'kho' && <KhoPanel onClose={() => setPanel('none')} />}
       {panel === 'settings' && <SettingsPanel onClose={() => setPanel('none')} />}
+      {panel === 'giapha' && <GiaPhaPanel onClose={() => setPanel('none')} />}
+      <TutorialBar short={short} />
+      <NpcDialogSheet />
+      <IntroScene />
       <ConfirmEstate />
     </div>
   );
@@ -198,24 +203,6 @@ function DockBtn({ icon, label, short, onClick }: { icon: string; label: string;
   );
 }
 
-function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
-  return (
-    <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-black/30" onClick={onClose}>
-      <div
-        className="vac-paper vac-pop-in max-h-[80vh] w-[min(420px,90vw)] overflow-y-auto bg-[#f3e3c0] p-2"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-1 flex items-center justify-between">
-          <b>{title}</b>
-          <button className={`${btn}`} onClick={onClose} aria-label="Đóng">
-            ✕
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
 
 function SeedPanel({ onClose }: { onClose: () => void }) {
   const save = useSliceStore((s) => s.save);

@@ -5,6 +5,9 @@ import { regenStamina } from './stamina';
 import { normalizePlotTiles } from './farmGrid';
 import { COUNTER, Counters, bumpCounter } from './quests';
 import type { EstateState } from './estate';
+import type { NpcState } from './npc';
+import type { StoryState } from './story';
+import type { NpcId } from '../data/npcs';
 
 /**
  * Luật vòng chơi Vườn – Ao – Chuồng (GĐ1) dạng hàm thuần.
@@ -65,6 +68,10 @@ export interface FarmSave {
   counters?: Counters;
   /** Điền trang (GP-14, P1-10): chướng ngại đã dọn, hạng mục đã sửa, số vùng đã khai. Save cũ thiếu = ban đầu. */
   estate?: EstateState;
+  /** Tim NPC (GP-50, P1-11). Save cũ thiếu = chưa quen ai. */
+  npcs?: Partial<Record<NpcId, NpcState>>;
+  /** Gia Phả bản thử (TG-30, P1-11): hướng đã chọn, chương đã nhận. */
+  story?: StoryState;
 }
 
 export type FarmResult = { ok: true; save: FarmSave; message: string } | { ok: false; message: string };

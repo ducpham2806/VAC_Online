@@ -57,6 +57,14 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 - Tổng sửa đủ 3 hạng mục: 1.200🪙 + 12 Gỗ + 6 Đá; bản đồ bản thử cho 15 Gỗ + 9 Đá.
 - Code: `src/domain/estate.ts` (`CLEAR_RULES`, `REPAIRS`), khóa tưới ở `src/engine/applyActions.ts` (`WELL_LOCKED_WATER_PER_BATCH`).
 
+### KT-19 · Tim NPC (QD-84)
+- **Thang:** 0–10 tim, mỗi tim 100 điểm (`HEART_POINTS`).
+- **Nói chuyện:** +20, có tác dụng 1 lần mỗi ngày mỗi NPC (ngày theo giờ Việt Nam).
+- **Tặng quà:** 1 món trong Kho, có tác dụng 1 lần mỗi ngày mỗi NPC: thích +80, thường +30, ghét −20 (không dưới 0). Món tặng bị trừ khỏi Kho.
+- **Mốc 2 tim:** mở 1 cảnh ngắn (bản thử).
+- **Thưởng Chương 1** (dữ liệu `src/data/quests.ts`): 600🪙 + 15💎 + 100 XP, cộng nhánh tình nghĩa (+30 Phong Thủy, +3 Nghĩa Xóm) hoặc thực dụng (+350🪙, +10 Phong Thủy, +1 Nghĩa Xóm).
+- Code: `src/domain/npc.ts`, `src/domain/story.ts`; sở thích ở `src/data/npcs.ts`.
+
 ### KT-16 · Thao tác hàng loạt
 Kéo để làm cả loạt (GP-02): tối đa 12 ô mỗi lượt kéo, mỗi ô vẫn tính đúng luật như khi chạm từng ô (chi phí giống, Kho đầy thì dừng).
 

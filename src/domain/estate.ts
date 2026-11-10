@@ -38,7 +38,7 @@ export interface RepairRule {
 export const REPAIRS: Record<StructureId, RepairRule> = {
   WELL: { name: 'Giếng', gold: 300, mats: { MAT_DA: 4 }, fengShui: 20, unlocks: 'tưới cả loạt khi kéo' },
   COOP: { name: 'Chuồng gà', gold: 400, mats: { MAT_GO: 6 }, fengShui: 30, unlocks: 'nuôi gà (P1-9)' },
-  HOUSE: { name: 'Nhà chính', gold: 500, mats: { MAT_GO: 6, MAT_DA: 2 }, fengShui: 40, unlocks: 'Gia Phả Chương 1 (P1-11)' },
+  HOUSE: { name: 'Nhà chính', gold: 500, mats: { MAT_GO: 6, MAT_DA: 2 }, fengShui: 40, unlocks: 'Sổ Gia Phả Chương 1' },
 };
 export const STRUCTURE_CHAR: Record<StructureId, string> = { WELL: 'W', COOP: ',', HOUSE: 'H' };
 export const STRUCTURE_IDS: readonly StructureId[] = ['WELL', 'COOP', 'HOUSE'];

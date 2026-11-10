@@ -4,6 +4,7 @@
  * P1-6: công tắc đổi mùa của bản thử (`seasonOverride`). P1-7: lưu cục bộ `vac_slice_save_v1`
  * (`version` + `migrate`), chỉ cho bản thử, không đẩy lên server. Chưa gửi server (P1-8).
  * P1-10: dọn đá/gốc cây, sửa hạng mục, khai hoang (GP-14); việc tốn vàng hỏi lại qua `pending`.
+ * P1-11: NPC có tim (hộp thoại `dialog`), cảnh mở đầu chọn hướng, Gia Phả Chương 1, cờ hướng dẫn `tut`.
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -12,6 +13,8 @@ import { SEASON_ORDER, seasonAt } from '../domain/season';
 import { findItem, type FarmSave, withRegen } from '../domain/farm';
 import { type Tool, nearestActionablePlot, plotAction } from '../domain/tools';
 import { MATERIALS, isMaterial } from '../domain/estate';
+import { NPC_IDS, type NpcId, npcAt } from '../data/npcs';
+import { spawnTile } from '../game/slice/estateMap';
 import { type Action, type ActionResult, applyActions } from '../engine/applyActions';
 import type { TilePos } from '../game/slice/estateMap';
 import {
@@ -53,6 +56,19 @@ const ACTION_TOOL: Partial<Record<Action['type'], Tool>> = {
   RECLAIM: 'HOE',
 };
 
+/** Cờ hướng dẫn bản thử (GP-62): những việc không có trong `save`. */
+export interface TutorialFlags {
+  moved: boolean;
+  sold: boolean;
+  hidden: boolean;
+}
+
+/** Hộp thoại NPC đang mở; `line` = câu vừa nói (chào, phản ứng quà, cảnh tim). */
+export interface NpcDialog {
+  npcId: NpcId;
+  line: string;
+}
+
 /** Việc tốn vàng đang chờ người chơi xác nhận (sửa hạng mục, khai hoang). */
 export interface PendingEstate extends EstateConfirm {
   action: Action;
@@ -69,18 +85,27 @@ interface SliceState {
   toasts: Toast[];
   fx: TileFx[];
   pending: PendingEstate | null;
+  tut: TutorialFlags;
+  dialog: NpcDialog | null;
   tick: (now: number) => void;
   setPlayerTile: (t: TilePos) => void;
   setSeed: (id: string) => void;
   setSeasonOverride: (s: Season | null) => void;
   toast: (text: string, ok?: boolean) => void;
   /** `at`: ô hiển thị hiệu ứng cho thao tác không gắn ô ruộng (dọn, sửa, khai hoang). */
-  act: (actions: Action[], at?: TilePos) => ActionResult[];
+  act: (actions: Action[], at?: TilePos, silent?: boolean) => ActionResult[];
   actNear: () => void;
   /** Chạm đối tượng điền trang ở ô `t` (đã trong tầm). */
   interactEstate: (t: TilePos) => void;
   confirmPending: () => void;
   cancelPending: () => void;
+  openNpc: (id: NpcId) => void;
+  closeNpc: () => void;
+  talkTo: (id: NpcId) => void;
+  giftTo: (id: NpcId, itemId: string) => void;
+  choosePath: (path: 'EMP' | 'PRAG') => void;
+  claimChapter: (no: number) => void;
+  setTutorialHidden: (hidden: boolean) => void;
   sell: (itemId: string, qty: number) => void;
   reset: (now: number) => void;
 }
@@ -108,6 +133,8 @@ function initial(now: number) {
     toasts: [] as Toast[],
     fx: [] as TileFx[],
     pending: null,
+    tut: { moved: false, sold: false, hidden: false } as TutorialFlags,
+    dialog: null,
   };
 }
 
@@ -120,8 +147,13 @@ export const useSliceStore = create<SliceState>()(
       tick: (now) => set((s) => ({ now, save: withRegen(s.save, now) })),
 
       setPlayerTile: (t) => {
-        const p = get().playerTile;
-        if (p.x !== t.x || p.y !== t.y) set({ playerTile: t });
+        const s = get();
+        const p = s.playerTile;
+        if (p.x === t.x && p.y === t.y) return;
+        const sp = spawnTile();
+        // "đã đi" = rời chỗ xuất hiện sau lần đặt vị trí đầu tiên (0,0 là giá trị khởi tạo)
+        const moved = s.tut.moved || ((p.x !== 0 || p.y !== 0) && (t.x !== sp.x || t.y !== sp.y));
+        set({ playerTile: t, ...(moved !== s.tut.moved ? { tut: { ...s.tut, moved } } : {}) });
       },
 
       setSeed: (id) => set({ seedId: id }),
@@ -141,7 +173,7 @@ export const useSliceStore = create<SliceState>()(
         setTimeout(() => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })), TOAST_MS);
       },
 
-      act: (actions, at) => {
+      act: (actions, at, silent) => {
         if (!actions.length) return [];
         const now = Date.now();
         const s = get();
@@ -169,6 +201,7 @@ export const useSliceStore = create<SliceState>()(
         set({ save: out.save, now, seedId, fx: [...s.fx.slice(-20), ...fx] });
 
         const firstFail = out.results.find((r) => !r.ok);
+        if (silent) return out.results;
         if (actions.length === 1) {
           get().toast(out.results[0].message, out.results[0].ok);
         } else {
@@ -190,6 +223,9 @@ export const useSliceStore = create<SliceState>()(
           else get().toast(noSeedMessage(get()), false);
           return;
         }
+        // NPC kề bên → mở hộp thoại (GP-50).
+        const npc = npcNear(s.playerTile);
+        if (npc) return get().openNpc(npc);
         // Không có ô ruộng nào trong tầm: việc điền trang kề bên (dọn, sửa, khai hoang) hoặc lời nhắn.
         const e = estateNear(s);
         if (e) return get().interactEstate(e.at);
@@ -217,8 +253,35 @@ export const useSliceStore = create<SliceState>()(
       cancelPending: () => set({ pending: null }),
 
       sell: (itemId, qty) => {
-        get().act([{ type: 'SELL', itemId, qty }]);
+        const [r] = get().act([{ type: 'SELL', itemId, qty }]);
+        const s = get();
+        if (r?.ok && !s.tut.sold) set({ tut: { ...s.tut, sold: true } });
       },
+
+      // Mở hộp thoại = chào hỏi: lần đầu trong ngày mới cộng tim (GP-50).
+      openNpc: (npcId) => get().talkTo(npcId),
+
+      closeNpc: () => set({ dialog: null }),
+
+      talkTo: (npcId) => {
+        const [r] = get().act([{ type: 'TALK', npcId }], undefined, true);
+        if (r) set({ dialog: { npcId, line: r.message } });
+      },
+
+      giftTo: (npcId, itemId) => {
+        const [r] = get().act([{ type: 'GIFT', npcId, itemId }], undefined, true);
+        if (r) set({ dialog: { npcId, line: r.message } });
+      },
+
+      choosePath: (path) => {
+        get().act([{ type: 'CHOOSE_PATH', path }]);
+      },
+
+      claimChapter: (no) => {
+        get().act([{ type: 'CLAIM_CHAPTER', chapterNo: no }]);
+      },
+
+      setTutorialHidden: (hidden) => set((s) => ({ tut: { ...s.tut, hidden } })),
 
       reset: (now) => set({ ...initial(now) }),
     }),
@@ -230,12 +293,13 @@ export const useSliceStore = create<SliceState>()(
         save: s.save,
         seedId: s.seedId,
         seasonOverride: s.seasonOverride,
+        tut: s.tut,
       }),
-      // Phiên bản lạ (cũ hơn chưa có nhánh chuyển, hoặc mới hơn) → chơi lại từ đầu thay vì đọc sai.
-      // v1 → v2: chỉ thêm `save.estate` (thiếu = điền trang ban đầu, `reconcileSliceSave` điền).
-      migrate: (persisted, version) => (version === 1 || version === SLICE_SAVE_VERSION ? persisted : {}),
+      // v1 → v2 → v3 chỉ thêm trường (`save.estate`, `save.npcs`, `save.story`, `tut`); thiếu = ban đầu.
+      // Phiên bản lạ (mới hơn, hoặc không phải số) → chơi lại từ đầu thay vì đọc sai.
+      migrate: (persisted, version) => (version >= 1 && version <= SLICE_SAVE_VERSION ? persisted : {}),
       merge: (persisted, current) => {
-        const p = (persisted ?? {}) as Partial<Pick<SliceState, 'save' | 'seedId' | 'seasonOverride'>>;
+        const p = (persisted ?? {}) as Partial<Pick<SliceState, 'save' | 'seedId' | 'seasonOverride' | 'tut'>>;
         const save = reconcileSliceSave(p.save);
         if (!save) return current;
         const seasonOverride = SEASON_ORDER.includes(p.seasonOverride as Season) ? (p.seasonOverride as Season) : null;
@@ -246,11 +310,25 @@ export const useSliceStore = create<SliceState>()(
           now,
           seasonOverride,
           seedId: validSeed(save, effectiveSeason({ now, seasonOverride }), p.seedId ?? null),
+          tut: { moved: p.tut?.moved === true, sold: p.tut?.sold === true, hidden: p.tut?.hidden === true },
         };
       },
     },
   ),
 );
+
+/** NPC trong tầm (ô đang đứng hoặc 8 ô quanh). */
+export function npcNear(p: TilePos): NpcId | undefined {
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      const id = npcAt(p.x + dx, p.y + dy);
+      if (id) return id;
+    }
+  }
+  return undefined;
+}
+
+export { NPC_IDS };
 
 /** Đối tượng điền trang trong tầm (8 ô quanh người chơi): ưu tiên ô có việc làm được, không thì ô có lời nhắn. */
 function estateNear(s: Pick<SliceState, 'save' | 'playerTile'>): { at: TilePos; target: EstateTarget } | null {
@@ -270,6 +348,7 @@ function estateNear(s: Pick<SliceState, 'save' | 'playerTile'>): { at: TilePos; 
 export function selectActionTool(s: Pick<SliceState, 'save' | 'playerTile' | 'now'>): Tool {
   const near = nearestActionablePlot(s.save.tiles, s.playerTile.x, s.playerTile.y, s.now);
   if (near) return near.tool;
+  if (npcNear(s.playerTile)) return 'HAND';
   return estateNear(s)?.target.tool ?? 'NONE';
 }
 

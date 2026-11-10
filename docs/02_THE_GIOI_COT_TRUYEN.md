@@ -71,7 +71,7 @@ ID chính xác của từng đặc sản: dữ liệu (`CROP_N/C/S..`, `ANI_N/C/
 3. **Người chơi chọn:**
    - "Tự cày trả sạch nợ" (tình nghĩa: +Phong Thủy, +Nghĩa Xóm);
    - "Mười mùa vụ nữa ông sẽ mua lúa Hoàng Kim của tôi" (thực dụng: +vàng).
-4. **Vào game:** hướng dẫn tân thủ bắt đầu (GP-62). Mùa trong cảnh là Thu, còn game bắt đầu ở mùa đang chạy trên server.
+4. **Vào game:** hướng dẫn tân thủ bắt đầu (GP-62). Lựa chọn ở bước 3 chưa trả thưởng; thưởng trả khi xong Chương 1 (QD-84, KT-19). Mùa trong cảnh là Thu, còn game bắt đầu ở mùa đang chạy trên server.
 
 ### TG-50 · Lịch lễ hội theo mùa (GP-70)
 | Mùa | Lễ hội | Hoạt động | Từ Đợt |
