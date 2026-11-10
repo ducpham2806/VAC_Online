@@ -6,6 +6,7 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
+| QD-83 | Số liệu P1-10 (sửa nhà/giếng/chuồng gà, dọn đá/gốc cây, khai hoang): giá, vật liệu, ⚡, chức năng mở khi sửa | P1-10, P1-11 | Vật liệu mới `MAT_GO`, `MAT_DA` (chỉ từ dọn chướng ngại); đá 2⚡ → 3 Đá, gốc cây 4⚡ → 5 Gỗ; Giếng 300🪙 + 4 Đá (mở tưới kéo cả loạt), Chuồng gà 400🪙 + 6 Gỗ (mở nuôi gà ở P1-9), Nhà 500🪙 + 6 Gỗ + 2 Đá (mở Gia Phả Chương 1 ở P1-11); khai hoang theo vùng `500 × 1,25^k` + 5⚡ (KT-15, QD-18): vùng 1 = 8 ô, vùng 2 = 14 ô. Chi tiết trong WORKLOG 10/11 |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |

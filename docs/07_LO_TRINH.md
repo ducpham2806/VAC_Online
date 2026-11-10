@@ -66,7 +66,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 | P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | DONE 10/11 (lưu cục bộ; phần đồng bộ server làm cùng P1-8) |
 | P1-8 | Schema mới trên project VAC (viết lại một lần, QD-81): `farm_states`, `ledger`, `_commit_farm_state`, Edge Function `apply-actions` | test SQL; p95 < 400 ms (gộp P0-6) | Quyền Supabase project VAC; PO duyệt migration | BLOCKED |
 | P1-9 | Nội dung 8 loài 2 mùa Bắc Bộ (5 cây, 2 vật nuôi, 1 cá) + art theo prompt; Bếp Củi; bảng đơn HTX | Dữ liệu từ `catalog.csv`; `/vac-balance-check` | P1-4; PO duyệt danh sách loài | TODO |
-| P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4 | TODO |
+| P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4; PO duyệt QD-83 | BLOCKED (chờ QD-83) |
 | P1-11 | 2 NPC có tim, Chương 1, hướng dẫn 15 phút đầu (GP-50, GP-62, TG-30) | Người mới chơi hết hướng dẫn không kẹt | P1-5, P1-10 | TODO |
 | P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11 | TODO |
 
