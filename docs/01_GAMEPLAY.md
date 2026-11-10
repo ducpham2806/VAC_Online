@@ -22,8 +22,8 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
   - thức ăn: chuồng;
   - cần câu: ao, sông;
   - rìu/búa: gốc cây, đá.
-- **Tầm làm việc:** đối tượng ở gần nhân vật thì làm ngay. Ở xa thì nhân vật tự đi tới rồi làm; đi bộ chỉ là hình thức, không tính thời gian chơi.
-- **Làm cả loạt:** giữ và kéo qua nhiều ô để gặt, tưới hoặc gieo một lượt (giới hạn số ô mỗi lượt kéo: KT-16).
+- **Tầm làm việc:** đối tượng ở gần nhân vật (ô đang đứng hoặc 8 ô xung quanh) thì làm ngay. Ở xa thì nhân vật tự đi tới rồi làm; đi bộ chỉ là hình thức, không tính thời gian chơi.
+- **Làm cả loạt:** giữ và kéo qua nhiều ô để gặt, tưới hoặc gieo một lượt (giới hạn số ô mỗi lượt kéo: KT-16). Công cụ chốt theo ô đầu tiên của lượt kéo; ô cần công cụ khác bị bỏ qua. Kéo bắt đầu ngoài ruộng là kéo xem bản đồ.
 - **Hành động cần nhân vật đứng đúng chỗ** (câu cá, đi rừng, nói chuyện với NPC): đi tới mới làm được.
 - **Không chặn luật:** máy chủ không kiểm vị trí nhân vật; vị trí chỉ ảnh hưởng hình ảnh và trải nghiệm.
 

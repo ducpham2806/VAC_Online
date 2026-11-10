@@ -1,12 +1,14 @@
-# Bàn giao · 10/11/2026 · P1 đang chạy (P1-1…3 xong)
+# Bàn giao · 10/11/2026 · P1 đang chạy (P1-1…5 xong)
 
 ## Việc vừa làm
 Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
 - QD-82 áp bằng script; atlas `slice`; engine ở `src/engine/`; scene đi bộ `?p1` (`src/game/slice/`).
+- P1-4/5: chạm ô, kéo cả loạt, nút hành động, HUD lai, Kho bán HTX (`src/domain/tools.ts`, `src/store/useSliceStore.ts`, `src/ui/hud/SliceHud.tsx`).
 - Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
 
 ## Đã xác minh
-- typecheck, 201 test, build, test:art, check:docs PASS.
+- typecheck, 216 test, build, test:art, check:docs PASS.
+- `tools/qa/p1-slice-smoke.cjs` (cần `npx vite --port 5179`): cả vòng gieo → bán ở 2 cỡ, 0 nút < 44 px, 0 lỗi JS.
 - Playwright `?p1` ở 1280×720 và 844×390: chạm đi tới, joystick, 0 lỗi JS. Ảnh: `docs/screenshots/p1-3-*.png`.
 
 ## Chưa xác minh
@@ -14,9 +16,10 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-4: chạm ô ruộng → công cụ tự chọn (GP-02), ở xa thì đi tới (đã có `pathToward`) rồi gọi `applyActions`; kéo trên ô = làm cả loạt ≤ 12 ô (KT-16). Hiện kéo đâu cũng là xem bản đồ.
-2. P1-5: HUD React theo wireframe `docs/wireframes/` (thanh công cụ thu gọn).
-3. P1-7 lưu cục bộ, rồi P1-8 khi có quyền Supabase.
+1. P1-6: cỏ đổi màu theo mùa (AR-11; hiện chỉ có art Xuân/Đông), công tắc đổi mùa cho bản thử.
+2. P1-7: lưu cục bộ `useSliceStore` (`version` + `migrate`).
+3. P1-8 khi có quyền Supabase; P1-9 cần PO duyệt 8 loài.
+4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). DB MVP chưa đổi.

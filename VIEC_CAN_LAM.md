@@ -38,8 +38,11 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P1-1 Atlas `slice`~~ ✅ 2026-11-10
 - [x] ~~P1-2 Engine vào `src/engine/`~~ ✅ 2026-11-10
 - [x] ~~P1-3 Scene điền trang đi bộ (`?p1`)~~ ✅ 2026-11-10
-- [ ] P1-4 Chạm ô / kéo làm cả loạt
-- [ ] P1-5 HUD lai
+- [x] ~~P1-4 Chạm ô / kéo làm cả loạt~~ ✅ 2026-11-10
+- [x] ~~P1-5 HUD lai~~ ✅ 2026-11-10
+- [ ] P1-6 Mùa trên bản đồ + công tắc đổi mùa
+- [ ] P1-7 Lưu cục bộ
+- [ ] Thử `?p1` trên điện thoại thật (anh)
 - [ ] PO duyệt danh sách 8 loài cho P1-9 (khi tới thẻ đó)
 
 ## F. Nhật ký

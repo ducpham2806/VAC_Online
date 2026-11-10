@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-4…5 · Chạm ô, làm cả loạt, HUD lai · 10/11/2026 — DONE (chưa có người chơi thử)
+- Vòng gieo → tưới → gặt → bán HTX chạy được trong `?p1`, mọi thay đổi qua engine dùng chung.
+- Chạm ô xa: nhân vật đi tới rồi làm; kéo trên ruộng: làm cả loạt ≤ 12 ô (KT-16); nút hành động dùng công cụ tự chọn (GP-02).
+- HUD theo wireframe P0-5, mọi nút ≥ 44 px ở 1280×720 và 844×390. Ảnh: `docs/screenshots/p1-4-*`, `p1-5-*`.
+- Chưa: lưu, server, chuồng/ao/khai hoang (thẻ sau).
+
 ## P1-1…3 · Nền bản thử đi bộ · 10/11/2026 — DONE (chưa có người chơi thử)
 - Atlas `slice` từ ảnh PO tạo (QD-80, QD-82), audit đạt.
 - Engine luật dùng chung ở `src/engine/applyActions.ts` (ADR-001).

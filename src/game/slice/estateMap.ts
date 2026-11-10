@@ -4,6 +4,7 @@
  *
  * Ký hiệu:
  *  .  cỏ             ,  sân đất (chuồng gà)     F  ô ruộng đã cuốc (đi được)
+ *  w  đất hoang (đi được; cuốc mở ở P1-10, giá khai hoang KT-15)
  *  #  bờ rào/bụi     H  nhà (đổ nát)            W  giếng
  *  P  ao             T  gốc cây to              R  đá
  *  S  chỗ xuất hiện  (đi được)
@@ -18,10 +19,10 @@ export const ESTATE_ROWS: readonly string[] = [
   '#..........HHHH...WW.........#',
   '#.................WW.....PPPP#',
   '#.......................PPPPP#',
-  '#....FFFFFFF............PPPPP#',
-  '#....FFFFFFF.....S.......PPPP#',
-  '#....FFFFFFF.................#',
-  '#....FFFFFFF.......R.........#',
+  '#....FFFwwww............PPPPP#',
+  '#....FFFwwww.....S.......PPPP#',
+  '#....wwwwwww.................#',
+  '#....wwwwwww.......R.........#',
   '#............................#',
   '#..R..............,,,,,,.....#',
   '#.................,,,,,,.....#',

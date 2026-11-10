@@ -1,7 +1,10 @@
 /**
- * P1-3 — scene điền trang bản thử (LT-03, UI-20): nhân vật đi 4 hướng bằng joystick nổi
- * hoặc chạm đất để tự tìm đường; kéo ở vùng trống để xem bản đồ.
- * Chưa có thao tác ô (P1-4) và HUD (P1-5). Nhà/giếng/cây/đá đang dùng hình vẽ code của atlas `world` (tạm).
+ * P1-3/P1-4 — scene điền trang bản thử (LT-03, UI-20, GP-02).
+ *  - Đi: joystick nổi góc dưới trái, hoặc chạm đất để tự tìm đường.
+ *  - Chạm ô ruộng: công cụ tự chọn; trong tầm thì làm ngay, xa thì đi tới rồi làm.
+ *  - Kéo bắt đầu trên ô ruộng: làm cả loạt ≤ 12 ô (KT-16). Kéo ở chỗ khác: xem bản đồ.
+ * Trạng thái nông trại ở `useSliceStore` (engine ADR-001); scene chỉ vẽ và gửi thao tác.
+ * Nhà/giếng/cây/đá đang dùng hình vẽ code của atlas `world` (tạm).
  */
 import Phaser from 'phaser';
 import {
@@ -19,6 +22,10 @@ import {
 } from './estateMap';
 import { type Dir, JOYSTICK_RADIUS_PX, facing, inJoystickZone, isDrag, joystickVector } from './gesture';
 import { pathToward } from './pathfinding';
+import { BATCH_DRAG_MAX, batchFromDrag, growthStage, inReach, plotAction, toolForPlot, toolForTarget } from '../../domain/tools';
+import { notYet, useSliceStore } from '../../store/useSliceStore';
+import { plotId, targetAt } from './sliceSave';
+import { TOOL_EMOJI } from './toolIcons';
 
 export const SLICE_ATLAS = 'slice';
 const WORLD = 'world';
@@ -28,7 +35,12 @@ const DIRS: readonly Dir[] = ['down', 'up', 'left', 'right'];
 const WOOD_D = 0x3d2314;
 const PAPER = 0xf3e3c0;
 
-type PointerMode = 'joystick' | 'pending' | 'pan';
+interface PlotView {
+  soil: Phaser.GameObjects.Image;
+  crop: Phaser.GameObjects.Image;
+}
+
+type PointerMode = 'joystick' | 'pending' | 'pan' | 'batch';
 
 export interface SliceDebug {
   tile: TilePos;
@@ -53,6 +65,12 @@ export class EstateScene extends Phaser.Scene {
   private joyKnob!: Phaser.GameObjects.Arc;
   private marker!: Phaser.GameObjects.Rectangle;
   private worldObjects: Phaser.GameObjects.GameObject[] = [];
+  private plots = new Map<string, PlotView>();
+  private pendingTarget: TilePos | null = null;
+  private batchIds: string[] = [];
+  private batchMarks: Phaser.GameObjects.Rectangle[] = [];
+  private lastFxSeq = 0;
+  private unsubscribe: (() => void) | null = null;
 
   constructor() {
     super('EstateScene');
@@ -61,6 +79,7 @@ export class EstateScene extends Phaser.Scene {
   preload(): void {
     this.load.atlas(SLICE_ATLAS, 'assets/atlas/slice.png', 'assets/atlas/slice.json');
     this.load.atlas(WORLD, 'assets/atlas/world.png', 'assets/atlas/world.json');
+    this.load.atlas('wave1', 'assets/atlas/wave1.png', 'assets/atlas/wave1.json'); // cây chưa có art thật (tạm)
   }
 
   create(): void {
@@ -70,9 +89,16 @@ export class EstateScene extends Phaser.Scene {
     this.setupCameras();
     this.setupInput();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
+    this.renderPlots();
+    this.lastFxSeq = useSliceStore.getState().fx.at(-1)?.seq ?? 0;
+    this.unsubscribe = useSliceStore.subscribe((st, prev) => {
+      if (st.save !== prev.save || st.now !== prev.now) this.renderPlots();
+      if (st.fx !== prev.fx) this.playFx();
+    });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this);
       this.input.removeAllListeners();
+      this.unsubscribe?.();
     });
   }
 
@@ -91,12 +117,15 @@ export class EstateScene extends Phaser.Scene {
     for (let y = 0; y < ESTATE_HEIGHT; y++) {
       for (let x = 0; x < ESTATE_COLS; x++) {
         const ch = ESTATE_ROWS[y][x];
-        const frame = ch === 'F' ? 'tile_tilled_dry' : ch === ',' ? 'tile_grass_dong' : 'tile_grass_xuan';
+        const frame = ch === ',' || ch === 'w' ? 'tile_grass_dong' : 'tile_grass_xuan';
         this.add2(this.add.image(x * TILE, y * TILE, SLICE_ATLAS, frame).setOrigin(0).setDepth(-1000));
+        if (ch === 'w' && (x * 7 + y * 3) % 4 === 0) {
+          // đất hoang: cỏ dại lưa thưa (P1-10 mới cuốc được)
+          this.add2(this.add.image(x * TILE + TILE / 2, (y + 1) * TILE - 6, WORLD, `tuft_${(x + y) % 3}`).setOrigin(0.5, 1).setDepth(-950));
+        }
       }
     }
     this.drawPond();
-    this.drawField();
     this.placeBlock('H', 'house');
     this.placeBlock('W', 'well');
     this.drawBorder();
@@ -121,15 +150,40 @@ export class EstateScene extends Phaser.Scene {
     }
   }
 
-  private drawField(): void {
-    // Bản thử P1-3: ruộng có lúa nhiều giai đoạn để xem tỉ lệ. P1-4 thay bằng trạng thái thật từ engine.
-    for (let y = 0; y < ESTATE_HEIGHT; y++) {
-      for (let x = 0; x < ESTATE_COLS; x++) {
-        if (tileAt(x, y) !== 'F') continue;
-        const stage = (x + y * 2) % 5;
-        if (stage === 4) continue;
-        this.add2(this.add.image(x * TILE + TILE / 2, (y + 1) * TILE - 1, SLICE_ATLAS, `CROP_01_${stage}`).setOrigin(0.5, 1).setDepth((y + 1) * TILE - 2));
+  /** Ô ruộng: đất khô/ướt + cây theo giai đoạn, vẽ lại mỗi khi trạng thái đổi hoặc mỗi giây. */
+  private renderPlots(): void {
+    const { save, now } = useSliceStore.getState();
+    for (const t of save.tiles) {
+      let v = this.plots.get(t.id);
+      if (!v) {
+        const soil = this.add2(this.add.image(t.tileX * TILE, t.tileY * TILE, SLICE_ATLAS, 'tile_tilled_dry').setOrigin(0).setDepth(-990));
+        const crop = this.add2(this.add.image(t.tileX * TILE + TILE / 2, (t.tileY + 1) * TILE - 1, SLICE_ATLAS, 'CROP_01_0').setOrigin(0.5, 1));
+        this.uiCam?.ignore([soil, crop]);
+        v = { soil, crop };
+        this.plots.set(t.id, v);
       }
+      v.soil.setFrame(t.itemId && t.watered ? 'tile_tilled_wet' : 'tile_tilled_dry');
+      if (!t.itemId) {
+        v.crop.setVisible(false);
+        continue;
+      }
+      const stage = growthStage(t, now);
+      const f = `${t.itemId}_${stage}`;
+      if (this.textures.get(SLICE_ATLAS).has(f)) v.crop.setTexture(SLICE_ATLAS, f).setScale(1);
+      else if (this.textures.exists('wave1') && this.textures.get('wave1').has(f)) v.crop.setTexture('wave1', f).setScale(0.75);
+      v.crop.setVisible(true).setDepth((t.tileY + 1) * TILE - 2);
+    }
+  }
+
+  /** Biểu tượng công cụ bay lên trên ô vừa làm. */
+  private playFx(): void {
+    const list = useSliceStore.getState().fx.filter((f) => f.seq > this.lastFxSeq);
+    for (const f of list) {
+      this.lastFxSeq = Math.max(this.lastFxSeq, f.seq);
+      const c = tileCenter({ x: f.x, y: f.y });
+      const txt = this.add.text(c.x, c.y - 8, TOOL_EMOJI[f.tool], { fontSize: '16px' }).setOrigin(0.5).setDepth(20_000);
+      this.uiCam?.ignore(txt);
+      this.tweens.add({ targets: txt, y: c.y - 30, alpha: 0, duration: 700, ease: 'Cubic.out', onComplete: () => txt.destroy() });
     }
   }
 
@@ -231,7 +285,10 @@ export class EstateScene extends Phaser.Scene {
       if (dist <= step) {
         this.player.setPosition(tx, ty);
         this.path.shift();
-        if (!this.path.length) this.marker.setVisible(false);
+        if (!this.path.length) {
+          this.marker.setVisible(false);
+          this.arrive();
+        }
       } else {
         vx = dx / dist;
         vy = dy / dist;
@@ -248,6 +305,54 @@ export class EstateScene extends Phaser.Scene {
       this.player.setFrame(`farmer_walk_${this.dir}_0`);
     }
     this.player.setDepth(this.player.y);
+    useSliceStore.getState().setPlayerTile(this.feetTile());
+  }
+
+  private feetTile(): TilePos {
+    return worldToTile(this.player.x, this.player.y - 2);
+  }
+
+  private face(target: TilePos): void {
+    const f = this.feetTile();
+    this.dir = facing(target.x - f.x, target.y - f.y, this.dir);
+    this.player.setFrame(`farmer_walk_${this.dir}_0`);
+  }
+
+  /** Tới nơi sau khi chạm một đối tượng ở xa: làm việc đó (GP-02). */
+  private arrive(): void {
+    const t = this.pendingTarget;
+    this.pendingTarget = null;
+    if (t) this.interact(t, false);
+  }
+
+  /** Chạm vào ô `t`: trong tầm thì làm, xa thì đi tới (rồi `arrive`). */
+  private interact(t: TilePos, allowWalk: boolean): void {
+    const st = useSliceStore.getState();
+    const kind = targetAt(t.x, t.y);
+    const tile = kind === 'PLOT' ? st.save.tiles.find((p) => p.id === plotId(t.x, t.y)) : undefined;
+    const tool = toolForTarget(kind, tile, Date.now());
+    if (kind === 'GROUND') {
+      if (allowWalk) this.walkToTile(t);
+      return;
+    }
+    if (!inReach(this.feetTile().x, this.feetTile().y, t.x, t.y)) {
+      if (allowWalk && this.walkToTile(t, true)) this.pendingTarget = t;
+      return;
+    }
+    this.face(t);
+    if (tile) {
+      if (tool === 'NONE') {
+        const left = tile.matureAt ? Math.max(0, Math.ceil((tile.matureAt - Date.now()) / 1000)) : 0;
+        st.toast(`💧 Đã tưới — còn ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} nữa chín.`, true);
+        return;
+      }
+      const a = plotAction(tool, tile.id, st.seedId);
+      if (a) st.act([a]);
+      else st.toast('Chưa chọn hạt giống — mở túi hạt để chọn.', false);
+      return;
+    }
+    const msg = notYet(kind);
+    if (msg) st.toast(msg, false);
   }
 
   private following = true;
@@ -313,7 +418,13 @@ export class EstateScene extends Phaser.Scene {
         this.joyKnob.setPosition(this.startX + v.knobX, this.startY + v.knobY);
         return;
       }
-      if (this.pointerMode === 'pending' && isDrag(p.x - this.startX, p.y - this.startY)) this.pointerMode = 'pan';
+      if (this.pointerMode === 'pending' && isDrag(p.x - this.startX, p.y - this.startY)) {
+        const s0 = this.cameras.main.getWorldPoint(this.startX, this.startY);
+        const t0 = worldToTile(s0.x, s0.y);
+        this.pointerMode = targetAt(t0.x, t0.y) === 'PLOT' ? 'batch' : 'pan';
+        if (this.pointerMode === 'batch') this.addToBatch(t0);
+      }
+      if (this.pointerMode === 'batch') this.addToBatch(worldToTile(p.worldX, p.worldY));
       if (this.pointerMode === 'pan') {
         const cam = this.cameras.main;
         cam.stopFollow();
@@ -327,7 +438,8 @@ export class EstateScene extends Phaser.Scene {
 
     const end = (p: Phaser.Input.Pointer) => {
       if (p.id !== this.pointerId) return;
-      if (this.pointerMode === 'pending') this.walkTo(p.worldX, p.worldY);
+      if (this.pointerMode === 'pending') this.interact(worldToTile(p.worldX, p.worldY), true);
+      if (this.pointerMode === 'batch') this.commitBatch();
       if (this.pointerMode === 'joystick') {
         this.joy = { vx: 0, vy: 0 };
         this.joyBase.setVisible(false);
@@ -340,16 +452,55 @@ export class EstateScene extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, end);
   }
 
-  /** Chạm đất → tự tìm đường; chạm vật cản (nhà, giếng…) → đi tới ô sát nó (P1-4 sẽ làm thao tác ở đó). */
-  walkTo(worldX: number, worldY: number): boolean {
-    const target = worldToTile(worldX, worldY);
-    const from = worldToTile(this.player.x, this.player.y - 2);
+  /** Kéo qua ô ruộng: gom ô (chỉ ô ruộng), đánh dấu, tối đa KT-16 ô. */
+  private addToBatch(t: TilePos): void {
+    if (targetAt(t.x, t.y) !== 'PLOT') return;
+    const id = plotId(t.x, t.y);
+    if (this.batchIds.includes(id)) return;
+    if (this.batchIds.length >= BATCH_DRAG_MAX) return; // KT-16
+    const { save } = useSliceStore.getState();
+    const now = Date.now();
+    const first = save.tiles.find((p) => p.id === (this.batchIds[0] ?? id));
+    const tile = save.tiles.find((p) => p.id === id);
+    // chỉ đánh dấu ô cần cùng công cụ với ô đầu (giống batchFromDrag)
+    if (!tile || !first || toolForPlot(tile, now) !== toolForPlot(first, now) || toolForPlot(first, now) === 'NONE') return;
+    this.batchIds.push(id);
+    const c = tileCenter(t);
+    const m = this.add.rectangle(c.x, c.y, TILE - 4, TILE - 4, 0xf5b700, 0.25).setStrokeStyle(2, 0xf5b700, 1).setDepth(-480);
+    this.uiCam.ignore(m);
+    this.batchMarks.push(m);
+  }
+
+  private commitBatch(): void {
+    const { save, seedId, act, toast } = useSliceStore.getState();
+    const r = batchFromDrag(this.batchIds, save.tiles, Date.now(), seedId);
+    if (r.actions.length) act(r.actions);
+    else if (r.tool === 'SEED') toast('Chưa chọn hạt giống — mở túi hạt để chọn.', false);
+    this.batchIds = [];
+    this.batchMarks.forEach((m) => m.destroy());
+    this.batchMarks = [];
+  }
+
+  /** Đi tới ô: đất trống → đúng ô đó; đối tượng → dừng ở ô đầu tiên trong tầm làm việc. */
+  walkToTile(target: TilePos, stopInReach = false): boolean {
+    const from = this.feetTile();
     const r = pathToward(from, target, isWalkable);
     if (!r) return false;
-    this.path = r.path.slice(1);
+    let path = r.path;
+    if (stopInReach) {
+      const i = path.findIndex((p) => inReach(p.x, p.y, target.x, target.y));
+      if (i >= 0) path = path.slice(0, i + 1);
+    }
+    this.path = path.slice(1);
     const c = tileCenter(target);
     this.marker.setPosition(c.x, c.y).setVisible(this.path.length > 0);
     this.follow();
+    if (!this.path.length) this.arrive();
     return true;
+  }
+
+  /** Giữ cho Playwright: chạm vào điểm thế giới như người chơi. */
+  tapWorld(worldX: number, worldY: number): void {
+    this.interact(worldToTile(worldX, worldY), true);
   }
 }

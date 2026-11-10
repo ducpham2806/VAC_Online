@@ -54,6 +54,11 @@
 .touch-btn:active {
   transform: scale(0.94);
 }
+/* UI-01: chuẩn mới ≥ 44px (HUD bản thử P1). .touch-btn 38px giữ cho game MVP cũ. */
+.touch-btn-44 {
+  min-width: 44px;
+  min-height: 44px;
+}
 
 /* ---------------------------------------------------------------------------
  * Khung UI pixel (tools/art/codeart_ui.py): gỗ lim & giấy dó, 9-slice viền 8px.

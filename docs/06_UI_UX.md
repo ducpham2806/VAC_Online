@@ -24,6 +24,8 @@ Mọi thay đổi giao diện phải chụp ở 1280×720 và 844×390 (điện 
 | Góc phải | Nút hành động theo ngữ cảnh + thanh công cụ 5–8 ô (cuốc, bình tưới, liềm, túi hạt, rìu, thức ăn, cần câu) |
 | Kéo hai ngón / kéo ở vùng trống | Di chuyển camera |
 
+**Nút hành động:** làm việc trên ô ruộng trong tầm (ưu tiên ô đang đứng, rồi ô gần nhất); không có thì báo đối tượng kề bên. Biểu tượng trên nút luôn là công cụ sẽ dùng.
+
 Phân biệt chạm với kéo: dịch quá 12 px là kéo, khi nhả thì không thực hiện thao tác. Joystick chỉ nhận ở góc dưới trái (~1/3 rộng, ~40% cao), để không tranh với kéo camera.
 
 **Wireframe (P0-5):** [`docs/wireframes/hud-dieu-khien-lai.html`](wireframes/hud-dieu-khien-lai.html), ảnh 1280×720 và 844×390 cùng thư mục. Mọi nút ≥ 44 px ở cả 2 cỡ.
