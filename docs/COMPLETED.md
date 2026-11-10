@@ -5,9 +5,9 @@ Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đ
 ## P0 · Chốt nền · 10/11/2026 — DONE (trừ P0-6)
 - **Quyết định:** PO duyệt toàn bộ đề xuất (QD-18…32); không cấp API key ảnh (QD-33).
 - **P0-3 ADR + dữ liệu:** ADR-001 một bản luật TS trên Edge Function; ADR-002 `farm_states` + `ledger` + khóa lạc quan; ADR-003 một nguồn dữ liệu `data/`. Thêm cột `Seasons` (48 cây) và lịch mùa `src/domain/season.ts`, có test.
-- **P0-4 thử nghiệm kỹ thuật** (`prototypes/p0-4-edge/`): chạy được ở máy cục bộ, p95 3,1 ms chưa tính mạng, khóa lạc quan + sổ cái đúng. Còn P0-6: đo trên Supabase thật, chờ QD-81.
+- **P0-4 thử nghiệm kỹ thuật** (`prototypes/p0-4-edge/`): chạy được ở máy cục bộ, p95 3,1 ms chưa tính mạng, khóa lạc quan + sổ cái đúng. Còn P0-6: đo trên Supabase thật (QD-81: dùng project cũ; chờ kết nối Supabase tới project VAC).
 - **P0-5:** wireframe HUD điều khiển lai (`docs/wireframes/`). Rút ra: thanh công cụ thu gọn mặc định.
-- **P0-2:** mẫu hình vẽ code 28 khung theo chuẩn mới; ảnh thật chờ PO tạo theo `art/prompts/p0_samples.md` (QD-80).
+- **P0-2:** mẫu hình vẽ code 28 khung theo chuẩn mới; ảnh thật PO tạo (QD-80) nhập bằng `tools/art/import_sheet.py` → `art/source/p0_ai/` (28 khung, 0 pixel lạc bảng, cảnh ghép `scene_x3.png`).
 - **Bằng chứng:** typecheck, 190 test, build, check:docs, test:art PASS; `run-local.sh` PASS.
 
 ## DOCS-01 · Bộ tài liệu mới `docs/00 → 08` · 10/11/2026 — DONE, chờ PO duyệt nội dung

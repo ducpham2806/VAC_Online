@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""Nhập 1 tấm ảnh nhiều khung (ChatGPT / Gemini, nền #FF00FF) thành các khung sprite đúng chuẩn docs/05_ART_AUDIO.
+
+  python3 tools/art/import_sheet.py --p0                     # 5 tấm mẫu P0-2 trong art/source/inbox/ -> art/source/p0_ai/
+  python3 tools/art/import_sheet.py in.png --layout strip:4 --size 32x48 --names CROP_01_0,CROP_01_1,CROP_01_2,CROP_01_3
+
+Khác import_sprite.py (1 ảnh -> 1 khung):
+  - Cắt khung: `strip:N` (các hình xếp ngang, tách theo khoảng trống), `grid:CxR` (ô đều nhau), `tiles:N` (ô vuông ngang, không tách nền).
+  - **Cùng một tỉ lệ thu cho mọi khung của một tấm**: mạ non vẫn nhỏ hơn lúa chín; nhân vật không "nhảy" cỡ giữa các bước.
+  - Thu nhỏ bằng màu chiếm đa số trong mỗi khối (sau khi khóa bảng 64 màu), giữ nét pixel thay vì làm nhòe.
+Sau đó: khóa alpha 0/255, đổi gần đen -> #3D2314, viền ấm 1px (trừ tile nền).
+"""
+import argparse
+import os
+import sys
+
+import numpy as np
+from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from import_sprite import DEFAULT_PALETTE, add_outline, parse_size  # noqa: E402
+from recolor_outline import WARM_OUTLINE, count_near_black, count_off_palette, load_gpl  # noqa: E402
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+INBOX = os.path.join(ROOT, "art", "source", "inbox")
+P0_OUT = os.path.join(ROOT, "art", "source", "p0_ai")
+
+DIRS = ("down", "up", "left", "right")
+# Tên khung trùng với mẫu vẽ bằng code (codeart_p0_samples.py) để so cạnh nhau.
+P0_SHEETS = [
+    ("CROP_01_sheet.png", "strip:4", "32x48", [f"CROP_01_{i}" for i in range(4)]),
+    ("ANI_01_sheet.png", "strip:2", "48x48", ["ANI_01_0", "ANI_01_1"]),
+    ("AQUA_01_sheet.png", "strip:2", "32x32", ["AQUA_01_0", "AQUA_01_1"]),
+    ("farmer_walk_sheet.png", "grid:4x4", "48x64", [f"farmer_walk_{d}_{f}" for d in DIRS for f in range(4)]),
+    ("tiles_sheet.png", "tiles:4", "32x32", ["tile_tilled_dry", "tile_tilled_wet", "tile_grass_xuan", "tile_grass_dong"]),
+]
+
+
+def magenta_mask(rgb: np.ndarray) -> np.ndarray:
+    """True ở pixel nền: gần #FF00FF, kể cả viền pha hồng do ảnh AI làm mềm cạnh."""
+    r, g, b = (rgb[..., i].astype(np.int32) for i in range(3))
+    return (r - g > 60) & (b - g > 60) & (np.abs(r - b) < 110)
+
+
+def palette_index(rgb: np.ndarray, palette: np.ndarray) -> np.ndarray:
+    flat = rgb.reshape(-1, 3).astype(np.int32)
+    out = np.empty(len(flat), dtype=np.int32)
+    for s in range(0, len(flat), 200_000):
+        chunk = flat[s:s + 200_000]
+        d = ((chunk[:, None, :] - palette[None, :, :]) ** 2).sum(axis=2)
+        out[s:s + 200_000] = d.argmin(axis=1)
+    return out.reshape(rgb.shape[:2])
+
+
+def runs(profile: np.ndarray, min_gap: int) -> list[tuple[int, int]]:
+    """Các đoạn liên tục có hình (profile > 0), gộp khe hở < min_gap."""
+    idx = np.flatnonzero(profile > 0)
+    if not len(idx):
+        return []
+    segs, start, prev = [], idx[0], idx[0]
+    for i in idx[1:]:
+        if i - prev > min_gap:
+            segs.append((start, prev + 1))
+            start = i
+        prev = i
+    segs.append((start, prev + 1))
+    return segs
+
+
+def split_strip(alpha: np.ndarray, n: int) -> list[tuple[int, int, int, int]]:
+    segs = runs(alpha.sum(axis=0), min_gap=8)
+    while len(segs) > n:  # gộp cặp kề nhau có khe nhỏ nhất (vd hạt thóc tách khỏi con gà)
+        gaps = [segs[i + 1][0] - segs[i][1] for i in range(len(segs) - 1)]
+        i = int(np.argmin(gaps))
+        segs[i:i + 2] = [(segs[i][0], segs[i + 1][1])]
+    if len(segs) != n:
+        raise ValueError(f"Tìm được {len(segs)} hình, cần {n} — kiểm tra nền / bố cục ảnh")
+    boxes = []
+    for x0, x1 in segs:
+        ys = np.flatnonzero(alpha[:, x0:x1].sum(axis=1) > 0)
+        boxes.append((x0, int(ys[0]), x1, int(ys[-1]) + 1))
+    return boxes
+
+
+def split_grid(alpha: np.ndarray, cols: int, rows: int) -> list[tuple[int, int, int, int]]:
+    """Cùng một khung (hợp bbox của mọi ô, tính theo tọa độ trong ô) để giữ nhịp nhún và đường chân."""
+    h, w = alpha.shape
+    cw, ch = w // cols, h // rows
+    ux0, uy0, ux1, uy1 = cw, ch, 0, 0
+    for r in range(rows):
+        for c in range(cols):
+            cell = alpha[r * ch:(r + 1) * ch, c * cw:(c + 1) * cw]
+            ys, xs = np.flatnonzero(cell.sum(axis=1)), np.flatnonzero(cell.sum(axis=0))
+            if len(ys):
+                ux0, uy0 = min(ux0, xs[0]), min(uy0, ys[0])
+                ux1, uy1 = max(ux1, xs[-1] + 1), max(uy1, ys[-1] + 1)
+    return [(c * cw + ux0, r * ch + uy0, c * cw + ux1, r * ch + uy1) for r in range(rows) for c in range(cols)]
+
+
+def downsample(idx: np.ndarray, alpha: np.ndarray, box: tuple[int, int, int, int], scale: float,
+               out_w: int, out_h: int) -> tuple[np.ndarray, np.ndarray]:
+    """Mỗi pixel đích = màu bảng chiếm đa số trong khối nguồn; trong suốt nếu < 50% khối có hình."""
+    x0, y0, x1, y1 = box
+    tw, th = max(1, round((x1 - x0) * scale)), max(1, round((y1 - y0) * scale))
+    tw, th = min(tw, out_w), min(th, out_h)
+    oi = np.zeros((th, tw), dtype=np.int32)
+    oa = np.zeros((th, tw), dtype=bool)
+    sx, sy = (x1 - x0) / tw, (y1 - y0) / th
+    for ty in range(th):
+        ya, yb = y0 + int(ty * sy), max(y0 + int(ty * sy) + 1, y0 + int((ty + 1) * sy))
+        for tx in range(tw):
+            xa, xb = x0 + int(tx * sx), max(x0 + int(tx * sx) + 1, x0 + int((tx + 1) * sx))
+            a = alpha[ya:yb, xa:xb]
+            if a.mean() >= 0.5:
+                oa[ty, tx] = True
+                oi[ty, tx] = np.bincount(idx[ya:yb, xa:xb][a]).argmax()
+    return oi, oa
+
+
+def to_image(oi: np.ndarray, oa: np.ndarray, palette: np.ndarray, size: tuple[int, int]) -> Image.Image:
+    """Đặt khung đã thu vào canvas size, neo đáy giữa, chừa 1px đáy cho viền."""
+    th, tw = oi.shape
+    rgba = np.zeros((th, tw, 4), dtype=np.uint8)
+    rgba[..., :3] = palette[oi]
+    rgba[..., 3] = np.where(oa, 255, 0)
+    near_black = oa & (rgba[..., :3].max(axis=2) <= 24)
+    rgba[near_black, :3] = WARM_OUTLINE
+    art = Image.fromarray(rgba, "RGBA")
+    canvas = Image.new("RGBA", size, (0, 0, 0, 0))
+    canvas.paste(art, ((size[0] - tw) // 2, size[1] - 1 - th), art)
+    return canvas
+
+
+def import_sheet(path: str, layout: str, size: tuple[int, int], palette_list: list[tuple[int, int, int]]) -> list[Image.Image]:
+    palette = np.array(palette_list, dtype=np.int32)
+    rgb = np.asarray(Image.open(path).convert("RGB"))
+    kind, arg = layout.split(":")
+    if kind == "tiles":
+        return import_tiles(rgb, int(arg), size, palette)
+    alpha = ~magenta_mask(rgb)
+    # bỏ nhiễu lẻ (pixel hồng/đen rời rạc do nén ảnh)
+    alpha &= np.roll(alpha, 1, 0) | np.roll(alpha, -1, 0)
+    alpha &= np.roll(alpha, 1, 1) | np.roll(alpha, -1, 1)
+    boxes = split_strip(alpha, int(arg)) if kind == "strip" else split_grid(alpha, *map(int, arg.split("x")))
+    scale = min(min((size[0] - 2) / (x1 - x0), (size[1] - 2) / (y1 - y0)) for x0, y0, x1, y1 in boxes)
+    idx = palette_index(rgb, palette)
+    frames = []
+    for box in boxes:
+        oi, oa = downsample(idx, alpha, box, scale, size[0] - 2, size[1] - 2)
+        frames.append(add_outline(to_image(oi, oa, palette, size), WARM_OUTLINE))
+    return frames
+
+
+def import_tiles(rgb: np.ndarray, n: int, size: tuple[int, int], palette: np.ndarray) -> list[Image.Image]:
+    """Ô nền phủ kín khung: không viền, không trong suốt (AR-20)."""
+    alpha = ~magenta_mask(rgb)
+    boxes = split_strip(alpha, n)
+    idx = palette_index(rgb, palette)
+    out = []
+    for x0, y0, x1, y1 in boxes:
+        m = max(3, (x1 - x0) * 7 // 100)  # bỏ mép: ảnh AI hay vẽ khung tối quanh ô, làm lộ lưới khi lát liền
+        box = (x0 + m, y0 + m, x1 - m, y1 - m)
+        full = np.ones_like(alpha)
+        oi, oa = downsample(idx, full, box, min(size[0] / (box[2] - box[0]), size[1] / (box[3] - box[1])), *size)
+        rgba = np.zeros((*oi.shape, 4), dtype=np.uint8)
+        rgba[..., :3] = palette[oi]
+        rgba[..., 3] = 255
+        out.append(Image.fromarray(rgba, "RGBA").resize(size, Image.Resampling.NEAREST))
+    return out
+
+
+def save_all(named: dict[str, Image.Image], out_dir: str, palette: list[tuple[int, int, int]]) -> list[str]:
+    os.makedirs(out_dir, exist_ok=True)
+    bad = []
+    for name, im in named.items():
+        if count_off_palette(im, palette) or count_near_black(im, 24):
+            bad.append(name)
+        im.save(os.path.join(out_dir, f"{name}.png"))
+    return bad
+
+
+def scene(f: dict[str, Image.Image]) -> Image.Image:
+    """Ghép thử cảnh nông trại x3 để duyệt tỉ lệ giữa nhân vật, cây, vật nuôi, ô đất (không phải bản đồ thật)."""
+    from PIL import ImageDraw
+    sc = Image.new("RGBA", (12 * 32, 7 * 32))
+    for y in range(7):
+        for x in range(12):
+            sc.paste(f["tile_grass_dong" if x >= 9 and y >= 5 else "tile_grass_xuan"], (x * 32, y * 32))
+    for y in range(2, 5):
+        for x in range(2, 7):
+            sc.paste(f["tile_tilled_wet" if (x + y) % 3 == 0 else "tile_tilled_dry"], (x * 32, y * 32))
+            sc.alpha_composite(f[f"CROP_01_{(x - 2) % 4}"], (x * 32, y * 32 - 16))
+    ImageDraw.Draw(sc).ellipse((270, 40, 370, 120), fill=(46, 139, 141, 255), outline=(*WARM_OUTLINE, 255), width=2)
+    sc.alpha_composite(f["AQUA_01_0"], (290, 55))
+    sc.alpha_composite(f["AQUA_01_1"], (325, 80))
+    sc.alpha_composite(f["ANI_01_0"], (250, 150))
+    sc.alpha_composite(f["ANI_01_1"], (300, 160))
+    sc.alpha_composite(f["farmer_walk_right_1"], (200, 120))
+    return sc.resize((sc.width * 3, sc.height * 3), Image.Resampling.NEAREST)
+
+
+def run_p0(palette: list[tuple[int, int, int]]) -> int:
+    named: dict[str, Image.Image] = {}
+    for fname, layout, size, names in P0_SHEETS:
+        frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette)
+        named.update(zip(names, frames))
+    # Ảnh AI vẽ cả hàng 3 và 4 đều quay mặt sang phải: hàng "left" lấy bản lật gương của hàng 3.
+    for f in range(4):
+        named[f"farmer_walk_left_{f}"] = named[f"farmer_walk_left_{f}"].transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    bad = save_all(named, P0_OUT, palette)
+    from codeart_p0_samples import preview  # noqa: E402 — dùng chung bảng xem x4
+    preview(named).save(os.path.join(P0_OUT, "preview_x4.png"))
+    scene(named).save(os.path.join(P0_OUT, "scene_x3.png"))
+    print(f"{len(named)} khung -> {os.path.relpath(P0_OUT)}; lạc bảng / gần đen: {bad or 'không'}")
+    return 1 if bad else 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("image", nargs="?")
+    ap.add_argument("--p0", action="store_true", help="nhập 5 tấm mẫu P0-2 từ art/source/inbox/")
+    ap.add_argument("--layout", help="strip:N | grid:CxR | tiles:N")
+    ap.add_argument("--size", default="48x48")
+    ap.add_argument("--names", help="tên khung, cách nhau dấu phẩy, theo thứ tự trái→phải, trên→dưới")
+    ap.add_argument("--out-dir", default="art/source/wave1")
+    ap.add_argument("--palette", default=DEFAULT_PALETTE)
+    a = ap.parse_args()
+    palette = load_gpl(a.palette)
+    if a.p0:
+        return run_p0(palette)
+    if not (a.image and a.layout and a.names):
+        ap.error("cần image, --layout, --names (hoặc --p0)")
+    frames = import_sheet(a.image, a.layout, parse_size(a.size), palette)
+    names = a.names.split(",")
+    if len(names) != len(frames):
+        ap.error(f"{len(frames)} khung nhưng {len(names)} tên")
+    bad = save_all(dict(zip(names, frames)), a.out_dir, palette)
+    print(f"{len(frames)} khung -> {a.out_dir}; lạc bảng / gần đen: {bad or 'không'}")
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

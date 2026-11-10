@@ -6,8 +6,7 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-81 | Cho phép tạo project Supabase mới (gói miễn phí) cho bản làm lại, để đo P0-6 và làm P1 | `07` LT-10 P0-6 | Đồng ý; DB MVP giữ nguyên |
-| QD-80 | Nguồn ảnh thật cho sprite (PO không cấp API key, 10/11): PO tự tạo bằng ChatGPT/Gemini theo `art/prompts/`, thuê họa sĩ, hay dùng hình vẽ bằng code lâu dài? | `07` LT-10 P0-2, P1 | PO tự tạo 5 ảnh mẫu theo `art/prompts/p0_samples.md`, AI hậu kỳ |
+| QD-82 | Gà 48×48 trông to gần bằng người 48×64 (`art/source/p0_ai/scene_x3.png`): giữ, hay thu vật nuôi nhỏ về 32×32? Lúa có sẵn ụ bùn, đặt lên ô đất bị 2 lớp đất: tạo lại ảnh lúa không ụ bùn? | `05` AR-20, P1 | Thu gà về ~40×40 trong khung 48; tạo lại lúa không ụ bùn |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -31,7 +30,7 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-17 | 10/11 | Ưu tiên chỉnh tài liệu trước code | `07` |
 | QD-18 | 10/11 | PO duyệt toàn bộ mục "(đề xuất)" trong `docs/00 → 08` bản 10/11 (mùa chung server 7 ngày, kéo làm loạt 12 ô, vuốt ve vật nuôi, Phong Thủy có mốc thưởng, bật/tắt hái trộm, khai hoang `500 × 1,25^k`, không bán ⚡ / bỏ qua chờ trong 1.0, 2 ứng viên cưới nam…) | `01`, `02`, `03` |
 | QD-19 | 10/11 | Bản 1.0 ưu tiên cộng đồng; kiếm tiền chỉ bằng đồ trang trí, sau soft launch | `03` KT-60, `07` LT-04 |
-| QD-20 | 10/11 | Build lại phần nền: DB mới (DB cũ giữ nguyên), một bản luật TS chạy trên Edge Function | `04` KY-10 |
+| QD-20 | 10/11 | Build lại phần nền: ~~DB mới (DB cũ giữ nguyên)~~ (phần DB thay bằng QD-81), một bản luật TS chạy trên Edge Function | `04` KY-10 |
 | QD-21 | 10/11 | Miền cho bản chơi thử: Bắc Bộ | `01` GP-60 |
 | QD-22 | 10/11 | Cả game dùng chung 4 mùa vụ; Nam và Trung chỉ khác tên gọi và thời tiết | `01` GP-21 |
 | QD-23 | 10/11 | Trần Hyper-Casual và số người/phòng Sảnh: quyết khi làm GĐ6 | `03` KT-40, `04` KY-60 |
@@ -45,3 +44,5 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-31 | 10/11 | Số món ăn theo dữ liệu từng Đợt; giữ đường cong XP `round(60 × L^1.5)`, Lv.60 (xem lại khi có số beta) | `03` KT-10 |
 | QD-32 | 10/11 | Kiểm pháp lý trước khi bật bất kỳ thanh toán nào | `03` KT-60 |
 | QD-33 | 10/11 | PO không cấp API key ảnh; P0-2 làm mẫu bằng code + prompt cho PO tự tạo (thay đề xuất "cấp key") | `07` LT-10 |
+| QD-80 | 10/11 | Ảnh thật: PO tự tạo bằng ChatGPT/Gemini theo `art/prompts/`, AI hậu kỳ (`tools/art/import_sheet.py`). 5 tấm mẫu P0-2 đã nhập | `05` AR-50 |
+| QD-81 | 10/11 | Thay QD-20 (phần DB): không tạo project mới, dùng project Supabase cũ của MVP. Dữ liệu MVP bỏ được; được viết lại schema **một lần** khi chuyển sang ADR-002, sau đó lại additive-only | `04` KY-31 |

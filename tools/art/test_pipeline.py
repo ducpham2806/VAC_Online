@@ -61,3 +61,53 @@ class PipelineTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ImportSheetTest(unittest.TestCase):
+    """import_sheet.py: nhiều khung / tấm, chung một tỉ lệ thu."""
+
+    def _strip(self) -> Image.Image:
+        im = Image.new("RGB", (900, 400), (255, 0, 255))
+        d = ImageDraw.Draw(im)
+        d.rectangle((40, 300, 140, 380), fill=(120, 190, 30))    # hình thấp
+        d.rectangle((400, 60, 500, 380), fill=(120, 190, 30))    # hình cao
+        d.rectangle((700, 200, 800, 380), fill=(210, 170, 20))
+        return im
+
+    def test_strip_chung_ti_le_va_dung_chuan(self):
+        from import_sheet import import_sheet
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "s.png")
+            self._strip().save(path)
+            frames = import_sheet(path, "strip:3", (32, 48), PALETTE)
+        self.assertEqual(len(frames), 3)
+        heights = [f.getbbox()[3] - f.getbbox()[1] for f in frames]
+        self.assertLess(heights[0], heights[1] / 2, "hình thấp vẫn thấp hơn hình cao (không phóng riêng từng khung)")
+        for f in frames:
+            self.assertEqual(f.size, (32, 48))
+            self.assertEqual(count_off_palette(f, PALETTE), 0)
+            self.assertEqual(count_near_black(f, 24), 0)
+            self.assertEqual(f.getbbox()[3], 48, "neo đáy")
+            self.assertIn((*WARM_OUTLINE, 255), set(f.getdata()))
+
+    def test_sai_so_khung_bao_loi(self):
+        from import_sheet import import_sheet
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "s.png")
+            self._strip().save(path)
+            with self.assertRaises(ValueError):
+                import_sheet(path, "strip:4", (32, 48), PALETTE)
+
+    def test_tiles_phu_kin(self):
+        from import_sheet import import_sheet
+        im = Image.new("RGB", (700, 300), (255, 0, 255))
+        d = ImageDraw.Draw(im)
+        d.rectangle((20, 50, 320, 250), fill=(140, 90, 50))
+        d.rectangle((380, 50, 680, 250), fill=(120, 190, 30))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "t.png")
+            im.save(path)
+            tiles = import_sheet(path, "tiles:2", (32, 32), PALETTE)
+        for t in tiles:
+            self.assertEqual(t.size, (32, 32))
+            self.assertEqual({px[3] for px in t.getdata()}, {255}, "ô nền không trong suốt")

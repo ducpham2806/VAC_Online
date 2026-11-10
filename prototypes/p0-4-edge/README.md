@@ -24,6 +24,6 @@ Chạy: `DENO=<đường dẫn deno> ./run-local.sh`.
 - Kết luận: kiến trúc ADR-001/002 chạy được, luật chỉ viết một lần.
 
 ## Chưa kiểm được
-- **Độ trễ trên Supabase thật** (khởi động lạnh + mạng). Mục tiêu p95 < 400 ms. Cần project Supabase mới (QD-20); chưa tạo vì tạo project là thao tác tốn tài nguyên, chờ PO cho phép.
+- **Độ trễ trên Supabase thật** (khởi động lạnh + mạng). Mục tiêu p95 < 400 ms. Chạy trên project Supabase cũ (QD-81): `farm_states`, `ledger`, `_commit_farm_state` không trùng tên bảng MVP nên áp được như migration thêm.
 - **Từ 4 lô song song cùng tài khoản trở lên** có thể hết 3 lần thử. Bình thường một tài khoản chỉ chơi trên 1 thiết bị. Khi làm thật thì thêm backoff ngẫu nhiên và gộp thao tác phía client.
 - **Xác thực JWT** dựa vào gateway Supabase (`verify_jwt`). Ở máy cục bộ dùng JWT giả.

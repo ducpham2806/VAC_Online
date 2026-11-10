@@ -47,10 +47,10 @@ Danh sách loài cụ thể của mỗi Đợt nằm ở dữ liệu (`unlockWav
 | ID | Việc | Phụ thuộc | Trạng thái |
 |---|---|---|---|
 | P0-1 | Bộ tài liệu mới `docs/00 → 08` | QD-12…17 | DONE 10/11 (LT-11) |
-| P0-2 | 5 sprite mẫu (1 cây 4 giai đoạn + mùa, 1 gà, 1 cá, nhân vật đi 4 hướng, ô đất 2 mùa) qua `/vac-asset-audit` | QD-33 | DONE 10/11 bằng hình vẽ code (`05` AR-50); ảnh thật chờ QD-80 |
+| P0-2 | 5 sprite mẫu (1 cây 4 giai đoạn + mùa, 1 gà, 1 cá, nhân vật đi 4 hướng, ô đất 2 mùa) qua `/vac-asset-audit` | QD-33, QD-80 | DONE 10/11: mẫu vẽ code + ảnh thật PO tạo, nhập bằng `import_sheet.py` (`art/source/p0_ai/`) |
 | P0-3 | ADR-001 một bản luật TS; ADR-002 trạng thái + sổ cái tiền tệ; ADR-003 pipeline dữ liệu (thêm cột `seasons`) | QD-20 | DONE 10/11 (`docs/adr/`, cột `Seasons`, `src/domain/season.ts`) |
 | P0-4 | Thử nghiệm kỹ thuật: "gieo → thu → bán" chạy luật TS trên Edge Function có khóa phiên bản, đo độ trễ | P0-3 | DONE 10/11 ở máy cục bộ (`prototypes/p0-4-edge/`) |
-| P0-6 | Đo độ trễ P0-4 trên Supabase thật (project mới, mục tiêu p95 < 400 ms) | QD-81 | WAITING |
+| P0-6 | Đo độ trễ P0-4 trên Supabase thật (project cũ, mục tiêu p95 < 400 ms); bảng mới không trùng bảng MVP nên áp được kiểu thêm | QD-81 | BLOCKED: kết nối Supabase của phiên chưa thấy project VAC |
 | P0-5 | Wireframe mới cho HUD điều khiển lai (`06` UI-20) | P0-1 | DONE 10/11 (`docs/wireframes/`) |
 
 ### LT-11 · Việc tài liệu đã làm

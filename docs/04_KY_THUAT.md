@@ -54,7 +54,7 @@ Lý do và phương án: [ADR-001](adr/ADR-001-mot-ban-luat.md) (một bản lu�
 - RLS mặc định từ chối; người chơi chỉ đọc dữ liệu của mình.
 - Seed chỉ upsert, không `DELETE`. File seed sinh tự động (`npm run seed:catalog`).
 - Mỗi migration có test trong `supabase/tests/`.
-- Bản làm lại dùng DB mới (QD-20). DB cũ giữ nguyên, không sửa.
+- Bản làm lại dùng lại project Supabase cũ (QD-81). Dữ liệu MVP bỏ được; được viết lại schema **một lần** khi chuyển sang ADR-002 (migration riêng, PO duyệt trước khi áp). Sau mốc đó quay lại additive-only.
 
 ### KY-40 · Bảo mật — lỗi đã gặp, không lặp lại
 | Đã xảy ra | Luật |

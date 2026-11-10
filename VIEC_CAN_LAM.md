@@ -8,8 +8,10 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 ## A. Việc anh (PO)
 ### A0. Câu hỏi đang chờ anh (`docs/08_QUYET_DINH.md`)
 - [x] ~~Duyệt bộ tài liệu mới + mọi đề xuất~~ ✅ 2026-11-10 (QD-18…32)
-- [ ] QD-81: cho tạo project Supabase mới (miễn phí) cho bản làm lại → mở khóa P0-6 và P1.
-- [ ] QD-80: tạo 5 ảnh mẫu bằng ChatGPT/Gemini theo `art/prompts/p0_samples.md`, bỏ vào `art/source/inbox/` (hoặc chọn cách khác).
+- [x] ~~QD-81: Supabase cho bản làm lại~~ ✅ 2026-11-10 — dùng project cũ, dữ liệu MVP bỏ được.
+- [x] ~~QD-80: tạo 5 ảnh mẫu~~ ✅ 2026-11-10 — đã nhập vào `art/source/p0_ai/`.
+- [ ] Kết nối Supabase của Claude đang trỏ vào tài khoản chỉ có project "Nam_A_CRM". Cần nối tài khoản/tổ chức chứa project VAC (`znabynzbcimpesrxxxsz`) → mở khóa P0-6.
+- [ ] QD-82: cỡ gà + ảnh lúa không ụ bùn.
 - [ ] Trong lúc chờ: tạm dừng mở GĐ2 bản cũ (A1) hay vẫn làm tiếp?
 
 ### A1. Supabase / Vercel (bản MVP cũ — chỉ cần nếu vẫn mở GĐ2 cũ)
@@ -29,7 +31,7 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P0-3 ADR kiến trúc + cột `Seasons`~~ ✅ 2026-11-10
 - [x] ~~P0-4 Thử nghiệm Edge Function một bản luật (máy cục bộ)~~ ✅ 2026-11-10
 - [x] ~~P0-5 Wireframe HUD điều khiển lai~~ ✅ 2026-11-10
-- [ ] P0-6 Đo độ trễ trên Supabase thật (chờ QD-81)
+- [ ] P0-6 Đo độ trễ trên Supabase thật (chờ kết nối Supabase tới project VAC)
 - [ ] Lập thẻ P1 vertical slice
 
 ## F. Nhật ký
