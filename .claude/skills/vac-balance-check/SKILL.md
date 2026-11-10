@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Bash(npx tsx *), Bash(node *)
 # /vac-balance-check (chuyển thể từ CCGS `balance-check`)
 
 ## Thiếu dữ liệu thì dừng (nguyên tắc NOT ASSESSED của CCGS)
-Liệt kê input: `GAME_CATALOG`, `src/domain/progression.ts`, `src/domain/farm.ts`, bảng Sources/Sinks trong `02`, và **dữ liệu chơi thật** (chưa có analytics cho tới S3).
+Liệt kê input: `GAME_CATALOG`, `src/domain/progression.ts`, `src/domain/farm.ts`, mục tiêu Sources/Sinks `docs/03_KINH_TE.md` KT-55, và **dữ liệu chơi thật** (chưa có analytics cho tới S3).
 Phần nào thiếu input thì ghi **NOT ASSESSED — NO DATA**. Không ước đoán; báo "đạt" khi không có dữ liệu là lỗi.
 
 ## Bước 1 — Tính từ dữ liệu
@@ -25,7 +25,7 @@ Viết script tạm (`npx tsx` trong scratchpad, **không** commit) import `GAME
 - Đợt sau kém Đợt trước.
 
 ## Bước 3 — So với thiết kế
-Đối chiếu mục tiêu trong `02`: thu nhập/ngày, trần 1.500🪙/ngày cho hyper-casual, Sources/Sinks 94–112%. Chưa có số người chơi thật thì phần "thực tế" ghi NOT ASSESSED.
+Đối chiếu mục tiêu trong `docs/03_KINH_TE.md`: thu nhập/ngày, trần 1.500🪙/ngày cho hyper-casual, Sources/Sinks 94–112%. Chưa có số người chơi thật thì phần "thực tế" ghi NOT ASSESSED.
 
 ## Báo cáo
 Bảng theo Đợt (min / trung vị / max lãi/phút, loài bất thường), thời gian lên các mốc Lv 3/8/15, kèm danh sách đề xuất.

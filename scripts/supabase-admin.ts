@@ -158,7 +158,7 @@ const REPORT_QUERIES: Array<[string, string]> = [
   ],
   ['Phễu tân thủ', 'SELECT step_no, step, players FROM public.analytics_funnel ORDER BY step_no'],
   [
-    'Dòng tiền theo ngày — mục tiêu Sink/Source 94–112% (02_MASTER_ECONOMY)',
+    'Dòng tiền theo ngày — mục tiêu Sink/Source 94–112% (docs/03_KINH_TE KT-55)',
     'SELECT day, active_payers, gold_sources, gold_sinks, sink_source_pct, gems_sources, gems_sinks FROM public.analytics_economy ORDER BY day DESC LIMIT 14',
   ],
 ];

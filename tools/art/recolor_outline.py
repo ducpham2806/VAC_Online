@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hậu kỳ sprite theo 05_MASTER_ART (RULE D1 — cấm viền đen #000000).
+"""Hậu kỳ sprite theo docs/05_ART_AUDIO (RULE D1 — cấm viền đen #000000).
 
 Dùng sau khi agent-sprite-forge (generate2dsprite / video2dsprite) xuất PNG:
 

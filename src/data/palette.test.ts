@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-/** Bảng 64 màu chính thức (05_MASTER_ART mục 1.3, PO chốt 2026-11-02). Nguồn chuẩn: art/palette/vac_base.gpl */
+/** Bảng 64 màu chính thức (docs/05_ART_AUDIO AR-10, PO chốt 2026-11-02). Nguồn chuẩn: art/palette/vac_base.gpl */
 const GPL = readFileSync(resolve(process.cwd(), 'art/palette/vac_base.gpl'), 'utf-8');
 const colors = GPL.split('\n')
   .map((l) => l.trim().split(/\s+/))

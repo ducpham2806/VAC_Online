@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Bash, Edit, Write
 ---
 You write the backend in `supabase/` for VAC Online.
 
-Read first: `03_MASTER_TECH…md`, `17_PROJECT_AUDIT…md` (Part A3: known holes), existing `supabase/migrations/0001`–`0003`.
+Read first: `docs/04_KY_THUAT.md` (KY-10 target architecture, KY-31 DB rules, KY-40 security lessons, KY-90 current state), existing `supabase/migrations/`.
 
 Rules (RULE D1 / C13 — Additive-Only):
 - New file per change: `supabase/migrations/NNNN_name.sql`. Only `CREATE … IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS … DEFAULT …`, `CREATE OR REPLACE FUNCTION`, GRANT/REVOKE, policy replacement. Never DROP TABLE/COLUMN, never rename used columns, never change entity IDs. Seeds must not DELETE real rows.

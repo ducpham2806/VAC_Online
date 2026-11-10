@@ -4,6 +4,8 @@
 - Trần ký tự của các file đọc mỗi phiên (docs/WORKFLOW.md mục Budget).
 - Link tương đối không hỏng trong các file đó và trong docs/.
 - docs/WORKLOG.md có 1–3 mục.
+- Mã mục thiết kế (TQ/GP/TG/KT/KY/AR/UI/LT/QD-nn): mỗi mã định nghĩa đúng một lần,
+  mọi chỗ dẫn mã đều trỏ tới mã có thật (docs/00_TONG_QUAN.md mục TQ-05).
 - Bản ghim Game Studio trong .agents/game-studio/ khớp đúng docs/studio/SOURCE-MANIFEST.md.
 """
 import hashlib
@@ -16,7 +18,6 @@ LIMITS = {
     'AGENTS.md': 7000,
     'CLAUDE.md': 2000,
     'docs/SESSION-HANDOFF.md': 3000,
-    'docs/PROJECT-PLAN.md': 7000,
     'docs/WORKLOG.md': 4500,
     'docs/COMPLETED.md': 9000,
     'VIEC_CAN_LAM.md': 16000,
@@ -28,6 +29,32 @@ OTHER_INPUTS = [
 ]
 LINK = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
 errors = []
+
+# --- Mã mục thiết kế ---
+DESIGN = sorted((ROOT / 'docs').glob('0[0-8]_*.md'))
+if len(DESIGN) != 9:
+    errors.append(f'Cần 9 tài liệu thiết kế docs/00 → 08, đang có {len(DESIGN)}')
+CODE = r'(?:TQ|GP|TG|KT|KY|AR|UI|LT|QD)-\d{2}'
+DEF_HEADING = re.compile(rf'^#{{2,4}} ({CODE}) ·', re.M)
+DEF_ROW = re.compile(rf'^\| ({CODE}) \|', re.M)
+REF = re.compile(rf'(?<![A-Za-z0-9_-])({CODE})(?![0-9])')
+defined = {}
+for f in DESIGN:
+    text = f.read_text(encoding='utf-8')
+    LIMITS[f.relative_to(ROOT).as_posix()] = 24000 if f.name.startswith('01_') else 16000
+    for code in DEF_HEADING.findall(text) + DEF_ROW.findall(text):
+        if code in defined:
+            errors.append(f'Mã {code} định nghĩa 2 lần: {defined[code]} và {f.name}')
+        defined[code] = f.name
+REF_FILES = DESIGN + [ROOT / n for n in ('AGENTS.md', 'CLAUDE.md', 'VIEC_CAN_LAM.md', 'README.md')]
+REF_FILES += sorted((ROOT / '.claude').glob('**/*.md'))
+REF_FILES += [ROOT / 'docs' / n for n in ('WORKFLOW.md', 'SESSION-HANDOFF.md', 'COMPLETED.md')]
+for f in REF_FILES:
+    if not f.is_file():
+        continue
+    for code in sorted(set(REF.findall(f.read_text(encoding='utf-8')))):
+        if code not in defined:
+            errors.append(f'{f.relative_to(ROOT).as_posix()}: dẫn mã {code} không tồn tại')
 
 for name in list(LIMITS) + OTHER_INPUTS:
     path = ROOT / name
@@ -79,5 +106,5 @@ for _source, installed, expected in rows:
 if errors:
     print('\n'.join(errors))
     raise SystemExit(1)
-print(f'PASS: {len(LIMITS) + len(OTHER_INPUTS)} file đầu vào trong trần + link OK; '
+print(f'PASS: {len(LIMITS) + len(OTHER_INPUTS)} file đầu vào trong trần + link OK; {len(defined)} mã mục; '
       f'WORKLOG {len(entries)} mục; Game Studio {len(rows)} file khớp bản ghim')

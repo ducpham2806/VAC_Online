@@ -2,7 +2,7 @@ import { getSupabaseClient } from './supabaseClient';
 import { GenderType, RegionType } from '../data/types';
 
 /**
- * Dịch vụ xác thực — Supabase Auth là nguồn xác thực duy nhất (Sprint S0, 17_PROJECT_AUDIT B5).
+ * Dịch vụ xác thực — Supabase Auth là nguồn xác thực duy nhất (Sprint S0, docs_archive_merged/v1-2026-11-10/17_PROJECT_AUDIT B5).
  *
  * - KHÔNG lưu mật khẩu ở client dưới bất kỳ dạng nào.
  * - Mã OTP khôi phục do Supabase gửi qua email (template "Reset Password" phải có {{ .Token }}).

@@ -8,7 +8,7 @@ export interface StoryQuest {
   id: string;
   /** Số chương Gia Phả (1..10). */
   chapterNo: number;
-  /** Giai đoạn phát hành mở chương này (01_MASTER_GDD 4.2: GĐ1 = Ch.1–2, GĐ2 = Ch.3, 6, 7 …). */
+  /** Giai đoạn phát hành mở chương này (docs/02_THE_GIOI_COT_TRUYEN TG-30: GĐ1 = Ch.1–2, GĐ2 = Ch.3, 6, 7 …). */
   unlockStage: number;
   /** Cấp tối thiểu để nhận thưởng. */
   minLevel: number;

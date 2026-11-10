@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Nhập 1 ảnh (do ChatGPT / Gemini / API tạo, hoặc vẽ tay) thành sprite đúng chuẩn 05_MASTER_ART.
+"""Nhập 1 ảnh (do ChatGPT / Gemini / API tạo, hoặc vẽ tay) thành sprite đúng chuẩn docs/05_ART_AUDIO
 
   python3 tools/art/import_sprite.py art/source/inbox/lua_chin.png --id CROP_01 --stage 3
   python3 tools/art/import_sprite.py in.png --id ANI_01 --stage 2 --size 48x48 --out-dir art/source/wave1

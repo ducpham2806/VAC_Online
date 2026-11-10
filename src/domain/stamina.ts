@@ -1,4 +1,4 @@
-/** Năng lượng Bát Cơm hồi +1 ⚡ mỗi 3 phút (01_MASTER_GDD 1.2), không vượt trần. */
+/** Năng lượng Bát Cơm hồi +1 ⚡ mỗi 3 phút (docs/03_KINH_TE KT-20), không vượt trần. */
 export const STAMINA_REGEN_MS = 180_000;
 
 export function regenStamina(

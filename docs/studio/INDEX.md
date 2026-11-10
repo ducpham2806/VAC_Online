@@ -2,7 +2,7 @@
 
 Thư viện đầy đủ (116 skill, 21 vai trò, 4 rule, 6 template) đã cài ở `.agents/game-studio/` — bản ghim, cách cài và cập nhật: [INSTALLATION](INSTALLATION.md). **Không nạp tất cả.** Mỗi việc thường chỉ cần 1–3 skill; reference/scripts đi kèm chỉ mở khi cần. Skill `/vac-studio` làm đúng việc tra bảng này.
 
-Luật VAC (`AGENTS.md`, `.claude/rules/`) luôn ưu tiên hơn skill. Skill nói Godot/Unity, `project.yaml`, `design/gdd/`, `production/` → bỏ phần đó, dùng tài liệu `00 → 17` và `docs/` của VAC.
+Luật VAC (`AGENTS.md`, `.claude/rules/`) luôn ưu tiên hơn skill. Skill nói Godot/Unity, `project.yaml`, `design/gdd/`, `production/` → bỏ phần đó, dùng tài liệu `docs/00 → 08` của VAC.
 
 ## Đường đọc ngắn cho VAC
 
@@ -10,10 +10,10 @@ Luật VAC (`AGENTS.md`, `.claude/rules/`) luôn ưu tiên hơn skill. Skill nó
 |---|---|---|
 | Lập kế hoạch, chia thẻ việc, đóng việc | [game-production-scrum](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-production-scrum/SKILL.md) | Quy trình `docs/WORKFLOW.md` ưu tiên; đóng việc bằng `/vac-story-done` |
 | Chưa rõ cần chuyên môn gì | [router](../../.agents/game-studio/skills/00-orchestration-and-workflows/router/SKILL.md) | Engine = web, Phaser 3 + React 19 |
-| Viết / sửa đặc tả tính năng | [game-gdd-architect](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-gdd-architect/SKILL.md), [game-designer](../../.agents/game-studio/skills/01-design-and-narrative/game-designer/SKILL.md) | Ghi vào `01`, không tạo GDD thứ hai |
-| Giá, lương, thuế, trần, Sources/Sinks | [economy-designer](../../.agents/game-studio/skills/01-design-and-narrative/economy-designer/SKILL.md) | Chạy kèm `/vac-balance-check`; số liệu ở `02` + `GAME_CATALOG` |
-| Cốt truyện 10 Chương, thoại NPC | [narrative-designer](../../.agents/game-studio/skills/01-design-and-narrative/narrative-designer/SKILL.md), [dialogue-systems](../../.agents/game-studio/skills/01-design-and-narrative/dialogue-systems/SKILL.md) | Chỉ ghi ở `01` Chương 2, 4 |
-| Bố cục nông trại, Sảnh Chung | [level-design](../../.agents/game-studio/skills/01-design-and-narrative/level-design/SKILL.md), [generate2dmap](../../.agents/game-studio/skills/02-art-animation-ui-audio/generate2dmap/SKILL.md) | Lưới chuẩn: `src/domain/farmGrid.ts` |
+| Viết / sửa đặc tả tính năng | [game-gdd-architect](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-gdd-architect/SKILL.md), [game-designer](../../.agents/game-studio/skills/01-design-and-narrative/game-designer/SKILL.md) | Ghi vào `docs/01_GAMEPLAY.md` dưới mã `GP-nn`, không tạo GDD thứ hai |
+| Giá, lương, thuế, trần, Sources/Sinks | [economy-designer](../../.agents/game-studio/skills/01-design-and-narrative/economy-designer/SKILL.md) | Chạy kèm `/vac-balance-check`; số liệu ở `docs/03_KINH_TE.md` + `GAME_CATALOG` |
+| Cốt truyện 10 Chương, thoại NPC | [narrative-designer](../../.agents/game-studio/skills/01-design-and-narrative/narrative-designer/SKILL.md), [dialogue-systems](../../.agents/game-studio/skills/01-design-and-narrative/dialogue-systems/SKILL.md) | Chỉ ghi ở `docs/02_THE_GIOI_COT_TRUYEN.md` |
+| Bố cục nông trại, bản đồ làng, Sảnh Chung | [level-design](../../.agents/game-studio/skills/01-design-and-narrative/level-design/SKILL.md), [generate2dmap](../../.agents/game-studio/skills/02-art-animation-ui-audio/generate2dmap/SKILL.md) | Luật bản đồ: `docs/01_GAMEPLAY.md` GP-11, GP-14 |
 | Lưu tiến trình, tài khoản, đồng bộ | [save-systems](../../.agents/game-studio/skills/01-design-and-narrative/save-systems/SKILL.md), [backend-architect](../../.agents/game-studio/skills/07-quality-backend-publishing/backend-architect/SKILL.md) | DB additive-only, RPC dùng `auth.uid()` |
 | Gia nhân lazy-tick, NPC | [game-systems-ai-programmer](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-systems-ai-programmer/SKILL.md), [game-ai](../../.agents/game-studio/skills/01-design-and-narrative/game-ai/SKILL.md) | Luật ở `src/domain/workers.ts` + SQL |
 | Scene, camera, input chạm | [phaser-core](../../.agents/game-studio/skills/09-web-and-other-engines/phaser-core/SKILL.md), [camera-systems](../../.agents/game-studio/skills/01-design-and-narrative/camera-systems/SKILL.md), [input-systems](../../.agents/game-studio/skills/01-design-and-narrative/input-systems/SKILL.md) | **Phaser 3.88** — skill viết cho Phaser 4.2, đối chiếu API trước |
@@ -23,9 +23,9 @@ Luật VAC (`AGENTS.md`, `.claude/rules/`) luôn ưu tiên hơn skill. Skill nó
 | Âm thanh WebAudio | [game-audio-engineer](../../.agents/game-studio/skills/02-art-animation-ui-audio/game-audio-engineer/SKILL.md), [audio-design](../../.agents/game-studio/skills/02-art-animation-ui-audio/audio-design/SKILL.md) | `src/services/soundEffects.ts` |
 | Kiểm thử, playtest, closed beta | [game-qa-playtest](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-qa-playtest/SKILL.md), [code-reviewer](../../.agents/game-studio/skills/07-quality-backend-publishing/code-reviewer/SKILL.md) | Kèm `code-review`, `security-review` |
 | Hiệu năng di động | [performance-optimization](../../.agents/game-studio/skills/07-quality-backend-publishing/performance-optimization/SKILL.md) | Mục tiêu 60 FPS màn ngang |
-| Phát hành, LiveOps, sự kiện | [game-release-liveops](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-release-liveops/SKILL.md) | Lịch đích ở `08` Phần 4 |
+| Phát hành, LiveOps, sự kiện | [game-release-liveops](../../.agents/game-studio/skills/00-orchestration-and-workflows/game-release-liveops/SKILL.md) | Lịch lễ hội ở `docs/02_THE_GIOI_COT_TRUYEN.md` TG-50 |
 | Vertical slice, thử ý tưởng nhanh | [prototype-fast](../../.agents/game-studio/skills/00-orchestration-and-workflows/prototype-fast/SKILL.md) | Làm trong `prototypes/`, không trộn vào `src/` |
-| Truyền thông, cộng đồng | [content-creator](../../.agents/game-studio/skills/07-quality-backend-publishing/content-creator/SKILL.md), [growth-hacker](../../.agents/game-studio/skills/07-quality-backend-publishing/growth-hacker/SKILL.md), [seo-specialist](../../.agents/game-studio/skills/07-quality-backend-publishing/seo-specialist/SKILL.md) | Poster `09` |
+| Truyền thông, cộng đồng | [content-creator](../../.agents/game-studio/skills/07-quality-backend-publishing/content-creator/SKILL.md), [growth-hacker](../../.agents/game-studio/skills/07-quality-backend-publishing/growth-hacker/SKILL.md), [seo-specialist](../../.agents/game-studio/skills/07-quality-backend-publishing/seo-specialist/SKILL.md) | Không hứa trước lộ trình chưa duyệt (QD-83) |
 | PK / Loạn Chiến Sảnh Chung (GĐ6) | [phaser-arcade-physics](../../.agents/game-studio/skills/09-web-and-other-engines/phaser-arcade-physics/SKILL.md), [game-feel](../../.agents/game-studio/skills/01-design-and-narrative/game-feel/SKILL.md) | Chỉ khi mở GĐ6 |
 
 **Vai trò (21 playbook)** ở `.agents/game-studio/agents/`: dùng như hướng dẫn khi viết prompt cho subagent `vac-*`, không tự spawn. Gần nhất với VAC: `producer`, `design-lead`, `asset-pipeline-lead`, `art-ui-lead`, `qa-lead`, `release-lead`, `team-ui`, `team-assets`, `team-narrative`, `team-prototype-jam`.

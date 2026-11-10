@@ -2,17 +2,25 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## DOCS-01 · Bộ tài liệu mới `docs/00 → 08` · 10/11/2026 — DONE, chờ PO duyệt nội dung
+- PO chốt hướng: Green Farm 3 + Harvest Moon, điều khiển lai, 4 mùa theo tuần thật, ⚡ cho việc nặng, 1 miền trước, lưu trữ bộ cũ (QD-12…17).
+- Bộ cũ `00 → 17` (17 file, ~494 KB) chuyển nguyên văn sang `docs_archive_merged/v1-2026-11-10/`. Thay bằng 9 file ~110 KB: tổng quan, gameplay, thế giới, kinh tế, kỹ thuật, art, UI, lộ trình, sổ quyết định.
+- Chống chồng chéo: mỗi luật một mã mục (`GP-`, `KT-`…); số chỉ ở `03` + dữ liệu; quyết định chỉ ở `08`; `check:docs` kiểm mã dẫn sai/trùng.
+- CSV `04` → `data/catalog.csv`; key art → `art/key_art/`. `VIEC_CAN_LAM.md` rút gọn (bản cũ ở `docs/archive/`). Cập nhật agent/skill/rule `vac-*`, AGENTS, README, chú thích code.
+- Bằng chứng: typecheck, 178 test, build, check:docs PASS. Không đổi luật code, DB hay số kinh tế.
+- Giới hạn: các mục "(đề xuất)" và 17 câu `QD-83…99` chờ PO; code vẫn theo thiết kế cũ (KY-90).
+
 ## TOOLING-01 · Game Studio + Graphify + hệ nhật ký · 10/11/2026
 - Nhánh `claude/gifted-faraday-2q851c`. Cài thư viện Game_Studio_Agent `c5dac46` (297 file, 116 skill, 21 vai trò) ở `.agents/game-studio/`, manifest băm từng file, skill định tuyến `/vac-studio`, chỉ mục riêng cho VAC.
 - Graphify `0.9.105` (+SQL): skill `/graphify`, hook nhắc tra đồ thị, SessionStart tự cài và dựng `graphify-out/` (~1.350 nút, không commit).
 - Rút `AGENTS.md` 19,7 KB → ~6 KB, giữ đủ RULE D0/D1 (bản cũ nguyên văn ở archive). Nhật ký chuyển từ `VIEC_CAN_LAM.md` mục F sang `docs/WORKLOG.md` + COMPLETED + HANDOFF, có `npm run check:docs`.
-- Bản đánh giá plan + kế hoạch làm lại (đề xuất, **chờ PO duyệt**): `docs/REVIEW-2026-11-10.md`, `docs/PROJECT-PLAN.md`.
+- Bản đánh giá plan: `docs/REVIEW-2026-11-10.md`; kế hoạch đề xuất sau đó gộp vào `docs/07_LO_TRINH.md`.
 - Không đổi code game, DB hay kinh tế.
 
 ## S0 · Ổn định nền móng · 31/10/2026 — DONE
 - Build chạy lại; vitest + CI (typecheck → test → test:sql → build); chỉ dùng Supabase Auth, bỏ kho mật khẩu ở localStorage; công cụ debug chỉ hiện ở DEV.
 - `0003_security_hardening`: RPC khóa bằng `auth.uid()`, catalog chỉ `service_role` ghi; seed catalog phía server. Dữ liệu `unlockWave` 5 Đợt (23/45/63/76/81) có test khóa.
-- Quy ước: `GAME_CATALOG` (166 mục) là nguồn chuẩn; CSV `04` (146 dòng) phải là tập con.
+- Quy ước: `GAME_CATALOG` (166 mục) là nguồn chuẩn; CSV (nay là `data/catalog.csv`, 146 dòng) phải là tập con.
 
 ## S1 · Vòng chơi GĐ1 trên server · 01/11/2026 — DONE, đã áp DB thật
 - `0004_farm_core`: gieo, tưới, thu vào Kho, bán HTX, năng lượng +1⚡/3 phút đều tính ở server. `0005` sửa Security Advisor; smoke test thật đạt.

@@ -22,7 +22,7 @@ export const POT_MACHINE_ID = 'MAC_02';
 export const STARTER_RECIPE_ID = 'PROD_01';
 /** Tổng số nguyên liệu tối đa bỏ vào Nồi Đất (tính cả số lượng). */
 export const POT_MAX_INGREDIENTS = 4;
-/** Thưởng lần đầu khám phá mỗi món (`12_PLAN` M04.2). */
+/** Thưởng lần đầu khám phá mỗi món (`docs_archive_merged/v1-2026-11-10/12_PLAN` M04.2). */
 export const DISCOVER_GEMS = 10;
 export const DISCOVER_XP = 50;
 /** Buff "Nắng Gió Cao Nguyên" (miền Trung): −10% thời gian chế biến (`01` mục 2.1). */

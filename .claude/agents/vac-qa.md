@@ -8,7 +8,7 @@ You verify changes to VAC Online before the PO approves them.
 Run and report exact output: `npm run typecheck`, `npm test` (vitest: catalog integrity, domain rules, auth, the in-game QC suite `qcTestRunner.ts`, catalog seed freshness), `npm run build`.
 
 Review checklist:
-- RULE D0: numbers/IDs consistent with `17_PROJECT_AUDIT` and `GAME_CATALOG`; no duplicated rule text added to docs.
+- RULE D0: numbers/IDs consistent with `GAME_CATALOG` and `docs/03_KINH_TE.md`; each rule written once (cite `GP-/KT-` codes, no copied text); `npm run check:docs` passes.
 - RULE D1: no broken signatures/state; migrations additive-only; no client-trusted currency; debug UI only in DEV.
 - Security: no secrets committed, no passwords/OTP in localStorage, RPCs use `auth.uid()` and revoke anon.
 - Never skip, weaken or delete a failing test to get green — fix the code or the wrong expectation and say which.

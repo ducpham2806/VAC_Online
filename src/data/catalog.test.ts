@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { GAME_CATALOG } from './masterData';
 
 const VAC_PREFIX = /^(CROP|ANI|AQUA)_/;
-const CSV_PATH = resolve(__dirname, '../../04_MASTER_DATA_Bang_Thong_So_Kinh_Te_Toan_Game.csv');
+const CSV_PATH = resolve(__dirname, '../../data/catalog.csv');
 
 /** Tách 1 dòng CSV đơn giản (hỗ trợ trường có dấu ngoặc kép). */
 function parseCsvLine(line: string): string[] {
@@ -74,7 +74,7 @@ describe('GAME_CATALOG — toàn vẹn dữ liệu gốc', () => {
   });
 });
 
-describe('CSV 04_MASTER_DATA ↔ GAME_CATALOG', () => {
+describe('CSV data/catalog.csv ↔ GAME_CATALOG', () => {
   const rows = loadCsvRows();
   const byId = new Map(GAME_CATALOG.map((c) => [c.id, c]));
 

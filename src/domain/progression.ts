@@ -1,7 +1,7 @@
 import { CatalogItem, RegionType } from '../data/types';
 
 /**
- * Tiến trình cấp độ & mở khóa (17_PROJECT_AUDIT C1). SQL: public._xp_to_next / public._apply_xp
+ * Tiến trình cấp độ & mở khóa (docs_archive_merged/v1-2026-11-10/17_PROJECT_AUDIT C1). SQL: public._xp_to_next / public._apply_xp
  * trong migration 0004 dùng ĐÚNG công thức này — sửa ở đây thì phải sửa cả SQL.
  */
 export const MAX_LEVEL = 60;
@@ -47,7 +47,7 @@ export type PlantLock =
 
 /**
  * Có được gieo/thả loài này không: đúng Đợt đang mở, đủ cấp, và đặc sản vùng chỉ trồng ở
- * đúng miền của mình (01_MASTER_GDD 2.1 — 70% chung / 30% độc quyền).
+ * đúng miền của mình (docs/01_GAMEPLAY GP-60 — 70% chung / 30% độc quyền).
  */
 export function canPlant(item: CatalogItem, level: number, gameStage: number, region: RegionType): PlantLock {
   if (!isPlantable(item)) return { ok: false, reason: 'NOT_PLANTABLE' };
@@ -57,7 +57,7 @@ export function canPlant(item: CatalogItem, level: number, gameStage: number, re
   return { ok: true };
 }
 
-/** Bếp Quê, Xưởng, đồ thợ… (mọi thứ không gieo/nuôi được) mở từ Giai đoạn 2 (`12_PLAN` M04.1–M04.3). */
+/** Bếp Quê, Xưởng, đồ thợ… (mọi thứ không gieo/nuôi được) mở từ Giai đoạn 2 (`docs_archive_merged/v1-2026-11-10/12_PLAN` M04.1–M04.3). */
 export const CRAFT_MIN_STAGE = 2;
 
 export type CraftLock =
