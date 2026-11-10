@@ -3,10 +3,12 @@
 Webgame / PWA → Mobile App thể loại **Cozy Vietnamese Pixel Art Farm Tycoon & Social RPG**
 (Phaser 3 + React 19 + Zustand + Supabase).
 
-- Thiết kế đích: bộ tài liệu `00` → `16` (bắt đầu từ `00_MASTER_BIBLE…md`).
-- **Hiện trạng thực tế & kế hoạch sprint:** `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md`.
-- Quy tắc cho AI agent: `AGENTS.md`.
-- **Việc cần làm (PO + dev):** `VIEC_CAN_LAM.md`.
+- **Tài liệu thiết kế:** `docs/00_TONG_QUAN.md` → `docs/08_QUYET_DINH.md` (bắt đầu từ `00`: tầm nhìn, tham chiếu Green Farm 3 + Harvest Moon, bản đồ tài liệu). Lộ trình: `docs/07_LO_TRINH.md`. Hiện trạng code: `docs/04_KY_THUAT.md` KY-90. Bộ cũ `00 → 17`: `docs_archive_merged/v1-2026-11-10/`.
+- **Dữ liệu thực thể:** `data/catalog.csv` ↔ `src/data/masterData.ts`.
+- Quy tắc cho AI agent: `AGENTS.md` (Claude Code nạp qua `CLAUDE.md`).
+- **Việc cần làm (PO + dev):** `VIEC_CAN_LAM.md`. Đánh giá dự án: `docs/REVIEW-2026-11-10.md`.
+- **Nhật ký / bàn giao:** `docs/WORKLOG.md`, `docs/COMPLETED.md`, `docs/SESSION-HANDOFF.md` (quy trình: `docs/WORKFLOW.md`).
+- **Bộ công cụ AI:** thư viện Game Studio `.agents/game-studio/` (tra `docs/studio/INDEX.md`), đồ thị tri thức Graphify (`npm run graph`).
 
 ## Chạy nhanh
 
@@ -26,6 +28,7 @@ npm run typecheck   # tsc cho app + test
 npm test            # vitest: luật domain, catalog & 5 Đợt, store, auth, 25 QC test case, seed
 npm run test:sql    # test migration + RPC trên Postgres tạm (cần Postgres 16 cục bộ hoặc PGHOST)
 npm run build       # bản production (ẩn công cụ debug)
+npm run check:docs  # trần ký tự tài liệu, link, nhật ký, bản ghim Game Studio
 ```
 
 ## Kết nối Supabase
@@ -66,4 +69,4 @@ Khi mở giai đoạn mới, cần nâng cả `VITE_GAME_STAGE` lẫn hàm SQL `
 
 ## Đóng gói Mobile
 
-`capacitor.config.ts` đã có cấu hình; thư viện `@capacitor/*` sẽ được cài ở Sprint S11–S12 (xem file `17`).
+`capacitor.config.ts` đã có cấu hình; thư viện `@capacitor/*` sẽ được cài ở Sprint S11–S12 (xem `docs/04_KY_THUAT.md` KY-70).

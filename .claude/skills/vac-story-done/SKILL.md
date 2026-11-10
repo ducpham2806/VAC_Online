@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Edit, Bash(npm run *), Bash(npx vitest run *), 
 # /vac-story-done (chuyển thể từ CCGS `story-done` + `gate-check`)
 
 ## Bước 1 — Tiêu chí
-Lấy tiêu chí nghiệm thu từ yêu cầu của PO, plan, hoặc runbook `11`–`16` của module. Mỗi tiêu chí phải kiểm được đúng/sai.
+Lấy tiêu chí nghiệm thu từ yêu cầu của PO, plan, hoặc thẻ việc trong `docs/07_LO_TRINH.md`. Mỗi tiêu chí phải kiểm được đúng/sai.
 
 ## Bước 2 — Chạy kiểm tra (ghi lại output thật)
 `npm run typecheck`, `npm test`, `npm run build`; thêm `npm run test:sql` nếu có đụng `supabase/`.
@@ -27,7 +27,7 @@ Không chạy được thì ghi **NOT ASSESSED** cho tiêu chí đó, không ghi
 - Migration có additive-only không?
 
 ## Bước 5 — Cập nhật hiện trạng
-Phụ lục 1 trong file 17 (Done/Partial…), mục C của sprint đang chạy.
+`docs/04_KY_THUAT.md` KY-90 (nếu hiện trạng đổi), trạng thái thẻ ở `docs/07_LO_TRINH.md`, `docs/COMPLETED.md`, `docs/WORKLOG.md`.
 
 ## Bước 6 — Phiếu nghiệm thu
 ```

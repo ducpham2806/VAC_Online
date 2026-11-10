@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HUD điều khiển lai</title>
+<!-- Wireframe P0-5 (docs/06_UI_UX.md UI-20, UI-30). Chỉ là bản phác bố cục, không phải art thật. -->
+<style>
+  :root { --wood:#7a4a2a; --wood-d:#3D2314; --paper:#f3e3c0; --leaf:#7FB800; --soil:#8a5a35; --water:#2E8B8D; --gold:#F5B700; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:#1b3b2b; font-family: system-ui, sans-serif; color:var(--wood-d); }
+  .screen { position:fixed; inset:0; overflow:hidden; }
+  /* Bản đồ: lưới tile 32px (GP-11, AR-20) */
+  .map { position:absolute; inset:0; background-color:#6fa83a;
+    background-image: linear-gradient(rgba(0,0,0,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.06) 1px, transparent 1px);
+    background-size:32px 32px; }
+  .field { position:absolute; left:calc(50% - 176px); top:calc(50% - 96px); width:224px; height:160px;
+    display:grid; grid-template-columns:repeat(7,32px); grid-auto-rows:32px; }
+  .plot { background:var(--soil); border:1px solid #5c3a20; display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .plot.wet { background:#5e3d22; }
+  .plot.sel { outline:2px dashed #fff; outline-offset:-3px; }
+  .pond { position:absolute; left:calc(50% + 80px); top:calc(50% - 64px); width:128px; height:96px; background:var(--water); border-radius:40px; border:3px solid #1B3B2B; }
+  .house { position:absolute; left:calc(50% - 300px); top:calc(50% - 150px); width:128px; height:96px; background:#c85a32; border:3px solid var(--wood-d); display:flex; align-items:flex-end; justify-content:center; font-size:12px; padding:4px; color:#fff; }
+  .rock { position:absolute; width:32px; height:32px; font-size:22px; display:flex; align-items:center; justify-content:center; opacity:.9; }
+  .player { position:absolute; left:calc(50% - 16px); top:calc(50% + 70px); width:32px; height:48px; background:#F4A7B9; border:2px solid var(--wood-d); border-radius:12px 12px 4px 4px; }
+  .path { position:absolute; left:calc(50%); top:calc(50% + 30px); width:2px; height:40px; border-left:2px dashed #fff; }
+  .npc-bubble { position:absolute; left:calc(50% - 250px); top:calc(50% - 40px); background:var(--paper); border:2px solid var(--wood-d); border-radius:8px; padding:2px 6px; font-size:12px; }
+  /* HUD chung */
+  .hud { position:absolute; font-size:13px; }
+  .panel { background:var(--paper); border:3px solid var(--wood-d); border-radius:8px; padding:4px 8px; box-shadow:0 2px 0 var(--wood-d); }
+  .tl { top:max(8px, env(safe-area-inset-top)); left:max(8px, env(safe-area-inset-left)); display:flex; gap:6px; align-items:center; }
+  .avatar { width:40px; height:40px; border-radius:50%; background:#F4A7B9; border:3px solid var(--wood-d); }
+  .xp { width:110px; height:8px; background:#d8c49b; border-radius:4px; overflow:hidden; } .xp i { display:block; width:45%; height:100%; background:var(--leaf); }
+  .tc { top:max(8px, env(safe-area-inset-top)); left:50%; transform:translateX(-50%); text-align:center; }
+  .tr { top:max(8px, env(safe-area-inset-top)); right:max(8px, env(safe-area-inset-right)); display:flex; gap:6px; }
+  .tr .panel { min-width:64px; text-align:right; }
+  .stamina.active { outline:3px solid var(--gold); }
+  /* Joystick nổi nửa trái */
+  .joy-zone { position:absolute; left:0; top:62%; bottom:0; width:32%; border-top:2px dashed rgba(255,255,255,.4); border-right:2px dashed rgba(255,255,255,.4); border-top-right-radius:12px; }
+  .joy { position:absolute; left:max(56px, calc(env(safe-area-inset-left) + 40px)); bottom:max(84px, calc(env(safe-area-inset-bottom) + 76px)); width:112px; height:112px; border-radius:50%; background:rgba(243,227,192,.35); border:3px solid rgba(61,35,20,.6); }
+  .joy::after { content:""; position:absolute; left:34px; top:24px; width:44px; height:44px; border-radius:50%; background:rgba(243,227,192,.9); border:3px solid var(--wood-d); }
+  .zone-label { position:absolute; color:#fff; font-size:11px; background:rgba(0,0,0,.35); padding:1px 5px; border-radius:4px; }
+  /* Nút hành động + thanh công cụ phải */
+  .act { position:absolute; right:max(24px, calc(env(safe-area-inset-right) + 16px)); bottom:max(88px, calc(env(safe-area-inset-bottom) + 80px)); width:76px; height:76px; border-radius:50%; background:var(--gold); border:4px solid var(--wood-d); display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:24px; }
+  .act small { font-size:10px; }
+  .tools { position:absolute; right:max(110px, calc(env(safe-area-inset-right) + 104px)); bottom:max(84px, calc(env(safe-area-inset-bottom) + 76px)); display:grid; grid-template-columns:repeat(4,44px); gap:4px; }
+  .tool { width:44px; height:44px; background:var(--paper); border:3px solid var(--wood-d); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .tool.on { background:#ffe28a; }
+  /* Dock đáy */
+  .dock { position:absolute; left:50%; transform:translateX(-50%); bottom:max(6px, env(safe-area-inset-bottom)); display:flex; gap:6px; background:var(--wood); border:3px solid var(--wood-d); border-radius:10px; padding:4px 6px; }
+  .dock .tool { width:auto; min-width:44px; padding:0 8px; font-size:12px; gap:4px; }
+  .legend { position:absolute; left:50%; top:calc(50% + 120px); transform:translateX(-50%); width:min(520px, 60vw); font-size:11px; background:rgba(243,227,192,.92); border:2px solid var(--wood-d); border-radius:6px; padding:4px 8px; }
+  @media (max-height: 420px) {
+    .legend { display:none; }
+    .joy { width:92px; height:92px; bottom:max(64px, calc(env(safe-area-inset-bottom) + 56px)); }
+    .joy::after { left:26px; top:18px; width:36px; height:36px; }
+    .act { width:64px; height:64px; bottom:max(64px, calc(env(safe-area-inset-bottom) + 56px)); }
+    .tools { bottom:max(60px, calc(env(safe-area-inset-bottom) + 52px)); right:max(92px, calc(env(safe-area-inset-right) + 88px)); grid-template-columns:repeat(4,44px); }
+    .field { transform:scale(.8); transform-origin:center; }
+    .xp { width:70px; }
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="map">
+    <div class="house">Nhà chính (sửa bậc 1)</div>
+    <div class="npc-bubble">Bác Bảy 💬</div>
+    <div class="field">
+      <div class="plot">🌱</div><div class="plot wet">🌿</div><div class="plot wet">🌿</div><div class="plot">🌾</div><div class="plot">🌾</div><div class="plot sel">🌾</div><div class="plot"></div>
+      <div class="plot">🌱</div><div class="plot wet">🌿</div><div class="plot">🥬</div><div class="plot">🥬</div><div class="plot"></div><div class="plot"></div><div class="plot"></div>
+      <div class="plot"></div><div class="plot"></div><div class="plot"></div><div class="plot"></div><div class="plot"></div><div class="plot"></div><div class="plot"></div>
+    </div>
+    <div class="pond"></div>
+    <div class="rock" style="left:calc(50% + 230px); top:calc(50% + 40px)">🪨</div>
+    <div class="rock" style="left:calc(50% + 262px); top:calc(50% + 72px)">🪵</div>
+    <div class="path"></div>
+    <div class="player" title="Điền chủ"></div>
+  </div>
+
+  <div class="joy-zone"><span class="zone-label" style="left:8px; top:-22px">Vùng joystick nổi (chạm đất ngoài vùng = đi tới)</span></div>
+  <div class="joy" aria-label="Joystick"></div>
+
+  <div class="hud tl"><div class="avatar"></div><div class="panel">Lv.4 <div class="xp"><i></i></div></div></div>
+  <div class="hud tc panel">🌸 Xuân · ngày 3/7 · ☀️ Nắng<br><small>còn 4 ngày sang Hạ</small></div>
+  <div class="hud tr"><div class="panel">🪙 2.480</div><div class="panel">💎 50</div><div class="panel stamina active">⚡ 38/50</div></div>
+
+  <div class="tools" aria-label="Thanh công cụ">
+    <div class="tool">⛏️</div><div class="tool on">🌾</div><div class="tool">🚿</div><div class="tool">🌱</div>
+    <div class="tool">🪓</div><div class="tool">🌽</div><div class="tool">🎣</div><div class="tool">🎒</div>
+  </div>
+  <div class="act"><span>🌾</span><small>Gặt</small></div>
+
+  <div class="dock"><div class="tool">📦 Kho</div><div class="tool">📋 Đơn</div><div class="tool">📜 Gia Phả</div><div class="tool">👥 Bạn</div><div class="tool">⚙️</div></div>
+
+  <div class="legend">
+    <b>Wireframe P0-5 — UI-20/UI-30.</b> Ô có viền trắng: ô đang chọn, nút vàng hiện công cụ tự chọn theo đối tượng (gặt).
+    Chạm ô xa → nét đứt: nhân vật tự đi tới rồi làm. Giữ + kéo qua các ô: làm cả loạt (≤ 12 ô, KT-16).
+    ⚡ viền vàng: đang dùng việc nặng (đá, gốc cây bên phải). Mọi nút ≥ 44px, chừa safe-area.
+  </div>
+</div>
+</body>
+</html>

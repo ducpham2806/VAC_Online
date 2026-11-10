@@ -2,9 +2,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { GAME_CATALOG } from './masterData';
+import { CROP_SEASONS } from './seasons';
+import type { Season } from './types';
 
 const VAC_PREFIX = /^(CROP|ANI|AQUA)_/;
-const CSV_PATH = resolve(__dirname, '../../04_MASTER_DATA_Bang_Thong_So_Kinh_Te_Toan_Game.csv');
+const CSV_PATH = resolve(__dirname, '../../data/catalog.csv');
 
 /** Tách 1 dòng CSV đơn giản (hỗ trợ trường có dấu ngoặc kép). */
 function parseCsvLine(line: string): string[] {
@@ -74,7 +76,7 @@ describe('GAME_CATALOG — toàn vẹn dữ liệu gốc', () => {
   });
 });
 
-describe('CSV 04_MASTER_DATA ↔ GAME_CATALOG', () => {
+describe('CSV data/catalog.csv ↔ GAME_CATALOG', () => {
   const rows = loadCsvRows();
   const byId = new Map(GAME_CATALOG.map((c) => [c.id, c]));
 
@@ -90,4 +92,36 @@ describe('CSV 04_MASTER_DATA ↔ GAME_CATALOG', () => {
       .map((r) => r.ID);
     expect(mismatched).toEqual([]);
   });
+
+  it('cột Seasons trong CSV khớp CROP_SEASONS (GP-20)', () => {
+    const mismatched = rows
+      .filter((r) => r.ID.startsWith('CROP_'))
+      .filter((r) => (r.Seasons ?? '') !== (CROP_SEASONS[r.ID] ?? []).join('|'))
+      .map((r) => r.ID);
+    expect(mismatched).toEqual([]);
+  });
 });
+
+describe('Mùa vụ (GP-20, GP-61)', () => {
+  // Mọi thứ gieo được trên đất: CROP, TREE, MUTANT_CROP (ID bắt đầu bằng CROP_).
+  const crops = GAME_CATALOG.filter((c) => c.id.startsWith('CROP_'));
+  const SEASONS: Season[] = ['XUAN', 'HA', 'THU', 'DONG'];
+
+  it('mọi cây trồng có ít nhất 1 mùa gieo, và không có mùa cho thứ không phải cây', () => {
+    expect(crops.filter((c) => !(CROP_SEASONS[c.id]?.length)).map((c) => c.id)).toEqual([]);
+    const nonCrop = Object.keys(CROP_SEASONS).filter((id) => !crops.some((c) => c.id === id));
+    expect(nonCrop).toEqual([]);
+  });
+
+  it('Đợt 1 của mỗi miền có ≥ 6 cây gieo được trong mỗi mùa', () => {
+    for (const region of ['NORTH', 'CENTRAL', 'SOUTH'] as const) {
+      for (const season of SEASONS) {
+        const n = crops.filter(
+          (c) => c.unlockWave === 1 && (c.region === 'ALL' || c.region === region) && CROP_SEASONS[c.id]?.includes(season),
+        ).length;
+        expect(n, `${region} ${season}`).toBeGreaterThanOrEqual(6);
+      }
+    }
+  });
+});
+

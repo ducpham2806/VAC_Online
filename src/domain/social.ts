@@ -9,7 +9,7 @@ export const DOG_CATCH_CHANCE = 0.5;
 /** Đàn Ngỗng (PET_02) mổ kẻ trộm. */
 export const GOOSE_CATCH_CHANCE = 0.4;
 /**
- * Cửa sổ trộm 2 phút (thay "3 phút ân huệ" ghi ở 03_MASTER_TECH). Cách áp cụ thể với mốc chín
+ * Cửa sổ trộm 2 phút (thay "3 phút ân huệ" của thiết kế cũ; xem docs/03_KINH_TE KT-32). Cách áp cụ thể với mốc chín
  * và với Gia nhân thu gom (RULE C9) chốt khi làm tính năng trộm ở S6.
  */
 export const STEAL_WINDOW_MINUTES = 2;

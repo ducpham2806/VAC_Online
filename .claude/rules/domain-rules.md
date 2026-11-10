@@ -11,7 +11,7 @@ paths:
   1. Sửa hàm domain.
   2. Viết migration mới `CREATE OR REPLACE` cho RPC tương ứng. Không sửa file migration đã chạy.
   3. Cập nhật `src/domain/*.test.ts` và `supabase/tests/*.test.sql`.
-  4. Cập nhật ghi chú trong `02_MASTER_ECONOMY` / file 17.
+  4. Cập nhật `docs/03_KINH_TE.md` (mã KT-) và nếu hiện trạng đổi thì `docs/04_KY_THUAT.md` KY-90.
   Dùng skill `/vac-propagate-change` để không sót chỗ nào.
 - Mỗi hàm trả `{ ok, save, message }`. Lỗi thì trả `ok: false` kèm lời nhắn tiếng Việt cho người chơi; không throw.
 - Mỗi nhánh (thành công và từng lý do từ chối) đều phải có test.

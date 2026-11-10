@@ -1,5 +1,5 @@
 /**
- * Luật Chợ Phiên P2P (02_MASTER_ECONOMY): giá niêm yết bị kẹp trong [0.8x, 2.0x]
+ * Luật Chợ Phiên P2P (docs/03_KINH_TE KT-31): giá niêm yết bị kẹp trong [0.8x, 2.0x]
  * giá bán gốc và người bán chịu 5% Thuế Chợ (PO chốt 2026-11-01).
  * Hàm thuần — dùng chung cho Store, QC runner và (sau này) đối chiếu với RPC server.
  */

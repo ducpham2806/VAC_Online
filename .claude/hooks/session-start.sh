@@ -25,3 +25,7 @@ if command -v python3 >/dev/null 2>&1; then
       || echo "session-start: bỏ qua cài thư viện Python cho art pipeline (lỗi pip)" >&2
   fi
 fi
+
+# 3. graphify: cài bản ghim + dựng đồ thị tri thức (graphify-out/, không commit). Lỗi không chặn session.
+bash scripts/graphify-build.sh >/dev/null 2>&1 \
+  || echo "session-start: bỏ qua dựng đồ thị graphify (lỗi cài đặt hoặc mạng)" >&2

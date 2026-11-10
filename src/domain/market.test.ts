@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { quoteMarketListing } from './market';
 
-describe('quoteMarketListing — luật Chợ Phiên P2P (02_MASTER_ECONOMY)', () => {
+describe('quoteMarketListing — luật Chợ Phiên P2P (docs/03_KINH_TE KT-31)', () => {
   it('kẹp giá trần 2.0x và trừ 5% thuế', () => {
     const q = quoteMarketListing(10, 5, 999);
     expect(q.clampedPrice).toBe(20);

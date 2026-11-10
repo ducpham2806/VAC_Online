@@ -11,3 +11,9 @@ __pycache__/
 *.pyc
 dist-preview
 dist-preview-gd2
+
+# graphify (dựng lại bằng scripts/graphify-build.sh)
+graphify-out/
+
+# P0-4: bản đóng gói luật, sinh bằng build-engine.sh
+prototypes/*/supabase/functions/_shared/engine.js

@@ -9,7 +9,7 @@ paths:
 # Giao diện & Phaser — chuyển thể từ CCGS `ui-code`
 
 - UI **không sở hữu state game**: chỉ đọc store (dùng selector `useGameStore((s) => s.x)`) và gọi action. Không tính tiền hay luật trong component.
-- **2-Thumb Landscape** (`06_MASTER_UI_UX`): nút chạm ≥ 44px (`.touch-btn`), chừa `safe-area-inset-*`, chất liệu gỗ/tre/giấy dó. Phải kiểm ở **1280×720 và 844×390**.
+- **2-Thumb Landscape** (`docs/06_UI_UX.md`, điều khiển lai UI-20): nút chạm ≥ 44px (`.touch-btn`), chừa `safe-area-inset-*`, chất liệu gỗ/tre/giấy dó. Phải kiểm ở **1280×720 và 844×390**.
 - Công cụ debug chỉ hiện sau `import.meta.env.DEV`. Tính năng của giai đoạn sau phải bọc `isStageOpen(n)` (`src/config/features.ts`).
 - Phaser:
   - Gỡ mọi `subscribe` / `EventBus.on` / timer khi scene `shutdown`/`destroy`.

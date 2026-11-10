@@ -179,7 +179,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 4. EPIC 01: Không lưu mật khẩu / OTP ở client (Auth thật qua Supabase — 17_PROJECT_AUDIT B5)
+  // 4. EPIC 01: Không lưu mật khẩu / OTP ở client (Auth thật qua Supabase — docs_archive_merged/v1-2026-11-10/17_PROJECT_AUDIT B5)
   runCase('TC-01.0d', 'EPIC 01', 'Không lưu mật khẩu/OTP ở client: dọn kho cũ & phiên Khách không chứa mật khẩu', () => {
     let legacyRemoved = true;
     let sessionClean = true;
@@ -199,7 +199,7 @@ export function runFullQCTestSuite(): QCTestResult[] {
     };
   });
 
-  // 5. EPIC 01: Toàn vẹn Master Data (GAME_CATALOG là nguồn chuẩn — xem 17_PROJECT_AUDIT mục A1)
+  // 5. EPIC 01: Toàn vẹn Master Data (GAME_CATALOG là nguồn chuẩn — xem docs_archive_merged/v1-2026-11-10/17_PROJECT_AUDIT mục A1)
   runCase('TC-01.3a', 'EPIC 01', 'Toàn vẹn Danh mục Thực thể: ID duy nhất, đủ 81 loài V-A-C & không có giá NaN', () => {
     const total = GAME_CATALOG.length;
     const uniqueIds = new Set(GAME_CATALOG.map((item) => item.id)).size;

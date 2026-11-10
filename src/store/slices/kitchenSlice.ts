@@ -2,7 +2,7 @@
  * Slice Bếp Quê & Xưởng (S4 — M04.1..M04.3). Chỉ điều phối:
  *  - offline: áp luật thuần ở `src/domain/cooking.ts`;
  *  - online: gọi RPC của migration 0009 và nhận ảnh chụp server (không tự cộng tiền/⚡).
- * Đặc tả: `17_PROJECT_AUDIT` mục C2.
+ * Đặc tả: `docs_archive_merged/v1-2026-11-10/17_PROJECT_AUDIT` mục C2.
  */
 import { GAME_STAGE } from '../../config/features';
 import {
