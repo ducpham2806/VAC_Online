@@ -5,6 +5,7 @@
  * (`version` + `migrate`), chỉ cho bản thử, không đẩy lên server. Chưa gửi server (P1-8).
  * P1-10: dọn đá/gốc cây, sửa hạng mục, khai hoang (GP-14); việc tốn vàng hỏi lại qua `pending`.
  * P1-11: NPC có tim (hộp thoại `dialog`), cảnh mở đầu chọn hướng, Gia Phả Chương 1, cờ hướng dẫn `tut`.
+ * P1-9: chỗ nuôi gà/vịt/cá, Bếp Củi (bảng nấu `panel = 'KITCHEN'`), bảng đơn HTX (`panel = 'ORDERS'`).
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -23,6 +24,7 @@ import {
   SLICE_SAVE_VERSION,
   newSliceSave,
   reconcileSliceSave,
+  seedForTile,
   sowableSeeds,
 } from '../game/slice/sliceSave';
 import { type EstateConfirm, type EstateTarget, estateTargetAt } from '../game/slice/estateTarget';
@@ -75,6 +77,9 @@ export interface PendingEstate extends EstateConfirm {
   at: TilePos;
 }
 
+/** Bảng đang mở trên HUD do chạm vật trên bản đồ hoặc nút dock. */
+export type SlicePanel = 'KITCHEN' | 'ORDERS';
+
 interface SliceState {
   save: FarmSave;
   now: number;
@@ -87,6 +92,7 @@ interface SliceState {
   pending: PendingEstate | null;
   tut: TutorialFlags;
   dialog: NpcDialog | null;
+  panel: SlicePanel | null;
   tick: (now: number) => void;
   setPlayerTile: (t: TilePos) => void;
   setSeed: (id: string) => void;
@@ -106,6 +112,15 @@ interface SliceState {
   choosePath: (path: 'EMP' | 'PRAG') => void;
   claimChapter: (no: number) => void;
   setTutorialHidden: (hidden: boolean) => void;
+  openPanel: (p: SlicePanel | null) => void;
+  cook: (productId: string) => void;
+  collectDish: () => void;
+  eat: (productId: string) => void;
+  discover: (ingredientIds: string[]) => void;
+  /** Lấp chỗ trống trên bảng đơn (im lặng: không báo khi chưa có đơn mới). */
+  refreshOrders: () => void;
+  deliverOrder: (slot: number) => void;
+  skipOrder: (slot: number) => void;
   sell: (itemId: string, qty: number) => void;
   reset: (now: number) => void;
 }
@@ -135,6 +150,7 @@ function initial(now: number) {
     pending: null,
     tut: { moved: false, sold: false, hidden: false } as TutorialFlags,
     dialog: null,
+    panel: null as SlicePanel | null,
   };
 }
 
@@ -186,6 +202,7 @@ export const useSliceStore = create<SliceState>()(
           rng: Math.random,
           gameStage: SLICE_GAME_STAGE,
           season: s.seasonOverride ?? undefined,
+          slice: true,
         });
         const okIdx = out.results.filter((r) => r.ok).map((r) => r.index);
         const fx: TileFx[] = okIdx.flatMap((i) => {
@@ -218,7 +235,7 @@ export const useSliceStore = create<SliceState>()(
         const s = get();
         const near = nearestActionablePlot(s.save.tiles, s.playerTile.x, s.playerTile.y, Date.now());
         if (near) {
-          const a = plotAction(near.tool, near.tile.id, s.seedId);
+          const a = plotAction(near.tool, near.tile.id, seedForTile(near.tile, s.seedId));
           if (a) s.act([a]);
           else get().toast(noSeedMessage(get()), false);
           return;
@@ -236,6 +253,7 @@ export const useSliceStore = create<SliceState>()(
         const s = get();
         const target = estateTargetAt(s.save, at.x, at.y);
         if (!target) return;
+        if (target.open) return set({ panel: target.open });
         if (target.action && target.confirm) return set({ pending: { ...target.confirm, action: target.action, at } });
         if (target.action) {
           s.act([target.action], at);
@@ -283,6 +301,39 @@ export const useSliceStore = create<SliceState>()(
 
       setTutorialHidden: (hidden) => set((s) => ({ tut: { ...s.tut, hidden } })),
 
+      openPanel: (panel) => {
+        set({ panel });
+        if (panel === 'ORDERS') get().refreshOrders();
+      },
+
+      cook: (productId) => {
+        get().act([{ type: 'COOK', productId }]);
+      },
+
+      collectDish: () => {
+        get().act([{ type: 'COLLECT_DISH' }]);
+      },
+
+      eat: (productId) => {
+        get().act([{ type: 'EAT', productId }]);
+      },
+
+      discover: (ingredientIds) => {
+        get().act([{ type: 'DISCOVER', ingredientIds }]);
+      },
+
+      refreshOrders: () => {
+        get().act([{ type: 'REFRESH_ORDERS' }], undefined, true);
+      },
+
+      deliverOrder: (slot) => {
+        get().act([{ type: 'DELIVER_ORDER', slot }]);
+      },
+
+      skipOrder: (slot) => {
+        get().act([{ type: 'SKIP_ORDER', slot }]);
+      },
+
       reset: (now) => set({ ...initial(now) }),
     }),
     {
@@ -295,7 +346,7 @@ export const useSliceStore = create<SliceState>()(
         seasonOverride: s.seasonOverride,
         tut: s.tut,
       }),
-      // v1 → v2 → v3 chỉ thêm trường (`save.estate`, `save.npcs`, `save.story`, `tut`); thiếu = ban đầu.
+      // v1 → v4 chỉ thêm trường (`save.estate`, `save.npcs`, `save.story`, `tut`, chỗ nuôi, bếp, đơn); thiếu = ban đầu.
       // Phiên bản lạ (mới hơn, hoặc không phải số) → chơi lại từ đầu thay vì đọc sai.
       migrate: (persisted, version) => (version >= 1 && version <= SLICE_SAVE_VERSION ? persisted : {}),
       merge: (persisted, current) => {

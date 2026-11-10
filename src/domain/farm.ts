@@ -8,6 +8,8 @@ import type { EstateState } from './estate';
 import type { NpcState } from './npc';
 import type { StoryState } from './story';
 import type { NpcId } from '../data/npcs';
+import type { MachineState } from './cooking';
+import type { OrderBoard } from './orders';
 
 /**
  * Luật vòng chơi Vườn – Ao – Chuồng (GĐ1) dạng hàm thuần.
@@ -72,6 +74,12 @@ export interface FarmSave {
   npcs?: Partial<Record<NpcId, NpcState>>;
   /** Gia Phả bản thử (TG-30, P1-11): hướng đã chọn, chương đã nhận. */
   story?: StoryState;
+  /** Xưởng đã có (P1-9: Bếp Củi `MAC_02` mở khi sửa hạng mục Bếp). Thiếu = chưa có. */
+  machines?: Record<string, MachineState>;
+  /** Món đã tìm ra ở Nồi Đất (GP-30). Thiếu = rỗng. */
+  discoveredRecipes?: string[];
+  /** Bảng đơn HTX (GP-40, P1-9). Thiếu = bảng trống, đơn về khi mở bảng. */
+  orders?: OrderBoard;
 }
 
 export type FarmResult = { ok: true; save: FarmSave; message: string } | { ok: false; message: string };
@@ -112,15 +120,16 @@ export function growMs(item: CatalogItem, region: RegionType): number {
   return Math.round(Math.max(1, item.growOrCraftMinutes) * 60_000 * factor);
 }
 
-export function plant(save: FarmSave, tileId: string, itemId: string, gameStage: number, now: number): FarmResult {
+/** `unlockLevel`: cấp mở thay cho dữ liệu (bản thử, KT-21); thiếu = theo dữ liệu. */
+export function plant(save: FarmSave, tileId: string, itemId: string, gameStage: number, now: number, unlockLevel?: number): FarmResult {
   const tile = save.tiles.find((t) => t.id === tileId);
   if (!tile) return fail('⚠️ Không tìm thấy ô đất này!');
   if (tile.itemId) return fail('⚠️ Ô này đang có cây/vật nuôi rồi!');
   const item = findItem(itemId);
   if (!item) return fail('⚠️ Giống không có trong danh mục!');
-  const lock = canPlant(item, save.level, gameStage, save.region);
+  const lock = canPlant(unlockLevel === undefined ? item : { ...item, unlockLevel }, save.level, gameStage, save.region);
   if (!lock.ok) {
-    if (lock.reason === 'LEVEL_LOCKED') return fail(`🔒 [${item.name}] mở ở Lv.${item.unlockLevel}!`);
+    if (lock.reason === 'LEVEL_LOCKED') return fail(`🔒 [${item.name}] mở ở Lv.${unlockLevel ?? item.unlockLevel}!`);
     if (lock.reason === 'WAVE_LOCKED') return fail(`🔒 [${item.name}] thuộc Đợt ${item.unlockWave ?? '?'} — chưa mở!`);
     if (lock.reason === 'REGION_LOCKED') return fail(`🔒 [${item.name}] là đặc sản độc quyền miền khác!`);
     return fail(`⚠️ [${item.name}] không gieo/thả được!`);

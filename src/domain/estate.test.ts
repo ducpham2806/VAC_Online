@@ -35,13 +35,13 @@ describe('GP-14 bố cục điền trang bản thử', () => {
     for (const r of RECLAIM_REGIONS) for (const t of r) expect(layoutCharAt(t.x, t.y)).toBe('w');
   });
 
-  it('vật liệu trên bản đồ đủ để sửa cả 3 hạng mục (QD-83: vật liệu hữu hạn, không mọc lại)', () => {
+  it('vật liệu trên bản đồ đủ để sửa cả 4 hạng mục (QD-83, QD-87: vật liệu hữu hạn, không mọc lại)', () => {
     const supply: Record<MaterialId, number> = { MAT_GO: 0, MAT_DA: 0 };
     for (const o of OBSTACLES) supply[CLEAR_RULES[o.kind].item] += CLEAR_RULES[o.kind].qty;
     const need: Record<MaterialId, number> = { MAT_GO: 0, MAT_DA: 0 };
     for (const r of Object.values(REPAIRS)) for (const [m, n] of Object.entries(r.mats)) need[m as MaterialId] += n;
     expect(supply).toEqual({ MAT_GO: 15, MAT_DA: 9 });
-    expect(need).toEqual({ MAT_GO: 12, MAT_DA: 6 });
+    expect(need).toEqual({ MAT_GO: 14, MAT_DA: 8 }); // Giếng + Chuồng + Nhà 12/6, Bếp Củi +2/+2 (QD-87)
   });
 
   it('giá khai hoang tăng dần 500 × 1,25^k (KT-15)', () => {
@@ -141,5 +141,34 @@ describe('KT-15 khai hoang theo vùng', () => {
     expect(reclaimRegion(all, 2, NOW)).toMatchObject({ ok: false, message: '⚠️ Đã khai hoang hết đất của điền trang!' });
     expect(reclaimRegion(fresh({ gold: 499 }), 0, NOW).ok).toBe(false);
     expect(reclaimRegion(fresh({ stamina: 4, staminaUpdatedAt: NOW }), 0, NOW).ok).toBe(false);
+  });
+});
+
+describe('P1-9 Bếp Củi và chỗ nuôi (QD-87, KT-21)', () => {
+  const kit = { MAT_GO: 2, MAT_DA: 2 };
+  it('Bếp Củi: chưa đủ cấp / thiếu vật liệu → từ chối; đủ → có xưởng MAC_02, giá lấy từ dữ liệu', () => {
+    expect(REPAIRS.KITCHEN.gold).toBe(350);
+    expect(repairStructure(fresh({ inventory: kit }), 'KITCHEN')).toMatchObject({ ok: false, message: expect.stringContaining('Lv.3') });
+    expect(repairStructure(fresh({ level: 3 }), 'KITCHEN')).toMatchObject({ ok: false, message: expect.stringContaining('350') });
+    const s = ok(repairStructure(fresh({ level: 3, inventory: kit }), 'KITCHEN'));
+    expect(s.machines?.MAC_02).toEqual({ craftItemId: null, readyAt: null });
+    expect(s.gold).toBe(fresh().gold - 350);
+    expect(s.inventory).toEqual({ MAT_GO: 0, MAT_DA: 0 });
+    expect(structureAt(16, 2)).toBe('KITCHEN');
+  });
+
+  it('chỗ nuôi: ao có sẵn 2 chỗ vịt + 3 chỗ cá; sửa Chuồng gà thêm đúng 4 chỗ gà', () => {
+    const s0 = fresh({ inventory: { MAT_GO: 6 } });
+    expect(s0.tiles.filter((t) => t.zoneType === 'POND')).toHaveLength(5);
+    expect(s0.tiles.filter((t) => t.zoneType === 'COOP')).toHaveLength(0);
+    const s = ok(repairStructure(s0, 'COOP'));
+    expect(s.tiles.filter((t) => t.zoneType === 'COOP').map((t) => t.id)).toEqual(['P20_13', 'P21_13', 'P20_14', 'P21_14']);
+    expect(s.tiles).toHaveLength(s0.tiles.length + 4);
+  });
+
+  it('chỗ nuôi nằm đúng sân chuồng (,) và ao (P) trên bố cục', () => {
+    const s = fresh();
+    for (const t of s.tiles.filter((x) => x.zoneType === 'POND')) expect(layoutCharAt(t.tileX, t.tileY)).toBe('P');
+    for (const [x, y] of [[20, 13], [21, 14]]) expect(layoutCharAt(x, y)).toBe(',');
   });
 });

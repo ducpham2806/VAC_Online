@@ -80,7 +80,8 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 
 ### GP-13 · Chuồng và Ao nhiều lứa
 - **Con giống:** mua một lần, thu nhiều lứa (trứng, sữa, mẻ cá). Ô hiện "còn N lứa"; hết lứa thì ô trống để thả con mới (công thức N: KT-13).
-- **Chăm sóc:** vật nuôi cần được cho ăn mỗi ngày thật để tiếp tục cho sản phẩm. Thức ăn từ Cối Xay Cám hoặc mua ở HTX.
+- **Chăm sóc:** vật nuôi cần được cho ăn mỗi ngày thật để tiếp tục cho sản phẩm. Thức ăn từ Cối Xay Cám hoặc mua ở HTX. Bản thử P1 chưa có cho ăn (KT-21).
+- **Chỗ nuôi trên bản đồ:** mỗi chỗ là một ô, chỉ nuôi một loài (gà trong sân chuồng, vịt mép ao, cá giữa ao); chạm ô trống để thả, tới lứa hiện biểu tượng sản phẩm để thu (số chỗ: KT-21).
 - **Thương vật nuôi:** vuốt ve hằng ngày tăng độ vui; vui cao thì có cơ hội ra sản phẩm loại tốt (QD-18; số liệu chốt ở P2).
 
 ### GP-14 · Điền trang và khai hoang (khôi phục kiểu Green Farm 3)
@@ -97,7 +98,7 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 ## Chế biến và người làm
 
 ### GP-30 · Xưởng và Bếp (QD-08)
-- **Xây xưởng:** xưởng (`MAC_`) xây bằng vàng; mỗi xưởng nấu 1 mẻ một lúc, có hàng chờ.
+- **Xây xưởng:** xưởng (`MAC_`) xây bằng vàng; mỗi xưởng nấu 1 mẻ một lúc, có hàng chờ. Bản thử: Bếp Củi là một hạng mục điền trang, sửa bằng vàng + vật liệu (KT-18); chạm Bếp đã sửa để mở bảng nấu.
 - **Nồi Đất:** bỏ 2–4 nguyên liệu để khám phá công thức. Công thức đúng được ghi vào Sổ tay món và có thưởng (KT-30); sai thì trả lại nguyên liệu.
 - **Món ăn:** dùng để ăn hồi ⚡, giao đơn, tặng NPC hoặc bán.
 - **Xưởng nghề** (Đan Lát, Khung Cửi): làm đồ thợ và vật phẩm trang trí từ nông sản.
@@ -117,7 +118,7 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 
 ### GP-40 · Đơn hàng HTX và tàu Bắc–Nam
 - **Bảng đơn HTX:** luôn có vài đơn. Mỗi đơn đòi 1–3 loại hàng, thưởng cao hơn bán thẳng (KT-14). Bỏ đơn thì đơn mới về sau một khoảng chờ.
-- Đơn chỉ đòi hàng đã mở và đúng mùa (GP-20).
+- Đơn chỉ đòi hàng đã mở và đúng mùa (GP-20). Số đơn, số lượng, hệ số thưởng: KT-14.
 - **Tàu Bắc–Nam** (Đợt 3): vài chuyến mỗi ngày, mỗi chuyến 3 toa × 3 kiện hàng.
   - Đủ một toa thì có vàng + XP; đủ cả tàu thì có rương thưởng.
   - Hàng xóm được đóng giúp 1 kiện mỗi chuyến, cả hai cùng có thưởng.

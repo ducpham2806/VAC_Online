@@ -17,7 +17,9 @@ describe('P1-4 store bản thử: chạm ô → engine', () => {
 
   it('người chơi mới: mỗi ô F trên bản đồ là 1 ô ruộng trống, có sẵn giống gieo được', () => {
     const s = useSliceStore.getState();
-    expect(s.save.tiles).toHaveLength(plots.length);
+    // ô ruộng `F` + 5 chỗ nuôi ở ao (2 vịt, 3 cá); chỗ gà mở khi sửa Chuồng (P1-9)
+    expect(s.save.tiles.filter((t) => t.zoneType === 'LAND')).toHaveLength(plots.length);
+    expect(s.save.tiles.filter((t) => t.zoneType === 'POND')).toHaveLength(5);
     expect(s.save.tiles.every((t) => t.itemId === null)).toBe(true);
     expect(s.seedId).toBe('CROP_01');
   });
@@ -229,7 +231,7 @@ describe('P1-10 điền trang trong store bản thử', () => {
     useSliceStore.getState().interactEstate({ x: 9, y: 7 });
     useSliceStore.getState().confirmPending();
     const s = useSliceStore.getState();
-    expect(s.save.tiles).toHaveLength(plots.length + 8);
+    expect(s.save.tiles.filter((t) => t.zoneType === 'LAND')).toHaveLength(plots.length + 8);
     expect(s.save.gold).toBe(2000);
   });
 

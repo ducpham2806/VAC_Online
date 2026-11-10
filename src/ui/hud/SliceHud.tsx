@@ -15,6 +15,7 @@ import { effectiveSeason, itemLabel, selectActionTool, useSliceStore } from '../
 import { GameIcon } from '../GameIcon';
 import { Sheet, btn } from './sliceUi';
 import { GiaPhaPanel, IntroScene, NpcDialogSheet, TutorialBar } from './SliceStoryHud';
+import { SlicePanels } from './SliceKitchenHud';
 
 const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
   XUAN: { icon: '🌸', name: 'Xuân' },
@@ -53,6 +54,7 @@ export const SliceHud: React.FC = () => {
   const actionTool = useSliceStore(selectActionTool);
   const actNear = useSliceStore((s) => s.actNear);
   const toast = useSliceStore((s) => s.toast);
+  const openPanel = useSliceStore((s) => s.openPanel);
   const [toolbarOpen, setToolbarOpen] = useState(false);
   const [panel, setPanel] = useState<Panel>('none');
   const short = useShort();
@@ -167,7 +169,7 @@ export const SliceHud: React.FC = () => {
         style={{ bottom: 'max(6px, env(safe-area-inset-bottom))' }}
       >
         <DockBtn icon="📦" label="Kho" short={short} onClick={() => setPanel('kho')} />
-        <DockBtn icon="📋" label="Đơn" short={short} onClick={() => toast('📋 Bảng đơn HTX mở ở P1-9.', false)} />
+        <DockBtn icon="📋" label="Đơn" short={short} onClick={() => openPanel('ORDERS')} />
         <DockBtn icon="📜" label="Gia Phả" short={short} onClick={() => setPanel('giapha')} />
         <DockBtn icon="👥" label="Bạn" short={short} onClick={() => toast('👥 Bạn bè mở sau bản thử.', false)} />
         <DockBtn icon="⚙️" label="" short onClick={() => setPanel('settings')} />
@@ -181,6 +183,7 @@ export const SliceHud: React.FC = () => {
       <NpcDialogSheet />
       <IntroScene />
       <ConfirmEstate />
+      <SlicePanels />
     </div>
   );
 };
@@ -271,6 +274,7 @@ function KhoPanel({ onClose }: { onClose: () => void }) {
   const inv = useSliceStore((s) => s.save.inventory);
   const fengShui = useSliceStore((s) => s.save.fengShuiScore);
   const sell = useSliceStore((s) => s.sell);
+  const eat = useSliceStore((s) => s.eat);
   const rows = Object.entries(inv).filter(([, n]) => n > 0);
   return (
     <Sheet title="📦 Kho" onClose={onClose}>
@@ -295,9 +299,16 @@ function KhoPanel({ onClose }: { onClose: () => void }) {
             <span>
               {itemLabel(id)} × <b>{n}</b>
             </span>
-            <button className={`${btn} px-2`} onClick={() => sell(id, n)} data-testid={`sell-${id}`}>
-              Bán HTX +{(it?.baseSellGold ?? 0) * n} 🪙
-            </button>
+            <span className="flex gap-1">
+              {it?.category === 'RECIPE' && it.staminaDelta > 0 && (
+                <button className={`${btn} px-2`} onClick={() => eat(id)} data-testid={`eat-${id}`}>
+                  Ăn +{it.staminaDelta} ⚡
+                </button>
+              )}
+              <button className={`${btn} px-2`} onClick={() => sell(id, n)} data-testid={`sell-${id}`}>
+                Bán HTX +{(it?.baseSellGold ?? 0) * n} 🪙
+              </button>
+            </span>
           </div>
         );
       })}

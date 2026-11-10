@@ -1,4 +1,4 @@
-# Bàn giao · 10/11/2026 · P1 đang chạy (P1-1…7, P1-10, P1-11 xong)
+# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…7, P1-10, P1-11 xong; P1-9 code xong, chờ ảnh)
 
 ## Việc vừa làm
 Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
@@ -7,6 +7,7 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P1-6/7: mùa trên bản đồ + công tắc mùa (⚙️), lưu cục bộ `vac_slice_save_v1`.
 - P1-10 (QD-83): dọn đá/gốc cây → Gỗ/Đá, sửa giếng/chuồng/nhà, khai hoang 2 vùng (`src/domain/estate.ts`, `src/game/slice/estateTarget.ts`).
 - P1-11 (QD-84): cảnh mở đầu, 2 NPC có tim, Sổ Gia Phả Chương 1, hướng dẫn 8 bước (`src/domain/npc.ts`, `story.ts`, `src/game/slice/sliceTutorial.ts`, `src/ui/hud/SliceStoryHud.tsx`).
+- P1-9 (QD-86, QD-87): 8 loài (`src/data/sliceContent.ts`), chỗ nuôi + Bếp Củi (`src/domain/estate.ts`), đơn HTX (`src/domain/orders.ts`), HUD `src/ui/hud/SliceKitchenHud.tsx`; engine `ctx.slice`.
 - Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
 
 ## Đã xác minh
@@ -20,7 +21,7 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-9: 8 loài đã duyệt (QD-86, `src/data/sliceContent.ts`); chờ PO duyệt số Bếp Củi / chỗ nuôi / đơn HTX và 7 ảnh `art/prompts/p1_species.md`.
+1. P1-9 code xong (QD-86, QD-87): chỗ nuôi gà/vịt/cá, Bếp Củi, bảng đơn HTX; kiểm khói `tools/qa/p1-9-smoke.cjs`. Chờ 7 ảnh PO `art/prompts/p1_species.md` (đang dùng hình tạm).
 2. P1-8 khi có quyền Supabase project VAC.
 3. P1-12 chơi thử 10–20 người.
 4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).

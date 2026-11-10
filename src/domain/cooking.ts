@@ -1,6 +1,6 @@
 import { GAME_CATALOG } from '../data/masterData';
 import { CatalogItem, RecipeIngredient, RegionType } from '../data/types';
-import { CRAFT_MIN_STAGE, applyXp, canCraftOrBuy, maxUnlockedWave } from './progression';
+import { CRAFT_MIN_STAGE, type CraftLock, applyXp, canCraftOrBuy, maxUnlockedWave } from './progression';
 import { regenStamina } from './stamina';
 import { COUNTER, Counters, bumpCounter } from './quests';
 
@@ -82,6 +82,16 @@ export function isRecipeDiscovered(save: Pick<KitchenSave, 'discoveredRecipes'>,
   );
 }
 
+/**
+ * Luật Bếp riêng của bản thử (P1-9, QD-87): chỉ các món trong `recipeIds`, mở từ Giai đoạn `minStage`,
+ * cấp mở theo `unlockLevel`. Thiếu = luật đầy đủ (mọi món, Giai đoạn ≥ CRAFT_MIN_STAGE, cấp trong dữ liệu).
+ */
+export interface KitchenRules {
+  recipeIds: readonly string[];
+  minStage: number;
+  unlockLevel: (item: CatalogItem) => number;
+}
+
 export type RecipeLock =
   | { ok: true }
   | { ok: false; reason: 'NOT_RECIPE' | 'LEVEL_LOCKED' }
@@ -90,11 +100,18 @@ export type RecipeLock =
   | { ok: false; reason: 'INGREDIENT_LOCKED'; itemId: string; wave: number };
 
 /** Món có nấu được ở Giai đoạn / cấp hiện tại không (chưa xét kho và khám phá). */
-export function recipeLock(item: CatalogItem, level: number, gameStage: number): RecipeLock {
+export function recipeLock(item: CatalogItem, level: number, gameStage: number, rules?: KitchenRules): RecipeLock {
   if ((item.category !== 'RECIPE' && item.category !== 'CRAFT_GEAR') || !item.recipe || !item.machineId) {
     return { ok: false, reason: 'NOT_RECIPE' };
   }
-  const lock = canCraftOrBuy(item, level, gameStage);
+  if (rules && !rules.recipeIds.includes(item.id)) return { ok: false, reason: 'NOT_RECIPE' };
+  const lock: CraftLock = rules
+    ? gameStage < rules.minStage
+      ? { ok: false, reason: 'STAGE_LOCKED', stage: rules.minStage }
+      : rules.unlockLevel(item) > level
+        ? { ok: false, reason: 'LEVEL_LOCKED' }
+        : { ok: true }
+    : canCraftOrBuy(item, level, gameStage);
   if (!lock.ok) {
     if (lock.reason === 'STAGE_LOCKED') return { ok: false, reason: 'STAGE_LOCKED', stage: lock.stage };
     return { ok: false, reason: 'LEVEL_LOCKED' };
@@ -168,18 +185,20 @@ export function startCraft(
   machineId: string,
   productId: string,
   gameStage: number,
-  now: number
+  now: number,
+  rules?: KitchenRules
 ): KitchenResult {
   const machine = save.machines[machineId];
   if (!machine) return fail('🏭 Hãy xây xưởng này trước!');
   if (machine.craftItemId) return fail(`⏳ Xưởng đang nấu [${nameOf(machine.craftItemId)}]!`);
   const item = BY_ID.get(productId);
   if (!item || item.machineId !== machineId) return fail('⚠️ Món này không nấu ở xưởng này!');
-  const lock = recipeLock(item, save.level, gameStage);
+  const lock = recipeLock(item, save.level, gameStage, rules);
   if (!lock.ok) {
+    if (lock.reason === 'NOT_RECIPE') return fail('⚠️ Món này chưa nấu được ở đây!');
     if (lock.reason === 'INGREDIENT_LOCKED') return fail(`🔒 Cần [${nameOf(lock.itemId)}] — mở ở Đợt ${lock.wave}!`);
     if (lock.reason === 'STAGE_LOCKED') return fail(`🔒 Món này mở ở Giai đoạn ${lock.stage}!`);
-    return fail(`🔒 Cần đạt Cấp ${item.unlockLevel} để nấu [${item.name}]!`);
+    return fail(`🔒 Cần đạt Cấp ${rules ? rules.unlockLevel(item) : item.unlockLevel} để nấu [${item.name}]!`);
   }
   if (!isRecipeDiscovered(save, productId)) return fail('📖 Chưa biết công thức! Hãy thử phối món ở Nồi Đất trước.');
   const missing = missingIngredients(save.inventory, item.recipe ?? []);
@@ -216,8 +235,9 @@ export function collectCraft(save: KitchenSave, machineId: string, now: number):
 }
 
 /** Ăn 1 món trong Kho để hồi ⚡ (không vượt trần; ⚡ đầy thì không cho ăn để khỏi phí món). */
-export function eatDish(save: KitchenSave, productId: string, gameStage: number, now: number): KitchenResult {
-  if (gameStage < CRAFT_MIN_STAGE) return fail(`🔒 Bếp Quê mở ở Giai đoạn ${CRAFT_MIN_STAGE}!`);
+export function eatDish(save: KitchenSave, productId: string, gameStage: number, now: number, rules?: KitchenRules): KitchenResult {
+  const minStage = rules?.minStage ?? CRAFT_MIN_STAGE;
+  if (gameStage < minStage) return fail(`🔒 Bếp Quê mở ở Giai đoạn ${minStage}!`);
   const item = BY_ID.get(productId);
   if (!item || item.category !== 'RECIPE' || item.staminaDelta <= 0) return fail('⚠️ Món này không ăn được!');
   const have = save.inventory[productId] ?? 0;
@@ -261,8 +281,9 @@ function isSubMultiset(a: Map<string, number>, recipe: readonly RecipeIngredient
  * M04.2 — Nồi Đất: thử 1–4 nguyên liệu đang có trong Kho. Khớp đúng 1 công thức chưa khám phá
  * (đã mở Đợt, đủ cấp) thì mở công thức + thưởng lần đầu. Nguyên liệu KHÔNG bị tiêu.
  */
-export function discoverRecipe(save: KitchenSave, ingredientIds: readonly string[], gameStage: number): KitchenResult {
-  if (gameStage < CRAFT_MIN_STAGE) return fail(`🔒 Bếp Quê mở ở Giai đoạn ${CRAFT_MIN_STAGE}!`);
+export function discoverRecipe(save: KitchenSave, ingredientIds: readonly string[], gameStage: number, rules?: KitchenRules): KitchenResult {
+  const minStage = rules?.minStage ?? CRAFT_MIN_STAGE;
+  if (gameStage < minStage) return fail(`🔒 Bếp Quê mở ở Giai đoạn ${minStage}!`);
   if (!save.machines[POT_MACHINE_ID]) return fail('🍲 Hãy xây Bếp Củi (có Nồi Đất) trước!');
   const picked = countIds(ingredientIds);
   const total = [...picked.values()].reduce((a, b) => a + b, 0);
@@ -270,7 +291,7 @@ export function discoverRecipe(save: KitchenSave, ingredientIds: readonly string
   for (const [id, n] of picked) {
     if ((save.inventory[id] ?? 0) < n) return fail(`🧺 Kho không đủ ${n} ${nameOf(id)}!`);
   }
-  const open = KITCHEN_RECIPES.filter((r) => recipeLock(r, save.level, gameStage).ok);
+  const open = KITCHEN_RECIPES.filter((r) => recipeLock(r, save.level, gameStage, rules).ok);
   const match = open.find((r) => sameMultiset(picked, r.recipe ?? []));
   if (match) {
     if (isRecipeDiscovered(save, match.id)) return fail(`📖 Đã biết món [${match.emoji} ${match.name}] rồi — nấu ở Sổ Tay nhé!`);

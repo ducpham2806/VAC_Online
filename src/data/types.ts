@@ -57,7 +57,7 @@ export interface FarmTileEntity {
   id: string;
   tileX: number;
   tileY: number;
-  zoneType: 'LAND' | 'WETLAND' | 'ORCHARD' | 'POND';
+  zoneType: 'LAND' | 'WETLAND' | 'ORCHARD' | 'POND' | 'COOP';
   itemId: string | null;
   plantedAt: number | null;
   matureAt: number | null;

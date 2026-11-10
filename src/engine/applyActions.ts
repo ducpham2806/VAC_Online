@@ -10,6 +10,9 @@ import { canSowInSeason, seasonAt } from '../domain/season';
 import { type StructureId, clearObstacle, isRepaired, reclaimRegion, repairStructure } from '../domain/estate';
 import { giftItem, talk } from '../domain/npc';
 import { choosePath, claimChapter } from '../domain/story';
+import { type KitchenRules, type KitchenSave, collectCraft, discoverRecipe, eatDish, startCraft } from '../domain/cooking';
+import { deliverOrder, refreshOrders, skipOrder } from '../domain/orders';
+import { SLICE_KITCHEN_ID, SLICE_RECIPES, SLICE_SPECIES, SLOT_SPECIES, slotAt, sliceUnlockLevel } from '../data/sliceContent';
 
 export const MAX_ACTIONS_PER_BATCH = 50;
 export const STATE_SCHEMA_VERSION = 1;
@@ -25,7 +28,14 @@ export type Action =
   | { type: 'TALK'; npcId: string }
   | { type: 'GIFT'; npcId: string; itemId: string }
   | { type: 'CHOOSE_PATH'; path: string }
-  | { type: 'CLAIM_CHAPTER'; chapterNo: number };
+  | { type: 'CLAIM_CHAPTER'; chapterNo: number }
+  | { type: 'COOK'; productId: string }
+  | { type: 'COLLECT_DISH' }
+  | { type: 'EAT'; productId: string }
+  | { type: 'DISCOVER'; ingredientIds: string[] }
+  | { type: 'REFRESH_ORDERS' }
+  | { type: 'DELIVER_ORDER'; slot: number }
+  | { type: 'SKIP_ORDER'; slot: number };
 
 export interface LedgerRow {
   currency: 'GOLD' | 'GEM' | 'STAMINA';
@@ -50,6 +60,11 @@ export interface EngineContext {
    * Chỉ client bản thử truyền; Edge Function không bao giờ đọc giá trị này từ người chơi.
    */
   season?: Season;
+  /**
+   * Luật nội dung bản thử P1 (QD-86, QD-87): chỉ 8 loài, mỗi chỗ nuôi đúng loài, cấp mở riêng (KT-21),
+   * Bếp Củi mở ở Giai đoạn 1 với 2 món. Server đặt theo chế độ chơi, không đọc từ người chơi.
+   */
+  slice?: boolean;
 }
 
 export interface ApplyOutput {
@@ -110,6 +125,18 @@ function ref(action: Action): string {
       return action.structureId;
     case 'RECLAIM':
       return `REGION_${action.regionIndex}`;
+    case 'COOK':
+    case 'EAT':
+      return action.productId;
+    case 'DISCOVER':
+      return action.ingredientIds.join('+');
+    case 'COLLECT_DISH':
+      return SLICE_KITCHEN_ID;
+    case 'REFRESH_ORDERS':
+      return 'ORDERS';
+    case 'DELIVER_ORDER':
+    case 'SKIP_ORDER':
+      return `ORDER_${action.slot}`;
     default:
       return action.tileId;
   }
@@ -118,18 +145,48 @@ function ref(action: Action): string {
 /** Chưa sửa Giếng: mỗi lô chỉ tưới 1 ô; sửa xong mới tưới cả loạt khi kéo (KT-18, QD-83). */
 export const WELL_LOCKED_WATER_PER_BATCH = 1;
 
+/** Luật Bếp của bản thử (QD-87): 2 món, mở ở Giai đoạn 1, cấp mở theo KT-21. */
+const SLICE_KITCHEN_RULES: KitchenRules = { recipeIds: SLICE_RECIPES, minStage: 1, unlockLevel: sliceUnlockLevel };
+
+/** Chạy một luật Bếp trên phần trạng thái Bếp của `save`, ghép kết quả lại. */
+function kitchen(save: FarmSave, run: (k: KitchenSave) => { ok: true; save: KitchenSave; message: string } | { ok: false; message: string }): FarmResult {
+  const r = run({ ...save, machines: save.machines ?? {}, discoveredRecipes: save.discoveredRecipes ?? [] });
+  return r.ok ? { ok: true, save: { ...save, ...r.save }, message: r.message } : r;
+}
+
+/** Bản thử: chỉ 8 loài; ô ruộng chỉ gieo cây, chỗ nuôi chỉ thả đúng loài của chỗ đó. */
+function slicePlantCheck(save: FarmSave, tileId: string, itemId: string): string | null {
+  if (!SLICE_SPECIES.includes(itemId)) return '🔒 Giống này chưa có trong bản thử.';
+  const tile = save.tiles.find((t) => t.id === tileId);
+  if (!tile) return null; // để `plant` báo lỗi chung
+  const slot = tile.zoneType === 'LAND' ? undefined : slotAt(tile.tileX, tile.tileY);
+  if (!slot) return itemId.startsWith('CROP_') ? null : '⚠️ Vật nuôi phải thả ở chuồng hoặc ao.';
+  return SLOT_SPECIES[slot.kind] === itemId ? null : '⚠️ Chỗ này không nuôi loài đó.';
+}
+
 function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
+  const season = ctx.season ?? seasonAt(ctx.now).season;
+  const rules = ctx.slice ? SLICE_KITCHEN_RULES : undefined;
   switch (action.type) {
     case 'PLANT': {
       const item = findItem(action.itemId);
-      const season = ctx.season ?? seasonAt(ctx.now).season;
       if (item && !canSowInSeason(CROP_SEASONS[item.id], season)) {
         return { ok: false, message: `🍂 [${item.name}] không gieo được trong mùa này.` };
       }
-      return plant(save, action.tileId, action.itemId, ctx.gameStage, ctx.now);
+      if (ctx.slice) {
+        const bad = slicePlantCheck(save, action.tileId, action.itemId);
+        if (bad) return { ok: false, message: bad };
+      }
+      const r = plant(save, action.tileId, action.itemId, ctx.gameStage, ctx.now, ctx.slice && item ? sliceUnlockLevel(item) : undefined);
+      // chỗ nuôi không tưới: lời nhắn riêng thay cho "chạm lần nữa để tưới" của ô ruộng
+      const animal = ctx.slice && item && r.ok && save.tiles.find((t) => t.id === action.tileId)?.zoneType !== 'LAND';
+      return animal ? { ...r, message: `🐣 Đã thả [${item.emoji} ${item.name}] (-${item.buyCostGold} 🪙) — tới lứa thì chạm để thu.` } : r;
     }
-    case 'WATER':
+    case 'WATER': {
+      const tile = save.tiles.find((t) => t.id === action.tileId);
+      if (ctx.slice && tile && tile.zoneType !== 'LAND') return { ok: false, message: '⚠️ Vật nuôi không cần tưới.' };
       return water(save, action.tileId, ctx.now);
+    }
     case 'HARVEST':
       return harvest(save, action.tileId, ctx.now);
     case 'SELL':
@@ -148,6 +205,20 @@ function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
       return choosePath(save, action.path);
     case 'CLAIM_CHAPTER':
       return claimChapter(save, action.chapterNo);
+    case 'COOK':
+      return kitchen(save, (k) => startCraft(k, SLICE_KITCHEN_ID, action.productId, ctx.gameStage, ctx.now, rules));
+    case 'COLLECT_DISH':
+      return kitchen(save, (k) => collectCraft(k, SLICE_KITCHEN_ID, ctx.now));
+    case 'EAT':
+      return kitchen(save, (k) => eatDish(k, action.productId, ctx.gameStage, ctx.now, rules));
+    case 'DISCOVER':
+      return kitchen(save, (k) => discoverRecipe(k, action.ingredientIds, ctx.gameStage, rules));
+    case 'REFRESH_ORDERS':
+      return refreshOrders(save, season, ctx.now, ctx.rng);
+    case 'DELIVER_ORDER':
+      return deliverOrder(save, action.slot, season, ctx.rng);
+    case 'SKIP_ORDER':
+      return skipOrder(save, action.slot, ctx.now);
   }
 }
 

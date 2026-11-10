@@ -32,11 +32,14 @@ export interface EstateTarget {
   action: Action | null;
   confirm?: EstateConfirm;
   hint?: string;
+  /** Mở bảng của hạng mục (Bếp Củi đã sửa → bảng nấu). */
+  open?: 'KITCHEN';
 }
 
 const REPAIRED_HINT: Record<StructureId, string> = {
   WELL: '🪣 Giếng đã sửa — kéo trên ruộng để tưới cả loạt.',
-  COOP: '🌽 Chuồng đã sửa — gà về ở bản sau (P1-9).',
+  COOP: '🐔 Chuồng đã sửa — chạm ô trống trong sân để thả gà.',
+  KITCHEN: '🍲 Bếp Củi',
   HOUSE: '🏠 Nhà đã sửa — mở 📜 Gia Phả ở dưới màn hình để xem Chương 1.',
 };
 
@@ -50,12 +53,14 @@ export function estateTargetAt(save: FarmSave, x: number, y: number): EstateTarg
   }
   const sid = structureAt(x, y);
   if (sid) {
+    if (sid === 'KITCHEN' && estate.repaired.includes(sid)) return { tool: 'HAND', action: null, open: 'KITCHEN' };
     if (estate.repaired.includes(sid)) return { tool: 'NONE', action: null, hint: REPAIRED_HINT[sid] };
     const r = REPAIRS[sid];
+    if (r.minLevel && save.level < r.minLevel) return { tool: 'NONE', action: null, hint: `🔒 Sửa ${r.name} mở ở Lv.${r.minLevel}.` };
     return {
       tool: 'HAMMER',
       action: { type: 'REPAIR', structureId: sid },
-      confirm: { title: `Sửa ${r.name}`, cost: repairCostText(sid), unlocks: `Mở ${r.unlocks} · +${r.fengShui} Phong Thủy` },
+      confirm: { title: `Sửa ${r.name}`, cost: repairCostText(sid), unlocks: `Mở ${r.unlocks}${r.fengShui ? ` · +${r.fengShui} Phong Thủy` : ''}` },
     };
   }
   const ri = regionIndexAt(x, y);
@@ -72,6 +77,6 @@ export function estateTargetAt(save: FarmSave, x: number, y: number): EstateTarg
     };
   }
   if (layoutCharAt(x, y) === 'D') return { tool: 'NONE', action: null, hint: '🌳 Cây đa đầu làng — ông bà để lại làm bóng mát, không chặt.' };
-  if (layoutCharAt(x, y) === 'P') return { tool: 'ROD', action: null, hint: '🎣 Thả và câu cá mở ở bản sau (P1-9).' };
+  if (layoutCharAt(x, y) === 'P') return { tool: 'NONE', action: null, hint: '🐟 Thả cá ở mép dưới ao, thả vịt ở mép trái ao.' };
   return null;
 }

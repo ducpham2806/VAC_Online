@@ -12,13 +12,13 @@ export const BATCH_DRAG_MAX = 12;
 export const REACH_TILES = 1;
 
 export type Tool = 'HOE' | 'SEED' | 'WATER' | 'SICKLE' | 'FEED' | 'ROD' | 'AXE' | 'HAMMER' | 'HAND' | 'NONE';
-export type TargetKind = 'PLOT' | 'WILD' | 'COOP' | 'POND' | 'ROCK' | 'TREE' | 'HOUSE' | 'WELL' | 'GROUND';
+export type TargetKind = 'PLOT' | 'WILD' | 'COOP' | 'POND' | 'ROCK' | 'TREE' | 'HOUSE' | 'WELL' | 'KITCHEN' | 'GROUND';
 
-/** Ô ruộng: trống → túi hạt; chín → liềm; chưa tưới → bình tưới; còn lại không có việc. */
+/** Ô ruộng: trống → túi hạt; chín → liềm; chưa tưới → bình tưới; còn lại không có việc. Chỗ nuôi (chuồng, ao) không tưới. */
 export function toolForPlot(tile: FarmTileEntity, now: number): Tool {
   if (!tile.itemId) return 'SEED';
   if (isMature(tile, now)) return 'SICKLE';
-  if (!tile.watered) return 'WATER';
+  if (!tile.watered && tile.zoneType === 'LAND') return 'WATER';
   return 'NONE';
 }
 
@@ -37,6 +37,7 @@ export function toolForTarget(kind: TargetKind, tile: FarmTileEntity | undefined
       return 'AXE';
     case 'HOUSE':
     case 'WELL':
+    case 'KITCHEN':
       return 'HAND';
     case 'GROUND':
       return 'NONE';
@@ -60,6 +61,8 @@ export function batchFromDrag(
   tiles: readonly FarmTileEntity[],
   now: number,
   seedId: string | null,
+  /** Giống cho từng ô (chỗ nuôi dùng đúng loài của chỗ đó); thiếu = `seedId`. */
+  seedFor?: (tile: FarmTileEntity) => string | null,
 ): { tool: Tool; actions: Action[] } {
   const byId = new Map(tiles.map((t) => [t.id, t]));
   const seen = new Set<string>();
@@ -73,7 +76,7 @@ export function batchFromDrag(
     const t = toolForPlot(tile, now);
     if (tool === null) tool = t; // chốt theo ô đầu tiên, kể cả khi ô đó không có việc
     if (t !== tool || tool === 'NONE') continue;
-    const a = plotAction(tool, id, seedId);
+    const a = plotAction(tool, id, seedFor ? seedFor(tile) : seedId);
     if (a) actions.push(a);
     if (actions.length >= BATCH_DRAG_MAX) break;
   }

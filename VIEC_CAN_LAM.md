@@ -51,7 +51,7 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~Tạo 5 ảnh cây đa / bụi tre / đá / cỏ dại / rào theo `art/prompts/p1_nature.md`~~ ✅ 2026-11-11 (đã nhập vào `?p1`)
 - [x] ~~NPC to thêm 15%, rào mới, cây xoan (QD-85)~~ ✅ 2026-11-11
 - [x] ~~PO duyệt danh sách 8 loài cho P1-9~~ (QD-86, 11/11)
-- [ ] PO duyệt số liệu P1-9: Bếp Củi, chỗ nuôi gà/vịt/cá, bảng đơn HTX
+- [x] ~~PO duyệt số liệu P1-9: Bếp Củi, chỗ nuôi gà/vịt/cá, bảng đơn HTX~~ (QD-87, 11/11)
 - [ ] PO tạo 7 ảnh theo `art/prompts/p1_species.md`
 
 ## F. Nhật ký

@@ -7,6 +7,8 @@ import type { FarmTileEntity } from '../data/types';
 import { ESTATE_ROWS, layoutCharAt } from '../data/estateLayout';
 import { EXPAND_FENG_SHUI, EXPAND_GOLD, EXPAND_STAMINA, EXPAND_XP, type FarmResult, type FarmSave, withRegen } from './farm';
 import { applyXp } from './progression';
+import { ANIMAL_SLOTS, type AnimalSlot, SLICE_KITCHEN_ID, sliceUnlockLevel, slotAt } from '../data/sliceContent';
+import { GAME_CATALOG } from '../data/masterData';
 
 // ---------------------------------------------------------------- vật liệu (KT-18)
 export const MAT_GO = 'MAT_GO';
@@ -26,7 +28,7 @@ export const CLEAR_RULES: Record<ObstacleKind, { stamina: number; item: Material
 };
 
 // ---------------------------------------------------------------- hạng mục (KT-18)
-export type StructureId = 'WELL' | 'COOP' | 'HOUSE';
+export type StructureId = 'WELL' | 'COOP' | 'HOUSE' | 'KITCHEN';
 export interface RepairRule {
   name: string;
   gold: number;
@@ -34,14 +36,26 @@ export interface RepairRule {
   fengShui: number;
   /** Chức năng mở khi sửa xong (GP-14). */
   unlocks: string;
+  /** Cấp tối thiểu để sửa; thiếu = không giới hạn. */
+  minLevel?: number;
 }
+const KITCHEN_ITEM = GAME_CATALOG.find((c) => c.id === SLICE_KITCHEN_ID);
 export const REPAIRS: Record<StructureId, RepairRule> = {
   WELL: { name: 'Giếng', gold: 300, mats: { MAT_DA: 4 }, fengShui: 20, unlocks: 'tưới cả loạt khi kéo' },
-  COOP: { name: 'Chuồng gà', gold: 400, mats: { MAT_GO: 6 }, fengShui: 30, unlocks: 'nuôi gà (P1-9)' },
+  COOP: { name: 'Chuồng gà', gold: 400, mats: { MAT_GO: 6 }, fengShui: 30, unlocks: '4 chỗ nuôi gà' },
   HOUSE: { name: 'Nhà chính', gold: 500, mats: { MAT_GO: 6, MAT_DA: 2 }, fengShui: 40, unlocks: 'Sổ Gia Phả Chương 1' },
+  // QD-87: giá xây Bếp Củi lấy từ dữ liệu (`MAC_02`), thêm 2 Gỗ + 2 Đá; cấp mở theo bản thử (KT-21).
+  KITCHEN: {
+    name: 'Bếp Củi',
+    gold: KITCHEN_ITEM?.buyCostGold ?? 0,
+    mats: { MAT_GO: 2, MAT_DA: 2 },
+    fengShui: 0,
+    unlocks: 'nấu Cơm Trắng, thử món ở Nồi Đất',
+    minLevel: KITCHEN_ITEM ? sliceUnlockLevel(KITCHEN_ITEM) : undefined,
+  },
 };
-export const STRUCTURE_CHAR: Record<StructureId, string> = { WELL: 'W', COOP: ',', HOUSE: 'H' };
-export const STRUCTURE_IDS: readonly StructureId[] = ['WELL', 'COOP', 'HOUSE'];
+export const STRUCTURE_CHAR: Record<StructureId, string> = { WELL: 'W', COOP: ',', HOUSE: 'H', KITCHEN: 'K' };
+export const STRUCTURE_IDS: readonly StructureId[] = ['WELL', 'COOP', 'HOUSE', 'KITCHEN'];
 
 // ---------------------------------------------------------------- khai hoang (KT-15)
 /** Giá vùng thứ k (k = số vùng đã khai, bắt đầu 0): `EXPAND_GOLD × 1,25^k` (QD-18). */
@@ -185,6 +199,27 @@ export function emptyPlot(x: number, y: number): FarmTileEntity {
   };
 }
 
+/** Chỗ nuôi đang dùng được: chỗ gà chỉ có khi đã sửa Chuồng gà; vịt, cá có sẵn ở ao (KT-21). */
+export function slotPositions(estate: EstateState): AnimalSlot[] {
+  return ANIMAL_SLOTS.filter((s) => s.kind !== 'HEN' || estate.repaired.includes('COOP'));
+}
+
+/** Chỗ nuôi trống ở (x, y): cùng id kiểu ô ruộng (`P{x}_{y}`), vùng `COOP` (gà) hoặc `POND` (vịt, cá). */
+export function emptySlot(s: AnimalSlot): FarmTileEntity {
+  return { ...emptyPlot(s.x, s.y), zoneType: s.kind === 'HEN' ? 'COOP' : 'POND' };
+}
+
+/** Mọi ô của bản thử theo điền trang: ô ruộng + chỗ nuôi. */
+export function estateTiles(estate: EstateState): FarmTileEntity[] {
+  return [...plotPositions(estate).map((t) => emptyPlot(t.x, t.y)), ...slotPositions(estate).map(emptySlot)];
+}
+
+/** Chỗ nuôi đang mở ở (x, y), nếu có. */
+export function openSlotAt(x: number, y: number, estate: EstateState): AnimalSlot | undefined {
+  const s = slotAt(x, y);
+  return s && slotPositions(estate).includes(s) ? s : undefined;
+}
+
 /** Mọi vị trí ô ruộng hiện có: ô `F` gốc + các vùng đã khai hoang. */
 export function plotPositions(estate: EstateState): TilePos[] {
   const out: TilePos[] = [];
@@ -242,22 +277,32 @@ export function repairStructure(save: FarmSave, id: StructureId): FarmResult {
   if (!rule) return fail('⚠️ Không có hạng mục này!');
   const estate = estateOf(save);
   if (estate.repaired.includes(id)) return fail(`⚠️ ${rule.name} đã sửa rồi!`);
+  if (rule.minLevel && save.level < rule.minLevel) return fail(`🔒 Sửa ${rule.name} mở ở Lv.${rule.minLevel}!`);
   const missing = (Object.entries(rule.mats) as [MaterialId, number][]).filter(([m, n]) => (save.inventory[m] ?? 0) < n);
   if (save.gold < rule.gold || missing.length) {
     return fail(`🔨 Sửa ${rule.name} cần ${repairCostText(id)}.`);
   }
   const inventory = { ...save.inventory };
   for (const [m, n] of Object.entries(rule.mats) as [MaterialId, number][]) inventory[m] = (inventory[m] ?? 0) - n;
+  const next: EstateState = { ...estate, repaired: [...estate.repaired, id] };
+  // hạng mục mở chỗ nuôi (Chuồng gà) → thêm đúng các chỗ vừa mở; Bếp Củi → có xưởng MAC_02 (GP-30)
+  const before = slotPositions(estate);
+  const have = new Set(save.tiles.map((t) => t.id));
+  const opened = slotPositions(next).filter((sl) => !before.includes(sl)).map(emptySlot);
+  const tiles = [...save.tiles, ...opened.filter((t) => !have.has(t.id))];
+  const machines = id === 'KITCHEN' ? { ...save.machines, [SLICE_KITCHEN_ID]: { craftItemId: null, readyAt: null } } : save.machines;
   return {
     ok: true,
     save: {
       ...save,
       gold: save.gold - rule.gold,
       inventory,
+      tiles,
+      ...(machines ? { machines } : {}),
       fengShuiScore: save.fengShuiScore + rule.fengShui,
-      estate: { ...estate, repaired: [...estate.repaired, id] },
+      estate: next,
     },
-    message: `🔨 Đã sửa ${rule.name}: mở ${rule.unlocks} (+${rule.fengShui} Phong Thủy)`,
+    message: `🔨 Đã sửa ${rule.name}: mở ${rule.unlocks}${rule.fengShui ? ` (+${rule.fengShui} Phong Thủy)` : ''}`,
   };
 }
 

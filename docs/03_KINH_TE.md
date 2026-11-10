@@ -35,7 +35,12 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 
 ### KT-14 · Bán ở HTX và đơn hàng
 - **Bán thẳng HTX:** vàng = `giá bán × qty`, không thuế.
-- **Đơn hàng HTX** (GP-40): thưởng = `Σ(giá bán × sl) × hệ số đơn`. Hệ số đơn 1,2–1,5 cộng XP (chưa code, chốt ở P1). Đơn chỉ đòi hàng thuộc Đợt đã mở và đúng mùa.
+- **Đơn hàng HTX** (GP-40, QD-87): bảng luôn có 3 đơn; mỗi đơn đòi 1–3 loại hàng đã mở và đúng mùa.
+  - Số lượng mỗi dòng: nông sản 3–6, trứng/cá 1–3, món ăn 1.
+  - Hệ số đơn `k` theo số loại: 1 loại 1,2 · 2 loại 1,35 · 3 loại 1,5.
+  - Thưởng vàng = `round(Σ(giá bán × sl) × k)`; XP = `round(Σ(XP loài × sl) × k)`. Ví dụ: 3 Lúa (giá 4, XP 1) → 14🪙 + 4 XP. Giao đơn 0⚡.
+  - Giao xong: chỗ đó có đơn mới ngay. Bỏ đơn: chỗ đó trống 10 phút rồi mới có đơn mới.
+  - Code: `src/domain/orders.ts` (`ORDER_SLOTS`, `ORDER_FACTOR`, `ORDER_QTY`, `ORDER_SKIP_COOLDOWN_MS`).
 
 ### KT-15 · Khai hoang
 - **Khai hoang theo vùng** (QD-18, QD-83): vùng thứ k (k = số vùng đã khai, từ 0) giá `500 × 1,25^k` 🪙 + 5⚡; nhận +45 XP và +25 Phong Thủy; cả vùng thành ô ruộng trống. Ví dụ: vùng 1 = 500🪙, vùng 2 = 625🪙.
@@ -53,8 +58,9 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 | Giếng | 300🪙 + 4 Đá | +20 | Tưới cả loạt khi kéo (chưa sửa: mỗi lượt tưới 1 ô) |
 | Chuồng gà | 400🪙 + 6 Gỗ | +30 | Nuôi gà (P1-9) |
 | Nhà chính | 500🪙 + 6 Gỗ + 2 Đá | +40 | Gia Phả Chương 1 (P1-11) |
+| Bếp Củi (QD-87) | giá xây `MAC_02` trong dữ liệu (350🪙) + 2 Gỗ + 2 Đá; từ cấp 3 (KT-21) | 0 | Nấu món, Nồi Đất (KT-30) |
 
-- Tổng sửa đủ 3 hạng mục: 1.200🪙 + 12 Gỗ + 6 Đá; bản đồ bản thử cho 15 Gỗ + 9 Đá.
+- Tổng sửa đủ 4 hạng mục: 1.550🪙 + 14 Gỗ + 8 Đá; bản đồ bản thử cho 15 Gỗ + 9 Đá.
 - Code: `src/domain/estate.ts` (`CLEAR_RULES`, `REPAIRS`), khóa tưới ở `src/engine/applyActions.ts` (`WELL_LOCKED_WATER_PER_BATCH`).
 
 ### KT-19 · Tim NPC (QD-84)
@@ -82,6 +88,14 @@ Kéo để làm cả loạt (GP-02): tối đa 12 ô mỗi lượt kéo, mỗi �
 
 ### KT-30 · Xưởng và bếp
 Thời gian, nguyên liệu và giá thành phẩm lấy từ dữ liệu (`machineId`, `recipe`). Khám phá công thức ở Nồi Đất được +10💎 và +50 XP (`cooking.ts`). Mỗi xưởng nấu 1 mẻ một lúc, có hàng chờ (GP-30).
+
+### KT-21 · Nội dung bản thử P1 (QD-86, QD-87)
+- **Loài:** 8 loài Đợt 1, giá/thời gian/sản lượng/XP giữ nguyên dữ liệu. Danh sách: `src/data/sliceContent.ts`.
+- **Cấp mở riêng bản thử** (dữ liệu gốc không đổi): Gà 2, Cá Rô 3, Hành 3, Cải 3, Bếp Củi và Cơm 3, Canh Cải Cá Rô 4, Vịt 5. Lúa 1, Rau Muống 2, Ngô 2 theo dữ liệu. Ước tính: buổi đầu ~30–40 phút lên cấp 3; tới cấp 5 cần ~3 giờ chơi.
+- **Chỗ nuôi:** 4 chỗ gà (mở khi sửa Chuồng gà), 2 chỗ vịt, 3 chỗ cá ở ao. Mỗi chỗ chỉ nuôi đúng loài của nó; số lứa theo KT-13.
+- **Cho ăn:** bản thử chưa có (mua con giống là đủ lứa); cho ăn + Cối Xay Cám ở P2. Lý do: cho ăn bằng nông sản theo dữ liệu làm gà lỗ (5 lứa bán 70🪙, tốn 40🪙 cám + 40🪙 con giống).
+- **Bếp:** mở ở Giai đoạn 1 cho bản thử, chỉ 2 món (Cơm Trắng biết sẵn, Canh Cải Cá Rô tìm ở Nồi Đất).
+- Code: `src/data/sliceContent.ts` (`SLICE_UNLOCK_LEVEL`, `ANIMAL_SLOTS`), engine `ctx.slice` (`src/engine/applyActions.ts`).
 
 ### KT-31 · Chợ phiên P2P (QD-02)
 - **Khung giá:** từ `max(1, floor(0,8 × giá gốc))` đến `2,0 × giá gốc`.

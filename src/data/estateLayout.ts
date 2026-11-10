@@ -8,13 +8,14 @@
  *  #  bờ rào/bụi     H  nhà (hạng mục HOUSE)            W  giếng (hạng mục WELL)
  *  P  ao             T  gốc cây xoan (một cụm = 1 cây)  R  đá
  *  D  cây đa cổ thụ đầu làng (không chặt, chỉ chắn lối)
+ *  K  Bếp Củi (hạng mục KITCHEN, P1-9)
  *  S  chỗ xuất hiện  (đi được)
  */
 export const ESTATE_ROWS: readonly string[] = [
   '##############################',
   '#....TTT..............TTT....#',
-  '#....TTT...HHHH.......TTT.DDD#',
-  '#....TTT...HHHH...........DDD#',
+  '#....TTT...HHHH.KK....TTT.DDD#',
+  '#....TTT...HHHH.KK........DDD#',
   '#..........HHHH...WW.........#',
   '#.................WW.....PPPP#',
   '#.......................PPPPP#',

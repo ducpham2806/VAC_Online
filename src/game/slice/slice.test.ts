@@ -116,14 +116,14 @@ describe('P1-10 bản đồ có tính điền trang', () => {
     expect(r?.tiles.find((t) => t.id === plotId(9, 7))?.itemId).toBe('CROP_01');
   });
 
-  it('chạm đối tượng: đá → dọn ngay; giếng → hỏi lại; vùng 2 trước vùng 1 → nhắc; ao → báo P1-9', () => {
+  it('chạm đối tượng: đá → dọn ngay; giếng → hỏi lại; vùng 2 trước vùng 1 → nhắc; ao → chỉ chỗ thả cá, vịt', () => {
     const s = newSliceSave(0);
     expect(estateTargetAt(s, 19, 10)).toMatchObject({ tool: 'AXE', action: { type: 'CLEAR', obstacleId: 'R_19_10' } });
     expect(estateTargetAt(s, 6, 2)).toMatchObject({ action: { type: 'CLEAR', obstacleId: 'T_5_1' } });
     expect(estateTargetAt(s, 18, 4)?.confirm).toMatchObject({ title: 'Sửa Giếng', cost: '300 🪙 + 4 🪨 Đá' });
     expect(estateTargetAt(s, 6, 10)).toMatchObject({ action: null, hint: '⛏️ Khai hoang vùng 1 trước.' });
     expect(estateTargetAt(s, 9, 7)?.confirm).toMatchObject({ title: 'Khai hoang vùng 1', cost: '500 🪙 + 5 ⚡' });
-    expect(estateTargetAt(s, 26, 7)?.hint).toContain('P1-9');
+    expect(estateTargetAt(s, 26, 7)?.hint).toContain('Thả cá'); // giữa ao: chỉ dẫn tới chỗ nuôi (P1-9)
     expect(estateTargetAt(s, 15, 11)).toBeNull();
     const repaired = { ...s, estate: { cleared: [], repaired: ['WELL' as const], reclaimed: 0 } };
     expect(estateTargetAt(repaired, 18, 4)).toMatchObject({ tool: 'NONE', action: null });
