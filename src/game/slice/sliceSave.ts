@@ -4,6 +4,7 @@
  */
 import { GAME_CATALOG } from '../../data/masterData';
 import { CROP_SEASONS } from '../../data/seasons';
+import { SLICE_CROPS } from '../../data/sliceContent';
 import type { CatalogItem, Season } from '../../data/types';
 import { newFarmSave } from '../../engine/applyActions';
 import type { FarmSave } from '../../domain/farm';
@@ -42,11 +43,11 @@ export function targetAt(x: number, y: number, estate: EstateState = NO_ESTATE):
   return KIND[effectiveCharAt(x, y, estate)] ?? 'GROUND';
 }
 
-/** Giống gieo được ngay: cây (`CROP_`) đủ cấp, Đợt, miền và đúng mùa `season` (GP-20). */
+/** Giống gieo được ngay: 5 cây của bản thử (QD-86) đủ cấp, Đợt, miền và đúng mùa `season` (GP-20). */
 export function sowableSeeds(save: FarmSave, season: Season): CatalogItem[] {
   return GAME_CATALOG.filter(
     (c) =>
-      c.id.startsWith('CROP_') &&
+      SLICE_CROPS.includes(c.id) &&
       canPlant(c, save.level, SLICE_GAME_STAGE, save.region).ok &&
       canSowInSeason(CROP_SEASONS[c.id], season),
   );

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { ESTATE_COLS, ESTATE_ROWS, boundsOf, isWalkable, spawnTile, tilesOf } from './estateMap';
 import { facing, inJoystickZone, isDrag, joystickVector, JOYSTICK_RADIUS_PX } from './gesture';
 import { findPath, pathToward } from './pathfinding';
-import { newSliceSave, plotId, reconcileSliceSave, targetAt } from './sliceSave';
+import { newSliceSave, plotId, reconcileSliceSave, sowableSeeds, targetAt } from './sliceSave';
+import { SLICE_CROPS, SLICE_RECIPES, SLICE_SPECIES } from '../../data/sliceContent';
+import { GAME_CATALOG } from '../../data/masterData';
 import { estateTargetAt } from './estateTarget';
 import { SLICE_TUTORIAL, currentTutorialStep, tutorialTarget } from './sliceTutorial';
 import { NPCS, NPC_IDS, npcAt } from '../../data/npcs';
@@ -177,5 +179,20 @@ describe('Cây đa đầu làng (D) — không chặt', () => {
     expect(isWalkable(27, 2)).toBe(false);
     expect(estateTargetAt(newSliceSave(0), 27, 2)).toMatchObject({ action: null, tool: 'NONE' });
     expect(estateTargetAt(newSliceSave(0), 27, 2)?.hint).toContain('không chặt');
+  });
+});
+
+describe('P1-9 bộ 8 loài bản thử (QD-86)', () => {
+  it('chỉ gieo được 5 cây của bản thử, đủ cấp và đúng mùa', () => {
+    const save = { ...newSliceSave(0), level: 10 };
+    expect(sowableSeeds(save, 'XUAN').map((c) => c.id)).toEqual([...SLICE_CROPS]);
+    expect(sowableSeeds(save, 'THU').map((c) => c.id)).toEqual([...SLICE_CROPS]);
+    expect(sowableSeeds(save, 'HA').map((c) => c.id)).toEqual(['CROP_01', 'CROP_02']);
+    expect(sowableSeeds(save, 'DONG').map((c) => c.id)).toEqual(['CROP_03', 'CROP_04', 'CROP_05']);
+    expect(sowableSeeds(newSliceSave(0), 'XUAN').map((c) => c.id)).toEqual(['CROP_01']);
+  });
+
+  it('mọi mã của bản thử có trong GAME_CATALOG, thuộc Đợt 1', () => {
+    for (const id of [...SLICE_SPECIES, ...SLICE_RECIPES]) expect(GAME_CATALOG.find((c) => c.id === id)?.unlockWave).toBe(1);
   });
 });

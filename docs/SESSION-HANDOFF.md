@@ -20,7 +20,7 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-9: cần PO duyệt 8 loài (5 cây, 2 vật nuôi, 1 cá) 2 mùa Bắc Bộ.
+1. P1-9: 8 loài đã duyệt (QD-86, `src/data/sliceContent.ts`); chờ PO duyệt số Bếp Củi / chỗ nuôi / đơn HTX và 7 ảnh `art/prompts/p1_species.md`.
 2. P1-8 khi có quyền Supabase project VAC.
 3. P1-12 chơi thử 10–20 người.
 4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
