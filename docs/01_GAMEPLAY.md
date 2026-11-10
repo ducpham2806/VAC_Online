@@ -87,7 +87,7 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 - **Bắt đầu:** điền trang đổ nát. Có các **hạng mục khôi phục**: nhà chính, giếng, chuồng, ao, bếp, vườn cây, cổng.
   - Mỗi hạng mục sửa theo bậc, cần vàng và vật liệu (gỗ, đá, tre).
   - Sửa xong thì mở thêm chức năng hoặc chỗ chứa, gắn với Chương Gia Phả.
-- **Khai hoang:** phần đất ngoài khu đã dọn bị đá, gốc cây, cỏ dại che. Dọn đá/gốc cây bằng rìu/búa (việc nặng, ⚡, KT-18) được vật liệu; cuốc đất hoang theo vùng (vàng + ⚡, KT-15).
+- **Khai hoang:** phần đất ngoài khu đã dọn bị đá, gốc cây (xoan già), cỏ dại che. Cây đa đầu làng là cây thiêng, không chặt (QD-85). Dọn đá/gốc cây bằng rìu/búa (việc nặng, ⚡, KT-18) được vật liệu; cuốc đất hoang theo vùng (vàng + ⚡, KT-15).
 - **Hỏi lại trước khi tiêu vàng:** sửa hạng mục và khai hoang hiện chi phí, thứ mở được, số đang có; người chơi bấm xác nhận mới trừ. Dọn chướng ngại (chỉ tốn ⚡) làm ngay.
 - **Hạng mục đổ nát** hiện xỉn màu kèm đống gạch vụn; sửa xong hiện bình thường. Chuồng chưa sửa thì chưa có gà.
   - Vùng đất mở theo thứ tự cố định, vùng kế tiếp hiện mờ trên bản đồ.

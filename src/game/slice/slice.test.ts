@@ -171,3 +171,11 @@ describe('P1-11 mũi tên hướng dẫn chỉ chỗ lấy vật liệu khi thi�
     expect(tutorialTarget(house, v({ MAT_DA: 2, MAT_GO: 5 }, ['T_5_1']))).toEqual({ x: 22, y: 1 });
   });
 });
+
+describe('Cây đa đầu làng (D) — không chặt', () => {
+  it('chắn lối, không phải chướng ngại dọn được, chạm thì nhắc', () => {
+    expect(isWalkable(27, 2)).toBe(false);
+    expect(estateTargetAt(newSliceSave(0), 27, 2)).toMatchObject({ action: null, tool: 'NONE' });
+    expect(estateTargetAt(newSliceSave(0), 27, 2)?.hint).toContain('không chặt');
+  });
+});

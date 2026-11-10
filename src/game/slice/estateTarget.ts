@@ -71,6 +71,7 @@ export function estateTargetAt(save: FarmSave, x: number, y: number): EstateTarg
       },
     };
   }
+  if (layoutCharAt(x, y) === 'D') return { tool: 'NONE', action: null, hint: '🌳 Cây đa đầu làng — ông bà để lại làm bóng mát, không chặt.' };
   if (layoutCharAt(x, y) === 'P') return { tool: 'ROD', action: null, hint: '🎣 Thả và câu cá mở ở bản sau (P1-9).' };
   return null;
 }

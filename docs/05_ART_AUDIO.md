@@ -31,7 +31,7 @@ Kiểm tự động: `/vac-asset-audit`, `npm run test:art`, `src/data/palette.t
 | Loại | Kích thước | Ghi chú |
 |---|---|---|
 | Lưới bản đồ, ô đất trồng | 32×32 | Mỗi ô trồng 1 cây (GP-11). Ô đất 168×80 kiểu cũ bỏ (QD-27) |
-| Nhân vật người | 48×64 | Neo `(0,5, 0,95)` (khớp `player.ts`) |
+| Nhân vật người | 48×64 | Neo `(0,5, 0,95)` (khớp `player.ts`). NPC có tim: 56×74 (QD-85) |
 | Vật nuôi | 48×48 | Neo đáy |
 | Cây trồng 4 giai đoạn | khung 32×48, neo đáy | Đường ống `import_sprite.py` (hiện là 48×48, đổi khi làm lại) |
 | Icon, vật phẩm, công cụ | 32×32 | |

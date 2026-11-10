@@ -19,7 +19,7 @@ export { ESTATE_ROWS };
 export const ESTATE_COLS = ESTATE_ROWS[0].length;
 export const ESTATE_HEIGHT = ESTATE_ROWS.length;
 
-const BLOCKED = new Set(['#', 'H', 'W', 'P', 'T', 'R']);
+const BLOCKED = new Set(['#', 'H', 'W', 'P', 'T', 'R', 'D']);
 
 export interface TilePos {
   x: number;

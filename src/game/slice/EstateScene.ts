@@ -385,8 +385,13 @@ export class EstateScene extends Phaser.Scene {
     }
   }
 
-  /** Đá (mỗi ô 1 tảng) và cây (mỗi cụm 1 cây đa phủ cả khối) — dọn được ở P1-10. */
+  /** Đá (mỗi ô 1 tảng) và cây xoan (mỗi cụm 1 cây phủ cả khối) — dọn được ở P1-10; cây đa `D` chỉ để ngắm. */
   private drawTrees(): void {
+    const d = boundsOf('D');
+    if (d) {
+      const bottom = (d.y + d.h) * TILE;
+      this.foliage.push(this.add2(this.add.image((d.x + d.w / 2) * TILE, bottom, ESTATE, 'tree_0').setOrigin(0.5, 1).setDepth(bottom)));
+    }
     for (const o of OBSTACLES) {
       const xs = o.tiles.map((t) => t.x);
       const ys = o.tiles.map((t) => t.y);
@@ -396,7 +401,7 @@ export class EstateScene extends Phaser.Scene {
         const v = (o.tiles[0].x + o.tiles[0].y) % 3; // 3 dáng đá: tròn, dẹt, chồng đôi
         this.obstacleViews.set(o.id, this.add2(this.add.image(cx, bottom - 2, ESTATE, `rock_${v}`).setOrigin(0.5, 1).setDepth(bottom)));
       } else {
-        const img = this.add2(this.add.image(cx, bottom, ESTATE, 'tree_0').setOrigin(0.5, 1).setDepth(bottom));
+        const img = this.add2(this.add.image(cx, bottom, ESTATE, 'xoan_0').setOrigin(0.5, 1).setDepth(bottom)); // xoan già: chặt lấy Gỗ
         this.foliage.push(img);
         this.obstacleViews.set(o.id, img);
       }

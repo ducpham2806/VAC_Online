@@ -6,14 +6,15 @@
  *  .  cỏ             ,  sân chuồng gà (hạng mục COOP)   F  ô ruộng đã cuốc
  *  w  đất hoang (khai hoang theo vùng, KT-15)
  *  #  bờ rào/bụi     H  nhà (hạng mục HOUSE)            W  giếng (hạng mục WELL)
- *  P  ao             T  gốc cây to (một cụm = 1 cây)    R  đá
+ *  P  ao             T  gốc cây xoan (một cụm = 1 cây)  R  đá
+ *  D  cây đa cổ thụ đầu làng (không chặt, chỉ chắn lối)
  *  S  chỗ xuất hiện  (đi được)
  */
 export const ESTATE_ROWS: readonly string[] = [
   '##############################',
   '#....TTT..............TTT....#',
-  '#....TTT...HHHH.......TTT....#',
-  '#....TTT...HHHH..............#',
+  '#....TTT...HHHH.......TTT.DDD#',
+  '#....TTT...HHHH...........DDD#',
   '#..........HHHH...WW.........#',
   '#.................WW.....PPPP#',
   '#.......................PPPPP#',

@@ -45,18 +45,20 @@ P1_SHEETS = [
     ("house_sheet.png", "strip:2", "128x128", ["house_0", "house_1"], {}),
     ("well_sheet.png", "strip:2", "64x80", ["well_0", "well_1"], {}),
     ("coop_sheet.png", "strip:2", "96x96", ["coop_0", "coop_1"], {}),
-    ("npc_bacbay_sheet.png", "strip:4", "48x64",
+    # QD-85: NPC lớn hơn người chơi 15% (56×74 thay 48×64) cho dễ nhận ra
+    ("npc_bacbay_sheet.png", "strip:4", "56x74",
      ["npc_bacbay_idle_0", "npc_bacbay_idle_1", "npc_bacbay_talk_0", "npc_bacbay_talk_1"], {}),
-    ("npc_cohuong_sheet.png", "strip:4", "48x64",
+    ("npc_cohuong_sheet.png", "strip:4", "56x74",
      ["npc_cohuong_idle_0", "npc_cohuong_idle_1", "npc_cohuong_talk_0", "npc_cohuong_talk_1"], {}),
     ("portraits_sheet.png", "strip:3", "64x64", ["portrait_bacbay", "portrait_cohuong", "portrait_bakien"], {}),
     # art/prompts/p1_nature.md — thay hình tạm của atlas `world`
-    ("tree_sheet.png", "strip:1", "96x112", ["tree_0"], {}),
+    ("tree_sheet.png", "strip:1", "96x112", ["tree_0"], {}),  # cây đa: 1 cây cổ thụ, không chặt
+    ("xoan_sheet.png", "strip:1", "96x112", ["xoan_0"], {}),  # cây xoan già: gốc cây chặt lấy Gỗ (KT-18)
     ("bamboo_sheet.png", "strip:2", "48x96", ["bamboo_0", "bamboo_1"], {}),
     ("rock_sheet.png", "strip:3", "40x32", ["rock_0", "rock_1", "rock_2"], {}),
     ("weeds_sheet.png", "strip:3", "20x16", ["weed_0", "weed_1", "weed_2"], {}),
-    # AI vẽ rào xéo (rail dốc ~0,49 lên bên phải): trượt dọc cho rail nằm ngang, cọc vẫn đứng, để ghép liền theo mép bản đồ
-    ("fence_sheet.png", "strip:2", "64x48", ["fence_0", "fence_1"], {"shear": 0.49}),
+    # Ảnh rào vẽ thẳng (PO tạo lại 11/11). Ảnh xéo thì thêm {"shear": độ dốc} để nắn rail thành ngang.
+    ("fence_sheet.png", "strip:2", "64x32", ["fence_0", "fence_1"], {}),
 ]
 
 
@@ -309,7 +311,7 @@ def p1_preview(named: dict[str, Image.Image], grass: Image.Image | None) -> Imag
     order = ["house_0", "house_1", "well_0", "well_1", "coop_0", "coop_1",
              "npc_bacbay_idle_0", "npc_bacbay_talk_0", "npc_cohuong_idle_0", "npc_cohuong_talk_0",
              "portrait_bacbay", "portrait_cohuong", "portrait_bakien",
-             "tree_0", "bamboo_0", "bamboo_1", "rock_0", "rock_1", "rock_2", "weed_0", "weed_1", "weed_2", "fence_0", "fence_1"]
+             "tree_0", "xoan_0", "bamboo_0", "bamboo_1", "rock_0", "rock_1", "rock_2", "weed_0", "weed_1", "weed_2", "fence_0", "fence_1"]
     order = [n for n in order if n in named]
     w = sum(named[n].width + 8 for n in order) + 8
     sheet = Image.new("RGBA", (w, 144), (90, 140, 60, 255))

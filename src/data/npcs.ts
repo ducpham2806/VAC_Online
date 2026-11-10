@@ -8,7 +8,7 @@ export interface NpcDef {
   id: NpcId;
   name: string;
   emoji: string;
-  /** Tiền tố khung trong atlas `estate` (ảnh PO, `art/prompts/p1_estate_npc.md`): `<sprite>_idle_0/1`, `<sprite>_talk_0/1`. */
+  /** Tiền tố khung trong atlas `estate` (ảnh PO, `art/prompts/p1_estate_npc.md`): `<sprite>_idle_0/1`, `<sprite>_talk_0/1` (khung 56×74, QD-85). */
   sprite: string;
   /** Chân dung 64×64 cho hộp thoại: `public/assets/portraits/<portrait>.png`. */
   portrait: string;
