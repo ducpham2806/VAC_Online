@@ -6,6 +6,7 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
+| QD-84 | P1-11: chọn 2 NPC có tim, số điểm tim, thưởng Chương 1, thứ tự hướng dẫn 15 phút đầu | P1-11 | NPC: Bác Bảy + Cô Giáo Hương (Bá Kiến chỉ xuất hiện ở cảnh mở đầu, chưa có tim). Tim 0–10, 100 điểm/tim; nói chuyện +20 (1 lần/ngày/NPC), quà thường +30, quà thích +80, quà ghét −20 (1 quà/ngày/NPC); mốc 2 tim mở 1 cảnh ngắn. Chương 1: chọn tình nghĩa/thực dụng ở cảnh mở đầu (TG-40), thưởng giữ số đang có trong `src/data/quests.ts` (600🪙 + 15💎 + 100 XP + nhánh) trả khi đủ: tưới, gặt lúa, sửa Nhà. Hướng dẫn 8 bước: đi → gieo → tưới → gặt → bán HTX → dọn đá → sửa Giếng → sửa Nhà mở Sổ Gia Phả. Chi tiết trong WORKLOG 10/11 |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
