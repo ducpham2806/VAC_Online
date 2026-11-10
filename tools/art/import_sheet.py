@@ -2,6 +2,7 @@
 """Nhập 1 tấm ảnh nhiều khung (ChatGPT / Gemini, nền #FF00FF) thành các khung sprite đúng chuẩn docs/05_ART_AUDIO.
 
   python3 tools/art/import_sheet.py --p0                     # 5 tấm mẫu P0-2 trong art/source/inbox/ -> art/source/p0_ai/
+  python3 tools/art/import_sheet.py --p1                     # 6 tấm P1 (nhà, giếng, chuồng, NPC, chân dung) -> art/source/p1_ai/
   python3 tools/art/import_sheet.py in.png --layout strip:4 --size 32x48 --names CROP_01_0,CROP_01_1,CROP_01_2,CROP_01_3
 
 Khác import_sprite.py (1 ảnh -> 1 khung):
@@ -24,6 +25,7 @@ from recolor_outline import WARM_OUTLINE, count_near_black, count_off_palette, l
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 INBOX = os.path.join(ROOT, "art", "source", "inbox")
 P0_OUT = os.path.join(ROOT, "art", "source", "p0_ai")
+P1_OUT = os.path.join(ROOT, "art", "source", "p1_ai")
 
 DIRS = ("down", "up", "left", "right")
 # Tên khung trùng với mẫu vẽ bằng code (codeart_p0_samples.py) để so cạnh nhau.
@@ -35,6 +37,19 @@ P0_SHEETS = [
     ("AQUA_01_sheet.png", "strip:2", "32x32", ["AQUA_01_0", "AQUA_01_1"], {}),
     ("farmer_walk_sheet.png", "grid:4x4", "48x64", [f"farmer_walk_{d}_{f}" for d in DIRS for f in range(4)], {}),
     ("tiles_sheet.png", "tiles:4", "32x32", ["tile_tilled_dry", "tile_tilled_wet", "tile_grass_xuan", "tile_grass_dong"], {}),
+]
+
+
+# P1 (art/prompts/p1_estate_npc.md): hạng mục điền trang 2 khung (đổ nát, đã sửa); NPC 2 khung đứng + 2 khung nói.
+P1_SHEETS = [
+    ("house_sheet.png", "strip:2", "128x128", ["house_0", "house_1"], {}),
+    ("well_sheet.png", "strip:2", "64x80", ["well_0", "well_1"], {}),
+    ("coop_sheet.png", "strip:2", "96x96", ["coop_0", "coop_1"], {}),
+    ("npc_bacbay_sheet.png", "strip:4", "48x64",
+     ["npc_bacbay_idle_0", "npc_bacbay_idle_1", "npc_bacbay_talk_0", "npc_bacbay_talk_1"], {}),
+    ("npc_cohuong_sheet.png", "strip:4", "48x64",
+     ["npc_cohuong_idle_0", "npc_cohuong_idle_1", "npc_cohuong_talk_0", "npc_cohuong_talk_1"], {}),
+    ("portraits_sheet.png", "strip:3", "64x64", ["portrait_bacbay", "portrait_cohuong", "portrait_bakien"], {}),
 ]
 
 
@@ -272,10 +287,44 @@ def run_p0(palette: list[tuple[int, int, int]]) -> int:
     return 1 if bad else 0
 
 
+def p1_preview(named: dict[str, Image.Image], grass: Image.Image | None) -> Image.Image:
+    """Bảng duyệt x3: các khung P1 trên nền cỏ, cùng tỉ lệ với ô 32×32 (người chơi 48×64 để so cỡ)."""
+    order = ["house_0", "house_1", "well_0", "well_1", "coop_0", "coop_1",
+             "npc_bacbay_idle_0", "npc_bacbay_talk_0", "npc_cohuong_idle_0", "npc_cohuong_talk_0",
+             "portrait_bacbay", "portrait_cohuong", "portrait_bakien"]
+    w = sum(named[n].width + 8 for n in order) + 8
+    sheet = Image.new("RGBA", (w, 144), (90, 140, 60, 255))
+    if grass:
+        for x in range(0, w, 32):
+            for y in range(0, 144, 32):
+                sheet.paste(grass, (x, y))
+    x = 8
+    for n in order:
+        im = named[n]
+        sheet.alpha_composite(im, (x, 136 - im.height))
+        x += im.width + 8
+    return sheet.resize((sheet.width * 3, sheet.height * 3), Image.Resampling.NEAREST)
+
+
+def run_p1(palette: list[tuple[int, int, int]]) -> int:
+    named: dict[str, Image.Image] = {}
+    for fname, layout, size, names, opt in P1_SHEETS:
+        frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette,
+                              fit=opt.get("fit"), soil=opt.get("strip_soil", False))
+        named.update(zip(names, frames))
+    bad = save_all(named, P1_OUT, palette)
+    grass_path = os.path.join(P0_OUT, "tile_grass_xuan.png")
+    grass = Image.open(grass_path).convert("RGBA") if os.path.exists(grass_path) else None
+    p1_preview(named, grass).save(os.path.join(P1_OUT, "preview_x3.png"))
+    print(f"{len(named)} khung -> {os.path.relpath(P1_OUT)}; lạc bảng / gần đen: {bad or 'không'}")
+    return 1 if bad else 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("image", nargs="?")
     ap.add_argument("--p0", action="store_true", help="nhập 5 tấm mẫu P0-2 từ art/source/inbox/")
+    ap.add_argument("--p1", action="store_true", help="nhập 6 tấm P1 (nhà, giếng, chuồng, NPC, chân dung) từ art/source/inbox/")
     ap.add_argument("--layout", help="strip:N | grid:CxR | tiles:N")
     ap.add_argument("--size", default="48x48")
     ap.add_argument("--names", help="tên khung, cách nhau dấu phẩy, theo thứ tự trái→phải, trên→dưới")
@@ -285,6 +334,8 @@ def main() -> int:
     palette = load_gpl(a.palette)
     if a.p0:
         return run_p0(palette)
+    if a.p1:
+        return run_p1(palette)
     if not (a.image and a.layout and a.names):
         ap.error("cần image, --layout, --names (hoặc --p0)")
     frames = import_sheet(a.image, a.layout, parse_size(a.size), palette)

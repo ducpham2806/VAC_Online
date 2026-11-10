@@ -7,6 +7,7 @@
  * Nhà/giếng/cây/đá đang dùng hình vẽ code của atlas `world` (tạm).
  * P1-10: đá/gốc cây dọn xong thì biến mất; hạng mục đổ nát (tô tối + đống gạch) → sửa xong hiện bình thường;
  * vùng đất hoang kế tiếp có khung mờ, khai hoang xong thành ô ruộng (GP-14).
+ * Ảnh thật (atlas `estate`, ảnh PO P1): nhà/giếng/chuồng gà 2 khung đổ nát → đã sửa; NPC đứng/nói.
  * P1-11: 2 NPC đứng trên bản đồ (chạm → hộp thoại, 💬 khi hôm nay chưa chào), mũi tên chỉ bước hướng dẫn (GP-62).
  */
 import Phaser from 'phaser';
@@ -47,11 +48,14 @@ import { currentTutorialStep, tutorialTarget } from './sliceTutorial';
 
 export const SLICE_ATLAS = 'slice';
 const WORLD = 'world';
+const ESTATE = 'estate';
 const SPEED_PX_PER_S = 96; // 3 ô/giây
 const FEET_HALF_W = 8; // nửa bề ngang "chân" để va chạm, nhỏ hơn 1 ô cho dễ lách
 const DIRS: readonly Dir[] = ['down', 'up', 'left', 'right'];
 const WOOD_D = 0x3d2314;
 const REPAIR_SIGN = 'slice_repair_sign';
+/** Tiền tố khung hạng mục trong atlas `estate`: `_0` đổ nát, `_1` đã sửa. */
+const STRUCTURE_FRAME: Record<StructureId, string> = { HOUSE: 'house', WELL: 'well', COOP: 'coop' };
 const PAPER = 0xf3e3c0;
 
 interface PlotView {
@@ -114,6 +118,7 @@ export class EstateScene extends Phaser.Scene {
   preload(): void {
     this.load.atlas(SLICE_ATLAS, 'assets/atlas/slice.png', 'assets/atlas/slice.json');
     this.load.atlas(WORLD, 'assets/atlas/world.png', 'assets/atlas/world.json');
+    this.load.atlas(ESTATE, 'assets/atlas/estate.png', 'assets/atlas/estate.json');
     this.load.atlas('wave1', 'assets/atlas/wave1.png', 'assets/atlas/wave1.json'); // cây chưa có art thật (tạm)
   }
 
@@ -169,8 +174,8 @@ export class EstateScene extends Phaser.Scene {
       }
     }
     this.drawPond();
-    this.placeBlock('H', 'house', 'HOUSE');
-    this.placeBlock('W', 'well', 'WELL');
+    this.placeBlock('H', 'HOUSE');
+    this.placeBlock('W', 'WELL');
     this.drawBorder();
     this.drawTrees();
     this.drawCoop();
@@ -185,9 +190,18 @@ export class EstateScene extends Phaser.Scene {
       const n = NPCS[id];
       const x = n.tile.x * TILE + TILE / 2;
       const y = (n.tile.y + 1) * TILE - 2;
-      const spr = this.add2(this.add.sprite(x, y, WORLD, n.frame).setOrigin(0.5, 1).setDepth(y));
-      const alt = n.frame.replace(/_0$/, '_1');
-      this.time.addEvent({ delay: 700, loop: true, callback: () => spr.setFrame(spr.frame.name === n.frame ? alt : n.frame) });
+      const spr = this.add2(this.add.sprite(x, y, ESTATE, `${n.sprite}_idle_0`).setOrigin(0.5, 1).setDepth(y));
+      // đứng: 2 nhịp thở; đang mở hộp thoại với NPC này: 2 khung nói
+      let beat = 0;
+      this.time.addEvent({
+        delay: 450,
+        loop: true,
+        callback: () => {
+          beat++;
+          const talking = useSliceStore.getState().dialog?.npcId === id;
+          spr.setFrame(talking ? `${n.sprite}_talk_${beat % 2}` : `${n.sprite}_idle_${Math.floor(beat / 2) % 2}`);
+        },
+      });
       const bubble = this.add2(this.add.text(x + 10, y - spr.displayHeight, '💬', { fontSize: '14px' }).setOrigin(0.5, 1).setDepth(y + 1));
       this.npcBubbles.set(id, bubble);
     }
@@ -226,10 +240,7 @@ export class EstateScene extends Phaser.Scene {
     }
     (['WELL', 'COOP', 'HOUSE'] as const).forEach((sid) => {
       const ok = e.repaired.includes(sid);
-      for (const v of this.structureViews[sid]) {
-        if (ok) v.clearTint();
-        else v.setTint(0x8c7c6c); // đổ nát: xỉn tối tới khi có art thật
-      }
+      for (const v of this.structureViews[sid]) v.setFrame(`${STRUCTURE_FRAME[sid]}_${ok ? 1 : 0}`); // khung 0 đổ nát, 1 đã sửa
       for (const r of this.rubble[sid]) r.setVisible(!ok);
     });
     for (const h of this.hens) h.setVisible(e.repaired.includes('COOP'));
@@ -344,11 +355,11 @@ export class EstateScene extends Phaser.Scene {
     }
   }
 
-  private placeBlock(ch: string, frame: string, sid: StructureId): void {
+  private placeBlock(ch: string, sid: StructureId): void {
     const b = boundsOf(ch);
     if (!b) return;
     const bottom = (b.y + b.h) * TILE;
-    const img = this.add2(this.add.image((b.x + b.w / 2) * TILE, bottom, WORLD, frame).setOrigin(0.5, 1).setDepth(bottom));
+    const img = this.add2(this.add.image((b.x + b.w / 2) * TILE, bottom, ESTATE, `${STRUCTURE_FRAME[sid]}_0`).setOrigin(0.5, 1).setDepth(bottom));
     this.structureViews[sid].push(img);
     this.addRubble(sid, (b.x + b.w) * TILE + 6, bottom + 4);
   }
@@ -385,12 +396,15 @@ export class EstateScene extends Phaser.Scene {
     const b = boundsOf(',');
     if (!b) return;
     for (let x = b.x; x < b.x + b.w; x += 2) {
-      this.structureViews.COOP.push(this.add2(this.add.image((x + 1) * TILE, b.y * TILE + 4, WORLD, 'fence').setOrigin(0.5, 1).setDepth(b.y * TILE)));
+      this.add2(this.add.image((x + 1) * TILE, b.y * TILE + 4, WORLD, 'fence').setOrigin(0.5, 1).setDepth(b.y * TILE));
     }
-    this.addRubble('COOP', (b.x + b.w / 2) * TILE, (b.y + 2) * TILE);
+    // chuồng gà tre 96×96 ở góc trái sân (3×3 ô), gà đi lại phần sân còn lại
+    const hutBottom = (b.y + 3) * TILE;
+    this.structureViews.COOP.push(this.add2(this.add.image((b.x + 1.5) * TILE, hutBottom, ESTATE, 'coop_0').setOrigin(0.5, 1).setDepth(hutBottom)));
+    this.addRubble('COOP', (b.x + 3.4) * TILE, (b.y + 2) * TILE);
     const hens = [
-      { x: b.x + 1.5, y: b.y + 2, f: 0 },
-      { x: b.x + 4, y: b.y + 3, f: 1 },
+      { x: b.x + 4, y: b.y + 2, f: 0 },
+      { x: b.x + 5.2, y: b.y + 3.4, f: 1 },
     ];
     for (const h of hens) {
       const s = this.add2(this.add.sprite(h.x * TILE, h.y * TILE, SLICE_ATLAS, `ANI_01_${h.f}`).setOrigin(0.5, 0.95).setDepth(h.y * TILE));

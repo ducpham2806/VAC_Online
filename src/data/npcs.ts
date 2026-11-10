@@ -8,8 +8,10 @@ export interface NpcDef {
   id: NpcId;
   name: string;
   emoji: string;
-  /** Khung hình trong atlas `world` (tạm tới khi có art thật). */
-  frame: string;
+  /** Tiền tố khung trong atlas `estate` (ảnh PO, `art/prompts/p1_estate_npc.md`): `<sprite>_idle_0/1`, `<sprite>_talk_0/1`. */
+  sprite: string;
+  /** Chân dung 64×64 cho hộp thoại: `public/assets/portraits/<portrait>.png`. */
+  portrait: string;
   tile: { x: number; y: number };
   likes: readonly string[];
   dislikes: readonly string[];
@@ -24,7 +26,8 @@ export const NPCS: Record<NpcId, NpcDef> = {
     id: 'BAC_BAY',
     name: 'Bác Trưởng Thôn Bảy',
     emoji: '👴',
-    frame: 'bacbay_idle_0',
+    sprite: 'npc_bacbay',
+    portrait: 'bacbay',
     tile: { x: 16, y: 6 },
     likes: ['CROP_01'],
     dislikes: [],
@@ -39,7 +42,8 @@ export const NPCS: Record<NpcId, NpcDef> = {
     id: 'CO_HUONG',
     name: 'Cô Giáo Hương',
     emoji: '👩‍🏫',
-    frame: 'farmer_f_idle_0',
+    sprite: 'npc_cohuong',
+    portrait: 'cohuong',
     tile: { x: 21, y: 10 },
     likes: ['CROP_02'],
     dislikes: ['MAT_DA'],

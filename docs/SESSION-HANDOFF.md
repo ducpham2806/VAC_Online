@@ -22,10 +22,10 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 ## Bước tiếp theo
 1. P1-9: cần PO duyệt 8 loài (5 cây, 2 vật nuôi, 1 cá) 2 mùa Bắc Bộ.
 2. P1-8 khi có quyền Supabase project VAC.
-3. P1-12 chơi thử 10–20 người (cần art thật cho nhà/giếng/NPC trước).
+3. P1-12 chơi thử 10–20 người.
 4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). DB MVP chưa đổi.
 - Không đụng project Supabase "Nam_A_CRM".
-- Nhà/giếng/cây/đá (cả trạng thái đổ nát/đã sửa) trong `?p1` đang dùng hình vẽ code của atlas `world` (tạm, cần art thật trước P1-12).
+- Nhà/giếng/chuồng gà/NPC trong `?p1` đã dùng ảnh thật của PO (atlas `estate`). Cây đa, đá, cỏ dại, rào vẫn là hình tạm của atlas `world`.

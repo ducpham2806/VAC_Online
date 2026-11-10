@@ -12,6 +12,20 @@ import { itemLabel, useSliceStore } from '../../store/useSliceStore';
 import { Sheet, btn } from './sliceUi';
 
 const WOOD_D = '#3D2314';
+
+/** Chân dung 64×64 (ảnh PO P1) phóng 2× giữ nét pixel; `public/assets/portraits/`. */
+function Portrait({ id, size = 64 }: { id: string; size?: number }) {
+  return (
+    <img
+      src={`${import.meta.env.BASE_URL}assets/portraits/${id}.png`}
+      alt=""
+      width={size}
+      height={size}
+      className="shrink-0 rounded border-2 bg-[#fbf3df]"
+      style={{ imageRendering: 'pixelated', borderColor: WOOD_D }}
+    />
+  );
+}
 const EMP = QUEST_BRANCH_REWARDS.EMP;
 const PRAG = QUEST_BRANCH_REWARDS.PRAG;
 
@@ -24,10 +38,11 @@ export function IntroScene() {
   const q = chapterQuest(1);
   const pages = [
     {
+      portrait: 'bacbay',
       who: '👴 Bác Trưởng Thôn Bảy',
       text: 'Cháu về rồi đấy à. Ông nội cháu dặn bác giữ cái tráp gỗ lim này: cuốn Sổ Gia Phả, túi thóc giống tổ tiên, và tờ khế ước. Nhà cửa đổ nát cả, nhưng đất vẫn còn.',
     },
-    { who: '🎩 Thương Nhân Bá Kiến', text: `Hừm… ${q?.npcQuote ?? ''}` },
+    { portrait: 'bakien', who: '🎩 Thương Nhân Bá Kiến', text: `Hừm… ${q?.npcQuote ?? ''}` },
   ];
   return (
     <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-black/50" data-testid="intro">
@@ -35,8 +50,13 @@ export function IntroScene() {
         <b className="text-xs">📜 Bức Thư Trong Chiếc Tráp Gỗ Lim</b>
         {page < pages.length ? (
           <>
-            <p className="mt-1 font-bold">{pages[page].who}</p>
-            <p className="mt-1">{pages[page].text}</p>
+            <div className="mt-1 flex gap-2">
+              <Portrait id={pages[page].portrait} size={72} />
+              <div>
+                <p className="font-bold">{pages[page].who}</p>
+                <p className="mt-1">{pages[page].text}</p>
+              </div>
+            </div>
             <div className="mt-2 flex justify-end">
               <button className={`${btn} px-4 font-bold`} onClick={() => setPage(page + 1)} data-testid="intro-next">
                 Tiếp ▸
@@ -45,7 +65,10 @@ export function IntroScene() {
           </>
         ) : (
           <>
-            <p className="mt-1 font-bold">Cháu trả lời Bá Kiến thế nào?</p>
+            <div className="mt-1 flex items-center gap-2">
+              <Portrait id="bakien" size={48} />
+              <p className="font-bold">Cháu trả lời Bá Kiến thế nào?</p>
+            </div>
             <div className="mt-2 flex flex-col gap-2">
               <button className={`${btn} flex-col px-3 py-1 text-left`} onClick={() => choose('EMP')} data-testid="choose-EMP">
                 <b>🤝 "Cháu tự cày trả sạch nợ, đất này không bán."</b>
@@ -140,8 +163,13 @@ export function NpcDialogSheet() {
   return (
     <Sheet title={`${def.emoji} ${def.name}`} onClose={close}>
       <div className="text-xs" data-testid="npc-dialog">
-        <Hearts points={st.points} />
-        <p className="my-2 rounded border border-[#d8c49b] bg-[#fbf3df] p-2 text-sm">{dialog.line}</p>
+        <div className="flex gap-2">
+          <Portrait id={def.portrait} />
+          <div className="flex-1">
+            <Hearts points={st.points} />
+            <p className="my-1 rounded border border-[#d8c49b] bg-[#fbf3df] p-2 text-sm">{dialog.line}</p>
+          </div>
+        </div>
         <button className={`${btn} mb-2 px-3`} onClick={() => talkTo(dialog.npcId)}>
           💬 Nói chuyện
         </button>

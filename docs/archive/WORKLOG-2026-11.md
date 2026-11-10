@@ -65,3 +65,8 @@
 - Tổng chi để sửa đủ 3 hạng mục: 1.200🪙 + 12 Gỗ + 6 Đá; bản đồ có 3 cụm gốc cây (15 Gỗ) và 3 tảng đá (9 Đá), dư một chút. Người mới có 2.500🪙. Vật liệu hữu hạn trong bản thử (không mọc lại).
 - Khai hoang: vùng 1 (8 ô) 500🪙, vùng 2 (14 ô) 625🪙, mỗi vùng 5⚡ +45 XP +25 Phong Thủy. Sửa hạng mục +20/30/40 Phong Thủy (giếng/chuồng/nhà); mốc thưởng Phong Thủy để sau.
 - **Dừng ở:** chờ PO duyệt QD-83 (hoặc sửa số), rồi mới code P1-10.
+
+## 10/11/2026 · P1-11 Bước 1: đề xuất, chờ PO (QD-84) · claude/gifted-faraday-2q851c
+- Impact report: (1) core VAC: CÓ — thêm NPC có tim (GP-50), Chương 1 (TG-30, TG-40) và hướng dẫn (GP-62) vào bản thử; không đổi vòng gieo/tưới/gặt; (2) kinh tế: CÓ — thưởng Chương 1 (dùng số đang có: 600🪙 + 15💎 + 100 XP + nhánh tình nghĩa +30 Phong Thủy +3 Nghĩa Xóm / thực dụng +350🪙), quà tặng tiêu hàng trong Kho; (3) art/UI: Bác Bảy dùng hình `bacbay_idle` có sẵn, Cô Hương tạm dùng hình nông dân nữ của atlas `world`; hộp thoại + nút Nói chuyện / Tặng quà, thanh hướng dẫn thu gọn được; (4) module cũ: MVP và `src/domain/tutorial.ts` không đổi, bản thử có danh sách bước riêng; engine thêm `TALK`, `GIFT`, `CHOOSE_PATH`, `CLAIM_CHAPTER`; bản lưu bản thử lên version 3 (đọc được v1, v2); (5) DB: chưa (P1-8).
+- Kiểm "không kẹt": người mới 2.500🪙; đi hết 8 bước tốn ~800🪙 (giếng 300 + nhà 500 + hạt lúa), ⚡ 12/50 (2 đá + 2 gốc cây). Lúa chín ~2 phút.
+- **Dừng ở:** chờ PO duyệt QD-84 (hoặc sửa), rồi mới code P1-11.
