@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { ESTATE_COLS, ESTATE_ROWS, boundsOf, isWalkable, spawnTile, tilesOf } from './estateMap';
 import { facing, inJoystickZone, isDrag, joystickVector, JOYSTICK_RADIUS_PX } from './gesture';
 import { findPath, pathToward } from './pathfinding';
+import { newSliceSave, plotId, reconcileSliceSave, targetAt } from './sliceSave';
+import { estateTargetAt } from './estateTarget';
 
 describe('P1-3 bản đồ điền trang', () => {
   it('mọi hàng cùng độ rộng, viền kín', () => {
@@ -84,5 +86,42 @@ describe('P1-3 phân loại chạm (UI-20)', () => {
     expect(facing(1, 0.2, 'down')).toBe('right');
     expect(facing(-0.1, -1, 'down')).toBe('up');
     expect(facing(0, 0, 'left')).toBe('left');
+  });
+});
+
+describe('P1-10 bản đồ có tính điền trang', () => {
+  it('đá đã dọn: đi qua được và không còn là đối tượng; vùng đã khai: thành ô ruộng', () => {
+    const e = { cleared: ['R_19_10'], repaired: [], reclaimed: 1 };
+    expect(isWalkable(19, 10)).toBe(false);
+    expect(isWalkable(19, 10, e)).toBe(true);
+    expect(targetAt(19, 10, e)).toBe('GROUND');
+    expect(targetAt(9, 7)).toBe('WILD');
+    expect(targetAt(9, 7, e)).toBe('PLOT');
+    expect(targetAt(9, 9, e)).toBe('WILD');
+  });
+
+  it('bản lưu đã khai vùng 1: khớp lại giữ cây đã gieo trên ô mới', () => {
+    const s = newSliceSave(0);
+    const raw = {
+      ...s,
+      estate: { cleared: [], repaired: [], reclaimed: 1 },
+      tiles: [...s.tiles, { ...s.tiles[0], id: plotId(9, 7), tileX: 9, tileY: 7, itemId: 'CROP_01' }],
+    };
+    const r = reconcileSliceSave(raw);
+    expect(r?.tiles).toHaveLength(s.tiles.length + 8);
+    expect(r?.tiles.find((t) => t.id === plotId(9, 7))?.itemId).toBe('CROP_01');
+  });
+
+  it('chạm đối tượng: đá → dọn ngay; giếng → hỏi lại; vùng 2 trước vùng 1 → nhắc; ao → báo P1-9', () => {
+    const s = newSliceSave(0);
+    expect(estateTargetAt(s, 19, 10)).toMatchObject({ tool: 'AXE', action: { type: 'CLEAR', obstacleId: 'R_19_10' } });
+    expect(estateTargetAt(s, 6, 2)).toMatchObject({ action: { type: 'CLEAR', obstacleId: 'T_5_1' } });
+    expect(estateTargetAt(s, 18, 4)?.confirm).toMatchObject({ title: 'Sửa Giếng', cost: '300 🪙 + 4 🪨 Đá' });
+    expect(estateTargetAt(s, 6, 10)).toMatchObject({ action: null, hint: '⛏️ Khai hoang vùng 1 trước.' });
+    expect(estateTargetAt(s, 9, 7)?.confirm).toMatchObject({ title: 'Khai hoang vùng 1', cost: '500 🪙 + 5 ⚡' });
+    expect(estateTargetAt(s, 26, 7)?.hint).toContain('P1-9');
+    expect(estateTargetAt(s, 15, 11)).toBeNull();
+    const repaired = { ...s, estate: { cleared: [], repaired: ['WELL' as const], reclaimed: 0 } };
+    expect(estateTargetAt(repaired, 18, 4)).toMatchObject({ tool: 'NONE', action: null });
   });
 });

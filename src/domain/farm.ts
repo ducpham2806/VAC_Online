@@ -4,6 +4,7 @@ import { applyXp, canPlant } from './progression';
 import { regenStamina } from './stamina';
 import { normalizePlotTiles } from './farmGrid';
 import { COUNTER, Counters, bumpCounter } from './quests';
+import type { EstateState } from './estate';
 
 /**
  * Luật vòng chơi Vườn – Ao – Chuồng (GĐ1) dạng hàm thuần.
@@ -62,6 +63,8 @@ export interface FarmSave {
   tiles: FarmTileEntity[];
   /** Bộ đếm hành động cho mục tiêu nhiệm vụ (src/domain/quests.ts). Save cũ có thể thiếu. */
   counters?: Counters;
+  /** Điền trang (GP-14, P1-10): chướng ngại đã dọn, hạng mục đã sửa, số vùng đã khai. Save cũ thiếu = ban đầu. */
+  estate?: EstateState;
 }
 
 export type FarmResult = { ok: true; save: FarmSave; message: string } | { ok: false; message: string };

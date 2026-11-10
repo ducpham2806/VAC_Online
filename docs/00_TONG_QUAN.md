@@ -60,4 +60,4 @@ File vận hành (không phải thiết kế): `AGENTS.md`, `VIEC_CAN_LAM.md` (v
 - **HTX:** Hợp tác xã, nơi bán nông sản và nhận đơn.
 - **Gia nhân / thợ:** người làm thuê.
 - **Điền trang:** khu nhà và đất của người chơi.
-- **Tiền tố ID thực thể:** `CROP_` cây, `ANI_` vật nuôi, `AQUA_` thủy sản, `PROD_` món/sản phẩm, `MAC_` xưởng, `WORK_` thợ, `PET_` thú cưng, `FASH_` thời trang, `BM_` tính năng, `NEW_` mới, `CRAFT_` đồ nghề, `IAP_` gói nạp, `DEF_` phòng thủ, `TRAP_` bẫy. **Không bao giờ đổi ID đã có** (`04` KY-31).
+- **Tiền tố ID thực thể:** `CROP_` cây, `ANI_` vật nuôi, `AQUA_` thủy sản, `PROD_` món/sản phẩm, `MAC_` xưởng, `WORK_` thợ, `PET_` thú cưng, `FASH_` thời trang, `BM_` tính năng, `NEW_` mới, `CRAFT_` đồ nghề, `IAP_` gói nạp, `DEF_` phòng thủ, `TRAP_` bẫy, `MAT_` vật liệu (QD-83). **Không bao giờ đổi ID đã có** (`04` KY-31).

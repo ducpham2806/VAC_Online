@@ -10,21 +10,18 @@ import type { FarmSave } from '../../domain/farm';
 import { canPlant } from '../../domain/progression';
 import { canSowInSeason } from '../../domain/season';
 import type { TargetKind } from '../../domain/tools';
-import { tileAt, tilesOf } from './estateMap';
+import { type EstateState, effectiveCharAt, emptyEstate, emptyPlot, estateOf, plotId, plotPositions } from '../../domain/estate';
 
 /** Bản thử P1 chưa có công tắc giai đoạn: chỉ Đợt 1 (LT-03). */
 export const SLICE_GAME_STAGE = 1;
 
-export const plotId = (x: number, y: number) => `P${x}_${y}`;
+export { plotId };
 
 /** Người chơi mới của bản thử: số ô ruộng = số ô `F` trên bản đồ, còn lại theo `newFarmSave` (KT-01). */
 export function newSliceSave(now: number): FarmSave {
   const base = newFarmSave('NORTH', now);
-  const template = base.tiles[0];
-  return {
-    ...base,
-    tiles: tilesOf('F').map((t) => ({ ...template, id: plotId(t.x, t.y), tileX: t.x, tileY: t.y })),
-  };
+  const estate = emptyEstate();
+  return { ...base, estate, tiles: plotPositions(estate).map((t) => emptyPlot(t.x, t.y)) };
 }
 
 const KIND: Record<string, TargetKind> = {
@@ -38,8 +35,11 @@ const KIND: Record<string, TargetKind> = {
   W: 'WELL',
 };
 
-export function targetAt(x: number, y: number): TargetKind {
-  return KIND[tileAt(x, y)] ?? 'GROUND';
+const NO_ESTATE: EstateState = emptyEstate();
+
+/** Loại đối tượng ở ô (x, y), có tính điền trang: đá/gốc đã dọn → đất trống, vùng đã khai → ô ruộng. */
+export function targetAt(x: number, y: number, estate: EstateState = NO_ESTATE): TargetKind {
+  return KIND[effectiveCharAt(x, y, estate)] ?? 'GROUND';
 }
 
 /** Giống gieo được ngay: cây (`CROP_`) đủ cấp, Đợt, miền và đúng mùa `season` (GP-20). */
@@ -52,8 +52,11 @@ export function sowableSeeds(save: FarmSave, season: Season): CatalogItem[] {
   );
 }
 
-/** P1-7 — phiên bản dữ liệu lưu cục bộ của bản thử. Tăng khi đổi cấu trúc, kèm nhánh `migrate`. */
-export const SLICE_SAVE_VERSION = 1;
+/**
+ * P1-7 — phiên bản dữ liệu lưu cục bộ của bản thử. Tăng khi đổi cấu trúc, kèm nhánh `migrate`.
+ * v2 (P1-10): thêm `save.estate`; bản v1 đọc được nguyên (thiếu `estate` = điền trang ban đầu).
+ */
+export const SLICE_SAVE_VERSION = 2;
 export const SLICE_SAVE_KEY = 'vac_slice_save_v1';
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
@@ -67,13 +70,15 @@ export function reconcileSliceSave(raw: unknown): FarmSave | null {
     return null;
   }
   const save = raw as unknown as FarmSave;
-  const fresh = newSliceSave(save.staminaUpdatedAt ?? 0);
+  const estate = estateOf(save);
   const byId = new Map(save.tiles.filter(isObj).map((t) => [t.id, t]));
   return {
     ...save,
-    tiles: fresh.tiles.map((t) => {
+    estate,
+    tiles: plotPositions(estate).map(({ x, y }) => {
+      const t = emptyPlot(x, y);
       const old = byId.get(t.id);
-      return old ? { ...t, ...old, tileX: t.tileX, tileY: t.tileY } : t;
+      return old ? { ...t, ...old, tileX: x, tileY: y } : t;
     }),
   };
 }

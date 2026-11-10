@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SLICE_SAVE_KEY, SLICE_SAVE_VERSION, newSliceSave, plotId, reconcileSliceSave } from '../game/slice/sliceSave';
 import { tilesOf } from '../game/slice/estateMap';
-import { effectiveSeason, selectActionTool, useSliceStore } from './useSliceStore';
+import { effectiveSeason, itemLabel, selectActionTool, useSliceStore } from './useSliceStore';
 
 const plots = tilesOf('F');
 const p0 = plots[0];
@@ -69,11 +69,14 @@ describe('P1-4 store bản thử: chạm ô → engine', () => {
     expect(useSliceStore.getState().save.gold).toBeGreaterThan(g);
   });
 
-  it('không có ô ruộng trong tầm: nút hành động báo đối tượng kề chưa mở', () => {
+  it('không có ô ruộng trong tầm, cạnh chuồng gà đổ nát (P1-10): nút hành động = sửa, hỏi lại trước khi tiêu vàng', () => {
     useSliceStore.getState().setPlayerTile({ x: 18, y: 12 }); // mép sân chuồng gà
-    expect(selectActionTool(useSliceStore.getState())).toBe('FEED');
+    expect(selectActionTool(useSliceStore.getState())).toBe('HAMMER');
+    const gold = useSliceStore.getState().save.gold;
     useSliceStore.getState().actNear();
-    expect(useSliceStore.getState().toasts.at(-1)?.text).toContain('Cho gà ăn');
+    const s = useSliceStore.getState();
+    expect(s.pending).toMatchObject({ title: 'Sửa Chuồng gà', action: { type: 'REPAIR', structureId: 'COOP' } });
+    expect(s.save.gold).toBe(gold); // chưa xác nhận thì chưa trừ
   });
 });
 
@@ -176,5 +179,73 @@ describe('P1-7 khớp bản lưu với bản đồ', () => {
     expect(reconcileSliceSave(null)).toBeNull();
     expect(reconcileSliceSave({ tiles: [], gold: 1, level: 1 })).toBeNull();
     expect(reconcileSliceSave({ ...newSliceSave(0), tiles: 'x' })).toBeNull();
+  });
+});
+
+describe('P1-10 điền trang trong store bản thử', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-10T08:00:00+07:00'));
+    useSliceStore.getState().reset(Date.now());
+  });
+
+  it('chạm tảng đá: dọn ngay (không hỏi lại), +3 Đá, hiệu ứng rìu ở ô đá', () => {
+    useSliceStore.getState().interactEstate({ x: 19, y: 10 });
+    const s = useSliceStore.getState();
+    expect(s.pending).toBeNull();
+    expect(s.save.inventory.MAT_DA).toBe(3);
+    expect(s.fx.at(-1)).toMatchObject({ x: 19, y: 10, tool: 'AXE' });
+  });
+
+  it('xác nhận sửa khi thiếu vật liệu: báo lỗi, không trừ vàng; đủ vật liệu thì sửa được', () => {
+    const st = useSliceStore.getState();
+    st.interactEstate({ x: 18, y: 4 }); // giếng
+    useSliceStore.getState().confirmPending();
+    let s = useSliceStore.getState();
+    expect(s.pending).toBeNull();
+    expect(s.toasts.at(-1)?.ok).toBe(false);
+    expect(s.save.gold).toBe(2500);
+    for (const at of [{ x: 19, y: 10 }, { x: 3, y: 12 }]) useSliceStore.getState().interactEstate(at); // 6 Đá
+    useSliceStore.getState().interactEstate({ x: 18, y: 4 });
+    useSliceStore.getState().confirmPending();
+    s = useSliceStore.getState();
+    expect(s.save.estate?.repaired).toEqual(['WELL']);
+    expect(s.save.gold).toBe(2200);
+    expect(s.save.inventory.MAT_DA).toBe(2);
+    expect(s.fx.at(-1)).toMatchObject({ tool: 'HAMMER' });
+  });
+
+  it('thôi (hủy) thì không làm gì', () => {
+    useSliceStore.getState().interactEstate({ x: 9, y: 7 }); // đất hoang vùng 1
+    expect(useSliceStore.getState().pending?.title).toBe('Khai hoang vùng 1');
+    useSliceStore.getState().cancelPending();
+    const s = useSliceStore.getState();
+    expect(s.pending).toBeNull();
+    expect(s.save.estate?.reclaimed).toBe(0);
+  });
+
+  it('khai hoang vùng 1: thêm 8 ô ruộng trống vào bản thử', () => {
+    useSliceStore.getState().interactEstate({ x: 9, y: 7 });
+    useSliceStore.getState().confirmPending();
+    const s = useSliceStore.getState();
+    expect(s.save.tiles).toHaveLength(plots.length + 8);
+    expect(s.save.gold).toBe(2000);
+  });
+
+  it('Kho hiện vật liệu bằng tên tiếng Việt', () => {
+    expect(itemLabel('MAT_GO')).toBe('🪵 Gỗ');
+    expect(itemLabel('MAT_DA')).toBe('🪨 Đá');
+  });
+
+  it('bản lưu v1 (chưa có điền trang) vẫn đọc được qua migrate', async () => {
+    const v1 = { state: { save: newSliceSave(Date.now()), seedId: 'CROP_01', seasonOverride: null }, version: 1 };
+    delete (v1.state.save as { estate?: unknown }).estate;
+    v1.state.save.gold = 1234;
+    localStorage.setItem(SLICE_SAVE_KEY, JSON.stringify(v1));
+    await useSliceStore.persist.rehydrate();
+    const s = useSliceStore.getState();
+    expect(s.save.gold).toBe(1234);
+    expect(s.save.estate).toEqual({ cleared: [], repaired: [], reclaimed: 0 });
   });
 });

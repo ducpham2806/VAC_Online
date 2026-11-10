@@ -1,6 +1,7 @@
 /**
  * Kiểm thử khói bản thử P1 (?p1): đi tới, gieo/tưới/gặt cả loạt, nút hành động, Kho bán HTX, thanh công cụ,
- * công tắc 4 mùa (P1-6), tải lại trang giữ tiến trình (P1-7),
+ * công tắc 4 mùa (P1-6), tải lại trang giữ tiến trình (P1-7), điền trang: dọn đá/gốc cây, sửa giếng/chuồng/nhà,
+ * khai hoang, giếng mở tưới cả loạt (P1-10),
  * chụp 1280x720 + 844x390 và báo nút < 44 px (UI-01).
  *   npx vite --port 5179 --strictPort &   (cần DEV để có window.__vacSlice)
  *   node tools/qa/p1-slice-smoke.cjs docs/screenshots
@@ -23,6 +24,22 @@ const { chromium } = require('playwright');
     const st = () => p.evaluate(() => { const s = window.__vacSliceStore.getState(); return { gold: s.save.gold, inv: s.save.inventory,
       plots: s.save.tiles.map((t) => (t.itemId ? (t.watered ? 'W' : 'P') : '.')).join(''), toast: s.toasts.at(-1)?.text, me: s.playerTile }; });
     const log = [];
+    const est = () => p.evaluate(() => { const s = window.__vacSliceStore.getState(); return { gold: s.save.gold, st: s.save.stamina,
+      inv: s.save.inventory, e: s.save.estate, fs: s.save.fengShuiScore, tiles: s.save.tiles.length, toast: s.toasts.at(-1)?.text }; });
+    // chạm đối tượng ở ô (tx, ty) như người chơi, đợi tới khi điều kiện trên store đúng (đi tới rồi làm)
+    const tapUntil = async (tx, ty, cond, arg) => {
+      const r = await toScreen(tx, ty);
+      // ngoài màn hoặc rơi vào vùng joystick (UI-20: chạm ở đó là cần điều khiển, không phải chạm ô)
+      if (r.x < 0 || r.y < 0 || r.x > w || r.y > h || (r.x < w / 3 && r.y > h * 0.6)) await p.evaluate(([tx, ty]) => window.__vacSlice.tapWorld(tx * 32 + 16, ty * 32 + 16), [tx, ty]);
+      else await p.mouse.click(r.x, r.y);
+      await p.waitForFunction(cond, arg, { timeout: 15000 }).catch(async (e) => {
+        console.log('tapUntil', tx, ty, JSON.stringify(r), JSON.stringify(await est()), JSON.stringify(await p.evaluate(() => window.__vacSlice.debugState())));
+        throw e;
+      });
+      await p.waitForTimeout(150);
+    };
+    const cleared = (id) => window.__vacSliceStore.getState().save.estate.cleared.includes(id);
+    const pendingOpen = () => !!window.__vacSliceStore.getState().pending;
     // 0) chạm đất (13,9) để đi lại gần ruộng (camera theo)
     let s = await toScreen(13, 9); await p.mouse.click(s.x, s.y); await p.waitForTimeout(2500);
     // 1) chạm ô ruộng xa (5,7) → đi tới rồi gieo
@@ -35,7 +52,31 @@ const { chromium } = require('playwright');
     // 3) kéo tưới cả loạt
     s = await toScreen(5, 7); await p.mouse.move(s.x, s.y); await p.mouse.down();
     for (const q of [[6, 7], [7, 7], [7, 8], [6, 8], [5, 8]]) { const r = await toScreen(...q); await p.mouse.move(r.x, r.y, { steps: 5 }); }
-    await p.mouse.up(); await p.waitForTimeout(400); log.push(['drag-water', await st()]);
+    await p.mouse.up(); await p.waitForTimeout(400); log.push(['drag-water-well-broken', await st()]);
+    // 3b) P1-10: dọn 2 tảng đá (6 Đá) → sửa giếng (hỏi lại) → kéo tưới lại được cả loạt
+    if (w === 1280) await p.screenshot({ path: `${out}/p1-10-before-${w}x${h}.png` });
+    await tapUntil(19, 10, cleared, 'R_19_10');
+    await tapUntil(3, 12, cleared, 'R_3_12');
+    await tapUntil(18, 4, pendingOpen);
+    await p.screenshot({ path: `${out}/p1-10-confirm-${w}x${h}.png` });
+    await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(300); log.push(['repair-well', await est()]);
+    // gốc cây → gỗ → chuồng gà và nhà
+    await tapUntil(6, 2, cleared, 'T_5_1');
+    await tapUntil(4, 15, cleared, 'T_3_15');
+    await tapUntil(22, 1, cleared, 'T_22_1');
+    await tapUntil(18, 12, pendingOpen); await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(200);
+    await tapUntil(12, 4, pendingOpen); await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(200);
+    log.push(['repair-coop-house', await est()]);
+    // khai hoang vùng 1
+    await tapUntil(9, 7, pendingOpen); await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(300);
+    log.push(['reclaim-1', await est()]);
+    // quay lại ruộng, kéo tưới cả loạt (giếng đã sửa)
+    await p.evaluate(() => window.__vacSlice.tapWorld(4 * 32 + 16, 8 * 32 + 16)); // cỏ sát ruộng
+    await p.waitForFunction(() => !window.__vacSlice.debugState().moving, null, { timeout: 15000 }); await p.waitForTimeout(200);
+    s = await toScreen(5, 7); await p.mouse.move(s.x, s.y); await p.mouse.down();
+    for (const q of [[6, 7], [7, 7], [7, 8], [6, 8], [5, 8]]) { const r = await toScreen(...q); await p.mouse.move(r.x, r.y, { steps: 5 }); }
+    await p.mouse.up(); await p.waitForTimeout(400); log.push(['drag-water-well-ok', await st()]);
+    await p.screenshot({ path: `${out}/p1-10-after-${w}x${h}.png` });
     await p.screenshot({ path: `${out}/p1-4-growing-${w}x${h}.png` });
     // 4) cho chín ngay (chỉ trong kiểm thử): lùi mốc thời gian của ô
     await p.evaluate(() => { const S = window.__vacSliceStore; const s = S.getState(); const n = Date.now();
@@ -44,8 +85,9 @@ const { chromium } = require('playwright');
     await p.screenshot({ path: `${out}/p1-4-ripe-${w}x${h}.png` });
     // 5) nút hành động gặt 1 ô, rồi kéo gặt phần còn lại
     await p.getByTestId('action-btn').click(); await p.waitForTimeout(300); log.push(['action-btn', await st()]);
-    s = await toScreen(5, 7); await p.mouse.move(s.x, s.y); await p.mouse.down();
-    for (const q of [[6, 7], [7, 7], [7, 8], [6, 8], [5, 8]]) { const r = await toScreen(...q); await p.mouse.move(r.x, r.y, { steps: 5 }); }
+    // kéo bắt đầu từ ô còn chín (ô vừa gặt bằng nút đã trống; GP-02: công cụ chốt theo ô đầu)
+    s = await toScreen(7, 8); await p.mouse.move(s.x, s.y); await p.mouse.down();
+    for (const q of [[7, 7], [6, 7], [5, 7], [5, 8], [6, 8]]) { const r = await toScreen(...q); await p.mouse.move(r.x, r.y, { steps: 5 }); }
     await p.mouse.up(); await p.waitForTimeout(300); log.push(['drag-harvest', await st()]);
     // 6) Kho → bán HTX
     await p.getByRole('button', { name: 'Kho' }).click(); await p.waitForTimeout(300);

@@ -9,6 +9,7 @@ export const TOOL_EMOJI: Record<Tool, string> = {
   FEED: '🌽',
   ROD: '🎣',
   AXE: '🪓',
+  HAMMER: '🔨',
   HAND: '✋',
   NONE: '',
 };

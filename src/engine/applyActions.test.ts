@@ -50,3 +50,43 @@ describe('P0-4 engine — gieo → thu → bán dùng luật src/domain', () => 
     expect(applyActions(newFarmSave('NORTH', SPRING), many, ctx(SPRING)).results[0].ok).toBe(false);
   });
 });
+
+describe('P1-10 engine — điền trang (GP-14, KT-15, KT-18)', () => {
+  const planted = () => {
+    const s0 = newFarmSave('NORTH', SPRING);
+    return applyActions(s0, ['T0', 'T1', 'T2'].map((t) => ({ type: 'PLANT' as const, tileId: t, itemId: 'CROP_01' })), ctx(SPRING)).save;
+  };
+  const waterAll = ['T0', 'T1', 'T2'].map((t) => ({ type: 'WATER' as const, tileId: t }));
+
+  it('chưa sửa Giếng: lô tưới 3 ô chỉ tưới được ô đầu, các ô sau báo cần sửa giếng', () => {
+    const r = applyActions(planted(), waterAll, ctx(SPRING));
+    expect(r.results.map((x) => x.ok)).toEqual([true, false, false]);
+    expect(r.results[1].message).toContain('Sửa Giếng');
+  });
+
+  it('đã sửa Giếng: tưới cả loạt', () => {
+    const s = { ...planted(), estate: { cleared: [], repaired: ['WELL' as const], reclaimed: 0 } };
+    expect(applyActions(s, waterAll, ctx(SPRING)).results.every((x) => x.ok)).toBe(true);
+  });
+
+  it('dọn, sửa, khai hoang qua engine: sổ cái ghi ⚡ và vàng, ref là id đối tượng', () => {
+    const s0 = { ...newFarmSave('NORTH', SPRING), inventory: { MAT_DA: 1 } };
+    const r = applyActions(
+      s0,
+      [
+        { type: 'CLEAR', obstacleId: 'R_19_10' },
+        { type: 'REPAIR', structureId: 'WELL' },
+        { type: 'RECLAIM', regionIndex: 0 },
+      ],
+      ctx(SPRING),
+    );
+    expect(r.results.map((x) => x.ok)).toEqual([true, true, true]);
+    expect(r.ledger.map((l) => [l.currency, l.delta, l.reason, l.ref])).toEqual([
+      ['STAMINA', -2, 'CLEAR', 'R_19_10'],
+      ['GOLD', -300, 'REPAIR', 'WELL'],
+      ['GOLD', -500, 'RECLAIM', 'REGION_0'],
+      ['STAMINA', -5, 'RECLAIM', 'REGION_0'],
+    ]);
+    expect(r.save.tiles).toHaveLength(6 + 8);
+  });
+});

@@ -4,33 +4,17 @@
  *
  * Ký hiệu:
  *  .  cỏ             ,  sân đất (chuồng gà)     F  ô ruộng đã cuốc (đi được)
- *  w  đất hoang (đi được; cuốc mở ở P1-10, giá khai hoang KT-15)
+ *  w  đất hoang (đi được; khai hoang theo vùng — `src/domain/estate.ts`, KT-15)
  *  #  bờ rào/bụi     H  nhà (đổ nát)            W  giếng
  *  P  ao             T  gốc cây to              R  đá
  *  S  chỗ xuất hiện  (đi được)
  */
+import { ESTATE_ROWS } from '../../data/estateLayout';
+import { type EstateState, effectiveCharAt, emptyEstate } from '../../domain/estate';
+
 export const TILE = 32;
 
-export const ESTATE_ROWS: readonly string[] = [
-  '##############################',
-  '#....TTT..............TTT....#',
-  '#....TTT...HHHH.......TTT....#',
-  '#....TTT...HHHH..............#',
-  '#..........HHHH...WW.........#',
-  '#.................WW.....PPPP#',
-  '#.......................PPPPP#',
-  '#....FFFwwww............PPPPP#',
-  '#....FFFwwww.....S.......PPPP#',
-  '#....wwwwwww.................#',
-  '#....wwwwwww.......R.........#',
-  '#............................#',
-  '#..R..............,,,,,,.....#',
-  '#.................,,,,,,.....#',
-  '#.................,,,,,,..R..#',
-  '#..TTT............,,,,,,.....#',
-  '#..TTT.......................#',
-  '##############################',
-];
+export { ESTATE_ROWS };
 
 export const ESTATE_COLS = ESTATE_ROWS[0].length;
 export const ESTATE_HEIGHT = ESTATE_ROWS.length;
@@ -47,8 +31,11 @@ export function tileAt(x: number, y: number): string {
   return ESTATE_ROWS[y][x];
 }
 
-export function isWalkable(x: number, y: number): boolean {
-  return !BLOCKED.has(tileAt(x, y));
+const NO_ESTATE: EstateState = emptyEstate();
+
+/** Đi được không, có tính điền trang (đá/gốc cây đã dọn thì đi qua được — P1-10). */
+export function isWalkable(x: number, y: number, estate: EstateState = NO_ESTATE): boolean {
+  return !BLOCKED.has(effectiveCharAt(x, y, estate));
 }
 
 /** Mọi ô có ký hiệu `ch`, theo thứ tự đọc (trái → phải, trên → dưới). */

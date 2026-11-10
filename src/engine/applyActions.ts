@@ -7,6 +7,7 @@ import { CROP_SEASONS } from '../data/seasons';
 import type { FarmTileEntity, RegionType, Season } from '../data/types';
 import { type FarmResult, type FarmSave, findItem, harvest, plant, sellToHtx, water, withRegen } from '../domain/farm';
 import { canSowInSeason, seasonAt } from '../domain/season';
+import { type StructureId, clearObstacle, isRepaired, reclaimRegion, repairStructure } from '../domain/estate';
 
 export const MAX_ACTIONS_PER_BATCH = 50;
 export const STATE_SCHEMA_VERSION = 1;
@@ -15,7 +16,10 @@ export type Action =
   | { type: 'PLANT'; tileId: string; itemId: string }
   | { type: 'WATER'; tileId: string }
   | { type: 'HARVEST'; tileId: string }
-  | { type: 'SELL'; itemId: string; qty: number };
+  | { type: 'SELL'; itemId: string; qty: number }
+  | { type: 'CLEAR'; obstacleId: string }
+  | { type: 'REPAIR'; structureId: StructureId }
+  | { type: 'RECLAIM'; regionIndex: number };
 
 export interface LedgerRow {
   currency: 'GOLD' | 'GEM' | 'STAMINA';
@@ -82,8 +86,23 @@ export function newFarmSave(region: RegionType, now: number): FarmSave {
 }
 
 function ref(action: Action): string {
-  return 'itemId' in action ? action.itemId : action.tileId;
+  switch (action.type) {
+    case 'SELL':
+    case 'PLANT':
+      return action.itemId;
+    case 'CLEAR':
+      return action.obstacleId;
+    case 'REPAIR':
+      return action.structureId;
+    case 'RECLAIM':
+      return `REGION_${action.regionIndex}`;
+    default:
+      return action.tileId;
+  }
 }
+
+/** Chưa sửa Giếng: mỗi lô chỉ tưới 1 ô; sửa xong mới tưới cả loạt khi kéo (KT-18, QD-83). */
+export const WELL_LOCKED_WATER_PER_BATCH = 1;
 
 function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
   switch (action.type) {
@@ -101,6 +120,12 @@ function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
       return harvest(save, action.tileId, ctx.now);
     case 'SELL':
       return sellToHtx(save, action.itemId, action.qty);
+    case 'CLEAR':
+      return clearObstacle(save, action.obstacleId, ctx.now);
+    case 'REPAIR':
+      return repairStructure(save, action.structureId);
+    case 'RECLAIM':
+      return reclaimRegion(save, action.regionIndex, ctx.now);
   }
 }
 
@@ -111,8 +136,14 @@ export function applyActions(input: FarmSave, actions: readonly Action[], ctx: E
   let save = withRegen(input, ctx.now);
   const ledger: LedgerRow[] = [];
   const results: ActionResult[] = [];
+  let watered = 0;
   actions.forEach((action, index) => {
+    if (action.type === 'WATER' && watered >= WELL_LOCKED_WATER_PER_BATCH && !isRepaired(save, 'WELL')) {
+      results.push({ index, ok: false, message: '🪣 Sửa Giếng để tưới cả loạt — giờ tưới từng ô.' });
+      return;
+    }
     const res = step(save, action, ctx);
+    if (res.ok && action.type === 'WATER') watered++;
     results.push({ index, ok: res.ok, message: res.message });
     if (!res.ok) return; // thao tác lỗi không làm hỏng các thao tác khác
     const next = res.save;

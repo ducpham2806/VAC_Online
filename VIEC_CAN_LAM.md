@@ -42,6 +42,8 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P1-5 HUD lai~~ ✅ 2026-11-10
 - [x] ~~P1-6 Mùa trên bản đồ + công tắc đổi mùa~~ ✅ 2026-11-10
 - [x] ~~P1-7 Lưu cục bộ~~ ✅ 2026-11-10
+- [x] ~~Duyệt số liệu P1-10 (QD-83)~~ ✅ 2026-11-10
+- [x] ~~P1-10 Sửa nhà/giếng/chuồng + khai hoang~~ ✅ 2026-11-10
 - [ ] Thử `?p1` trên điện thoại thật (anh)
 - [ ] PO duyệt danh sách 8 loài cho P1-9 (khi tới thẻ đó)
 

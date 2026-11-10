@@ -21,7 +21,8 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
   - liềm hoặc tay: cái đã chín;
   - thức ăn: chuồng;
   - cần câu: ao, sông;
-  - rìu/búa: gốc cây, đá.
+  - rìu/búa: gốc cây, đá;
+  - búa sửa: hạng mục đổ nát (GP-14).
 - **Tầm làm việc:** đối tượng ở gần nhân vật (ô đang đứng hoặc 8 ô xung quanh) thì làm ngay. Ở xa thì nhân vật tự đi tới rồi làm; đi bộ chỉ là hình thức, không tính thời gian chơi.
 - **Làm cả loạt:** giữ và kéo qua nhiều ô để gặt, tưới hoặc gieo một lượt (giới hạn số ô mỗi lượt kéo: KT-16). Công cụ chốt theo ô đầu tiên của lượt kéo; ô cần công cụ khác bị bỏ qua. Kéo bắt đầu ngoài ruộng là kéo xem bản đồ.
 - **Hành động cần nhân vật đứng đúng chỗ** (câu cá, đi rừng, nói chuyện với NPC): đi tới mới làm được.
@@ -86,7 +87,9 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 - **Bắt đầu:** điền trang đổ nát. Có các **hạng mục khôi phục**: nhà chính, giếng, chuồng, ao, bếp, vườn cây, cổng.
   - Mỗi hạng mục sửa theo bậc, cần vàng và vật liệu (gỗ, đá, tre).
   - Sửa xong thì mở thêm chức năng hoặc chỗ chứa, gắn với Chương Gia Phả.
-- **Khai hoang:** phần đất ngoài khu đã dọn bị đá, gốc cây, cỏ dại che. Dọn bằng rìu/búa/cuốc (việc nặng, ⚡ + vàng, KT-15), được vật liệu.
+- **Khai hoang:** phần đất ngoài khu đã dọn bị đá, gốc cây, cỏ dại che. Dọn đá/gốc cây bằng rìu/búa (việc nặng, ⚡, KT-18) được vật liệu; cuốc đất hoang theo vùng (vàng + ⚡, KT-15).
+- **Hỏi lại trước khi tiêu vàng:** sửa hạng mục và khai hoang hiện chi phí, thứ mở được, số đang có; người chơi bấm xác nhận mới trừ. Dọn chướng ngại (chỉ tốn ⚡) làm ngay.
+- **Hạng mục đổ nát** hiện xỉn màu kèm đống gạch vụn; sửa xong hiện bình thường. Chuồng chưa sửa thì chưa có gà.
   - Vùng đất mở theo thứ tự cố định, vùng kế tiếp hiện mờ trên bản đồ.
   - Thay cho lưới 5×5 của QD-05 (QD-27).
 - **Phong Thủy:** điểm mỹ quan tăng khi sửa hạng mục và đặt trang trí. Đạt mốc Phong Thủy thì có thưởng và mở trang trí mới (QD-18).

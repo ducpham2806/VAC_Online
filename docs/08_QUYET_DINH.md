@@ -6,7 +6,6 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-83 | Số liệu P1-10 (sửa nhà/giếng/chuồng gà, dọn đá/gốc cây, khai hoang): giá, vật liệu, ⚡, chức năng mở khi sửa | P1-10, P1-11 | Vật liệu mới `MAT_GO`, `MAT_DA` (chỉ từ dọn chướng ngại); đá 2⚡ → 3 Đá, gốc cây 4⚡ → 5 Gỗ; Giếng 300🪙 + 4 Đá (mở tưới kéo cả loạt), Chuồng gà 400🪙 + 6 Gỗ (mở nuôi gà ở P1-9), Nhà 500🪙 + 6 Gỗ + 2 Đá (mở Gia Phả Chương 1 ở P1-11); khai hoang theo vùng `500 × 1,25^k` + 5⚡ (KT-15, QD-18): vùng 1 = 8 ô, vùng 2 = 14 ô. Chi tiết trong WORKLOG 10/11 |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -47,3 +46,4 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-80 | 10/11 | Ảnh thật: PO tự tạo bằng ChatGPT/Gemini theo `art/prompts/`, AI hậu kỳ (`tools/art/import_sheet.py`). 5 tấm mẫu P0-2 đã nhập | `05` AR-50 |
 | QD-81 | 10/11 | Thay QD-20 (phần DB): không tạo project mới, dùng project Supabase cũ của MVP. Dữ liệu MVP bỏ được; được viết lại schema **một lần** khi chuyển sang ADR-002, sau đó lại additive-only | `04` KY-31 |
 | QD-82 | 10/11 | Vật nuôi nhỏ thu hình về ~40×40 trong khung 48×48; cây không mang ụ bùn riêng (ô đất đã có đất). Đã áp bằng `import_sheet.py` (`fit`, `strip_soil`) | `05` AR-20, AR-50 |
+| QD-83 | 10/11 | Số liệu P1-10 theo đề xuất: vật liệu `MAT_GO`/`MAT_DA` chỉ từ dọn chướng ngại, hữu hạn trong bản thử; dọn đá 2⚡ → 3 Đá, gốc cây 4⚡ → 5 Gỗ; sửa Giếng / Chuồng gà / Nhà; Giếng mở tưới cả loạt; khai hoang theo vùng `500 × 1,25^k` | `03` KT-15, KT-18, KT-20; `01` GP-14 |

@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-10 · Điền trang: dọn, sửa, khai hoang · 10/11/2026 — DONE (chưa có người chơi thử)
+- Dọn đá / gốc cây (tốn ⚡) lấy Gỗ, Đá; sửa Giếng, Chuồng gà, Nhà (vàng + vật liệu, hỏi lại trước khi trừ) theo QD-83, KT-18.
+- Giếng chưa sửa thì mỗi lượt kéo chỉ tưới 1 ô; sửa xong tưới cả loạt. Khai hoang theo vùng `500 × 1,25^k` (KT-15), vùng 1 +8 ô, vùng 2 +14 ô.
+- Bản đồ đổi hình theo trạng thái; hình đổ nát vẫn là hình tạm. Ảnh: `docs/screenshots/p1-10-*`.
+- Chưa: SQL/server (P1-8), mốc thưởng Phong Thủy, art thật.
+
 ## P1-6…7 · Mùa trên bản đồ, lưu cục bộ · 10/11/2026 — DONE (chưa có người chơi thử)
 - 4 mùa trên bản đồ (cỏ, ao, tán cây) theo AR-11, công tắc đổi mùa trong ⚙️ cho người chơi thử.
 - Tiến trình bản thử lưu trên máy, có phiên bản và kiểm bản hỏng; tải lại trang không mất.

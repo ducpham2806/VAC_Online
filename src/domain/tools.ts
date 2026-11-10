@@ -11,7 +11,7 @@ export const BATCH_DRAG_MAX = 12;
 /** Tầm làm việc: ô đang đứng hoặc 8 ô xung quanh (GP-02 "ở gần thì làm ngay"). */
 export const REACH_TILES = 1;
 
-export type Tool = 'HOE' | 'SEED' | 'WATER' | 'SICKLE' | 'FEED' | 'ROD' | 'AXE' | 'HAND' | 'NONE';
+export type Tool = 'HOE' | 'SEED' | 'WATER' | 'SICKLE' | 'FEED' | 'ROD' | 'AXE' | 'HAMMER' | 'HAND' | 'NONE';
 export type TargetKind = 'PLOT' | 'WILD' | 'COOP' | 'POND' | 'ROCK' | 'TREE' | 'HOUSE' | 'WELL' | 'GROUND';
 
 /** Ô ruộng: trống → túi hạt; chín → liềm; chưa tưới → bình tưới; còn lại không có việc. */

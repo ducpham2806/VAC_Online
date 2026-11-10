@@ -38,10 +38,24 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 - **Đơn hàng HTX** (GP-40): thưởng = `Σ(giá bán × sl) × hệ số đơn`. Hệ số đơn 1,2–1,5 cộng XP (chưa code, chốt ở P1). Đơn chỉ đòi hàng thuộc Đợt đã mở và đúng mùa.
 
 ### KT-15 · Khai hoang
-- **Chi phí mỗi ô:** 500🪙 + 5⚡; nhận +45 XP và +25 Phong Thủy.
-- **Lưới:** nền 12 ô, tối đa 25 ô (lưới 5×5).
-- Code: `EXPAND_*` trong `farm.ts`, `farmGrid.ts`.
-- Bản làm lại (QD-18): giá tăng dần `500 × 1,25^k`, k = số vùng đã khai (bản cũ giá phẳng 500).
+- **Khai hoang theo vùng** (QD-18, QD-83): vùng thứ k (k = số vùng đã khai, từ 0) giá `500 × 1,25^k` 🪙 + 5⚡; nhận +45 XP và +25 Phong Thủy; cả vùng thành ô ruộng trống. Ví dụ: vùng 1 = 500🪙, vùng 2 = 625🪙.
+- Vùng mở theo thứ tự cố định (GP-14). Bản thử: vùng 1 = 8 ô, vùng 2 = 14 ô.
+- Code: `src/domain/estate.ts` (`reclaimCost`, `RECLAIM_REGIONS`, dùng `EXPAND_*` của `farm.ts`).
+- MVP cũ (giá phẳng 500 mỗi ô, lưới 5×5): `farm.ts` `expandFarm`, `farmGrid.ts`.
+
+### KT-18 · Vật liệu và sửa hạng mục (QD-83)
+- **Vật liệu:** `MAT_GO` (Gỗ), `MAT_DA` (Đá). Chỉ có từ dọn chướng ngại, không bán ở HTX. Bản thử: chướng ngại không mọc lại.
+- **Dọn chướng ngại:** tảng đá −2⚡ → +3 Đá; gốc cây −4⚡ → +5 Gỗ. Dọn xong ô thành đất đi được.
+- **Sửa hạng mục bậc 1:**
+
+| Hạng mục | Chi phí | Phong Thủy | Mở |
+|---|---|---|---|
+| Giếng | 300🪙 + 4 Đá | +20 | Tưới cả loạt khi kéo (chưa sửa: mỗi lượt tưới 1 ô) |
+| Chuồng gà | 400🪙 + 6 Gỗ | +30 | Nuôi gà (P1-9) |
+| Nhà chính | 500🪙 + 6 Gỗ + 2 Đá | +40 | Gia Phả Chương 1 (P1-11) |
+
+- Tổng sửa đủ 3 hạng mục: 1.200🪙 + 12 Gỗ + 6 Đá; bản đồ bản thử cho 15 Gỗ + 9 Đá.
+- Code: `src/domain/estate.ts` (`CLEAR_RULES`, `REPAIRS`), khóa tưới ở `src/engine/applyActions.ts` (`WELL_LOCKED_WATER_PER_BATCH`).
 
 ### KT-16 · Thao tác hàng loạt
 Kéo để làm cả loạt (GP-02): tối đa 12 ô mỗi lượt kéo, mỗi ô vẫn tính đúng luật như khi chạm từng ô (chi phí giống, Kho đầy thì dừng).
@@ -55,7 +69,7 @@ Kéo để làm cả loạt (GP-02): tối đa 12 ô mỗi lượt kéo, mỗi �
 ### KT-20 · Thể lực ⚡ (QD-14)
 - **Trần và hồi:** trần 50; hồi +1⚡/3 phút theo giờ thật (`STAMINA_REGEN_MS = 180.000`, SQL `0004`). Ăn món ăn để hồi thêm (`staminaDelta` trong dữ liệu).
 - **Không tốn ⚡:** gieo, tưới, thu, cho ăn, nấu, giao đơn, nói chuyện với NPC.
-- **Tốn ⚡ (việc nặng):** vét bùn 3, khai hoang 5, dọn đá/gốc cây 2–4 (mới, chốt ở P1), câu cá 1/lần (mới), đi rừng 6, PK 5/trận (QD-04, sau 1.0).
+- **Tốn ⚡ (việc nặng):** vét bùn 3, khai hoang 5, dọn đá 2 / gốc cây 4 (KT-18), câu cá 1/lần (mới), đi rừng 6, PK 5/trận (QD-04, sau 1.0).
 - Không bán ⚡ bằng ngọc trong 1.0 (QD-18; thiết kế cũ: 10/15/25/40💎, tối đa 5 lần/ngày).
 
 ### KT-30 · Xưởng và bếp

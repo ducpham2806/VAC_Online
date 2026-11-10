@@ -4,6 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { findItem } from '../../domain/farm';
+import { isMaterial } from '../../domain/estate';
 import { xpToNext } from '../../domain/progression';
 import { SEASON_ORDER, seasonAt } from '../../domain/season';
 import type { Tool } from '../../domain/tools';
@@ -20,10 +21,10 @@ const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
   DONG: { icon: '❄️', name: 'Đông' },
 };
 const TOOL_LABEL: Record<Tool, string> = {
-  HOE: 'Cuốc', SEED: 'Gieo', WATER: 'Tưới', SICKLE: 'Gặt', FEED: 'Cho ăn', ROD: 'Câu', AXE: 'Chặt', HAND: 'Sửa', NONE: '—',
+  HOE: 'Cuốc', SEED: 'Gieo', WATER: 'Tưới', SICKLE: 'Gặt', FEED: 'Cho ăn', ROD: 'Câu', AXE: 'Dọn', HAMMER: 'Sửa', HAND: 'Chạm', NONE: '—',
 };
 /** Thanh công cụ 8 ô (UI-20): công cụ tự chọn theo đối tượng, ô ở đây chỉ để xem / mở túi hạt / túi đồ. */
-const TOOLBAR: readonly (Tool | 'BAG')[] = ['HOE', 'SEED', 'WATER', 'SICKLE', 'AXE', 'FEED', 'ROD', 'BAG'];
+const TOOLBAR: readonly (Tool | 'BAG')[] = ['HOE', 'SEED', 'WATER', 'SICKLE', 'AXE', 'HAMMER', 'ROD', 'BAG'];
 
 const WOOD_D = '#3D2314';
 type Panel = 'none' | 'seeds' | 'kho' | 'settings';
@@ -174,6 +175,7 @@ export const SliceHud: React.FC = () => {
       {panel === 'seeds' && <SeedPanel onClose={() => setPanel('none')} />}
       {panel === 'kho' && <KhoPanel onClose={() => setPanel('none')} />}
       {panel === 'settings' && <SettingsPanel onClose={() => setPanel('none')} />}
+      <ConfirmEstate />
     </div>
   );
 };
@@ -248,14 +250,58 @@ function SeedPanel({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** P1-10: hỏi lại trước khi tiêu vàng cho sửa hạng mục / khai hoang (GP-14, KT-15, KT-18). */
+function ConfirmEstate() {
+  const pending = useSliceStore((s) => s.pending);
+  const confirm = useSliceStore((s) => s.confirmPending);
+  const cancel = useSliceStore((s) => s.cancelPending);
+  const gold = useSliceStore((s) => s.save.gold);
+  const inv = useSliceStore((s) => s.save.inventory);
+  if (!pending) return null;
+  const have = `Đang có: ${gold.toLocaleString('vi-VN')} 🪙 · ${itemLabel('MAT_GO')} ${inv.MAT_GO ?? 0} · ${itemLabel('MAT_DA')} ${inv.MAT_DA ?? 0}`;
+  return (
+    <Sheet title={`${pending.action.type === 'RECLAIM' ? '⛏️' : '🔨'} ${pending.title}`} onClose={cancel}>
+      <div className="text-xs" data-testid="confirm-estate">
+        <p>
+          Cần: <b>{pending.cost}</b>
+        </p>
+        <p>{pending.unlocks}</p>
+        <p className="mt-1 opacity-80">{have}</p>
+        <div className="mt-2 flex justify-end gap-2">
+          <button className={`${btn} px-3`} onClick={cancel}>
+            Thôi
+          </button>
+          <button className={`${btn} px-3 !bg-[#ffe28a] font-bold`} onClick={confirm} data-testid="confirm-yes">
+            {pending.action.type === 'RECLAIM' ? 'Khai hoang' : 'Sửa'}
+          </button>
+        </div>
+      </div>
+    </Sheet>
+  );
+}
+
 function KhoPanel({ onClose }: { onClose: () => void }) {
   const inv = useSliceStore((s) => s.save.inventory);
+  const fengShui = useSliceStore((s) => s.save.fengShuiScore);
   const sell = useSliceStore((s) => s.sell);
   const rows = Object.entries(inv).filter(([, n]) => n > 0);
   return (
     <Sheet title="📦 Kho" onClose={onClose}>
+      <p className="mb-1 text-xs" data-testid="feng-shui">
+        🏯 Phong Thủy điền trang: <b>{fengShui}</b>
+      </p>
       {rows.length === 0 && <p className="text-xs">Kho trống — gặt lúa chín để có nông sản.</p>}
       {rows.map(([id, n]) => {
+        if (isMaterial(id)) {
+          return (
+            <div key={id} className="flex min-h-[44px] items-center justify-between gap-2 border-b border-[#d8c49b] py-1 text-xs">
+              <span>
+                {itemLabel(id)} × <b>{n}</b>
+              </span>
+              <small>vật liệu sửa điền trang</small>
+            </div>
+          );
+        }
         const it = findItem(id);
         return (
           <div key={id} className="flex items-center justify-between gap-2 border-b border-[#d8c49b] py-1 text-xs">

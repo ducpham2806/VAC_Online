@@ -83,10 +83,10 @@ Lý do và phương án: [ADR-001](adr/ADR-001-mot-ban-luat.md) (một bản lu�
 
 ### KY-90 · Hiện trạng code (MVP cũ, đến 10/11/2026)
 Code đang chạy theo **thiết kế cũ**: chạm thẳng, không có mùa, nhân vật chỉ là hình.
-- **Scene:** game mặc định chỉ có `BootScene` và `FarmScene`. Bản thử P1 (`?p1`): `src/game/slice/EstateScene.ts` + store `useSliceStore` + HUD `src/ui/hud/SliceHud.tsx`. Có: đi bộ, chạm ô (đi tới rồi làm), kéo cả loạt, nút hành động, túi hạt theo mùa, Kho bán HTX. 6 ô ruộng (bằng người chơi mới, KT-01), phần ruộng còn lại là đất hoang chưa cuốc được. Mùa trên bản đồ theo AR-11 + công tắc đổi mùa trong ⚙️ (engine nhận `ctx.season` tùy chọn, chỉ client bản thử truyền). Lưu cục bộ `vac_slice_save_v1` (`version` + `migrate`, khớp ô ruộng với bản đồ khi đọc), có nút chơi lại từ đầu. Chưa có server. Kiểm thử khói: `tools/qa/p1-slice-smoke.cjs`.
-- **Engine dùng chung:** `src/engine/applyActions.ts` (ADR-001), Edge Function thử nghiệm đóng gói từ đây.
+- **Scene:** game mặc định chỉ có `BootScene` và `FarmScene`. Bản thử P1 (`?p1`): `src/game/slice/EstateScene.ts` + store `useSliceStore` + HUD `src/ui/hud/SliceHud.tsx`. Có: đi bộ, chạm ô (đi tới rồi làm), kéo cả loạt, nút hành động, túi hạt theo mùa, Kho bán HTX. 6 ô ruộng (bằng người chơi mới, KT-01). Điền trang (P1-10, `src/domain/estate.ts`, bố cục `src/data/estateLayout.ts`): dọn 3 đá + 3 gốc cây lấy vật liệu, sửa giếng/chuồng/nhà (hỏi lại trước khi trừ vàng), giếng mở tưới cả loạt, khai hoang 2 vùng (+22 ô); hình đổ nát tạm từ atlas `world`. Mùa trên bản đồ theo AR-11 + công tắc đổi mùa trong ⚙️ (engine nhận `ctx.season` tùy chọn, chỉ client bản thử truyền). Lưu cục bộ `vac_slice_save_v1` (version 2: thêm `save.estate`, đọc được bản v1; `migrate`, khớp ô ruộng với bản đồ khi đọc), có nút chơi lại từ đầu. Chưa có server. Kiểm thử khói: `tools/qa/p1-slice-smoke.cjs`.
+- **Engine dùng chung:** `src/engine/applyActions.ts` (ADR-001), Edge Function thử nghiệm đóng gói từ đây. Thao tác: `PLANT`, `WATER`, `HARVEST`, `SELL`, `CLEAR`, `REPAIR`, `RECLAIM`; 3 thao tác điền trang chỉ có trong engine mới, không có RPC SQL cũ.
 - **Store:** 6 slice.
-- **Test:** 225 test TS, 7 file test SQL, 7 test asset.
+- **Test:** 250 test TS, 7 file test SQL, 7 test asset.
 - **DB thật:** đã chạy `0001 → 0014` + seed; `0015` chưa áp; `app_game_stage() = 1`.
 - **Phần nên giữ khi làm lại:**
   - hàm luật `src/domain/*` + test;
