@@ -50,6 +50,13 @@ P1_SHEETS = [
     ("npc_cohuong_sheet.png", "strip:4", "48x64",
      ["npc_cohuong_idle_0", "npc_cohuong_idle_1", "npc_cohuong_talk_0", "npc_cohuong_talk_1"], {}),
     ("portraits_sheet.png", "strip:3", "64x64", ["portrait_bacbay", "portrait_cohuong", "portrait_bakien"], {}),
+    # art/prompts/p1_nature.md — thay hình tạm của atlas `world`
+    ("tree_sheet.png", "strip:1", "96x112", ["tree_0"], {}),
+    ("bamboo_sheet.png", "strip:2", "48x96", ["bamboo_0", "bamboo_1"], {}),
+    ("rock_sheet.png", "strip:3", "40x32", ["rock_0", "rock_1", "rock_2"], {}),
+    ("weeds_sheet.png", "strip:3", "20x16", ["weed_0", "weed_1", "weed_2"], {}),
+    # AI vẽ rào xéo (rail dốc ~0,49 lên bên phải): trượt dọc cho rail nằm ngang, cọc vẫn đứng, để ghép liền theo mép bản đồ
+    ("fence_sheet.png", "strip:2", "64x48", ["fence_0", "fence_1"], {"shear": 0.49}),
 ]
 
 
@@ -172,10 +179,20 @@ def strip_soil(rgb: np.ndarray, alpha: np.ndarray, boxes: list[tuple[int, int, i
     return out
 
 
+def shear_y(img: Image.Image, k: float) -> Image.Image:
+    """Trượt dọc: điểm ở cột x dời xuống k·x px (đường dốc −k thành ngang, đường đứng giữ đứng). Nền mới là #FF00FF."""
+    w, h = img.size
+    extra = int(abs(k) * w) + 1
+    off = 0 if k >= 0 else extra
+    return img.transform((w, h + extra), Image.Transform.AFFINE, (1, 0, 0, -k, 1, -off),
+                         resample=Image.Resampling.NEAREST, fillcolor=(255, 0, 255))
+
+
 def import_sheet(path: str, layout: str, size: tuple[int, int], palette_list: list[tuple[int, int, int]],
-                 fit: tuple[int, int] | None = None, soil: bool = False) -> list[Image.Image]:
+                 fit: tuple[int, int] | None = None, soil: bool = False, shear: float = 0.0) -> list[Image.Image]:
     palette = np.array(palette_list, dtype=np.int32)
-    rgb = np.asarray(Image.open(path).convert("RGB"))
+    src = Image.open(path).convert("RGB")
+    rgb = np.asarray(shear_y(src, shear) if shear else src)
     kind, arg = layout.split(":")
     if kind == "tiles":
         return import_tiles(rgb, int(arg), size, palette)
@@ -291,7 +308,9 @@ def p1_preview(named: dict[str, Image.Image], grass: Image.Image | None) -> Imag
     """Bảng duyệt x3: các khung P1 trên nền cỏ, cùng tỉ lệ với ô 32×32 (người chơi 48×64 để so cỡ)."""
     order = ["house_0", "house_1", "well_0", "well_1", "coop_0", "coop_1",
              "npc_bacbay_idle_0", "npc_bacbay_talk_0", "npc_cohuong_idle_0", "npc_cohuong_talk_0",
-             "portrait_bacbay", "portrait_cohuong", "portrait_bakien"]
+             "portrait_bacbay", "portrait_cohuong", "portrait_bakien",
+             "tree_0", "bamboo_0", "bamboo_1", "rock_0", "rock_1", "rock_2", "weed_0", "weed_1", "weed_2", "fence_0", "fence_1"]
+    order = [n for n in order if n in named]
     w = sum(named[n].width + 8 for n in order) + 8
     sheet = Image.new("RGBA", (w, 144), (90, 140, 60, 255))
     if grass:
@@ -309,8 +328,10 @@ def p1_preview(named: dict[str, Image.Image], grass: Image.Image | None) -> Imag
 def run_p1(palette: list[tuple[int, int, int]]) -> int:
     named: dict[str, Image.Image] = {}
     for fname, layout, size, names, opt in P1_SHEETS:
+        if not os.path.exists(os.path.join(INBOX, fname)):
+            continue  # nhóm ảnh chưa có (vd ảnh thiên nhiên) → game dùng hình tạm atlas `world`
         frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette,
-                              fit=opt.get("fit"), soil=opt.get("strip_soil", False))
+                              fit=opt.get("fit"), soil=opt.get("strip_soil", False), shear=opt.get("shear", 0.0))
         named.update(zip(names, frames))
     bad = save_all(named, P1_OUT, palette)
     grass_path = os.path.join(P0_OUT, "tile_grass_xuan.png")

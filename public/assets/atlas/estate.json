@@ -1,8 +1,48 @@
 {
  "frames": {
+  "bamboo_0": {
+   "frame": {
+    "x": 554,
+    "y": 0,
+    "w": 48,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 96
+   }
+  },
+  "bamboo_1": {
+   "frame": {
+    "x": 604,
+    "y": 0,
+    "w": 48,
+    "h": 96
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 96
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 96
+   }
+  },
   "coop_0": {
    "frame": {
-    "x": 260,
+    "x": 358,
     "y": 0,
     "w": 96,
     "h": 96
@@ -22,7 +62,7 @@
   },
   "coop_1": {
    "frame": {
-    "x": 358,
+    "x": 456,
     "y": 0,
     "w": 96,
     "h": 96
@@ -38,6 +78,46 @@
    "sourceSize": {
     "w": 96,
     "h": 96
+   }
+  },
+  "fence_0": {
+   "frame": {
+    "x": 400,
+    "y": 130,
+    "w": 64,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 48
+   }
+  },
+  "fence_1": {
+   "frame": {
+    "x": 466,
+    "y": 130,
+    "w": 64,
+    "h": 48
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 64,
+    "h": 48
+   },
+   "sourceSize": {
+    "w": 64,
+    "h": 48
    }
   },
   "house_0": {
@@ -82,86 +162,6 @@
   },
   "npc_bacbay_idle_0": {
    "frame": {
-    "x": 786,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "rotated": false,
-   "trimmed": false,
-   "spriteSourceSize": {
-    "x": 0,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "sourceSize": {
-    "w": 48,
-    "h": 64
-   }
-  },
-  "npc_bacbay_idle_1": {
-   "frame": {
-    "x": 836,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "rotated": false,
-   "trimmed": false,
-   "spriteSourceSize": {
-    "x": 0,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "sourceSize": {
-    "w": 48,
-    "h": 64
-   }
-  },
-  "npc_bacbay_talk_0": {
-   "frame": {
-    "x": 886,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "rotated": false,
-   "trimmed": false,
-   "spriteSourceSize": {
-    "x": 0,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "sourceSize": {
-    "w": 48,
-    "h": 64
-   }
-  },
-  "npc_bacbay_talk_1": {
-   "frame": {
-    "x": 936,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "rotated": false,
-   "trimmed": false,
-   "spriteSourceSize": {
-    "x": 0,
-    "y": 0,
-    "w": 48,
-    "h": 64
-   },
-   "sourceSize": {
-    "w": 48,
-    "h": 64
-   }
-  },
-  "npc_cohuong_idle_0": {
-   "frame": {
     "x": 0,
     "y": 130,
     "w": 48,
@@ -180,7 +180,7 @@
     "h": 64
    }
   },
-  "npc_cohuong_idle_1": {
+  "npc_bacbay_idle_1": {
    "frame": {
     "x": 50,
     "y": 130,
@@ -200,7 +200,7 @@
     "h": 64
    }
   },
-  "npc_cohuong_talk_0": {
+  "npc_bacbay_talk_0": {
    "frame": {
     "x": 100,
     "y": 130,
@@ -220,7 +220,7 @@
     "h": 64
    }
   },
-  "npc_cohuong_talk_1": {
+  "npc_bacbay_talk_1": {
    "frame": {
     "x": 150,
     "y": 130,
@@ -240,9 +240,89 @@
     "h": 64
    }
   },
+  "npc_cohuong_idle_0": {
+   "frame": {
+    "x": 200,
+    "y": 130,
+    "w": 48,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 64
+   }
+  },
+  "npc_cohuong_idle_1": {
+   "frame": {
+    "x": 250,
+    "y": 130,
+    "w": 48,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 64
+   }
+  },
+  "npc_cohuong_talk_0": {
+   "frame": {
+    "x": 300,
+    "y": 130,
+    "w": 48,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 64
+   }
+  },
+  "npc_cohuong_talk_1": {
+   "frame": {
+    "x": 350,
+    "y": 130,
+    "w": 48,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 48,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 48,
+    "h": 64
+   }
+  },
   "portrait_bacbay": {
    "frame": {
-    "x": 588,
+    "x": 786,
     "y": 0,
     "w": 64,
     "h": 64
@@ -262,7 +342,7 @@
   },
   "portrait_bakien": {
    "frame": {
-    "x": 654,
+    "x": 852,
     "y": 0,
     "w": 64,
     "h": 64
@@ -282,7 +362,7 @@
   },
   "portrait_cohuong": {
    "frame": {
-    "x": 720,
+    "x": 918,
     "y": 0,
     "w": 64,
     "h": 64
@@ -300,9 +380,149 @@
     "h": 64
    }
   },
+  "rock_0": {
+   "frame": {
+    "x": 532,
+    "y": 130,
+    "w": 40,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 32
+   }
+  },
+  "rock_1": {
+   "frame": {
+    "x": 574,
+    "y": 130,
+    "w": 40,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 32
+   }
+  },
+  "rock_2": {
+   "frame": {
+    "x": 616,
+    "y": 130,
+    "w": 40,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 40,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 40,
+    "h": 32
+   }
+  },
+  "tree_0": {
+   "frame": {
+    "x": 260,
+    "y": 0,
+    "w": 96,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 96,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 96,
+    "h": 112
+   }
+  },
+  "weed_0": {
+   "frame": {
+    "x": 658,
+    "y": 130,
+    "w": 20,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 20,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 20,
+    "h": 16
+   }
+  },
+  "weed_1": {
+   "frame": {
+    "x": 680,
+    "y": 130,
+    "w": 20,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 20,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 20,
+    "h": 16
+   }
+  },
+  "weed_2": {
+   "frame": {
+    "x": 702,
+    "y": 130,
+    "w": 20,
+    "h": 16
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 20,
+    "h": 16
+   },
+   "sourceSize": {
+    "w": 20,
+    "h": 16
+   }
+  },
   "well_0": {
    "frame": {
-    "x": 456,
+    "x": 654,
     "y": 0,
     "w": 64,
     "h": 80
@@ -322,7 +542,7 @@
   },
   "well_1": {
    "frame": {
-    "x": 522,
+    "x": 720,
     "y": 0,
     "w": 64,
     "h": 80
@@ -346,7 +566,7 @@
   "image": "estate.png",
   "format": "RGBA8888",
   "size": {
-   "w": 986,
+   "w": 984,
    "h": 196
   },
   "scale": "1"

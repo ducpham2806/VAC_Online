@@ -4,7 +4,7 @@
  *  - Chạm ô ruộng: công cụ tự chọn; trong tầm thì làm ngay, xa thì đi tới rồi làm.
  *  - Kéo bắt đầu trên ô ruộng: làm cả loạt ≤ 12 ô (KT-16). Kéo ở chỗ khác: xem bản đồ.
  * Trạng thái nông trại ở `useSliceStore` (engine ADR-001); scene chỉ vẽ và gửi thao tác.
- * Nhà/giếng/cây/đá đang dùng hình vẽ code của atlas `world` (tạm).
+ * Hình điền trang (nhà, giếng, chuồng, cây đa, tre, đá, cỏ dại, rào, NPC) đều từ ảnh của PO — atlas `estate`.
  * P1-10: đá/gốc cây dọn xong thì biến mất; hạng mục đổ nát (tô tối + đống gạch) → sửa xong hiện bình thường;
  * vùng đất hoang kế tiếp có khung mờ, khai hoang xong thành ô ruộng (GP-14).
  * Ảnh thật (atlas `estate`, ảnh PO P1): nhà/giếng/chuồng gà 2 khung đổ nát → đã sửa; NPC đứng/nói.
@@ -47,13 +47,14 @@ import { npcOf, vnDay } from '../../domain/npc';
 import { currentTutorialStep, tutorialTarget } from './sliceTutorial';
 
 export const SLICE_ATLAS = 'slice';
-const WORLD = 'world';
 const ESTATE = 'estate';
 const SPEED_PX_PER_S = 96; // 3 ô/giây
 const FEET_HALF_W = 8; // nửa bề ngang "chân" để va chạm, nhỏ hơn 1 ô cho dễ lách
 const DIRS: readonly Dir[] = ['down', 'up', 'left', 'right'];
 const WOOD_D = 0x3d2314;
 const REPAIR_SIGN = 'slice_repair_sign';
+/** Đoạn rào 64 px vẽ chồng nhau ngần này px: ảnh AI để hở mép rail sau khi nắn thẳng. */
+const FENCE_OVERLAP = 6;
 /** Tiền tố khung hạng mục trong atlas `estate`: `_0` đổ nát, `_1` đã sửa. */
 const STRUCTURE_FRAME: Record<StructureId, string> = { HOUSE: 'house', WELL: 'well', COOP: 'coop' };
 const PAPER = 0xf3e3c0;
@@ -117,7 +118,6 @@ export class EstateScene extends Phaser.Scene {
 
   preload(): void {
     this.load.atlas(SLICE_ATLAS, 'assets/atlas/slice.png', 'assets/atlas/slice.json');
-    this.load.atlas(WORLD, 'assets/atlas/world.png', 'assets/atlas/world.json');
     this.load.atlas(ESTATE, 'assets/atlas/estate.png', 'assets/atlas/estate.json');
     this.load.atlas('wave1', 'assets/atlas/wave1.png', 'assets/atlas/wave1.json'); // cây chưa có art thật (tạm)
   }
@@ -167,7 +167,7 @@ export class EstateScene extends Phaser.Scene {
           const views = [img];
           if ((x * 7 + y * 3) % 4 === 0) {
             // đất hoang: cỏ dại lưa thưa, khai hoang xong thì dọn (P1-10)
-            views.push(this.add2(this.add.image(x * TILE + TILE / 2, (y + 1) * TILE - 6, WORLD, `tuft_${(x + y) % 3}`).setOrigin(0.5, 1).setDepth(-950)));
+            views.push(this.add2(this.add.image(x * TILE + TILE / 2, (y + 1) * TILE - 6, ESTATE, `weed_${(x + y) % 3}`).setOrigin(0.5, 1).setDepth(-950)));
           }
           this.wildViews.set(`${x},${y}`, views);
         }
@@ -184,7 +184,7 @@ export class EstateScene extends Phaser.Scene {
     this.guide = this.add2(this.add.text(0, 0, '▼', { fontSize: '18px', color: '#f5b700', stroke: '#3d2314', strokeThickness: 4 }).setOrigin(0.5, 1).setDepth(19_000).setVisible(false));
   }
 
-  /** NPC có tim (GP-50): hình tạm từ atlas `world`, khung đứng yên 2 nhịp; 💬 khi hôm nay chưa chào. */
+  /** NPC có tim (GP-50): ảnh PO (atlas `estate`), đứng 2 nhịp, nói 2 khung; 💬 khi hôm nay chưa chào. */
   private drawNpcs(): void {
     for (const id of NPC_IDS) {
       const n = NPCS[id];
@@ -262,7 +262,7 @@ export class EstateScene extends Phaser.Scene {
     this.nextRegion.lineStyle(2, PAPER, 0.75).strokeRect(x + 2, y + 2, w - 4, h - 4);
   }
 
-  /** Biển "cần sửa" + cỏ dại cạnh hạng mục đổ nát (tạm, từ atlas `world`; không dùng hình đá để khỏi lẫn với đá dọn được). */
+  /** Biển "cần sửa" + cỏ dại cạnh hạng mục đổ nát (không dùng hình đá để khỏi lẫn với đá dọn được). */
   private addRubble(sid: StructureId, px: number, py: number): void {
     if (!this.textures.exists(REPAIR_SIGN)) {
       // biển gỗ nhỏ: cọc + tấm ván + dấu "!" (màu bảng 64 màu, viền ấm — AR-01)
@@ -275,7 +275,7 @@ export class EstateScene extends Phaser.Scene {
       g.destroy();
     }
     const sign = this.add2(this.add.image(px, py, REPAIR_SIGN).setOrigin(0.5, 1).setDepth(py));
-    const weed = this.add2(this.add.image(px + 14, py + 2, WORLD, 'tuft_1').setOrigin(0.5, 1).setDepth(py + 1));
+    const weed = this.add2(this.add.image(px + 14, py + 2, ESTATE, 'weed_2').setOrigin(0.5, 1).setDepth(py + 1));
     this.tweens.add({ targets: sign, angle: { from: -3, to: 3 }, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     this.rubble[sid].push(sign, weed);
   }
@@ -364,14 +364,24 @@ export class EstateScene extends Phaser.Scene {
     this.addRubble(sid, (b.x + b.w) * TILE + 6, bottom + 4);
   }
 
-  private drawBorder(): void {
-    for (let x = 0; x < ESTATE_COLS; x += 2) {
-      this.add2(this.add.image(x * TILE + TILE, TILE - 2, WORLD, 'fence').setOrigin(0.5, 1).setDepth(TILE));
-      this.add2(this.add.image(x * TILE + TILE, ESTATE_HEIGHT * TILE, WORLD, 'fence').setOrigin(0.5, 1).setDepth(ESTATE_HEIGHT * TILE));
+  /** Hàng rào tre từ px0 tới px1, chân ở py: các đoạn chồng mép FENCE_OVERLAP px để rail nối liền; thỉnh thoảng một đoạn cọc cao. */
+  private fenceRow(px0: number, px1: number, py: number): void {
+    // số đoạn đủ phủ, rồi dàn đều để đoạn cuối khớp đúng mép px1 (bước ≤ 64 − FENCE_OVERLAP)
+    const n = Math.max(2, Math.ceil((px1 - px0 - 64) / (64 - FENCE_OVERLAP)) + 1);
+    const step = (px1 - px0 - 64) / (n - 1);
+    for (let i = 0; i < n; i++) {
+      const f = i % 4 === 2 ? 'fence_1' : 'fence_0';
+      this.add2(this.add.image(Math.round(px0 + i * step), py, ESTATE, f).setOrigin(0, 1).setDepth(py + i * 0.01));
     }
+  }
+
+  private drawBorder(): void {
+    this.fenceRow(0, ESTATE_COLS * TILE, TILE - 2);
+    this.fenceRow(0, ESTATE_COLS * TILE, ESTATE_HEIGHT * TILE);
     for (let y = 1; y < ESTATE_HEIGHT - 1; y += 3) {
-      this.foliage.push(this.add2(this.add.image(TILE / 2, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE)));
-      this.foliage.push(this.add2(this.add.image((ESTATE_COLS - 0.5) * TILE, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE)));
+      const bam = `bamboo_${y % 2}`;
+      this.foliage.push(this.add2(this.add.image(TILE / 2, (y + 2) * TILE, ESTATE, bam).setOrigin(0.5, 1).setDepth((y + 2) * TILE)));
+      this.foliage.push(this.add2(this.add.image((ESTATE_COLS - 0.5) * TILE, (y + 2) * TILE, ESTATE, bam).setOrigin(0.5, 1).setFlipX(true).setDepth((y + 2) * TILE)));
     }
   }
 
@@ -383,9 +393,10 @@ export class EstateScene extends Phaser.Scene {
       const cx = ((Math.min(...xs) + Math.max(...xs) + 1) / 2) * TILE;
       const bottom = (Math.max(...ys) + 1) * TILE;
       if (o.kind === 'ROCK') {
-        this.obstacleViews.set(o.id, this.add2(this.add.image(cx, bottom - 6, WORLD, 'rock').setOrigin(0.5, 1).setScale(1.4).setDepth(bottom)));
+        const v = (o.tiles[0].x + o.tiles[0].y) % 3; // 3 dáng đá: tròn, dẹt, chồng đôi
+        this.obstacleViews.set(o.id, this.add2(this.add.image(cx, bottom - 2, ESTATE, `rock_${v}`).setOrigin(0.5, 1).setDepth(bottom)));
       } else {
-        const img = this.add2(this.add.image(cx, bottom, WORLD, 'banyan').setOrigin(0.5, 1).setDepth(bottom));
+        const img = this.add2(this.add.image(cx, bottom, ESTATE, 'tree_0').setOrigin(0.5, 1).setDepth(bottom));
         this.foliage.push(img);
         this.obstacleViews.set(o.id, img);
       }
@@ -395,9 +406,7 @@ export class EstateScene extends Phaser.Scene {
   private drawCoop(): void {
     const b = boundsOf(',');
     if (!b) return;
-    for (let x = b.x; x < b.x + b.w; x += 2) {
-      this.add2(this.add.image((x + 1) * TILE, b.y * TILE + 4, WORLD, 'fence').setOrigin(0.5, 1).setDepth(b.y * TILE));
-    }
+    this.fenceRow(b.x * TILE, (b.x + b.w) * TILE, b.y * TILE + 4);
     // chuồng gà tre 96×96 ở góc trái sân (3×3 ô), gà đi lại phần sân còn lại
     const hutBottom = (b.y + 3) * TILE;
     this.structureViews.COOP.push(this.add2(this.add.image((b.x + 1.5) * TILE, hutBottom, ESTATE, 'coop_0').setOrigin(0.5, 1).setDepth(hutBottom)));

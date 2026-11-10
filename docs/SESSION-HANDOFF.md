@@ -28,4 +28,4 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). DB MVP chưa đổi.
 - Không đụng project Supabase "Nam_A_CRM".
-- Nhà/giếng/chuồng gà/NPC trong `?p1` đã dùng ảnh thật của PO (atlas `estate`). Cây đa, đá, cỏ dại, rào vẫn là hình tạm của atlas `world`.
+- Mọi hình điền trang trong `?p1` (nhà, giếng, chuồng, NPC, cây đa, tre, đá, cỏ dại, rào) đã là ảnh thật của PO (atlas `estate`, `python3 tools/art/import_sheet.py --p1` rồi `pack_atlas.py art/source/p1_ai --name estate`).

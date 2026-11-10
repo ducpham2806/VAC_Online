@@ -48,7 +48,7 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P1-11 NPC có tim, Chương 1, hướng dẫn 15 phút đầu~~ ✅ 2026-11-10
 - [ ] Thử `?p1` trên điện thoại thật (anh)
 - [x] ~~Tạo 6 ảnh nhà / giếng / chuồng gà / NPC theo `art/prompts/p1_estate_npc.md`~~ ✅ 2026-11-11 (đã nhập vào `?p1`)
-- [ ] Tạo 5 ảnh cây đa / bụi tre / đá / cỏ dại / rào theo `art/prompts/p1_nature.md`, bỏ vào `art/source/inbox/` (anh, trước P1-12)
+- [x] ~~Tạo 5 ảnh cây đa / bụi tre / đá / cỏ dại / rào theo `art/prompts/p1_nature.md`~~ ✅ 2026-11-11 (đã nhập vào `?p1`)
 - [ ] PO duyệt danh sách 8 loài cho P1-9 (khi tới thẻ đó)
 
 ## F. Nhật ký

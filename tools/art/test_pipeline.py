@@ -131,3 +131,18 @@ class StripSoilTest(unittest.TestCase):
         self.assertTrue(any(g > r and g > b for r, g, b in colors), "vẫn còn lá xanh")
         bbox = frame.getbbox()
         self.assertLess(bbox[2] - bbox[0], 16, "khung sát thân cây, không rộng theo ụ bùn")
+
+
+class ShearTest(unittest.TestCase):
+    def test_shear_y_lam_duong_doc_thanh_ngang_giu_cot_dung(self):
+        from import_sheet import shear_y
+        img = Image.new("RGB", (101, 80), (255, 0, 255))
+        d = ImageDraw.Draw(img)
+        d.line([(0, 60), (100, 10)], fill=(200, 160, 60))  # rail dốc -0,5
+        d.line([(50, 0), (50, 79)], fill=(60, 40, 20))  # cọc đứng
+        out = shear_y(img, 0.5)
+        px = out.load()
+        rail = [y for x in (0, 100) for y in range(out.height) if px[x, y] == (200, 160, 60)]
+        self.assertLessEqual(max(rail) - min(rail), 1, "rail thành nằm ngang")
+        stake_cols = {x for x in range(out.width) for y in range(out.height) if px[x, y] == (60, 40, 20)}
+        self.assertEqual(stake_cols, {50}, "cọc vẫn thẳng đứng")

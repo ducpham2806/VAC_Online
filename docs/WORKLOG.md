@@ -6,7 +6,8 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - PO đẩy 6 ảnh lên `main` (`9450a80`); gộp `main` vào nhánh. `import_sheet.py --p1` → `art/source/p1_ai/` 17 khung (0 lạc bảng, 0 pixel đen, alpha 0/255, đúng cỡ AR-20) → atlas `public/assets/atlas/estate.*`; chân dung → `public/assets/portraits/`.
 - `?p1`: nhà/giếng/chuồng gà đổi khung đổ nát → đã sửa (bỏ tô tối), chuồng gà tre đặt ở góc sân; Bác Bảy, Cô Hương dùng ảnh mới (2 khung đứng, 2 khung nói khi mở hộp thoại); chân dung trong hộp thoại NPC và cảnh mở đầu (Bá Kiến).
 - Kiểm: typecheck, 270 test, build, test:art, check:docs PASS; smoke 2 cỡ + người mới theo hướng dẫn (844×390) PASS, 0 lỗi JS, 0 nút < 44 px. Ảnh: `docs/screenshots/p1-art-estate-{broken,repaired}-1280x720.png`.
-- **Dừng ở:** còn hình tạm: cây đa, đá, cỏ dại, rào (atlas `world`). NPC nhìn hơi mảnh hơn người chơi — chờ PO xem.
+- 11/11 (tiếp): nhập thêm 5 ảnh thiên nhiên (`580bca3`): cây đa, 2 bụi tre, 3 đá, 3 cỏ dại, 2 đoạn rào → atlas `estate` 28 khung (0 lạc bảng, 0 pixel đen). Rào AI vẽ xéo → `import_sheet.py` thêm `shear` nắn rail thành ngang; scene ghép rào chồng mép 6 px, dàn đều khớp mép. `?p1` bỏ hẳn atlas `world`. Smoke 2 cỡ + người mới PASS, 0 lỗi JS, 0 nút < 44 px.
+- **Dừng ở:** NPC nhìn hơi mảnh hơn người chơi — chờ PO xem. Việc tiếp: P1-9 (chờ duyệt 8 loài), P1-8 (chờ quyền Supabase).
 
 ## 10/11/2026 · P1-11 DONE (QD-84 PO duyệt) · claude/gifted-faraday-2q851c
 - PO duyệt QD-84 theo đề xuất. Ghi `03` KT-19 (mới), `01` GP-50, GP-62, `02` TG-40, `04` KY-90.
