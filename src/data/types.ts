@@ -1,4 +1,7 @@
 export type RegionType = 'NORTH' | 'CENTRAL' | 'SOUTH';
+
+/** Mùa vụ chung toàn server (docs/01_GAMEPLAY GP-20): Xuân → Hạ → Thu → Đông. */
+export type Season = 'XUAN' | 'HA' | 'THU' | 'DONG';
 export type GenderType = 'MALE' | 'FEMALE';
 export type UnlockWave = 1 | 2 | 3 | 4 | 5;
 

@@ -14,7 +14,7 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 | ⚡ Thể lực | Giới hạn việc nặng | KT-20 |
 
 ### KT-10 · Cấp độ và XP
-`xpToNext(L) = round(60 × L^1.5)`, L = cấp hiện tại, cấp tối đa 60. Ví dụ: lên Lv.2 cần 60 XP; tổng tới Lv.9 là 5.044 XP. Code: `src/domain/progression.ts` + SQL `_xp_to_next`. Chờ duyệt lại: QD-88.
+`xpToNext(L) = round(60 × L^1.5)`, L = cấp hiện tại, cấp tối đa 60. Ví dụ: lên Lv.2 cần 60 XP; tổng tới Lv.9 là 5.044 XP. Code: `src/domain/progression.ts` + SQL `_xp_to_next`. Chờ duyệt lại: QD-31.
 
 ### KT-11 · Thời gian lớn, tưới, sản lượng
 - **Thời gian chín:** `growMs = max(1, phút) × 60.000 × f`, với phút lấy từ dữ liệu thực thể. `f` là hệ số miền (KT-50), mặc định 1.
@@ -35,22 +35,28 @@ Cột "Nơi ở trong code" cho biết hằng số đang nằm ở đâu. Đổi
 
 ### KT-14 · Bán ở HTX và đơn hàng
 - **Bán thẳng HTX:** vàng = `giá bán × qty`, không thuế.
-- **Đơn hàng HTX** (GP-40): thưởng = `Σ(giá bán × sl) × hệ số đơn`. Hệ số đơn đề xuất 1,2–1,5 cộng XP (chưa code, chốt ở P1). Đơn chỉ đòi hàng thuộc Đợt đã mở và đúng mùa.
+- **Đơn hàng HTX** (GP-40): thưởng = `Σ(giá bán × sl) × hệ số đơn`. Hệ số đơn 1,2–1,5 cộng XP (chưa code, chốt ở P1). Đơn chỉ đòi hàng thuộc Đợt đã mở và đúng mùa.
 
 ### KT-15 · Khai hoang
 - **Chi phí mỗi ô:** 500🪙 + 5⚡; nhận +45 XP và +25 Phong Thủy.
 - **Lưới:** nền 12 ô, tối đa 25 ô (lưới 5×5).
 - Code: `EXPAND_*` trong `farm.ts`, `farmGrid.ts`.
-- Vấn đề: giá phẳng nên không thành chỗ tiêu tăng dần. Đề xuất cho P2: `500 × 1,25^k`, k = số ô đã khai.
+- Bản làm lại (QD-18): giá tăng dần `500 × 1,25^k`, k = số vùng đã khai (bản cũ giá phẳng 500).
 
-### KT-16 · Thao tác hàng loạt (đề xuất)
+### KT-16 · Thao tác hàng loạt
 Kéo để làm cả loạt (GP-02): tối đa 12 ô mỗi lượt kéo, mỗi ô vẫn tính đúng luật như khi chạm từng ô (chi phí giống, Kho đầy thì dừng).
+
+### KT-17 · Lịch mùa
+- **Mốc:** thứ Hai 05/01/2026 00:00 giờ Việt Nam là ngày 1 mùa Xuân năm 1.
+- **Độ dài:** mỗi mùa 7 ngày thật, một năm game 28 ngày.
+- **Thứ tự:** Xuân → Hạ → Thu → Đông.
+- Code: `src/domain/season.ts` (`SEASON_EPOCH_MS`, `SEASON_LENGTH_DAYS`). Mùa gieo của từng cây: cột `Seasons` trong dữ liệu.
 
 ### KT-20 · Thể lực ⚡ (QD-14)
 - **Trần và hồi:** trần 50; hồi +1⚡/3 phút theo giờ thật (`STAMINA_REGEN_MS = 180.000`, SQL `0004`). Ăn món ăn để hồi thêm (`staminaDelta` trong dữ liệu).
 - **Không tốn ⚡:** gieo, tưới, thu, cho ăn, nấu, giao đơn, nói chuyện với NPC.
 - **Tốn ⚡ (việc nặng):** vét bùn 3, khai hoang 5, dọn đá/gốc cây 2–4 (mới, chốt ở P1), câu cá 1/lần (mới), đi rừng 6, PK 5/trận (QD-04, sau 1.0).
-- Chưa quyết: có bán ⚡ bằng ngọc không (thiết kế cũ: 10/15/25/40💎, tối đa 5 lần/ngày). Đề xuất: không bán trong 1.0.
+- Không bán ⚡ bằng ngọc trong 1.0 (QD-18; thiết kế cũ: 10/15/25/40💎, tối đa 5 lần/ngày).
 
 ### KT-30 · Xưởng và bếp
 Thời gian, nguyên liệu và giá thành phẩm lấy từ dữ liệu (`machineId`, `recipe`). Khám phá công thức ở Nồi Đất được +10💎 và +50 XP (`cooking.ts`). Mỗi xưởng nấu 1 mẻ một lúc, có hàng chờ (GP-30).
@@ -77,7 +83,7 @@ Thời gian, nguyên liệu và giá thành phẩm lấy từ dữ liệu (`mach
 - Code: `src/domain/workers.ts`, SQL `0011`–`0014`. Thợ 3–6 chưa có số liệu theo luật mới.
 
 ### KT-40 · Trần thưởng ngoài nông trại
-Sau 1.0 (GP-80): Hyper-Casual tối đa 1.500/ngày (đơn vị chờ QD-95); 🏮 100–250/ngày; thuế Sới Đình 10% zero-sum; tối đa 3 trận có thưởng mỗi cặp mỗi ngày.
+Sau 1.0 (GP-80): Hyper-Casual tối đa 1.500/ngày (đơn vị quyết ở GĐ6, QD-23); 🏮 100–250/ngày; thuế Sới Đình 10% zero-sum; tối đa 3 trận có thưởng mỗi cặp mỗi ngày.
 
 ### KT-45 · Van chống lạm phát
 1. Chỉ đổi ngọc → vàng (có trần), cấm chiều ngược lại.
@@ -107,8 +113,8 @@ Bỏ khỏi bộ van cũ: quỹ xổ số và cược PK (LT-04).
   - Bùn quá mạnh (KT-12);
   - lương thợ 3–6 quá cao.
 
-### KT-60 · Kiếm tiền (chờ QD-90, QD-87)
+### KT-60 · Kiếm tiền (QD-19, QD-32)
 - **Bản 1.0 chỉ bán thứ không ảnh hưởng tiến trình:** đồ trang trí, thời trang `FASH_`, skin nhà, gói ủng hộ.
 - **Không có** gacha, xổ số, cược vàng, hộp quà may rủi (LT-04).
-- **Bỏ qua thời gian chờ bằng ngọc** (`ceil(0,8 × T^0,62)`, T = phút còn lại): đề xuất không có trong 1.0, vì làm hỏng trụ cột mùa vụ (TQ-03).
+- **Bỏ qua thời gian chờ bằng ngọc** (`ceil(0,8 × T^0,62)`, T = phút còn lại): không có trong 1.0 (QD-18), vì làm hỏng trụ cột mùa vụ (TQ-03).
 - **Bốn gói nạp cũ** `IAP_01..04` (19k/79k/99k/149k, có ngọc, vàng, ⚡) được giữ trong dữ liệu như ý tưởng. Chúng bán tiến trình nên phải thiết kế lại trước khi bán. Đổi tên "Season Pass" để khỏi trùng khái niệm mùa vụ.

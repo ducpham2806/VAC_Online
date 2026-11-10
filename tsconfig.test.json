@@ -9,7 +9,11 @@
   "include": [
     "src",
     "scripts",
+    "prototypes",
     "vitest.config.ts"
   ],
-  "exclude": []
+  "exclude": [
+    "prototypes/**/supabase/functions/**",
+    "prototypes/**/bench.ts"
+  ]
 }

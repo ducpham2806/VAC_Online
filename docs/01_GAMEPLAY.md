@@ -2,7 +2,7 @@
 
 **Sở hữu:** luật chơi của mọi hệ thống (viết bằng chữ).
 **Không chứa:** con số (dẫn mã `KT-` ở `03`), thông số từng loài (dữ liệu, `04` KY-20), cốt truyện và nhân vật (`02`), màn hình (`06`).
-Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuất, chờ PO duyệt qua mã `QD-` kèm theo.
+Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO duyệt hết ngày 10/11 (QD-18).
 
 ## Vòng chơi
 
@@ -43,7 +43,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
   - Cây đã gieo vẫn lớn và thu được khi sang mùa khác; không héo.
 - **Gán mùa** theo nông lịch Việt. Ví dụ: lúa (Xuân, Thu), su hào và cải (Đông), vải và nhãn (Hạ), đào và bưởi (Đông, cho Tết).
   - Loài ngắn ngày phổ biến được gieo ở 2–3 mùa, để mùa nào cũng có việc.
-- **Cây lâu năm** (dừa, ổi, chuối, xoài…): trồng mùa nào cũng được, ra quả theo mùa của nó (đề xuất, QD-84).
+- **Cây lâu năm** (dừa, ổi, chuối, xoài…): trồng mùa nào cũng được, ra quả theo mùa của nó (QD-29).
 - **Vật nuôi, thủy sản:** quanh năm.
 - **Đơn hàng HTX** chỉ đòi loài thuộc Đợt đã mở và gieo được trong mùa này hoặc mùa trước.
 - **Cây lớn theo giờ thật** (KT-11). Ngày và đêm trong game theo giờ thật Việt Nam, chỉ ảnh hưởng ánh sáng, nhạc và một số sự kiện đêm.
@@ -52,7 +52,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 - **Thời tiết hằng ngày:** server chọn theo xác suất của mùa; nắng, mưa, giông (mùa Hạ), sương (mùa Đông).
 - **Mưa:** mọi ô ngoài trời tính là đã tưới.
 - **Giông:** có thể đổ giàn cây leo. Dựng lại giàn tốn 0⚡ và có cơ hội ra Hoàng Kim; bạn bè dựng giúp được.
-- **Lịch mùa của các miền:** Nam (2 mùa mưa/khô) và Trung (mùa bão) dùng chung 4 mùa vụ, chỉ khác tên gọi và thời tiết (đề xuất, QD-94).
+- **Lịch mùa của các miền:** Nam (2 mùa mưa/khô) và Trung (mùa bão) dùng chung 4 mùa vụ, chỉ khác tên gọi và thời tiết (QD-22).
 
 ### GP-22 · Thể lực ⚡
 - Chỉ việc nặng tốn ⚡: khai hoang, dọn đá và gốc cây, vét bùn ao, câu cá, đi rừng.
@@ -67,7 +67,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 - **Thu:** thu hoạch vào Kho, không ra tiền ngay (QD-01). Bán ở HTX, nấu, giao đơn hoặc tặng.
 - Cây thường thu một lần rồi gieo lại.
 
-### GP-11 · Ô trồng trên bản đồ (đề xuất, QD-86)
+### GP-11 · Ô trồng trên bản đồ (QD-27)
 - **Ô trồng:** mỗi ô trồng là một ô lưới 32×32 trên bản đồ tile (`05` AR-20), như các game nông trại đi bộ.
 - **Bố cục:** người chơi tự cuốc đất ở vùng đã khai hoang, nên ruộng xếp theo ý mình.
 - **Thay cho hệ cũ:** bỏ các "khu" 168×80 cố định của lưới 5×5.
@@ -80,7 +80,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 ### GP-13 · Chuồng và Ao nhiều lứa
 - **Con giống:** mua một lần, thu nhiều lứa (trứng, sữa, mẻ cá). Ô hiện "còn N lứa"; hết lứa thì ô trống để thả con mới (công thức N: KT-13).
 - **Chăm sóc:** vật nuôi cần được cho ăn mỗi ngày thật để tiếp tục cho sản phẩm. Thức ăn từ Cối Xay Cám hoặc mua ở HTX.
-- **Thương vật nuôi:** vuốt ve hằng ngày tăng độ vui; vui cao thì có cơ hội ra sản phẩm loại tốt (đề xuất, chốt ở P2).
+- **Thương vật nuôi:** vuốt ve hằng ngày tăng độ vui; vui cao thì có cơ hội ra sản phẩm loại tốt (QD-18; số liệu chốt ở P2).
 
 ### GP-14 · Điền trang và khai hoang (khôi phục kiểu Green Farm 3)
 - **Bắt đầu:** điền trang đổ nát. Có các **hạng mục khôi phục**: nhà chính, giếng, chuồng, ao, bếp, vườn cây, cổng.
@@ -88,8 +88,8 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
   - Sửa xong thì mở thêm chức năng hoặc chỗ chứa, gắn với Chương Gia Phả.
 - **Khai hoang:** phần đất ngoài khu đã dọn bị đá, gốc cây, cỏ dại che. Dọn bằng rìu/búa/cuốc (việc nặng, ⚡ + vàng, KT-15), được vật liệu.
   - Vùng đất mở theo thứ tự cố định, vùng kế tiếp hiện mờ trên bản đồ.
-  - Đây là bản thay cho lưới 5×5 của QD-05, cần PO xác nhận ở QD-86.
-- **Phong Thủy:** điểm mỹ quan tăng khi sửa hạng mục và đặt trang trí. Đạt mốc Phong Thủy thì có thưởng và mở trang trí mới (đề xuất; bản cũ có điểm nhưng chưa có công dụng).
+  - Thay cho lưới 5×5 của QD-05 (QD-27).
+- **Phong Thủy:** điểm mỹ quan tăng khi sửa hạng mục và đặt trang trí. Đạt mốc Phong Thủy thì có thưởng và mở trang trí mới (QD-18).
 
 ## Chế biến và người làm
 
@@ -125,7 +125,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 - **Hái trộm:** giữ luật đã chốt (QD-03, QD-06; số liệu KT-32).
   - Chỉ trộm được trong cửa sổ ngắn sau khi chín. Chủ luôn giữ phần lớn sản lượng.
   - Chó và Ngỗng có thể bắt kẻ trộm; bị bắt thì mất vàng (zero-sum).
-  - Đề xuất: người chơi tự bật/tắt "vườn mở cho hái trộm", và có thưởng nhỏ nếu bật. Mục đích là giữ trụ cột 3 (làng giúp nhau, không phá nhau).
+  - Người chơi tự bật/tắt "vườn mở cho hái trộm" (QD-18), và có thưởng nhỏ nếu bật. Mục đích là giữ trụ cột 3 (làng giúp nhau, không phá nhau).
 
 ### GP-42 · Chợ phiên P2P (Đợt 3)
 - **Sạp:** mỗi người có vài ô bày bán. Giá đăng trong khung cho phép, người bán chịu thuế (KT-31).
@@ -142,7 +142,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 - **Lời thoại** theo mùa, thời tiết, số tim và chương.
 
 ### GP-52 · Hẹn hò và cưới (Đợt 5)
-- **Ứng viên:** có tên ở `02` TG-20. Đạt 10 tim (đề xuất, QD-98) và tặng tín vật Trầu Cau thì tổ chức lễ cưới ở Đình.
+- **Ứng viên:** có tên ở `02` TG-20. Đạt 10 tim (QD-25) và tặng tín vật Trầu Cau thì tổ chức lễ cưới ở Đình.
 - Bạn bè đến dự được.
 - **Sau cưới:** bạn đời phụ việc nhà mỗi ngày; sau đó có con (Bé Tiểu Đồng, lớn qua 3 giai đoạn).
 
@@ -153,7 +153,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
   - Mỗi miền có thưởng nhỏ riêng (KT-50), cảnh quan và phương ngữ NPC riêng (`02` TG-10).
 - **Loài của miền khác:** mua ở Chợ phiên, hoặc nhận Túi Hạt Giao Thoa (trồng được 3 vụ, KT-45) từ Thương Đội Liên Gia.
   - Thương Đội Liên Gia: 3 người chơi khác miền cùng góp hàng; chỉ chạy khi đã mở đủ 3 miền.
-- **Bản chơi thử và closed beta:** chỉ 1 miền (đề xuất Bắc, QD-93). Màn tạo nhân vật hiện 2 miền còn lại là "sắp mở".
+- **Bản chơi thử và closed beta:** chỉ 1 miền: Bắc Bộ (QD-21). Màn tạo nhân vật hiện 2 miền còn lại là "sắp mở".
 
 ### GP-61 · Mở khóa nội dung
 - **Đợt và chương:** một loài gieo hoặc nuôi được khi thỏa đủ:
@@ -164,7 +164,7 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
   - (5) đúng mùa, chỉ áp cho cây trồng.
 - **Năm Đợt:** lũy kế 23 → 45 → 63 → 76 → 81 loài V-A-C. Đợt của từng loài nằm ở dữ liệu (`unlockWave`, có test khóa).
 - **Khay giống:** loài bị khóa vẫn hiện, ghi rõ điều kiện ("Mở ở Chương N", "Gieo được mùa Hạ").
-- **Kiểm tra thiếu loài:** với 1 miền, Đợt 1 chỉ có ~21 loài, chia 4 mùa là mỏng. Khi gán mùa phải đảm bảo mỗi mùa có ≥ 6 loài cây gieo được. Nếu thiếu thì kéo sớm một phần Đợt 2 (đề xuất, chốt khi thêm cột `seasons`, `07` LT-10 P0-3).
+- **Kiểm tra thiếu loài:** với 1 miền, Đợt 1 chỉ có ~21 loài, chia 4 mùa là mỏng. Khi gán mùa phải đảm bảo mỗi mùa có ≥ 6 loài cây gieo được. Nếu thiếu thì kéo sớm một phần Đợt 2 (QD-18; chốt khi thêm cột `seasons`, `07` LT-10 P0-3).
 
 ### GP-62 · Hướng dẫn tân thủ
 - **Người dẫn:** Bác Bảy dẫn tối đa 8 bước trong Chương 1–2.
@@ -185,11 +185,11 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 - **Lịch:** mỗi mùa có 1–2 lễ hội cố định ở ngày thứ N của mùa (lịch: `02` TG-50).
 - **Diễn ra:** ở quảng trường làng.
 - **Tham gia:** nộp hàng hoặc chơi một trò ngắn. Thưởng là đồ trang trí, danh hiệu, 🏮, tim với NPC.
-- **Đình Làng:** sửa theo bậc như hạng mục điền trang (GP-14), mỗi bậc mở lễ hội lớn hơn. Đề xuất làm mốc cá nhân thay vì hội 20–30 người (QD-97).
+- **Đình Làng:** sửa theo bậc như hạng mục điền trang (GP-14), mỗi bậc mở lễ hội lớn hơn. Làm theo mốc cá nhân, không có hội (QD-24).
 
 ### GP-71 · Canh nồi Bánh Chưng (Tết, Đông → Xuân)
 - **Nấu:** người chơi nộp nguyên liệu để nấu một nồi.
-- **Bạn bè giúp:** tối đa 5 bạn tiếp củi (0⚡), mỗi lần rút ngắn thời gian, người giúp nhận lì xì. Đề xuất nồi 6h (QD-99).
+- **Bạn bè giúp:** tối đa 5 bạn tiếp củi (0⚡), mỗi lần rút ngắn thời gian, người giúp nhận lì xì. Nồi nấu 6h (QD-26).
 - **Kết quả:** bánh thường hoặc bánh Hoàng Kim.
 
 ### GP-72 · Kỷ Vật tuổi thơ 8x–9x
@@ -225,6 +225,6 @@ Hướng thiết kế: QD-12…15. Mục ghi "(đề xuất)" là AI đề xuấ
 ## Sau bản 1.0
 
 ### GP-80 · Sảnh Chung, PK, Hyper-Casual (`07` LT-04)
-- **Sảnh Chung "Chợ Đình":** nhiều người cùng đi lại, khoe trang phục, chat bong bóng, biểu cảm Múa Lân / Múa Sạp. Dùng lại bộ điều khiển đi bộ của nông trại. Số người mỗi phòng: QD-96.
+- **Sảnh Chung "Chợ Đình":** nhiều người cùng đi lại, khoe trang phục, chat bong bóng, biểu cảm Múa Lân / Múa Sạp. Dùng lại bộ điều khiển đi bộ của nông trại. Số người mỗi phòng: QD-23.
 - **PK dân gian không bạo lực:** Đi Cầu Tre Gậy Bông, Vật Sới Đình, Cướp Cờ, Bắt Vịt Vàng. Tốn ⚡ (QD-04). Chỉ làm khi có trọng tài server (`04` KY-60).
 - **Máy Thùng:** minigame 30–45 giây, có trần thưởng (KT-40). Không cược vàng.

@@ -10,7 +10,9 @@ Rule theo đường dẫn trong `.claude/rules/` là bản thi hành của file 
 - **Phát hành:** PWA trên Vercel; Capacitor (iOS/Android) sau P3.
 - **Kiểm tra:** vitest, `npm run test:sql` (Postgres tạm), CI chạy typecheck → test → build → check:docs → test:sql.
 
-### KY-10 · Kiến trúc đích (chờ QD-92)
+### KY-10 · Kiến trúc đích (QD-20)
+Lý do và phương án: [ADR-001](adr/ADR-001-mot-ban-luat.md) (một bản luật), [ADR-002](adr/ADR-002-trang-thai-va-so-cai.md) (trạng thái + sổ cái), [ADR-003](adr/ADR-003-mot-nguon-du-lieu.md) (một nguồn dữ liệu).
+
 1. **Một bản luật:** luật chơi là hàm thuần TypeScript trong `src/domain/`, nhận `now` và `rng` làm tham số.
    - Client dùng để hiển thị trước kết quả.
    - Server chạy đúng code đó trong Supabase Edge Function để quyết định thật.
@@ -22,11 +24,12 @@ Rule theo đường dẫn trong `.claude/rules/` là bản thi hành của file 
 4. **Trade-off:** Edge Function có độ trễ khởi động; mất `FOR UPDATE`. Chấp nhận vì game nông trại bất đồng bộ (100–300 ms/thao tác).
    - *Phương án dự phòng:* giữ RPC PL/pgSQL hiện tại và sinh test chéo TS ↔ SQL.
 5. **Hiện trạng:** luật đang viết hai lần, TS + SQL (`0004 → 0015`), xem KY-90.
+6. **Thử nghiệm P0-4** (`prototypes/p0-4-edge/README.md`): đã chạy được ở máy cục bộ — luật TS đóng gói chạy trên Deno, khóa lạc quan có thử lại, sổ cái khớp số dư, p95 3,1 ms chưa tính mạng. Chưa đo trên Supabase thật (QD-81).
 
 ### KY-20 · Một nguồn dữ liệu
 - **Đích:** `data/catalog.csv` (và các bảng dữ liệu sau này) → script sinh `src/data/*.generated.ts` + `supabase/seed/*.sql` + bảng tóm tắt cho tài liệu. Không ai sửa tay file sinh ra.
 - **Hiện trạng:** `GAME_CATALOG` (`src/data/masterData.ts`, 166 mục) là nguồn chuẩn. `data/catalog.csv` (146 dòng, thiếu `MAC_`, `FASH_`) phải khớp ID và Đợt (`catalog.test.ts`). Có 43 giá trị đang lệch, phải gộp ở ADR-003 (LT-10).
-- **Cột cần thêm cho hướng mới:** `seasons` (mùa trồng được, GP-20), `region` dùng như cũ, `toolAction` (công cụ dùng cho ô).
+- **Cột cho hướng mới:** `Seasons` đã thêm 10/11 (mùa gieo được, GP-20; khớp `src/data/seasons.ts`, test khóa). Sẽ thêm ở P1: `toolAction` (công cụ dùng cho ô), `fruitSeasons` (mùa ra quả của cây lâu năm, QD-29).
 
 ### KY-30 · Quy tắc code
 1. TypeScript strict, `tsc --noEmit` 0 lỗi, không `any`.
@@ -51,7 +54,7 @@ Rule theo đường dẫn trong `.claude/rules/` là bản thi hành của file 
 - RLS mặc định từ chối; người chơi chỉ đọc dữ liệu của mình.
 - Seed chỉ upsert, không `DELETE`. File seed sinh tự động (`npm run seed:catalog`).
 - Mỗi migration có test trong `supabase/tests/`.
-- Bản làm lại dùng DB mới chỉ khi PO cho phép (QD-92). DB cũ giữ nguyên.
+- Bản làm lại dùng DB mới (QD-20). DB cũ giữ nguyên, không sửa.
 
 ### KY-40 · Bảo mật — lỗi đã gặp, không lặp lại
 | Đã xảy ra | Luật |
@@ -70,7 +73,7 @@ Rule theo đường dẫn trong `.claude/rules/` là bản thi hành của file 
 - Thay đổi người chơi nhìn thấy được: chạy bản thật và chụp 1280×720 + 844×390 (`06` UI-10).
 
 ### KY-60 · Realtime (sau 1.0, GP-80)
-- **Phòng:** tối đa 25–30 người/phòng (QD-96). Gửi vị trí 10 Hz khi có di chuyển; client nội suy `lerp` 0,18 ở 60 FPS.
+- **Phòng:** tối đa 25–30 người/phòng (QD-23). Gửi vị trí 10 Hz khi có di chuyển; client nội suy `lerp` 0,18 ở 60 FPS.
 - **Minigame:** chuẩn `IHyperCasualCartridge` (`init / onActionInput / update / dispose`, seed RNG chung) chỉ làm khi có trọng tài server.
 
 ### KY-70 · PWA và app

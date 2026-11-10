@@ -31,7 +31,7 @@ Tính năng không phục vụ ít nhất một trụ cột, hoặc làm hỏng 
 | [02_THE_GIOI_COT_TRUYEN](02_THE_GIOI_COT_TRUYEN.md) | Bối cảnh, 3 miền, nhân vật, 10 Chương Gia Phả, lịch lễ hội | `TG-nn` |
 | [03_KINH_TE](03_KINH_TE.md) | Tiền tệ, công thức, hằng số, van chống lạm phát, Sources/Sinks, kiếm tiền | `KT-nn` |
 | `data/catalog.csv` + `src/data/masterData.ts` | Thông số từng thực thể (giá, thời gian, XP, Đợt, mùa) | ID thực thể |
-| [04_KY_THUAT](04_KY_THUAT.md) | Kiến trúc, dữ liệu, DB, bảo mật, quy tắc code, kiểm thử, hiện trạng code | `KY-nn` |
+| [04_KY_THUAT](04_KY_THUAT.md) + `docs/adr/` | Kiến trúc, dữ liệu, DB, bảo mật, quy tắc code, kiểm thử, hiện trạng code; ADR ghi lý do chọn kiến trúc | `KY-nn`, `ADR-nnn` |
 | [05_ART_AUDIO](05_ART_AUDIO.md) | Phong cách, palette, kích thước, hoạt ảnh, VFX, âm thanh, pipeline | `AR-nn` |
 | [06_UI_UX](06_UI_UX.md) | Màn hình, luồng, HUD, điều khiển chạm, chuẩn giao diện | `UI-nn` |
 | [07_LO_TRINH](07_LO_TRINH.md) | Pha phát triển, cổng kiểm chứng, nội dung mỗi Đợt theo pha, thẻ việc | `LT-nn` |

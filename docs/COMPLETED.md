@@ -2,13 +2,21 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P0 · Chốt nền · 10/11/2026 — DONE (trừ P0-6)
+- **Quyết định:** PO duyệt toàn bộ đề xuất (QD-18…32); không cấp API key ảnh (QD-33).
+- **P0-3 ADR + dữ liệu:** ADR-001 một bản luật TS trên Edge Function; ADR-002 `farm_states` + `ledger` + khóa lạc quan; ADR-003 một nguồn dữ liệu `data/`. Thêm cột `Seasons` (48 cây) và lịch mùa `src/domain/season.ts`, có test.
+- **P0-4 thử nghiệm kỹ thuật** (`prototypes/p0-4-edge/`): chạy được ở máy cục bộ, p95 3,1 ms chưa tính mạng, khóa lạc quan + sổ cái đúng. Còn P0-6: đo trên Supabase thật, chờ QD-81.
+- **P0-5:** wireframe HUD điều khiển lai (`docs/wireframes/`). Rút ra: thanh công cụ thu gọn mặc định.
+- **P0-2:** mẫu hình vẽ code 28 khung theo chuẩn mới; ảnh thật chờ PO tạo theo `art/prompts/p0_samples.md` (QD-80).
+- **Bằng chứng:** typecheck, 190 test, build, check:docs, test:art PASS; `run-local.sh` PASS.
+
 ## DOCS-01 · Bộ tài liệu mới `docs/00 → 08` · 10/11/2026 — DONE, chờ PO duyệt nội dung
 - PO chốt hướng: Green Farm 3 + Harvest Moon, điều khiển lai, 4 mùa theo tuần thật, ⚡ cho việc nặng, 1 miền trước, lưu trữ bộ cũ (QD-12…17).
 - Bộ cũ `00 → 17` (17 file, ~494 KB) chuyển nguyên văn sang `docs_archive_merged/v1-2026-11-10/`. Thay bằng 9 file ~68 KB: tổng quan, gameplay, thế giới, kinh tế, kỹ thuật, art, UI, lộ trình, sổ quyết định.
 - Chống chồng chéo: mỗi luật một mã mục (`GP-`, `KT-`…); số chỉ ở `03` + dữ liệu; quyết định chỉ ở `08`; `check:docs` kiểm mã dẫn sai/trùng.
 - CSV `04` → `data/catalog.csv`; key art → `art/key_art/`. `VIEC_CAN_LAM.md` rút gọn (bản cũ ở `docs/archive/`). Cập nhật agent/skill/rule `vac-*`, AGENTS, README, chú thích code.
 - Bằng chứng: typecheck, 178 test, build, check:docs PASS. Không đổi luật code, DB hay số kinh tế.
-- Giới hạn: các mục "(đề xuất)" và 17 câu `QD-83…99` chờ PO; code vẫn theo thiết kế cũ (KY-90).
+- Giới hạn: các mục "(đề xuất)" và các câu chờ PO (PO duyệt hết ngày 10/11, nay là QD-18…33); code vẫn theo thiết kế cũ (KY-90).
 
 ## TOOLING-01 · Game Studio + Graphify + hệ nhật ký · 10/11/2026
 - Nhánh `claude/gifted-faraday-2q851c`. Cài thư viện Game_Studio_Agent `c5dac46` (297 file, 116 skill, 21 vai trò) ở `.agents/game-studio/`, manifest băm từng file, skill định tuyến `/vac-studio`, chỉ mục riêng cho VAC.

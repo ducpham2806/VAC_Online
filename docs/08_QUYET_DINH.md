@@ -6,23 +6,8 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-90 | Mục tiêu bản 1.0: thương mại có doanh thu hay game cộng đồng? | `03` KT-60, `07` LT-04 | Cộng đồng trước, kiếm tiền bằng đồ trang trí sau soft launch |
-| QD-91 | Nguồn ảnh: PO tự tạo bằng ChatGPT/Gemini hay cấp API key cho AI tạo hàng loạt? | `07` LT-10 (P0-2) | Cấp key cho 5 sprite mẫu trước, rồi mới quyết hàng loạt |
-| QD-92 | Build lại phần nền (DB mới, một bản luật TS) hay sửa tại chỗ? | `04` KY-10, `07` | Build lại (lý do: `docs/REVIEW-2026-11-10.md`) |
-| QD-93 | Miền cho bản chơi thử | `01` GP-60, `05` | Bắc Bộ: có đủ 4 mùa, khớp hệ mùa vụ |
-| QD-94 | Lịch mùa cho miền Nam (2 mùa mưa/khô) và Trung (mùa bão) | `01` GP-21 | Cả game dùng chung 4 mùa vụ; mỗi miền đặt tên và thời tiết riêng |
-| QD-95 | Trần thưởng Hyper-Casual 1.500/ngày tính bằng 🏮 hay 🪙 | `03` KT-40 | Không cần quyết trước GĐ6 |
-| QD-96 | Sảnh Chung 25 hay 30 người/phòng | `01` GP-80 | Không cần quyết trước GĐ6 |
-| QD-97 | Đình Làng: hội 20–30 người hay mốc cá nhân 5k/15k/50k | `01` GP-70 | Mốc cá nhân (không cần hệ thống guild) |
-| QD-98 | Lễ cưới: 1.000 điểm thân mật hay 10 tim | `01` GP-52 | 10 tim, theo hệ tim NPC `GP-50` |
-| QD-99 | Nồi Bánh Chưng: 12h cả làng hay 6h tối đa 5 bạn | `01` GP-71 | 6h, tối đa 5 bạn |
-| QD-86 | Bản đồ tile 32×32: mỗi ô trồng 1 cây, khai hoang bằng dọn chướng ngại, thay lưới 5×5 khu 168×80 (thay QD-05) | `01` GP-11, GP-14; `05` AR-20 | Duyệt — khớp lối chơi đi bộ |
-| QD-85 | Chương 4–5 ở bản 1 miền dùng mục tiêu gì thay Thương Đội 3 miền; cấp mở chương trong `quests.ts` (Ch.4 Lv.9, Ch.5 Lv.12, Ch.8 Lv.18, Ch.9 Lv.22) khác thiết kế cũ (16/18/21/23) | `02` TG-30 | Theo code; Ch.5 dùng tàu + chợ |
-| QD-84 | Cây lâu năm trồng quanh năm, ra quả theo mùa (có cần dọn gốc sau N mùa như bản cũ `13`?) | `01` GP-20 | Ra quả theo mùa, không cần dọn gốc |
-| QD-83 | Poster `09` (đã lưu trữ) có từng đăng công khai không? Poster hứa 81 loài + 4 mùa ở GĐ1, 6 thợ, PK 45s, iOS/Android | Truyền thông | Nếu đã đăng: viết bài cập nhật lộ trình |
-| QD-89 | Số món ăn đích: 22 hay 27 | `03`, dữ liệu | Theo dữ liệu khi làm từng Đợt |
-| QD-88 | Duyệt đường cong XP `round(60 × L^1.5)`, Lv tối đa 60 | `03` KT-10 | Giữ, xem lại khi có số liệu beta |
-| QD-87 | Pháp lý: game online có thanh toán tại Việt Nam, cơ chế may rủi | `03` KT-60 | Kiểm trước khi bật thanh toán |
+| QD-81 | Cho phép tạo project Supabase mới (gói miễn phí) cho bản làm lại, để đo P0-6 và làm P1 | `07` LT-10 P0-6 | Đồng ý; DB MVP giữ nguyên |
+| QD-80 | Nguồn ảnh thật cho sprite (PO không cấp API key, 10/11): PO tự tạo bằng ChatGPT/Gemini theo `art/prompts/`, thuê họa sĩ, hay dùng hình vẽ bằng code lâu dài? | `07` LT-10 P0-2, P1 | PO tự tạo 5 ảnh mẫu theo `art/prompts/p0_samples.md`, AI hậu kỳ |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -31,7 +16,7 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-02 | 01/11 | Thuế Chợ P2P 5%, giá đăng 0,8–2,0× giá gốc | `03` KT-31 |
 | QD-03 | 01/11 | Bảo hiểm trộm 80% (trộm tối đa 20%/ô) | `03` KT-32 |
 | QD-04 | 01/11 | PK tốn `-5⚡`/trận; Máy Thùng và đi dạo Sảnh `0⚡` | `03` KT-20 |
-| QD-05 | 01/11 | Khai hoang thật lưới 5×5; kiểm mục tiêu nhiệm vụ trên server | `01` GP-14 |
+| QD-05 | 01/11 | ~~Khai hoang thật lưới 5×5~~ (thay bằng QD-27); kiểm mục tiêu nhiệm vụ trên server | `01` GP-14 |
 | QD-06 | 02/11 | Chó Phú Quốc bắt trộm 50%, Ngỗng 40%, cùng thức 70%; cửa sổ trộm 2 phút | `03` KT-32 |
 | QD-07 | 02/11 | Bảng 64 màu `art/palette/vac_base.gpl` | `05` AR-10 |
 | QD-08 | 02/11 | Bếp: Nồi Đất là khám phá công thức; giữ dữ liệu gốc và giá | `01` GP-30 |
@@ -44,3 +29,19 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-15 | 10/11 | Bản chơi thử và closed beta làm 1 miền trước; thiết kế đầy đủ giữ 3 miền | `01` GP-60, `07` |
 | QD-16 | 10/11 | Lưu trữ bộ tài liệu `00 → 17` cũ, thay bằng bộ `docs/00 → 08` | `00` |
 | QD-17 | 10/11 | Ưu tiên chỉnh tài liệu trước code | `07` |
+| QD-18 | 10/11 | PO duyệt toàn bộ mục "(đề xuất)" trong `docs/00 → 08` bản 10/11 (mùa chung server 7 ngày, kéo làm loạt 12 ô, vuốt ve vật nuôi, Phong Thủy có mốc thưởng, bật/tắt hái trộm, khai hoang `500 × 1,25^k`, không bán ⚡ / bỏ qua chờ trong 1.0, 2 ứng viên cưới nam…) | `01`, `02`, `03` |
+| QD-19 | 10/11 | Bản 1.0 ưu tiên cộng đồng; kiếm tiền chỉ bằng đồ trang trí, sau soft launch | `03` KT-60, `07` LT-04 |
+| QD-20 | 10/11 | Build lại phần nền: DB mới (DB cũ giữ nguyên), một bản luật TS chạy trên Edge Function | `04` KY-10 |
+| QD-21 | 10/11 | Miền cho bản chơi thử: Bắc Bộ | `01` GP-60 |
+| QD-22 | 10/11 | Cả game dùng chung 4 mùa vụ; Nam và Trung chỉ khác tên gọi và thời tiết | `01` GP-21 |
+| QD-23 | 10/11 | Trần Hyper-Casual và số người/phòng Sảnh: quyết khi làm GĐ6 | `03` KT-40, `04` KY-60 |
+| QD-24 | 10/11 | Đình Làng: mốc cá nhân, không hệ thống hội | `01` GP-70 |
+| QD-25 | 10/11 | Cưới khi đạt 10 tim | `01` GP-52 |
+| QD-26 | 10/11 | Nồi Bánh Chưng 6h, tối đa 5 bạn tiếp củi | `01` GP-71 |
+| QD-27 | 10/11 | Bản đồ tile 32×32, mỗi ô trồng 1 cây, khai hoang bằng dọn chướng ngại (thay QD-05) | `01` GP-11, GP-14; `05` AR-20 |
+| QD-28 | 10/11 | Cấp mở chương theo `src/data/quests.ts`; Ch.5 bản 1 miền dùng tàu + chợ thay Thương Đội | `02` TG-30 |
+| QD-29 | 10/11 | Cây lâu năm trồng quanh năm, ra quả theo mùa, không cần dọn gốc | `01` GP-20 |
+| QD-30 | 10/11 | Poster cũ: nếu đã đăng thì viết bài cập nhật lộ trình | Truyền thông |
+| QD-31 | 10/11 | Số món ăn theo dữ liệu từng Đợt; giữ đường cong XP `round(60 × L^1.5)`, Lv.60 (xem lại khi có số beta) | `03` KT-10 |
+| QD-32 | 10/11 | Kiểm pháp lý trước khi bật bất kỳ thanh toán nào | `03` KT-60 |
+| QD-33 | 10/11 | PO không cấp API key ảnh; P0-2 làm mẫu bằng code + prompt cho PO tự tạo (thay đề xuất "cấp key") | `07` LT-10 |

@@ -30,7 +30,7 @@ Kiểm tự động: `/vac-asset-audit`, `npm run test:art`, `src/data/palette.t
 ### AR-20 · Lưới và kích thước
 | Loại | Kích thước | Ghi chú |
 |---|---|---|
-| Lưới bản đồ, ô đất trồng | 32×32 | Mỗi ô trồng 1 cây (GP-11). Ô đất 168×80 kiểu cũ bỏ, chờ QD-86 |
+| Lưới bản đồ, ô đất trồng | 32×32 | Mỗi ô trồng 1 cây (GP-11). Ô đất 168×80 kiểu cũ bỏ (QD-27) |
 | Nhân vật người | 48×64 | Neo `(0,5, 0,95)` (khớp `player.ts`) |
 | Vật nuôi | 48×48 | Neo đáy |
 | Cây trồng 4 giai đoạn | khung 32×48, neo đáy | Đường ống `import_sprite.py` (hiện là 48×48, đổi khi làm lại) |
@@ -74,8 +74,8 @@ Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixe
 ### AR-50 · Pipeline asset
 1. **Ảnh gốc:** plugin `agent-sprite-forge` (`generate2dsprite`, `video2dsprite` cho hoạt ảnh nhân vật, `generate2dmap` cho tilemap) hoặc ảnh PO tự tạo bỏ vào `art/source/inbox/`.
    - Prompt mẫu: `art/prompts/`.
-   - Nguồn ảnh chờ QD-91.
+   - Nguồn ảnh: QD-33 (không dùng API key); ảnh thật chờ QD-80.
 2. **Chuẩn hóa:** `tools/art/import_sprite.py` (tách `#FF00FF`, cắt khung, alpha 0/255, khóa palette, viền ấm).
 3. **Đóng gói:** `tools/art/pack_atlas.py` → `public/assets/atlas/<lô>.png/.json`. Phaser đặt tên khung `<ID>_<giai đoạn>`.
-4. **Kiểm:** `/vac-asset-audit`. Thiếu khung thì game dùng hình vẽ bằng code (`codeart_*.py`).
+4. **Kiểm:** `/vac-asset-audit`. Mẫu hướng hình theo chuẩn này: `tools/art/codeart_p0_samples.py` → `art/source/p0_samples/` (lúa 4 giai đoạn 32×48, gà 48×48, cá 32×32, nhân vật đi 4 hướng × 4 khung, ô đất/cỏ 2 mùa); prompt cho ảnh thật: `art/prompts/p0_samples.md`. Thiếu khung thì game dùng hình vẽ bằng code (`codeart_*.py`).
 5. **Chỉ làm art cho miền đang mở** (QD-15). 30% đặc sản của miền khác làm khi mở miền đó.

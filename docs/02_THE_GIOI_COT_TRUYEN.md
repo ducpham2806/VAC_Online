@@ -13,7 +13,7 @@
 ### TG-10 · Ba miền
 | Miền | Cảnh quan | Giọng | Thưởng (KT-50) | Đặc sản tiêu biểu theo Đợt |
 |---|---|---|---|---|
-| **Bắc** (bản chơi thử, QD-93) | Nhà ngói đỏ 3 gian, cổng làng rêu, cây đa, giếng đá ong, đồi chè, ao sen | Ấm, chậm, hay dùng ca dao thời tiết | Cây ngắn ngày nhanh hơn | Đợt 1: Cải cúc & Su hào. Đợt 2: Chè Thái, Gà Đông Tảo. Đợt 3: Vải thiều, Nhãn lồng, Cá trắm đen. Đợt 4: Bưởi Diễn, Lợn bản, Cá anh vũ. Đợt 5: Rươi Tứ Kỳ |
+| **Bắc** (bản chơi thử, QD-21) | Nhà ngói đỏ 3 gian, cổng làng rêu, cây đa, giếng đá ong, đồi chè, ao sen | Ấm, chậm, hay dùng ca dao thời tiết | Cây ngắn ngày nhanh hơn | Đợt 1: Cải cúc & Su hào. Đợt 2: Chè Thái, Gà Đông Tảo. Đợt 3: Vải thiều, Nhãn lồng, Cá trắm đen. Đợt 4: Bưởi Diễn, Lợn bản, Cá anh vũ. Đợt 5: Rươi Tứ Kỳ |
 | **Trung – Tây Nguyên** | Nhà rường, nhà sàn đất đỏ bazan, đèn lồng, rặng dừa biển | "Răng, rứa, mô, tê" | Xưởng nhanh hơn | Tỏi Lý Sơn, Thanh long, Dê Ninh Thuận, Nho, Hồ tiêu, Cà phê BMT, Hươu sao, Tôm hùm Phú Yên |
 | **Nam** | Nhà ba gian ven kênh, cầu khỉ, xuồng ba lá, đầm sen Đồng Tháp | "Nghen, dữ thần, hết sảy" | Thủy sản thêm sản lượng | Bông điên điển, Khóm, Vịt chạy đồng, Măng cụt, Sầu riêng Ri6, Nhà yến, Cua Cà Mau |
 
@@ -43,7 +43,7 @@ ID chính xác của từng đặc sản: dữ liệu (`CROP_N/C/S..`, `ANI_N/C/
 
 **Thú cưng:** Chó Xoáy Phú Quốc (giữ nhà, đi theo Bác Bảy ở cảnh mở đầu), Mèo Tam Thể, Ngỗng, Trâu Đen, Chim Sáo.
 
-### TG-30 · Mười Chương Gia Phả (QD-10, QD-85)
+### TG-30 · Mười Chương Gia Phả (QD-10, QD-28)
 - Mục tiêu đo được, cấp mở và thưởng của từng chương ở `src/data/quests.ts` (nguồn chuẩn). Bảng dưới chỉ có tên và nội dung.
 - Mỗi chương có một lựa chọn: **tình nghĩa** (Phong Thủy, Nghĩa Xóm) hoặc **thực dụng** (vàng).
 - Thứ tự chơi khác số chương, vì chương được gắn theo Đợt phát hành.
@@ -63,7 +63,7 @@ ID chính xác của từng đặc sản: dữ liệu (`CROP_N/C/S..`, `ANI_N/C/
 
 **Lỗi cần sửa khi làm lại dữ liệu nhiệm vụ:**
 - Ch.7 cần Kén Tằm nhưng Tằm lại mở *bằng* Ch.7. Hiện có đường thoát qua Nón lá; khi làm lại nên mở Tằm ở Ch.6.
-- Ch.4–5 dựa vào tính năng nhiều miền; bản 1 miền cần mục tiêu thay thế (QD-85).
+- Ch.4–5 dựa vào tính năng nhiều miền; bản 1 miền cần mục tiêu thay thế (QD-28).
 
 ### TG-40 · Cảnh mở đầu "Bức Thư Trong Chiếc Tráp Gỗ Lim"
 1. **Chiều cuối Thu.** Cổng làng rêu phong; nhà ngói đổ nát bên giếng đá ong. Bác Bảy cùng Chó Xoáy trao tráp: Sổ Gia Phả, một túi hạt Lúa tổ tiên, tờ khế ước.

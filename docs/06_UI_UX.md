@@ -17,14 +17,18 @@ Mọi thay đổi giao diện phải chụp ở 1280×720 và 844×390 (điện 
 ### UI-20 · Điều khiển lai (QD-13)
 | Vùng | Thao tác |
 |---|---|
-| Nửa trái | Joystick ảo nổi (hiện ở chỗ chạm) để đi |
+| Góc dưới trái | Joystick ảo nổi (hiện ở chỗ chạm) để đi |
 | Chạm vào đất trống | Nhân vật tự tìm đường tới đó |
 | Chạm vào ô / chuồng / xưởng / NPC | Ở gần thì làm ngay bằng công cụ phù hợp (GP-02); ở xa thì nhân vật tự đi tới rồi làm |
 | Giữ và kéo trên các ô | Làm cả loạt: gặt, tưới, gieo (kiểu kéo để thu của Green Farm 3) |
 | Góc phải | Nút hành động theo ngữ cảnh + thanh công cụ 5–8 ô (cuốc, bình tưới, liềm, túi hạt, rìu, thức ăn, cần câu) |
 | Kéo hai ngón / kéo ở vùng trống | Di chuyển camera |
 
-Phân biệt chạm với kéo: dịch quá 12 px là kéo, khi nhả thì không thực hiện thao tác. Joystick chỉ nhận ở nửa trái, để không tranh với kéo camera.
+Phân biệt chạm với kéo: dịch quá 12 px là kéo, khi nhả thì không thực hiện thao tác. Joystick chỉ nhận ở góc dưới trái (~1/3 rộng, ~40% cao), để không tranh với kéo camera.
+
+**Wireframe (P0-5):** [`docs/wireframes/hud-dieu-khien-lai.html`](wireframes/hud-dieu-khien-lai.html), ảnh 1280×720 và 844×390 cùng thư mục. Mọi nút ≥ 44 px ở cả 2 cỡ.
+- **Phát hiện ở 844×390:** thanh công cụ 2 hàng + dock che gần nửa bản đồ.
+- **Luật:** vì công cụ tự chọn theo đối tượng (GP-02), thanh công cụ mặc định **thu gọn** thành 1 nút hiện công cụ đang dùng; chạm để mở 8 ô. Ở màn cao < 420 px thì dock chỉ hiện icon.
 
 ### UI-30 · HUD nông trại
 - **Góc trên trái:** chân dung, cấp + thanh XP.
