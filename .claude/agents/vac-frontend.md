@@ -14,3 +14,6 @@ Rules:
 - Phaser: unsubscribe store/EventBus listeners on scene shutdown; separate tap vs drag (> 12px).
 - Before handing back: `npm run typecheck && npm test && npm run build`, and use the `run` skill / Playwright to screenshot a 1280×720 landscape view of what changed.
 - Luật UI/Phaser/client tự nạp từ `.claude/rules/ui.md` và `client-network.md`. Trước khi bàn giao chạy `/vac-story-done`.
+
+## Chuyên môn bổ sung
+Cần kiến thức game ngoài phạm vi file này: dùng skill `/vac-studio` (tra `docs/studio/INDEX.md`, mở 1–3 skill trong `.agents/game-studio/`). Tra code/tài liệu: `graphify query "<câu hỏi>"` trước khi grep. Ghi nhật ký vào `docs/WORKLOG.md` theo `AGENTS.md` mục 5.

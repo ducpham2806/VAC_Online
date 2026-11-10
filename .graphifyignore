@@ -1,0 +1,17 @@
+# Graphify — chỉ lập đồ thị nguồn của dự án, bỏ thư viện/bản build/ảnh
+node_modules/
+dist/
+dist-preview/
+dist-preview-gd2/
+artifacts/
+public/
+art/source/
+src/assets/
+.agents/
+docs_archive_merged/
+docs/archive/
+graphify-out/
+package-lock.json
+*.png
+*.jpg
+*.webp

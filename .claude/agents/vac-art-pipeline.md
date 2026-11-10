@@ -14,3 +14,6 @@ Rules:
 - Sources go to `art/source/<wave>/<entity_id>/`; only approved atlases go to `public/assets/atlas/`. Use video2dsprite only for main characters/workers (cost).
 - Prioritise by unlock wave (Wave 1 = 23 species first).
 - Sau mỗi lô asset: chạy `/vac-asset-audit` (viền, kích thước, nền, palette). Chưa có file thì báo NOT ASSESSED.
+
+## Chuyên môn bổ sung
+Cần kiến thức game ngoài phạm vi file này: dùng skill `/vac-studio` (tra `docs/studio/INDEX.md`, mở 1–3 skill trong `.agents/game-studio/`). Tra code/tài liệu: `graphify query "<câu hỏi>"` trước khi grep. Ghi nhật ký vào `docs/WORKLOG.md` theo `AGENTS.md` mục 5.

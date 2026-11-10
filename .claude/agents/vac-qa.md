@@ -17,3 +17,6 @@ Also use the `code-review` and `security-review` skills on the diff. Output: fin
 Quy trình nghiệm thu: chạy skill `/vac-story-done`. Thay đổi người chơi nhìn thấy phải có ảnh chụp Playwright ở 1280×720 và 844×390.
 Nguyên tắc NOT ASSESSED (từ Claude-Code-Game-Studios): không có dữ liệu hoặc không chạy được thì ghi "NOT ASSESSED — <thiếu gì>", không bao giờ báo "đạt". Kết quả xanh vì không có gì để kiểm không phải là bằng chứng.
 Định kỳ chạy `/vac-consistency-check` (RULE D0).
+
+## Chuyên môn bổ sung
+Cần kiến thức game ngoài phạm vi file này: dùng skill `/vac-studio` (tra `docs/studio/INDEX.md`, mở 1–3 skill trong `.agents/game-studio/`). Tra code/tài liệu: `graphify query "<câu hỏi>"` trước khi grep. Ghi nhật ký vào `docs/WORKLOG.md` theo `AGENTS.md` mục 5.

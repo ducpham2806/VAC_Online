@@ -24,3 +24,11 @@
 
 ## agent-sprite-forge
 - Nguồn: https://github.com/0x0funky/agent-sprite-forge. Giấy phép MIT. Dùng dưới dạng plugin (`.claude/settings.json`), không chép mã vào repo.
+
+## Game_Studio_Agent (thư viện đầy đủ)
+- Nguồn: https://github.com/ducpham2806/Game_Studio_Agent, commit `c5dac4629d4f61972cc16033bbc13b4ac8e16aaa`. Tổng hợp từ Claude-Code-Game-Studios (MIT) và gamedev-skills/awesome-gamedev-agent-skills; giấy phép theo từng nguồn gốc ghi trong thư viện.
+- Cài nguyên vẹn ở `.agents/game-studio/` (297 file), không sửa; danh sách và mã băm: `docs/studio/SOURCE-MANIFEST.md`. Điều chỉnh cho VAC nằm ở `docs/studio/INDEX.md` và `.claude/skills/vac-studio/`.
+
+## graphify
+- Nguồn: gói PyPI `graphifyy` 0.9.105 (lệnh `graphify`). Cài khi chạy bằng `scripts/graphify-build.sh`, không chép mã vào repo.
+- `.claude/skills/graphify/SKILL.md` là bản skill do lệnh `graphify install --platform claude` sinh ra, chép nguyên văn để mọi phiên của dự án dùng được.

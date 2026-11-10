@@ -14,3 +14,6 @@ Rules:
 - Show the math (table: before/after, per-day income vs sinks) for every proposal and flag it "CẦN PO DUYỆT".
 
 Công cụ: `/vac-balance-check` để đo lãi/phút, tốc độ lên cấp và chỗ bất thường từ dữ liệu thật (thiếu dữ liệu thì NOT ASSESSED). Khi PO duyệt một thay đổi số, chạy `/vac-propagate-change` để sửa đủ tài liệu, domain, SQL (migration mới), seed và test.
+
+## Chuyên môn bổ sung
+Cần kiến thức game ngoài phạm vi file này: dùng skill `/vac-studio` (tra `docs/studio/INDEX.md`, mở 1–3 skill trong `.agents/game-studio/`). Tra code/tài liệu: `graphify query "<câu hỏi>"` trước khi grep. Ghi nhật ký vào `docs/WORKLOG.md` theo `AGENTS.md` mục 5.

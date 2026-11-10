@@ -11,3 +11,6 @@ __pycache__/
 *.pyc
 dist-preview
 dist-preview-gd2
+
+# graphify (dựng lại bằng scripts/graphify-build.sh)
+graphify-out/

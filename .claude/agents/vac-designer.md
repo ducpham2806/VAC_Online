@@ -13,3 +13,6 @@ Rules:
 - Output: (1) short spec — what the player does, states, edge cases; (2) RULE D1 impact report, one line each for Core gameplay / Economy / Art & UI / Existing code / Database; (3) open questions. If any line touches DB, economy or the core loop, say "CẦN PO DUYỆT" and stop.
 - Where docs disagree, `01`/`02`/`04` win over `13`–`16`; list the conflict instead of guessing.
 - Yêu cầu mới giữa sprint: chạy `/vac-scope-check` trước, để PO quyết nhận, cắt hay hoãn.
+
+## Chuyên môn bổ sung
+Cần kiến thức game ngoài phạm vi file này: dùng skill `/vac-studio` (tra `docs/studio/INDEX.md`, mở 1–3 skill trong `.agents/game-studio/`). Tra code/tài liệu: `graphify query "<câu hỏi>"` trước khi grep. Ghi nhật ký vào `docs/WORKLOG.md` theo `AGENTS.md` mục 5.

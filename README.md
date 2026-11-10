@@ -5,8 +5,10 @@ Webgame / PWA → Mobile App thể loại **Cozy Vietnamese Pixel Art Farm Tycoo
 
 - Thiết kế đích: bộ tài liệu `00` → `16` (bắt đầu từ `00_MASTER_BIBLE…md`).
 - **Hiện trạng thực tế & kế hoạch sprint:** `17_PROJECT_AUDIT_VA_KE_HOACH_TAI_CAU_TRUC.md`.
-- Quy tắc cho AI agent: `AGENTS.md`.
-- **Việc cần làm (PO + dev):** `VIEC_CAN_LAM.md`.
+- Quy tắc cho AI agent: `AGENTS.md` (Claude Code nạp qua `CLAUDE.md`).
+- **Việc cần làm (PO + dev):** `VIEC_CAN_LAM.md`. Kế hoạch làm lại (đề xuất): `docs/PROJECT-PLAN.md`, đánh giá: `docs/REVIEW-2026-11-10.md`.
+- **Nhật ký / bàn giao:** `docs/WORKLOG.md`, `docs/COMPLETED.md`, `docs/SESSION-HANDOFF.md` (quy trình: `docs/WORKFLOW.md`).
+- **Bộ công cụ AI:** thư viện Game Studio `.agents/game-studio/` (tra `docs/studio/INDEX.md`), đồ thị tri thức Graphify (`npm run graph`).
 
 ## Chạy nhanh
 
@@ -26,6 +28,7 @@ npm run typecheck   # tsc cho app + test
 npm test            # vitest: luật domain, catalog & 5 Đợt, store, auth, 25 QC test case, seed
 npm run test:sql    # test migration + RPC trên Postgres tạm (cần Postgres 16 cục bộ hoặc PGHOST)
 npm run build       # bản production (ẩn công cụ debug)
+npm run check:docs  # trần ký tự tài liệu, link, nhật ký, bản ghim Game Studio
 ```
 
 ## Kết nối Supabase
