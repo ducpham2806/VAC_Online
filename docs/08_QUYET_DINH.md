@@ -6,7 +6,6 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-82 | Gà 48×48 trông to gần bằng người 48×64 (`art/source/p0_ai/scene_x3.png`): giữ, hay thu vật nuôi nhỏ về 32×32? Lúa có sẵn ụ bùn, đặt lên ô đất bị 2 lớp đất: tạo lại ảnh lúa không ụ bùn? | `05` AR-20, P1 | Thu gà về ~40×40 trong khung 48; tạo lại lúa không ụ bùn |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -46,3 +45,4 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-33 | 10/11 | PO không cấp API key ảnh; P0-2 làm mẫu bằng code + prompt cho PO tự tạo (thay đề xuất "cấp key") | `07` LT-10 |
 | QD-80 | 10/11 | Ảnh thật: PO tự tạo bằng ChatGPT/Gemini theo `art/prompts/`, AI hậu kỳ (`tools/art/import_sheet.py`). 5 tấm mẫu P0-2 đã nhập | `05` AR-50 |
 | QD-81 | 10/11 | Thay QD-20 (phần DB): không tạo project mới, dùng project Supabase cũ của MVP. Dữ liệu MVP bỏ được; được viết lại schema **một lần** khi chuyển sang ADR-002, sau đó lại additive-only | `04` KY-31 |
+| QD-82 | 10/11 | Vật nuôi nhỏ thu hình về ~40×40 trong khung 48×48; cây không mang ụ bùn riêng (ô đất đã có đất). Đã áp bằng `import_sheet.py` (`fit`, `strip_soil`) | `05` AR-20, AR-50 |

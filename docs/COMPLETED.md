@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-1…3 · Nền bản thử đi bộ · 10/11/2026 — DONE (chưa có người chơi thử)
+- Atlas `slice` từ ảnh PO tạo (QD-80, QD-82), audit đạt.
+- Engine luật dùng chung ở `src/engine/applyActions.ts` (ADR-001).
+- `?p1`: scene điền trang Bắc Bộ, nhân vật đi 4 hướng bằng joystick nổi hoặc chạm-đi-tới (A*), kéo xem bản đồ (UI-20). Ảnh `docs/screenshots/p1-3-*.png`.
+- Chưa: thao tác ô, HUD, lưu, server (P1-4…8).
+
 ## P0 · Chốt nền · 10/11/2026 — DONE (trừ P0-6)
 - **Quyết định:** PO duyệt toàn bộ đề xuất (QD-18…32); không cấp API key ảnh (QD-33).
 - **P0-3 ADR + dữ liệu:** ADR-001 một bản luật TS trên Edge Function; ADR-002 `farm_states` + `ledger` + khóa lạc quan; ADR-003 một nguồn dữ liệu `data/`. Thêm cột `Seasons` (48 cây) và lịch mùa `src/domain/season.ts`, có test.

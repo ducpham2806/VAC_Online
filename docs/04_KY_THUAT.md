@@ -83,9 +83,10 @@ Lý do và phương án: [ADR-001](adr/ADR-001-mot-ban-luat.md) (một bản lu�
 
 ### KY-90 · Hiện trạng code (MVP cũ, đến 10/11/2026)
 Code đang chạy theo **thiết kế cũ**: chạm thẳng, không có mùa, nhân vật chỉ là hình.
-- **Scene:** chỉ có `BootScene` và `FarmScene`.
+- **Scene:** game mặc định chỉ có `BootScene` và `FarmScene`. Bản thử P1 (`?p1`): `src/game/slice/EstateScene.ts` — đi bộ joystick + chạm-đi-tới, chưa có thao tác ô/HUD (LT-12).
+- **Engine dùng chung:** `src/engine/applyActions.ts` (ADR-001), Edge Function thử nghiệm đóng gói từ đây.
 - **Store:** 6 slice.
-- **Test:** 178 test TS, 7 file test SQL.
+- **Test:** 201 test TS, 7 file test SQL, 7 test asset.
 - **DB thật:** đã chạy `0001 → 0014` + seed; `0015` chưa áp; `app_game_stage() = 1`.
 - **Phần nên giữ khi làm lại:**
   - hàm luật `src/domain/*` + test;

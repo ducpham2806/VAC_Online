@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { SEASON_EPOCH_MS } from '../../src/domain/season';
-import { applyActions, MAX_ACTIONS_PER_BATCH, newFarmSave } from './engine';
+import { SEASON_EPOCH_MS } from '../domain/season';
+import { applyActions, MAX_ACTIONS_PER_BATCH, newFarmSave } from './applyActions';
 
 const DAY = 86_400_000;
 const SPRING = SEASON_EPOCH_MS + 2 * DAY; // mùa Xuân

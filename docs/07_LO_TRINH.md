@@ -1,7 +1,7 @@
 # 07 · Lộ trình
 
 **Sở hữu:** các pha phát triển, cổng kiểm chứng, nội dung mỗi pha, thẻ việc đang chạy. **Không chứa:** luật chơi (`01`), con số (`03`), lý do chiến lược dài (`docs/REVIEW-2026-11-10.md`).
-Trạng thái: PO duyệt lộ trình này (QD-18, QD-20). Việc tài liệu (LT-11) đã được PO cho làm trước (QD-17).
+Trạng thái: PO duyệt lộ trình này (QD-18, QD-20). Đang chạy P1 (LT-12), trừ P0-6. Việc tài liệu (LT-11) đã được PO cho làm trước (QD-17).
 
 ### LT-01 · Nguyên tắc
 1. Mỗi pha kết thúc bằng cổng đo được trên người chơi thật. Chưa qua cổng thì không mở nội dung mới.
@@ -52,6 +52,23 @@ Danh sách loài cụ thể của mỗi Đợt nằm ở dữ liệu (`unlockWav
 | P0-4 | Thử nghiệm kỹ thuật: "gieo → thu → bán" chạy luật TS trên Edge Function có khóa phiên bản, đo độ trễ | P0-3 | DONE 10/11 ở máy cục bộ (`prototypes/p0-4-edge/`) |
 | P0-6 | Đo độ trễ P0-4 trên Supabase thật (project cũ, mục tiêu p95 < 400 ms); bảng mới không trùng bảng MVP nên áp được kiểu thêm | QD-81 | BLOCKED: kết nối Supabase của phiên chưa thấy project VAC |
 | P0-5 | Wireframe mới cho HUD điều khiển lai (`06` UI-20) | P0-1 | DONE 10/11 (`docs/wireframes/`) |
+
+### LT-12 · Thẻ việc P1 (vertical slice LT-03)
+Thứ tự: làm phần client chạy offline trước (một bản luật chạy ngay trên máy, ADR-001), nối server sau khi có quyền project VAC (P0-6). Bản thử mở bằng `?p1` trên URL, game MVP cũ vẫn chạy như cũ cho tới P1-12.
+| ID | Việc | Nghiệm thu | Phụ thuộc | Trạng thái |
+|---|---|---|---|---|
+| P1-1 | Atlas `slice` từ `art/source/p0_ai/` (QD-82: gà ~40×40, lúa không ụ bùn) | `public/assets/atlas/slice.*`, `/vac-asset-audit` 0 lỗi | P0-2 | DONE 10/11 |
+| P1-2 | Đưa engine P0-4 vào `src/engine/` (dùng chung client + Edge Function) | prototype import từ `src/engine`; test cũ vẫn qua | P0-4 | DONE 10/11 |
+| P1-3 | Scene điền trang `EstateScene`: bản đồ ô 32×32, nhân vật đi 4 hướng; joystick nổi góc dưới trái + chạm đất để tự tìm đường (UI-20) | Chụp 1280×720 và 844×390; test tìm đường | P1-1 | DONE 10/11 |
+| P1-4 | Chạm ô → tự chọn công cụ (GP-02); xa thì đi tới rồi làm; kéo làm cả loạt ≤ 12 ô (KT-16); gọi engine | Test domain; quay màn hình gieo → tưới → gặt | P1-2, P1-3 | TODO |
+| P1-5 | HUD lai React (UI-20, UI-30): nút hành động, thanh công cụ thu gọn, mùa + "còn N ngày", 🪙 ⚡ | Chụp 2 cỡ, mọi nút ≥ 44 px | P1-3 | TODO |
+| P1-6 | Mùa trên bản đồ: cỏ đổi màu theo mùa (AR-11), khay giống lọc theo mùa, công tắc đổi mùa cho bản thử (chỉ DEV/thử) | Test lọc mùa; chụp Xuân/Đông | P1-5 | TODO |
+| P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | TODO |
+| P1-8 | Schema mới trên project VAC (viết lại một lần, QD-81): `farm_states`, `ledger`, `_commit_farm_state`, Edge Function `apply-actions` | test SQL; p95 < 400 ms (gộp P0-6) | Quyền Supabase project VAC; PO duyệt migration | BLOCKED |
+| P1-9 | Nội dung 8 loài 2 mùa Bắc Bộ (5 cây, 2 vật nuôi, 1 cá) + art theo prompt; Bếp Củi; bảng đơn HTX | Dữ liệu từ `catalog.csv`; `/vac-balance-check` | P1-4; PO duyệt danh sách loài | TODO |
+| P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4 | TODO |
+| P1-11 | 2 NPC có tim, Chương 1, hướng dẫn 15 phút đầu (GP-50, GP-62, TG-30) | Người mới chơi hết hướng dẫn không kẹt | P1-5, P1-10 | TODO |
+| P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11 | TODO |
 
 ### LT-11 · Việc tài liệu đã làm
 10/11: thay bộ `00 → 17` bằng `docs/00 → 08`, gộp nội dung đáng giữ, đổi hướng theo QD-12…15. Chi tiết: `docs/COMPLETED.md`.

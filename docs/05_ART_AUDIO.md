@@ -76,6 +76,7 @@ Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixe
    - Prompt mẫu: `art/prompts/`.
    - Nguồn ảnh: QD-33 (không dùng API key), QD-80 (PO tự tạo bằng ChatGPT/Gemini).
 2. **Chuẩn hóa:** `tools/art/import_sprite.py` (1 ảnh → 1 khung) hoặc `tools/art/import_sheet.py` (1 tấm nhiều khung, chung tỉ lệ thu, thu bằng màu đa số); cả hai tách `#FF00FF`, alpha 0/255, khóa palette, viền ấm.
+   - QD-82: vật nuôi thu về ~40×40 trong khung 48; cây lọc bỏ ụ bùn/nước (`strip_soil`).
    - Ảnh AI hay sai hướng (cả 2 hàng trái/phải cùng quay phải) và vẽ khung tối quanh ô nền: script lật gương hàng trái và cắt mép ô.
 3. **Đóng gói:** `tools/art/pack_atlas.py` → `public/assets/atlas/<lô>.png/.json`. Phaser đặt tên khung `<ID>_<giai đoạn>`.
 4. **Kiểm:** `/vac-asset-audit`. Mẫu hướng hình theo chuẩn này: `tools/art/codeart_p0_samples.py` → `art/source/p0_samples/` (lúa 4 giai đoạn 32×48, gà 48×48, cá 32×32, nhân vật đi 4 hướng × 4 khung, ô đất/cỏ 2 mùa); prompt cho ảnh thật: `art/prompts/p0_samples.md`; ảnh thật đã nhập: `art/source/p0_ai/` (`preview_x4.png`, cảnh ghép `scene_x3.png`). Thiếu khung thì game dùng hình vẽ bằng code (`codeart_*.py`).

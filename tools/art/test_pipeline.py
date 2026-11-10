@@ -111,3 +111,23 @@ class ImportSheetTest(unittest.TestCase):
         for t in tiles:
             self.assertEqual(t.size, (32, 32))
             self.assertEqual({px[3] for px in t.getdata()}, {255}, "ô nền không trong suốt")
+
+
+class StripSoilTest(unittest.TestCase):
+    """QD-82: cây không mang ụ bùn riêng (ô đất đã có đất)."""
+
+    def test_bo_bun_giu_la(self):
+        from import_sheet import import_sheet
+        im = Image.new("RGB", (400, 400), (255, 0, 255))
+        d = ImageDraw.Draw(im)
+        d.ellipse((60, 300, 340, 380), fill=(110, 65, 33))      # ụ bùn nâu
+        d.rectangle((180, 80, 220, 340), fill=(78, 160, 34))    # thân lá xanh
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "c.png")
+            im.save(path)
+            (frame,) = import_sheet(path, "strip:1", (32, 48), PALETTE, soil=True)
+        colors = {px[:3] for px in frame.getdata() if px[3]}
+        self.assertFalse(any(abs(r - 110) < 20 and abs(g - 65) < 20 and abs(b - 33) < 20 for r, g, b in colors), "không còn màu bùn")
+        self.assertTrue(any(g > r and g > b for r, g, b in colors), "vẫn còn lá xanh")
+        bbox = frame.getbbox()
+        self.assertLess(bbox[2] - bbox[0], 16, "khung sát thân cây, không rộng theo ụ bùn")

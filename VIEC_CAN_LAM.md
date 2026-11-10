@@ -11,7 +11,7 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~QD-81: Supabase cho bản làm lại~~ ✅ 2026-11-10 — dùng project cũ, dữ liệu MVP bỏ được.
 - [x] ~~QD-80: tạo 5 ảnh mẫu~~ ✅ 2026-11-10 — đã nhập vào `art/source/p0_ai/`.
 - [ ] Kết nối Supabase của Claude đang trỏ vào tài khoản chỉ có project "Nam_A_CRM". Cần nối tài khoản/tổ chức chứa project VAC (`znabynzbcimpesrxxxsz`) → mở khóa P0-6.
-- [ ] QD-82: cỡ gà + ảnh lúa không ụ bùn.
+- [x] ~~QD-82: cỡ gà + ảnh lúa không ụ bùn~~ ✅ 2026-11-10 (áp bằng script, không cần tạo lại ảnh).
 - [ ] Trong lúc chờ: tạm dừng mở GĐ2 bản cũ (A1) hay vẫn làm tiếp?
 
 ### A1. Supabase / Vercel (bản MVP cũ — chỉ cần nếu vẫn mở GĐ2 cũ)
@@ -32,7 +32,15 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P0-4 Thử nghiệm Edge Function một bản luật (máy cục bộ)~~ ✅ 2026-11-10
 - [x] ~~P0-5 Wireframe HUD điều khiển lai~~ ✅ 2026-11-10
 - [ ] P0-6 Đo độ trễ trên Supabase thật (chờ kết nối Supabase tới project VAC)
-- [ ] Lập thẻ P1 vertical slice
+- [x] ~~Lập thẻ P1 vertical slice~~ ✅ 2026-11-10 (`docs/07_LO_TRINH.md` LT-12)
+
+## C. Đang làm — P1 Vertical slice (`docs/07_LO_TRINH.md` LT-12)
+- [x] ~~P1-1 Atlas `slice`~~ ✅ 2026-11-10
+- [x] ~~P1-2 Engine vào `src/engine/`~~ ✅ 2026-11-10
+- [x] ~~P1-3 Scene điền trang đi bộ (`?p1`)~~ ✅ 2026-11-10
+- [ ] P1-4 Chạm ô / kéo làm cả loạt
+- [ ] P1-5 HUD lai
+- [ ] PO duyệt danh sách 8 loài cho P1-9 (khi tới thẻ đó)
 
 ## F. Nhật ký
 Nhật ký chính: [docs/WORKLOG.md](docs/WORKLOG.md) (≤ 3 mục). Việc đã xong: [docs/COMPLETED.md](docs/COMPLETED.md).

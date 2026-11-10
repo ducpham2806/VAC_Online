@@ -27,12 +27,14 @@ P0_OUT = os.path.join(ROOT, "art", "source", "p0_ai")
 
 DIRS = ("down", "up", "left", "right")
 # Tên khung trùng với mẫu vẽ bằng code (codeart_p0_samples.py) để so cạnh nhau.
+# Tùy chọn: fit = cỡ tối đa của hình trong khung (QD-82: gà ~40x40 trong khung 48x48);
+# strip_soil = bỏ ụ bùn/nước ở đáy cây vì ô đất đã có đất (QD-82).
 P0_SHEETS = [
-    ("CROP_01_sheet.png", "strip:4", "32x48", [f"CROP_01_{i}" for i in range(4)]),
-    ("ANI_01_sheet.png", "strip:2", "48x48", ["ANI_01_0", "ANI_01_1"]),
-    ("AQUA_01_sheet.png", "strip:2", "32x32", ["AQUA_01_0", "AQUA_01_1"]),
-    ("farmer_walk_sheet.png", "grid:4x4", "48x64", [f"farmer_walk_{d}_{f}" for d in DIRS for f in range(4)]),
-    ("tiles_sheet.png", "tiles:4", "32x32", ["tile_tilled_dry", "tile_tilled_wet", "tile_grass_xuan", "tile_grass_dong"]),
+    ("CROP_01_sheet.png", "strip:4", "32x48", [f"CROP_01_{i}" for i in range(4)], {"strip_soil": True}),
+    ("ANI_01_sheet.png", "strip:2", "48x48", ["ANI_01_0", "ANI_01_1"], {"fit": (40, 40)}),
+    ("AQUA_01_sheet.png", "strip:2", "32x32", ["AQUA_01_0", "AQUA_01_1"], {}),
+    ("farmer_walk_sheet.png", "grid:4x4", "48x64", [f"farmer_walk_{d}_{f}" for d in DIRS for f in range(4)], {}),
+    ("tiles_sheet.png", "tiles:4", "32x32", ["tile_tilled_dry", "tile_tilled_wet", "tile_grass_xuan", "tile_grass_dong"], {}),
 ]
 
 
@@ -131,7 +133,32 @@ def to_image(oi: np.ndarray, oa: np.ndarray, palette: np.ndarray, size: tuple[in
     return canvas
 
 
-def import_sheet(path: str, layout: str, size: tuple[int, int], palette_list: list[tuple[int, int, int]]) -> list[Image.Image]:
+def plant_mask(rgb: np.ndarray) -> np.ndarray:
+    """True ở pixel lá/thân/bông (xanh lá, vàng lúa); False ở bùn nâu, nước xanh lam, viền."""
+    f = rgb.astype(np.float32) / 255
+    mx, mn = f.max(axis=2), f.min(axis=2)
+    d = np.where(mx - mn == 0, 1e-6, mx - mn)
+    r, g, b = f[..., 0], f[..., 1], f[..., 2]
+    h = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) * 60
+    sat = (mx - mn) / np.where(mx == 0, 1, mx)
+    return (h >= 36) & (h <= 150) & (sat > 0.35) & (mx > 0.3)
+
+
+def strip_soil(rgb: np.ndarray, alpha: np.ndarray, boxes: list[tuple[int, int, int, int]], band: float = 1.0) -> list[tuple[int, int, int, int]]:
+    """Ở dải đáy mỗi khung, chỉ giữ pixel cây; trả bbox mới sát phần còn lại."""
+    keep = plant_mask(rgb)
+    out = []
+    for x0, y0, x1, y1 in boxes:
+        yb = y1 - int((y1 - y0) * band)
+        alpha[yb:y1, x0:x1] &= keep[yb:y1, x0:x1]
+        sub = alpha[y0:y1, x0:x1]
+        ys, xs = np.flatnonzero(sub.sum(axis=1)), np.flatnonzero(sub.sum(axis=0))
+        out.append((x0 + int(xs[0]), y0 + int(ys[0]), x0 + int(xs[-1]) + 1, y0 + int(ys[-1]) + 1))
+    return out
+
+
+def import_sheet(path: str, layout: str, size: tuple[int, int], palette_list: list[tuple[int, int, int]],
+                 fit: tuple[int, int] | None = None, soil: bool = False) -> list[Image.Image]:
     palette = np.array(palette_list, dtype=np.int32)
     rgb = np.asarray(Image.open(path).convert("RGB"))
     kind, arg = layout.split(":")
@@ -142,7 +169,10 @@ def import_sheet(path: str, layout: str, size: tuple[int, int], palette_list: li
     alpha &= np.roll(alpha, 1, 0) | np.roll(alpha, -1, 0)
     alpha &= np.roll(alpha, 1, 1) | np.roll(alpha, -1, 1)
     boxes = split_strip(alpha, int(arg)) if kind == "strip" else split_grid(alpha, *map(int, arg.split("x")))
-    scale = min(min((size[0] - 2) / (x1 - x0), (size[1] - 2) / (y1 - y0)) for x0, y0, x1, y1 in boxes)
+    if soil:
+        boxes = strip_soil(rgb, alpha, boxes)
+    fw, fh = fit or (size[0] - 2, size[1] - 2)
+    scale = min(min(fw / (x1 - x0), fh / (y1 - y0)) for x0, y0, x1, y1 in boxes)
     idx = palette_index(rgb, palette)
     frames = []
     for box in boxes:
@@ -201,8 +231,9 @@ def scene(f: dict[str, Image.Image]) -> Image.Image:
 
 def run_p0(palette: list[tuple[int, int, int]]) -> int:
     named: dict[str, Image.Image] = {}
-    for fname, layout, size, names in P0_SHEETS:
-        frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette)
+    for fname, layout, size, names, opt in P0_SHEETS:
+        frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette,
+                              fit=opt.get("fit"), soil=opt.get("strip_soil", False))
         named.update(zip(names, frames))
     # Ảnh AI vẽ cả hàng 3 và 4 đều quay mặt sang phải: hàng "left" lấy bản lật gương của hàng 3.
     for f in range(4):

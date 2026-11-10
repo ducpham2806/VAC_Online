@@ -18,6 +18,8 @@ import sys
 from PIL import Image
 
 PADDING = 2
+# Ảnh xem nhanh do import_sheet.py / codeart_*.py sinh ra, không phải khung sprite.
+SKIP_PREFIXES = ("preview_", "scene_")
 
 
 def collect(src: str) -> list[tuple[str, str]]:
@@ -26,7 +28,7 @@ def collect(src: str) -> list[tuple[str, str]]:
         d = os.path.join(src, entity)
         if not os.path.isdir(d):
             stem, ext = os.path.splitext(entity)
-            if ext.lower() == ".png":
+            if ext.lower() == ".png" and not stem.startswith(SKIP_PREFIXES):
                 frames.append((stem, d))
             continue
         for f in sorted(os.listdir(d)):
