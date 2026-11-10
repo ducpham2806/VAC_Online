@@ -229,6 +229,30 @@ def scene(f: dict[str, Image.Image]) -> Image.Image:
     return sc.resize((sc.width * 3, sc.height * 3), Image.Resampling.NEAREST)
 
 
+# AR-11: mùa Hạ/Thu làm bằng đổi màu cỏ Xuân trong bảng 64 màu (cùng hình). (độ lệch sắc độ, hệ số bão hòa, hệ số sáng)
+SEASON_SHIFT = {"ha": (8, 1.15, 0.85), "thu": (-15, 0.7, 0.85)}
+
+
+def season_variant(img: Image.Image, shift: tuple[float, float, float], palette_list: list[tuple[int, int, int]]) -> Image.Image:
+    """Đổi sắc độ/bão hòa/độ sáng từng pixel rồi khóa lại vào bảng (không sinh màu ngoài bảng)."""
+    import colorsys
+    dh, ks, kv = shift
+    palette = np.array(palette_list, dtype=np.int32)
+    rgba = np.asarray(img.convert("RGBA")).copy()
+    out = rgba.copy()
+    for y in range(rgba.shape[0]):
+        for x in range(rgba.shape[1]):
+            r, g, b, a = (int(v) for v in rgba[y, x])
+            if not a:
+                continue
+            h, sat, val = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+            h = (h + dh / 360) % 1
+            nr, ng, nb = colorsys.hsv_to_rgb(h, min(1, sat * ks), min(1, val * kv))
+            c = np.array([nr * 255, ng * 255, nb * 255])
+            out[y, x, :3] = palette[((palette - c) ** 2).sum(axis=1).argmin()]
+    return Image.fromarray(out, "RGBA")
+
+
 def run_p0(palette: list[tuple[int, int, int]]) -> int:
     named: dict[str, Image.Image] = {}
     for fname, layout, size, names, opt in P0_SHEETS:
@@ -238,6 +262,8 @@ def run_p0(palette: list[tuple[int, int, int]]) -> int:
     # Ảnh AI vẽ cả hàng 3 và 4 đều quay mặt sang phải: hàng "left" lấy bản lật gương của hàng 3.
     for f in range(4):
         named[f"farmer_walk_left_{f}"] = named[f"farmer_walk_left_{f}"].transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    for name, shift in SEASON_SHIFT.items():
+        named[f"tile_grass_{name}"] = season_variant(named["tile_grass_xuan"], shift, palette)
     bad = save_all(named, P0_OUT, palette)
     from codeart_p0_samples import preview  # noqa: E402 — dùng chung bảng xem x4
     preview(named).save(os.path.join(P0_OUT, "preview_x4.png"))

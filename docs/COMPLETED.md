@@ -2,6 +2,11 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-6…7 · Mùa trên bản đồ, lưu cục bộ · 10/11/2026 — DONE (chưa có người chơi thử)
+- 4 mùa trên bản đồ (cỏ, ao, tán cây) theo AR-11, công tắc đổi mùa trong ⚙️ cho người chơi thử.
+- Tiến trình bản thử lưu trên máy, có phiên bản và kiểm bản hỏng; tải lại trang không mất.
+- Ảnh: `docs/screenshots/p1-6-*`.
+
 ## P1-4…5 · Chạm ô, làm cả loạt, HUD lai · 10/11/2026 — DONE (chưa có người chơi thử)
 - Vòng gieo → tưới → gặt → bán HTX chạy được trong `?p1`, mọi thay đổi qua engine dùng chung.
 - Chạm ô xa: nhân vật đi tới rồi làm; kéo trên ruộng: làm cả loạt ≤ 12 ô (KT-16); nút hành động dùng công cụ tự chọn (GP-02).

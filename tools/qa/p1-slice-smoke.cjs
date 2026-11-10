@@ -1,5 +1,6 @@
 /**
  * Kiểm thử khói bản thử P1 (?p1): đi tới, gieo/tưới/gặt cả loạt, nút hành động, Kho bán HTX, thanh công cụ,
+ * công tắc 4 mùa (P1-6), tải lại trang giữ tiến trình (P1-7),
  * chụp 1280x720 + 844x390 và báo nút < 44 px (UI-01).
  *   npx vite --port 5179 --strictPort &   (cần DEV để có window.__vacSlice)
  *   node tools/qa/p1-slice-smoke.cjs docs/screenshots
@@ -54,6 +55,32 @@ const { chromium } = require('playwright');
     // 7) mở thanh công cụ
     await p.getByRole('button', { name: 'Thanh công cụ' }).click(); await p.waitForTimeout(200);
     await p.screenshot({ path: `${out}/p1-5-hud-${w}x${h}.png` });
+    await p.getByRole('button', { name: 'Thanh công cụ' }).click(); // thu lại
+    // 8) công tắc mùa (P1-6): chụp từng mùa
+    for (const [name, key] of [['Mùa Hạ', 'ha'], ['Mùa Thu', 'thu'], ['Mùa Đông', 'dong']]) {
+      await p.getByRole('button', { name: 'Cài đặt' }).click();
+      await p.getByRole('button', { name }).click();
+      await p.getByRole('button', { name: 'Đóng' }).click();
+      await p.waitForTimeout(300);
+      const shown = await p.evaluate(() => window.__vacSlice.shownSeason());
+      log.push(['season-' + key, shown, await p.getByTestId('season').innerText()]);
+      if (w === 1280) await p.screenshot({ path: `${out}/p1-6-${key}-${w}x${h}.png` });
+    }
+    await p.getByRole('button', { name: 'Túi hạt' }).click(); await p.waitForTimeout(200);
+    log.push(['seeds-dong', (await p.locator('text=Chưa có giống nào').count()) > 0]);
+    await p.getByRole('button', { name: 'Đóng' }).click();
+    await p.getByRole('button', { name: 'Cài đặt' }).click();
+    if (w === 844) await p.screenshot({ path: `${out}/p1-6-settings-${w}x${h}.png` });
+    await p.getByRole('button', { name: 'Lịch thật' }).click();
+    await p.getByRole('button', { name: 'Đóng' }).click();
+    // 9) gieo 1 ô rồi tải lại trang (P1-7)
+    s = await toScreen(5, 7); await p.mouse.click(s.x, s.y); await p.waitForTimeout(800);
+    const before = await st();
+    await p.reload();
+    await p.waitForFunction(() => window.__vacSlice && window.__vacSlice.sys.isActive() && window.__vacSliceStore, null, { timeout: 15000 });
+    await p.waitForTimeout(300);
+    const after = await st();
+    log.push(['reload-kept', before.gold === after.gold && before.plots === after.plots, before.plots, after.plots, after.gold]);
     // kiểm cỡ nút
     const small = await p.evaluate(() => [...document.querySelectorAll('button')].map((b) => { const r = b.getBoundingClientRect(); return [b.getAttribute('aria-label') || b.textContent.trim(), Math.round(r.width), Math.round(r.height)]; }).filter(([, w, h]) => w < 44 || h < 44));
     console.log(w, h, JSON.stringify(log), 'nut<44:', JSON.stringify(small));

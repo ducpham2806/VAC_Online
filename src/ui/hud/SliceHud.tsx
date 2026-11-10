@@ -10,7 +10,7 @@ import type { Tool } from '../../domain/tools';
 import type { Season } from '../../data/types';
 import { TOOL_EMOJI } from '../../game/slice/toolIcons';
 import { sowableSeeds } from '../../game/slice/sliceSave';
-import { itemLabel, selectActionTool, useSliceStore } from '../../store/useSliceStore';
+import { effectiveSeason, itemLabel, selectActionTool, useSliceStore } from '../../store/useSliceStore';
 import { GameIcon } from '../GameIcon';
 
 const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
@@ -26,7 +26,7 @@ const TOOL_LABEL: Record<Tool, string> = {
 const TOOLBAR: readonly (Tool | 'BAG')[] = ['HOE', 'SEED', 'WATER', 'SICKLE', 'AXE', 'FEED', 'ROD', 'BAG'];
 
 const WOOD_D = '#3D2314';
-type Panel = 'none' | 'seeds' | 'kho';
+type Panel = 'none' | 'seeds' | 'kho' | 'settings';
 
 /** Màn thấp (< 420 px, điện thoại ngang): dock chỉ hiện icon (UI-20). */
 function useShort(): boolean {
@@ -55,9 +55,11 @@ export const SliceHud: React.FC = () => {
   const [panel, setPanel] = useState<Panel>('none');
   const short = useShort();
 
-  const season = seasonAt(now);
-  const daysLeft = Math.max(1, Math.ceil((season.nextSeasonAt - now) / 86_400_000));
-  const next = SEASON_ORDER[(SEASON_ORDER.indexOf(season.season) + 1) % 4];
+  const override = useSliceStore((s) => s.seasonOverride);
+  const cal = seasonAt(now);
+  const season = effectiveSeason({ now, seasonOverride: override });
+  const daysLeft = Math.max(1, Math.ceil((cal.nextSeasonAt - now) / 86_400_000));
+  const next = SEASON_ORDER[(SEASON_ORDER.indexOf(cal.season) + 1) % 4];
   const xpPct = Math.min(100, Math.round((save.xp / Math.max(1, xpToNext(save.level))) * 100));
   const seed = seedId ? findItem(seedId) : undefined;
 
@@ -86,10 +88,10 @@ export const SliceHud: React.FC = () => {
       <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center text-center" style={{ top: 'max(8px, env(safe-area-inset-top))' }}>
         <div className="vac-paper whitespace-nowrap bg-[#f3e3c0] px-3 py-0.5 leading-tight" data-testid="season">
           <b>
-            {SEASON_LABEL[season.season].icon} {SEASON_LABEL[season.season].name}
+            {SEASON_LABEL[season].icon} {SEASON_LABEL[season].name}
           </b>{' '}
-          · ngày {season.day}/7
-          {!short && (
+          {override ? '· công tắc thử' : `· ngày ${cal.day}/7`}
+          {!short && !override && (
             <div className="text-[11px]">
               còn {daysLeft} ngày sang {SEASON_LABEL[next].name}
             </div>
@@ -166,11 +168,12 @@ export const SliceHud: React.FC = () => {
         <DockBtn icon="📋" label="Đơn" short={short} onClick={() => toast('📋 Bảng đơn HTX mở ở P1-9.', false)} />
         <DockBtn icon="📜" label="Gia Phả" short={short} onClick={() => toast('📜 Gia Phả mở ở P1-11.', false)} />
         <DockBtn icon="👥" label="Bạn" short={short} onClick={() => toast('👥 Bạn bè mở sau bản thử.', false)} />
-        <DockBtn icon="⚙️" label="" short onClick={() => toast('⚙️ Cài đặt mở sau bản thử.', false)} />
+        <DockBtn icon="⚙️" label="" short onClick={() => setPanel('settings')} />
       </div>
 
       {panel === 'seeds' && <SeedPanel onClose={() => setPanel('none')} />}
       {panel === 'kho' && <KhoPanel onClose={() => setPanel('none')} />}
+      {panel === 'settings' && <SettingsPanel onClose={() => setPanel('none')} />}
     </div>
   );
 };
@@ -217,7 +220,8 @@ function SeedPanel({ onClose }: { onClose: () => void }) {
   const now = useSliceStore((s) => s.now);
   const seedId = useSliceStore((s) => s.seedId);
   const setSeed = useSliceStore((s) => s.setSeed);
-  const seeds = sowableSeeds(save, now);
+  const override = useSliceStore((s) => s.seasonOverride);
+  const seeds = sowableSeeds(save, effectiveSeason({ now, seasonOverride: override }));
   return (
     <Sheet title="🌱 Túi hạt — gieo được mùa này" onClose={onClose}>
       {seeds.length === 0 && <p className="text-xs">Chưa có giống nào gieo được trong mùa này.</p>}
@@ -264,6 +268,60 @@ function KhoPanel({ onClose }: { onClose: () => void }) {
           </div>
         );
       })}
+    </Sheet>
+  );
+}
+
+/** Cài đặt bản thử: công tắc đổi mùa (LT-03, P1-6) và chơi lại từ đầu (xóa bản lưu P1-7). */
+function SettingsPanel({ onClose }: { onClose: () => void }) {
+  const override = useSliceStore((s) => s.seasonOverride);
+  const setOverride = useSliceStore((s) => s.setSeasonOverride);
+  const reset = useSliceStore((s) => s.reset);
+  const toast = useSliceStore((s) => s.toast);
+  const [confirm, setConfirm] = useState(false);
+  return (
+    <Sheet title="⚙️ Cài đặt bản thử" onClose={onClose}>
+      <p className="mb-1 text-xs">
+        Công tắc mùa (chỉ có ở bản thử): xem bản đồ và giống gieo được của từng mùa. Cây đang lớn không bị ảnh hưởng.
+      </p>
+      <div className="mb-2 grid grid-cols-5 gap-1" data-testid="season-switch">
+        <button className={`${btn} text-xs ${override === null ? '!bg-[#ffe28a]' : ''}`} onClick={() => setOverride(null)}>
+          Lịch thật
+        </button>
+        {SEASON_ORDER.map((se) => (
+          <button
+            key={se}
+            className={`${btn} text-xs ${override === se ? '!bg-[#ffe28a]' : ''}`}
+            onClick={() => setOverride(se)}
+            aria-label={`Mùa ${SEASON_LABEL[se].name}`}
+          >
+            {SEASON_LABEL[se].icon} {SEASON_LABEL[se].name}
+          </button>
+        ))}
+      </div>
+      <p className="mb-1 text-xs">Tiến trình được lưu trên máy này (tải lại trang không mất).</p>
+      {!confirm ? (
+        <button className={`${btn} px-2 text-xs`} onClick={() => setConfirm(true)}>
+          🔄 Chơi lại từ đầu
+        </button>
+      ) : (
+        <div className="flex items-center gap-1 text-xs">
+          Xóa hết tiến trình bản thử?
+          <button
+            className={`${btn} px-2 !bg-[#f6d2b8]`}
+            onClick={() => {
+              reset(Date.now());
+              toast('Đã chơi lại từ đầu.');
+              onClose();
+            }}
+          >
+            Xóa
+          </button>
+          <button className={`${btn} px-2`} onClick={() => setConfirm(false)}>
+            Thôi
+          </button>
+        </div>
+      )}
     </Sheet>
   );
 }

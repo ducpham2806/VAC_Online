@@ -32,6 +32,13 @@ describe('P0-4 engine — gieo → thu → bán dùng luật src/domain', () => 
     expect(r.save.tiles.find((t) => t.id === 'T1')?.itemId).toBe('CROP_05');
   });
 
+  it('công tắc mùa của bản thử (P1-6) thay mùa lịch thật khi kiểm mùa gieo', () => {
+    const s0 = newFarmSave('NORTH', SPRING);
+    const plant = [{ type: 'PLANT' as const, tileId: 'T0', itemId: 'CROP_01' }];
+    expect(applyActions(s0, plant, { ...ctx(SPRING), season: 'DONG' }).results[0].ok).toBe(false);
+    expect(applyActions(s0, plant, { ...ctx(WINTER), season: 'XUAN' }).results[0].ok).toBe(true);
+  });
+
   it('không tin dữ liệu client: bán quá số trong Kho bị từ chối, không có dòng sổ cái', () => {
     const r = applyActions(newFarmSave('NORTH', SPRING), [{ type: 'SELL', itemId: 'CROP_01', qty: 99 }], ctx(SPRING));
     expect(r.results[0].ok).toBe(false);

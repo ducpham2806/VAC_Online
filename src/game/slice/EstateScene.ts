@@ -23,7 +23,8 @@ import {
 import { type Dir, JOYSTICK_RADIUS_PX, facing, inJoystickZone, isDrag, joystickVector } from './gesture';
 import { pathToward } from './pathfinding';
 import { BATCH_DRAG_MAX, batchFromDrag, growthStage, inReach, plotAction, toolForPlot, toolForTarget } from '../../domain/tools';
-import { notYet, useSliceStore } from '../../store/useSliceStore';
+import { effectiveSeason, noSeedMessage, notYet, useSliceStore } from '../../store/useSliceStore';
+import type { Season } from '../../data/types';
 import { plotId, targetAt } from './sliceSave';
 import { TOOL_EMOJI } from './toolIcons';
 
@@ -71,6 +72,10 @@ export class EstateScene extends Phaser.Scene {
   private batchMarks: Phaser.GameObjects.Rectangle[] = [];
   private lastFxSeq = 0;
   private unsubscribe: (() => void) | null = null;
+  private grass: Phaser.GameObjects.Image[] = [];
+  private foliage: Phaser.GameObjects.Image[] = [];
+  private pond!: Phaser.GameObjects.Graphics;
+  private season: Season | null = null;
 
   constructor() {
     super('EstateScene');
@@ -90,10 +95,12 @@ export class EstateScene extends Phaser.Scene {
     this.setupInput();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
     this.renderPlots();
+    this.applySeason();
     this.lastFxSeq = useSliceStore.getState().fx.at(-1)?.seq ?? 0;
     this.unsubscribe = useSliceStore.subscribe((st, prev) => {
       if (st.save !== prev.save || st.now !== prev.now) this.renderPlots();
       if (st.fx !== prev.fx) this.playFx();
+      if (st.now !== prev.now || st.seasonOverride !== prev.seasonOverride) this.applySeason();
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this);
@@ -117,8 +124,10 @@ export class EstateScene extends Phaser.Scene {
     for (let y = 0; y < ESTATE_HEIGHT; y++) {
       for (let x = 0; x < ESTATE_COLS; x++) {
         const ch = ESTATE_ROWS[y][x];
-        const frame = ch === ',' || ch === 'w' ? 'tile_grass_dong' : 'tile_grass_xuan';
-        this.add2(this.add.image(x * TILE, y * TILE, SLICE_ATLAS, frame).setOrigin(0).setDepth(-1000));
+        const dry = ch === ',' || ch === 'w'; // sân chuồng, đất hoang: luôn là đất cỏ úa
+        const img = this.add2(this.add.image(x * TILE, y * TILE, SLICE_ATLAS, dry ? 'tile_grass_dong' : 'tile_grass_xuan').setOrigin(0).setDepth(-1000));
+        if (!dry) this.grass.push(img);
+        else if (ch === 'w') img.setTint(0xd8c4a0); // đất hoang sẫm hơn sân/cỏ để luôn thấy ranh giới, kể cả mùa Đông
         if (ch === 'w' && (x * 7 + y * 3) % 4 === 0) {
           // đất hoang: cỏ dại lưa thưa (P1-10 mới cuốc được)
           this.add2(this.add.image(x * TILE + TILE / 2, (y + 1) * TILE - 6, WORLD, `tuft_${(x + y) % 3}`).setOrigin(0.5, 1).setDepth(-950));
@@ -133,13 +142,32 @@ export class EstateScene extends Phaser.Scene {
     this.drawCoop();
   }
 
+  /** AR-11: cỏ đổi tile theo mùa; ao và tán cây đổi tông (Đông miền Bắc: ao đục, cây trơ màu, không tuyết). */
+  private applySeason(): void {
+    const season = effectiveSeason(useSliceStore.getState());
+    if (season === this.season) return;
+    this.season = season;
+    const frame = `tile_grass_${season.toLowerCase()}`;
+    for (const g of this.grass) g.setFrame(frame);
+    const tint: Record<Season, number> = { XUAN: 0xffffff, HA: 0xe8ffe0, THU: 0xffd890, DONG: 0xb8b0a0 };
+    for (const f of this.foliage) f.setTint(tint[season]);
+    const b = boundsOf('P');
+    if (!b) return;
+    const water: Record<Season, number> = { XUAN: 0x2e8b8d, HA: 0x2e8b8d, THU: 0x3a7f7a, DONG: 0x5e7f78 };
+    this.pond.clear().fillStyle(water[season], 1).lineStyle(3, WOOD_D, 1);
+    this.pond.fillRoundedRect(b.x * TILE + 2, b.y * TILE + 2, b.w * TILE - 4, b.h * TILE - 4, 28);
+    this.pond.strokeRoundedRect(b.x * TILE + 2, b.y * TILE + 2, b.w * TILE - 4, b.h * TILE - 4, 28);
+  }
+
+  /** Cho kiểm thử: mùa đang vẽ trên bản đồ. */
+  shownSeason(): Season | null {
+    return this.season;
+  }
+
   private drawPond(): void {
     const b = boundsOf('P');
     if (!b) return;
-    const g = this.add2(this.add.graphics().setDepth(-900));
-    g.fillStyle(0x2e8b8d, 1).lineStyle(3, WOOD_D, 1);
-    g.fillRoundedRect(b.x * TILE + 2, b.y * TILE + 2, b.w * TILE - 4, b.h * TILE - 4, 28);
-    g.strokeRoundedRect(b.x * TILE + 2, b.y * TILE + 2, b.w * TILE - 4, b.h * TILE - 4, 28);
+    this.pond = this.add2(this.add.graphics().setDepth(-900));
     const fish = [
       { x: (b.x + 1.5) * TILE, y: (b.y + 1.5) * TILE, f: 0 },
       { x: (b.x + 3.2) * TILE, y: (b.y + 3) * TILE, f: 1 },
@@ -201,8 +229,8 @@ export class EstateScene extends Phaser.Scene {
       this.add2(this.add.image(x * TILE + TILE, ESTATE_HEIGHT * TILE, WORLD, 'fence').setOrigin(0.5, 1).setDepth(ESTATE_HEIGHT * TILE));
     }
     for (let y = 1; y < ESTATE_HEIGHT - 1; y += 3) {
-      this.add2(this.add.image(TILE / 2, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE));
-      this.add2(this.add.image((ESTATE_COLS - 0.5) * TILE, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE));
+      this.foliage.push(this.add2(this.add.image(TILE / 2, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE)));
+      this.foliage.push(this.add2(this.add.image((ESTATE_COLS - 0.5) * TILE, (y + 2) * TILE, WORLD, 'bamboo').setOrigin(0.5, 1).setDepth((y + 2) * TILE)));
     }
   }
 
@@ -215,7 +243,7 @@ export class EstateScene extends Phaser.Scene {
         if (ch !== 'T' || seen.has(`${x},${y}`)) continue;
         // khối cây 3×3 → 1 cây đa phủ cả khối
         for (let dy = 0; dy < 3; dy++) for (let dx = 0; dx < 3; dx++) seen.add(`${x + dx},${y + dy}`);
-        this.add2(this.add.image((x + 1.5) * TILE, (y + 3) * TILE, WORLD, 'banyan').setOrigin(0.5, 1).setDepth((y + 3) * TILE));
+        this.foliage.push(this.add2(this.add.image((x + 1.5) * TILE, (y + 3) * TILE, WORLD, 'banyan').setOrigin(0.5, 1).setDepth((y + 3) * TILE)));
       }
     }
   }
@@ -348,7 +376,7 @@ export class EstateScene extends Phaser.Scene {
       }
       const a = plotAction(tool, tile.id, st.seedId);
       if (a) st.act([a]);
-      else st.toast('Chưa chọn hạt giống — mở túi hạt để chọn.', false);
+      else st.toast(noSeedMessage(st), false);
       return;
     }
     const msg = notYet(kind);
@@ -472,10 +500,11 @@ export class EstateScene extends Phaser.Scene {
   }
 
   private commitBatch(): void {
-    const { save, seedId, act, toast } = useSliceStore.getState();
+    const st = useSliceStore.getState();
+    const { save, seedId, act, toast } = st;
     const r = batchFromDrag(this.batchIds, save.tiles, Date.now(), seedId);
     if (r.actions.length) act(r.actions);
-    else if (r.tool === 'SEED') toast('Chưa chọn hạt giống — mở túi hạt để chọn.', false);
+    else if (r.tool === 'SEED') toast(noSeedMessage(st), false);
     this.batchIds = [];
     this.batchMarks.forEach((m) => m.destroy());
     this.batchMarks = [];

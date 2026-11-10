@@ -62,8 +62,8 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 | P1-3 | Scene điền trang `EstateScene`: bản đồ ô 32×32, nhân vật đi 4 hướng; joystick nổi góc dưới trái + chạm đất để tự tìm đường (UI-20) | Chụp 1280×720 và 844×390; test tìm đường | P1-1 | DONE 10/11 |
 | P1-4 | Chạm ô → tự chọn công cụ (GP-02); xa thì đi tới rồi làm; kéo làm cả loạt ≤ 12 ô (KT-16); gọi engine | Test domain; quay màn hình gieo → tưới → gặt | P1-2, P1-3 | DONE 10/11 (`src/domain/tools.ts`, `tools/qa/p1-slice-smoke.cjs`) |
 | P1-5 | HUD lai React (UI-20, UI-30): nút hành động, thanh công cụ thu gọn, mùa + "còn N ngày", 🪙 ⚡ | Chụp 2 cỡ, mọi nút ≥ 44 px | P1-3 | DONE 10/11 (`src/ui/hud/SliceHud.tsx`; túi hạt đã lọc theo mùa) |
-| P1-6 | Mùa trên bản đồ: cỏ đổi màu theo mùa (AR-11), khay giống lọc theo mùa, công tắc đổi mùa cho bản thử (chỉ DEV/thử) | Test lọc mùa; chụp Xuân/Đông | P1-5 | TODO |
-| P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | TODO |
+| P1-6 | Mùa trên bản đồ: cỏ đổi màu theo mùa (AR-11), khay giống lọc theo mùa, công tắc đổi mùa cho bản thử (chỉ DEV/thử) | Test lọc mùa; chụp Xuân/Đông | P1-5 | DONE 10/11 (công tắc trong ⚙️; ảnh `docs/screenshots/p1-6-*`) |
+| P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | DONE 10/11 (lưu cục bộ; phần đồng bộ server làm cùng P1-8) |
 | P1-8 | Schema mới trên project VAC (viết lại một lần, QD-81): `farm_states`, `ledger`, `_commit_farm_state`, Edge Function `apply-actions` | test SQL; p95 < 400 ms (gộp P0-6) | Quyền Supabase project VAC; PO duyệt migration | BLOCKED |
 | P1-9 | Nội dung 8 loài 2 mùa Bắc Bộ (5 cây, 2 vật nuôi, 1 cá) + art theo prompt; Bếp Củi; bảng đơn HTX | Dữ liệu từ `catalog.csv`; `/vac-balance-check` | P1-4; PO duyệt danh sách loài | TODO |
 | P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4 | TODO |

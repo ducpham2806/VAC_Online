@@ -500,7 +500,7 @@
     "h": 32
    }
   },
-  "tile_grass_xuan": {
+  "tile_grass_ha": {
    "frame": {
     "x": 136,
     "y": 66,
@@ -520,7 +520,7 @@
     "h": 32
    }
   },
-  "tile_tilled_dry": {
+  "tile_grass_thu": {
    "frame": {
     "x": 170,
     "y": 66,
@@ -540,9 +540,49 @@
     "h": 32
    }
   },
-  "tile_tilled_wet": {
+  "tile_grass_xuan": {
    "frame": {
     "x": 204,
+    "y": 66,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   }
+  },
+  "tile_tilled_dry": {
+   "frame": {
+    "x": 238,
+    "y": 66,
+    "w": 32,
+    "h": 32
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 32
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 32
+   }
+  },
+  "tile_tilled_wet": {
+   "frame": {
+    "x": 272,
     "y": 66,
     "w": 32,
     "h": 32

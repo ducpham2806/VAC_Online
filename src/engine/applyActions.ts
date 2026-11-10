@@ -4,7 +4,7 @@
  * Luật lấy nguyên từ src/domain (không viết lại), thêm luật mùa vụ mới (GP-20).
  */
 import { CROP_SEASONS } from '../data/seasons';
-import type { FarmTileEntity, RegionType } from '../data/types';
+import type { FarmTileEntity, RegionType, Season } from '../data/types';
 import { type FarmResult, type FarmSave, findItem, harvest, plant, sellToHtx, water, withRegen } from '../domain/farm';
 import { canSowInSeason, seasonAt } from '../domain/season';
 
@@ -35,6 +35,11 @@ export interface EngineContext {
   now: number;
   rng: () => number;
   gameStage: number;
+  /**
+   * Công tắc đổi mùa của bản thử (LT-03, P1-6): thay mùa theo lịch thật khi kiểm tra mùa gieo.
+   * Chỉ client bản thử truyền; Edge Function không bao giờ đọc giá trị này từ người chơi.
+   */
+  season?: Season;
 }
 
 export interface ApplyOutput {
@@ -84,7 +89,7 @@ function step(save: FarmSave, action: Action, ctx: EngineContext): FarmResult {
   switch (action.type) {
     case 'PLANT': {
       const item = findItem(action.itemId);
-      const season = seasonAt(ctx.now).season;
+      const season = ctx.season ?? seasonAt(ctx.now).season;
       if (item && !canSowInSeason(CROP_SEASONS[item.id], season)) {
         return { ok: false, message: `🍂 [${item.name}] không gieo được trong mùa này.` };
       }
