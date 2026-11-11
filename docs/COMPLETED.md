@@ -2,6 +2,13 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-9 · Bộ 8 loài, chỗ nuôi, Bếp Củi, đơn HTX · 11/11/2026 — DONE (chưa có người chơi thử)
+- 8 loài Đợt 1 hai mùa Xuân + Thu (QD-86): 5 cây, gà, vịt, cá rô; cấp mở riêng bản thử (KT-21).
+- 9 chỗ nuôi trên bản đồ: 4 gà (mở khi sửa Chuồng), 2 vịt mép ao, 3 cá; thả/thu bằng chạm, chưa có cho ăn.
+- Bếp Củi là hạng mục thứ 4: nấu Cơm Trắng, tìm Canh Cải Cá Rô ở Nồi Đất, ăn món hồi ⚡ (QD-87).
+- Bảng đơn HTX 3 đơn, thưởng vàng + XP ×1,2–1,5, bỏ đơn chờ 10 phút (KT-14).
+- Ảnh thật của PO cho 4 cây, vịt, Bếp, 2 món. Kiểm: `tools/qa/p1-9-smoke.cjs` 2 cỡ. Ảnh: `docs/screenshots/p1-9-*`.
+
 ## P1-11 · NPC có tim, Chương 1, hướng dẫn · 10/11/2026 — DONE (chưa có người chơi thử)
 - Cảnh mở đầu (TG-40): Bác Bảy trao tráp, Bá Kiến ép bán đất, người chơi chọn tình nghĩa / thực dụng.
 - 2 NPC có tim (Bác Bảy, Cô Giáo Hương): nói chuyện, tặng quà mỗi ngày, mốc 2 tim có cảnh ngắn (KT-19).

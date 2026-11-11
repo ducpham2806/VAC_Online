@@ -61,7 +61,7 @@ const REPAIR_SIGN = 'slice_repair_sign';
 const FENCE_OVERLAP = 6;
 /** Tiền tố khung hạng mục trong atlas `estate`: `_0` đổ nát, `_1` đã sửa. */
 const STRUCTURE_FRAME: Record<StructureId, string> = { HOUSE: 'house', WELL: 'well', COOP: 'coop', KITCHEN: 'kitchen' };
-/** Hình tạm Bếp Củi (chưa có ảnh PO, `art/prompts/p1_species.md` ảnh 6): texture riêng `slice_kitchen_0/1`. */
+/** Dự phòng khi atlas `estate` thiếu khung `kitchen_0/1` (ảnh PO đã nhập 11/11): texture vẽ bằng code `slice_kitchen_0/1`. */
 const KITCHEN_TEMP = 'slice_kitchen';
 const PAPER = 0xf3e3c0;
 

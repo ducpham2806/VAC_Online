@@ -48,6 +48,14 @@ const { chromium } = require('playwright');
     const ripe = () => S(() => { const X = window.__vacSliceStore; const s = X.getState(); const n = Date.now();
       X.setState({ save: { ...s.save, tiles: s.save.tiles.map((t) => (t.itemId ? { ...t, plantedAt: n - 9e6, matureAt: n - 1 } : t)) }, now: n }); });
 
+    // 0) ruộng đủ 5 cây bản thử ở các giai đoạn (ảnh PO P1-9) — chỉ để chụp
+    await S(() => { const X = window.__vacSliceStore; const s = X.getState(); const n = Date.now(); const ids = ['CROP_01', 'CROP_02', 'CROP_03', 'CROP_04', 'CROP_05'];
+      let k = 0; X.setState({ save: { ...s.save, tiles: s.save.tiles.map((t) => (t.zoneType !== 'LAND' ? t : (() => { const i = k++;
+        return { ...t, itemId: ids[i % 5], plantedAt: n - (i % 4) * 100000 - 1, matureAt: n - (i % 4) * 100000 + 300000, watered: i % 2 === 0 }; })())) }, now: n }); });
+    await p.evaluate(() => window.__vacSlice.tapWorld(8 * 32 + 16, 6 * 32 + 16));
+    await p.waitForFunction(() => !window.__vacSlice.debugState().moving, null, { timeout: 15000 }); await p.waitForTimeout(400);
+    await p.screenshot({ path: `${out}/p1-9-crops-${w}x${h}.png` });
+    await S(() => { const X = window.__vacSliceStore; const s = X.getState(); X.setState({ save: { ...s.save, tiles: s.save.tiles.map((t) => (t.zoneType === 'LAND' ? { ...t, itemId: null, plantedAt: null, matureAt: null, watered: false } : t)) } }); });
     // 1) sửa Chuồng gà (chạm sân) → hỏi lại → đồng ý → 4 chỗ gà
     await tapUntil(18, 13, () => !!window.__vacSliceStore.getState().pending);
     await p.getByTestId('confirm-yes').click(); await p.waitForTimeout(200);

@@ -1,4 +1,4 @@
-# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…7, P1-10, P1-11 xong; P1-9 code xong, chờ ảnh)
+# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…7, P1-9, P1-10, P1-11 xong)
 
 ## Việc vừa làm
 Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
@@ -21,10 +21,9 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-9 code xong (QD-86, QD-87): chỗ nuôi gà/vịt/cá, Bếp Củi, bảng đơn HTX; kiểm khói `tools/qa/p1-9-smoke.cjs`. Chờ 7 ảnh PO `art/prompts/p1_species.md` (đang dùng hình tạm).
-2. P1-8 khi có quyền Supabase project VAC.
-3. P1-12 chơi thử 10–20 người.
-4. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
+1. P1-8 khi có quyền Supabase project VAC (P1-9 xong 11/11).
+2. P1-12 chơi thử 10–20 người.
+3. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). DB MVP chưa đổi.

@@ -37,6 +37,9 @@ P0_SHEETS = [
     ("AQUA_01_sheet.png", "strip:2", "32x32", ["AQUA_01_0", "AQUA_01_1"], {}),
     ("farmer_walk_sheet.png", "grid:4x4", "48x64", [f"farmer_walk_{d}_{f}" for d in DIRS for f in range(4)], {}),
     ("tiles_sheet.png", "tiles:4", "32x32", ["tile_tilled_dry", "tile_tilled_wet", "tile_grass_xuan", "tile_grass_dong"], {}),
+    # P1-9 (art/prompts/p1_species.md, QD-86): 4 cây + vịt của bộ 8 loài, cùng atlas `slice` với lúa/gà/cá
+    *[(f"{c}_sheet.png", "strip:4", "32x48", [f"{c}_{i}" for i in range(4)], {}) for c in ("CROP_02", "CROP_03", "CROP_04", "CROP_05")],
+    ("ANI_03_sheet.png", "strip:2", "48x48", ["ANI_03_0", "ANI_03_1"], {"fit": (40, 40)}),
 ]
 
 
@@ -59,6 +62,9 @@ P1_SHEETS = [
     ("weeds_sheet.png", "strip:3", "20x16", ["weed_0", "weed_1", "weed_2"], {}),
     # Ảnh rào vẽ thẳng (PO tạo lại 11/11). Ảnh xéo thì thêm {"shear": độ dốc} để nắn rail thành ngang.
     ("fence_sheet.png", "strip:2", "64x32", ["fence_0", "fence_1"], {}),
+    # P1-9 (art/prompts/p1_species.md): Bếp Củi 2 khung (đổ nát, đã sửa); icon 2 món (cũng chép sang src/assets/icons/)
+    ("kitchen_sheet.png", "strip:2", "64x64", ["kitchen_0", "kitchen_1"], {}),
+    ("dishes_sheet.png", "strip:2", "32x32", ["PROD_01", "PROD_03"], {}),
 ]
 
 
@@ -93,12 +99,29 @@ def runs(profile: np.ndarray, min_gap: int) -> list[tuple[int, int]]:
     return segs
 
 
+TOUCH_WIDTH = 1.6
+TOUCH_THIN = 0.3
+
+
 def split_strip(alpha: np.ndarray, n: int) -> list[tuple[int, int, int, int]]:
     segs = runs(alpha.sum(axis=0), min_gap=8)
     while len(segs) > n:  # gộp cặp kề nhau có khe nhỏ nhất (vd hạt thóc tách khỏi con gà)
         gaps = [segs[i + 1][0] - segs[i][1] for i in range(len(segs) - 1)]
         i = int(np.argmin(gaps))
         segs[i:i + 2] = [(segs[i][0], segs[i + 1][1])]
+    cols = alpha.sum(axis=0)
+    # 2 hình chạm nhau (vd lá cây giai đoạn 3–4): cắt hình rộng nhất ở cột thưa nhất giữa nó — chỉ khi hình đó
+    # rộng hẳn (≥ TOUCH_WIDTH × trung vị các hình còn lại) và cột cắt thưa (≤ TOUCH_THIN × cột dày nhất của nó).
+    while 1 < len(segs) < n:
+        widths = [b - a for a, b in segs]
+        i = int(np.argmax(widths))
+        others = float(np.median([w for k, w in enumerate(widths) if k != i]))
+        x0, x1 = segs[i]
+        lo, hi = x0 + (x1 - x0) // 4, x1 - (x1 - x0) // 4
+        cut = lo + int(np.argmin(cols[lo:hi]))
+        if widths[i] < TOUCH_WIDTH * others or cols[cut] > TOUCH_THIN * cols[x0:x1].max():
+            break
+        segs[i:i + 1] = [(x0, cut), (cut, x1)]
     if len(segs) != n:
         raise ValueError(f"Tìm được {len(segs)} hình, cần {n} — kiểm tra nền / bố cục ảnh")
     boxes = []
@@ -290,6 +313,8 @@ def season_variant(img: Image.Image, shift: tuple[float, float, float], palette_
 def run_p0(palette: list[tuple[int, int, int]]) -> int:
     named: dict[str, Image.Image] = {}
     for fname, layout, size, names, opt in P0_SHEETS:
+        if not os.path.exists(os.path.join(INBOX, fname)):
+            continue  # ảnh loài chưa có → game dùng hình tạm atlas `wave1`
         frames = import_sheet(os.path.join(INBOX, fname), layout, parse_size(size), palette,
                               fit=opt.get("fit"), soil=opt.get("strip_soil", False))
         named.update(zip(names, frames))
@@ -311,6 +336,7 @@ def p1_preview(named: dict[str, Image.Image], grass: Image.Image | None) -> Imag
     order = ["house_0", "house_1", "well_0", "well_1", "coop_0", "coop_1",
              "npc_bacbay_idle_0", "npc_bacbay_talk_0", "npc_cohuong_idle_0", "npc_cohuong_talk_0",
              "portrait_bacbay", "portrait_cohuong", "portrait_bakien",
+             "kitchen_0", "kitchen_1", "PROD_01", "PROD_03",
              "tree_0", "xoan_0", "bamboo_0", "bamboo_1", "rock_0", "rock_1", "rock_2", "weed_0", "weed_1", "weed_2", "fence_0", "fence_1"]
     order = [n for n in order if n in named]
     w = sum(named[n].width + 8 for n in order) + 8
@@ -336,6 +362,10 @@ def run_p1(palette: list[tuple[int, int, int]]) -> int:
                               fit=opt.get("fit"), soil=opt.get("strip_soil", False), shear=opt.get("shear", 0.0))
         named.update(zip(names, frames))
     bad = save_all(named, P1_OUT, palette)
+    # icon món ăn cho HUD (GameIcon đọc src/assets/icons/<ID>.png)
+    for icon in ("PROD_01", "PROD_03"):
+        if icon in named:
+            named[icon].save(os.path.join(ROOT, "src", "assets", "icons", f"{icon}.png"))
     grass_path = os.path.join(P0_OUT, "tile_grass_xuan.png")
     grass = Image.open(grass_path).convert("RGBA") if os.path.exists(grass_path) else None
     p1_preview(named, grass).save(os.path.join(P1_OUT, "preview_x3.png"))

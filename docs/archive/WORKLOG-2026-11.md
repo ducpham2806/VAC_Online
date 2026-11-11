@@ -84,3 +84,11 @@
 - Kiểm: typecheck, 270 test (+20), build, test:art, check:docs PASS. `tools/qa/p1-tutorial-smoke.cjs` (mới) 2 cỡ: người mới theo đúng thanh hướng dẫn đi hết 8 bước rồi nhận Chương 1, không kẹt, 0 lỗi JS (cho lúa chín ngay). `p1-slice-smoke.cjs` 2 cỡ: thêm cảnh mở đầu, Gia Phả, tặng quà, nhận Chương 1; 0 nút < 44 px.
 - Sửa trong lúc kiểm: thanh hướng dẫn che ruộng ở 844×390 → cho chạm xuyên. Lưu ý: chạy kiểm khói thì đừng sửa file khi Vite đang chạy (Vite tải lại trang).
 - **Dừng ở:** P1-9 chờ PO duyệt 8 loài; P1-8 chờ quyền Supabase; sau đó P1-12 chơi thử.
+
+## 11/11/2026 · Nhập 6 ảnh P1 của PO (nhà, giếng, chuồng gà, NPC, chân dung) · claude/gifted-faraday-2q851c
+- PO đẩy 6 ảnh lên `main` (`9450a80`); gộp `main` vào nhánh. `import_sheet.py --p1` → `art/source/p1_ai/` 17 khung (0 lạc bảng, 0 pixel đen, alpha 0/255, đúng cỡ AR-20) → atlas `public/assets/atlas/estate.*`; chân dung → `public/assets/portraits/`.
+- `?p1`: nhà/giếng/chuồng gà đổi khung đổ nát → đã sửa (bỏ tô tối), chuồng gà tre đặt ở góc sân; Bác Bảy, Cô Hương dùng ảnh mới (2 khung đứng, 2 khung nói khi mở hộp thoại); chân dung trong hộp thoại NPC và cảnh mở đầu (Bá Kiến).
+- Kiểm: typecheck, 270 test, build, test:art, check:docs PASS; smoke 2 cỡ + người mới theo hướng dẫn (844×390) PASS, 0 lỗi JS, 0 nút < 44 px. Ảnh: `docs/screenshots/p1-art-estate-{broken,repaired}-1280x720.png`.
+- 11/11 (tiếp): nhập thêm 5 ảnh thiên nhiên (`580bca3`): cây đa, 2 bụi tre, 3 đá, 3 cỏ dại, 2 đoạn rào → atlas `estate` 28 khung (0 lạc bảng, 0 pixel đen). Rào AI vẽ xéo → `import_sheet.py` thêm `shear` nắn rail thành ngang; scene ghép rào chồng mép 6 px, dàn đều khớp mép. `?p1` bỏ hẳn atlas `world`. Smoke 2 cỡ + người mới PASS, 0 lỗi JS, 0 nút < 44 px.
+- 11/11 (tiếp 2): PO yêu cầu NPC +15% → QD-85, NPC nhập lại ở khung 56×74 (không phóng trong game, giữ nét pixel). PO tạo lại rào (vẽ thẳng, bỏ `shear`) và gửi cây xoan (`48edc92`, `7b73099`): gốc cây chặt lấy Gỗ đổi sang xoan già; cây đa thành 1 cây cổ thụ đầu làng `D` (góc trên phải, chắn lối, chạm thì nhắc không chặt). Atlas `estate` 29 khung, 0 lạc bảng, 0 pixel đen. 271 test; smoke 2 cỡ + người mới PASS. Ảnh: `docs/screenshots/p1-art-trees-1280x720.png`.
+- **Dừng ở:** P1-9 (chờ duyệt 8 loài), P1-8 (chờ quyền Supabase).

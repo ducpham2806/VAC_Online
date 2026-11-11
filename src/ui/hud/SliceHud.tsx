@@ -297,7 +297,14 @@ function KhoPanel({ onClose }: { onClose: () => void }) {
         return (
           <div key={id} className="flex items-center justify-between gap-2 border-b border-[#d8c49b] py-1 text-xs">
             <span>
-              {itemLabel(id)} × <b>{n}</b>
+              {it?.category === 'RECIPE' ? (
+                <>
+                  <GameIcon id={id} fallback={it.emoji} size={24} /> {it.name}
+                </>
+              ) : (
+                itemLabel(id)
+              )}{' '}
+              × <b>{n}</b>
             </span>
             <span className="flex gap-1">
               {it?.category === 'RECIPE' && it.staminaDelta > 0 && (

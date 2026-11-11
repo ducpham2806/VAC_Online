@@ -10,6 +10,7 @@ import { isMaterial } from '../../domain/estate';
 import { SLICE_KITCHEN_ID, SLICE_RECIPES, sliceUnlockLevel } from '../../data/sliceContent';
 import { itemLabel, useSliceStore } from '../../store/useSliceStore';
 import { Sheet, btn } from './sliceUi';
+import { GameIcon } from '../GameIcon';
 
 const mmss = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
@@ -64,7 +65,8 @@ function KitchenPanel({ onClose }: { onClose: () => void }) {
         return (
           <div key={id} className="flex min-h-[44px] items-center justify-between gap-2 border-b border-[#d8c49b] py-1 text-xs">
             <span>
-              <b>{itemLabel(id)}</b> · {it.growOrCraftMinutes} phút · +{it.staminaDelta} ⚡ khi ăn
+              <GameIcon id={id} fallback={it.emoji} size={24} className="mr-1" />
+              <b>{it.name}</b> · {it.growOrCraftMinutes} phút · +{it.staminaDelta} ⚡ khi ăn
               <br />
               {isKnown ? (
                 <small>

@@ -98,6 +98,23 @@ class ImportSheetTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 import_sheet(path, "strip:4", (32, 48), PALETTE)
 
+    def test_hai_hinh_cham_nhau_van_tach_du_khung(self):
+        """Ảnh AI vẽ 2 giai đoạn cây chạm lá nhau: cắt ở cột thưa nhất, vẫn đủ 4 khung đúng chuẩn."""
+        from import_sheet import import_sheet
+        im = Image.new("RGB", (1000, 400), (255, 0, 255))
+        d = ImageDraw.Draw(im)
+        d.rectangle((40, 300, 140, 380), fill=(120, 190, 30))
+        d.rectangle((240, 200, 340, 380), fill=(120, 190, 30))
+        d.rectangle((500, 100, 640, 380), fill=(120, 190, 30))
+        d.rectangle((640, 340, 660, 344), fill=(120, 190, 30))  # lá chạm sang hình kế
+        d.rectangle((660, 60, 800, 380), fill=(120, 190, 30))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "s.png")
+            im.save(path)
+            frames = import_sheet(path, "strip:4", (32, 48), PALETTE)
+        self.assertEqual(len(frames), 4)
+        self.assertTrue(all(f.size == (32, 48) for f in frames))
+
     def test_tiles_phu_kin(self):
         from import_sheet import import_sheet
         im = Image.new("RGB", (700, 300), (255, 0, 255))
