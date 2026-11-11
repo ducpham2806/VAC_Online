@@ -49,6 +49,8 @@ import { TOOL_EMOJI } from './toolIcons';
 import { NPCS, NPC_IDS, type NpcId, npcAt } from '../../data/npcs';
 import { npcOf, vnDay } from '../../domain/npc';
 import { VFX_COLORS } from '../../domain/vfxEvents';
+import { SLICE_AQUA, SLICE_LIVESTOCK } from '../../data/sliceContent';
+import { SliceFarmFx, isFarmActionTool } from '../vfx/sliceFarmFx';
 import { currentTutorialStep, tutorialTarget } from './sliceTutorial';
 
 export const SLICE_ATLAS = 'slice';
@@ -68,7 +70,7 @@ const PAPER = 0xf3e3c0;
 
 interface PlotView {
   soil: Phaser.GameObjects.Image;
-  crop: Phaser.GameObjects.Image;
+  crop: Phaser.GameObjects.Sprite;
   /** Chỗ nuôi: khung mờ khi trống, biểu tượng sản phẩm khi tới lứa. */
   slot?: { mark: Phaser.GameObjects.Rectangle; badge: Phaser.GameObjects.Text };
 }
@@ -84,6 +86,7 @@ export interface SliceDebug {
 
 export class EstateScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Sprite;
+  private farmFx!: SliceFarmFx;
   private dir: Dir = 'down';
   private path: TilePos[] = [];
   private joy = { vx: 0, vy: 0 };
@@ -113,7 +116,6 @@ export class EstateScene extends Phaser.Scene {
   private wildViews = new Map<string, Phaser.GameObjects.Image[]>();
   private structureViews: Record<StructureId, Phaser.GameObjects.Image[]> = { WELL: [], COOP: [], HOUSE: [], KITCHEN: [] };
   private rubble: Record<StructureId, Phaser.GameObjects.Image[]> = { WELL: [], COOP: [], HOUSE: [], KITCHEN: [] };
-  private beat = 0;
   private nextRegion!: Phaser.GameObjects.Graphics;
   private shownEstate = '';
   private npcBubbles = new Map<NpcId, Phaser.GameObjects.Text>();
@@ -134,8 +136,10 @@ export class EstateScene extends Phaser.Scene {
   create(): void {
     this.drawMap();
     this.createPlayer();
+    this.createAnimalAnimations();
     this.createUi();
     this.setupCameras();
+    this.farmFx = new SliceFarmFx(this, this.uiCam, this.player);
     this.setupInput();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
     this.renderPlots();
@@ -318,6 +322,36 @@ export class EstateScene extends Phaser.Scene {
     const b = boundsOf('P');
     if (!b) return;
     this.pond = this.add2(this.add.graphics().setDepth(-900)); // cá, vịt: chỗ nuôi ở renderPlots (P1-9)
+    const ripplePositions = [[0.35, 0.26], [0.68, 0.41], [0.31, 0.55], [0.68, 0.71], [0.47, 0.83]];
+    ripplePositions.forEach(([rx, ry], index) => {
+      const x = Math.round((b.x + b.w * rx) * TILE);
+      const y = Math.round((b.y + b.h * ry) * TILE);
+      const ripple = this.add2(this.add.graphics({ x, y })).setName('slice-pond-ripple').setDepth(-899);
+      ripple.fillStyle(VFX_COLORS.water).fillRect(-9, 0, 14, 1).fillRect(1, 3, 8, 1);
+      ripple.fillStyle(VFX_COLORS.foam).fillRect(-5, 0, 6, 1);
+      ripple.setAlpha(0).setScale(0.7, 1);
+      this.tweens.add({
+        targets: ripple, scaleX: 1.25, alpha: 0.42, ease: 'Sine.inOut',
+        delay: index * 310, duration: 1250 + index * 130, yoyo: true, repeat: -1,
+      });
+    });
+  }
+
+  private createAnimalAnimations(): void {
+    const atlas = this.textures.get(SLICE_ATLAS);
+    for (const id of [...SLICE_LIVESTOCK, ...SLICE_AQUA]) {
+      const key = `slice_idle_${id}`;
+      if (this.anims.exists(key) || !atlas.has(`${id}_0`) || !atlas.has(`${id}_1`)) continue;
+      this.anims.create({
+        key,
+        frames: [
+          { key: SLICE_ATLAS, frame: `${id}_0`, duration: 220 },
+          { key: SLICE_ATLAS, frame: `${id}_1` },
+        ],
+        frameRate: 2,
+        repeat: -1,
+      });
+    }
   }
 
   /** Ô ruộng: đất khô/ướt + cây theo giai đoạn, vẽ lại mỗi khi trạng thái đổi hoặc mỗi giây. */
@@ -330,7 +364,7 @@ export class EstateScene extends Phaser.Scene {
       const animal = t.zoneType !== 'LAND';
       if (!v) {
         const soil = this.add2(this.add.image(t.tileX * TILE, t.tileY * TILE, SLICE_ATLAS, 'tile_tilled_dry').setOrigin(0).setDepth(-990).setVisible(!animal));
-        const crop = this.add2(this.add.image(t.tileX * TILE + TILE / 2, (t.tileY + 1) * TILE - 1, SLICE_ATLAS, 'CROP_01_0').setOrigin(0.5, 1));
+        const crop = this.add2(this.add.sprite(t.tileX * TILE + TILE / 2, (t.tileY + 1) * TILE - 1, SLICE_ATLAS, 'CROP_01_0').setOrigin(0.5, 1));
         v = { soil, crop };
         if (animal) {
           const c = tileCenter({ x: t.tileX, y: t.tileY });
@@ -346,15 +380,20 @@ export class EstateScene extends Phaser.Scene {
       v.slot?.mark.setVisible(!t.itemId);
       v.slot?.badge.setVisible(!!t.itemId && growthStage(t, now) === 3).setText(findItem(t.itemId ?? '')?.emoji ?? '');
       if (!t.itemId) {
-        v.crop.setVisible(false);
+        v.crop.stop().setVisible(false);
         continue;
       }
       const stage = growthStage(t, now);
-      // vật nuôi: ảnh thật 2 khung (đứng / mổ) đổi nhịp; cây: 4 giai đoạn. Chưa có ảnh thật → atlas tạm `wave1`.
-      const f = animal ? `${t.itemId}_${this.beat % 2}` : `${t.itemId}_${stage}`;
-      const tmp = `${t.itemId}_${stage}`;
-      if (this.textures.get(SLICE_ATLAS).has(f)) v.crop.setTexture(SLICE_ATLAS, f).setScale(1);
-      else if (this.textures.exists('wave1') && this.textures.get('wave1').has(tmp)) v.crop.setTexture('wave1', tmp).setScale(0.75);
+      const idle = `slice_idle_${t.itemId}`;
+      if (animal && this.anims.exists(idle)) {
+        v.crop.setScale(1).play({ key: idle, startFrame: (t.tileX + t.tileY) % 2 }, true);
+      } else {
+        // Cây: bốn giai đoạn. Dữ liệu lưu cũ có thể cần khung dự phòng từ wave1.
+        const frame = `${t.itemId}_${stage}`;
+        v.crop.stop();
+        if (this.textures.get(SLICE_ATLAS).has(frame)) v.crop.setTexture(SLICE_ATLAS, frame).setScale(1);
+        else if (this.textures.exists('wave1') && this.textures.get('wave1').has(frame)) v.crop.setTexture('wave1', frame).setScale(0.75);
+      }
       v.crop.setVisible(true).setDepth(animal && t.zoneType === 'POND' ? -880 : (t.tileY + 1) * TILE - 2);
     }
   }
@@ -362,50 +401,24 @@ export class EstateScene extends Phaser.Scene {
   /** Phản hồi trên ô vừa làm thành công. */
   private playFx(): void {
     const list = useSliceStore.getState().fx.filter((f) => f.seq > this.lastFxSeq);
+    let posed = false;
     for (const f of list) {
       this.lastFxSeq = Math.max(this.lastFxSeq, f.seq);
       const c = tileCenter({ x: f.x, y: f.y });
-      if (f.tool === 'WATER') {
-        this.waterFx(c.x, c.y);
+      const plot = this.plots.get(plotId(f.x, f.y));
+      if (plot && !plot.slot && isFarmActionTool(f.tool)) {
+        if (!posed && !this.isMoving()) {
+          this.face(f);
+          this.farmFx.playPose(f.tool);
+          posed = true;
+        }
+        this.farmFx.playTile(f.tool, c.x, c.y);
         continue;
       }
       const txt = this.add.text(c.x, c.y - 8, TOOL_EMOJI[f.tool], { fontSize: '16px' }).setOrigin(0.5).setDepth(20_000);
       this.uiCam?.ignore(txt);
       this.tweens.add({ targets: txt, y: c.y - 30, alpha: 0, duration: 700, ease: 'Cubic.out', onComplete: () => txt.destroy() });
     }
-  }
-
-  /** Sáu giọt rơi lệch nhịp, chạm đất rồi tách ra thành hạt nước nhỏ. */
-  private waterFx(x: number, y: number): void {
-    const drops = this.add.graphics({ x, y }).setName('slice-water-fx').setDepth(20_000);
-    this.uiCam.ignore(drops);
-    this.tweens.addCounter({
-      from: 0,
-      to: 1.5,
-      duration: 460,
-      onUpdate: (tween) => {
-        drops.clear();
-        const elapsed = tween.getValue() ?? 0;
-        for (let i = 0; i < 6; i++) {
-          const age = elapsed - i * 0.1;
-          if (age < 0 || age >= 1) continue;
-          const px = (i % 3 - 1) * 9 + (i >= 3 ? 4 : -3);
-          const ground = i >= 3 ? 8 : 2;
-          if (age < 0.65) {
-            const py = ground - Math.round(24 * (1 - (age / 0.65) ** 2));
-            drops.fillStyle(VFX_COLORS.water).fillRect(px - 2, py - 5, 4, 5).fillRect(px - 1, py - 7, 2, 2);
-            drops.fillStyle(VFX_COLORS.foam).fillRect(px - 1, py - 4, 1, 2);
-          } else {
-            const splash = (age - 0.65) / 0.35;
-            const spread = 2 + Math.round(splash * 4);
-            drops.fillStyle(VFX_COLORS.foam, 1 - splash)
-              .fillRect(px - spread, ground - 1, 2, 2)
-              .fillRect(px + spread, ground - 1, 2, 2);
-          }
-        }
-      },
-      onComplete: () => drops.destroy(),
-    });
   }
 
   /** Texture + khung của hạng mục: ảnh PO trong atlas `estate`; Bếp Củi chưa có ảnh → hình tạm vẽ bằng code. */
@@ -496,8 +509,6 @@ export class EstateScene extends Phaser.Scene {
     const hutBottom = (b.y + 3) * TILE;
     this.structureViews.COOP.push(this.add2(this.add.image((b.x + 1.5) * TILE, hutBottom, ESTATE, 'coop_0').setOrigin(0.5, 1).setDepth(hutBottom)));
     this.addRubble('COOP', (b.x + 3.4) * TILE, (b.y + 2) * TILE);
-    // gà, vịt, cá: chỗ nuôi ở renderPlots (P1-9); nhịp đổi khung đứng / mổ
-    this.time.addEvent({ delay: 800, loop: true, callback: () => { this.beat++; this.renderPlots(); } });
   }
 
   // ------------------------------------------------------------------ nhân vật
@@ -569,6 +580,7 @@ export class EstateScene extends Phaser.Scene {
       this.player.setFrame(`farmer_walk_${this.dir}_0`);
     }
     this.player.setDepth(this.player.y);
+    this.farmFx.updatePose(deltaMs, this.isMoving(), this.dir);
     useSliceStore.getState().setPlayerTile(this.feetTile());
   }
 

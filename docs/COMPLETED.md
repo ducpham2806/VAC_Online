@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Hoạt ảnh nông trại P1 · 11/11/2026 · codex/p1-hoat-anh-nong-trai
+- Gieo, tưới, gặt có tư thế công cụ và hiệu ứng theo AR-30, AR-31.
+- Dùng lại sprite P1. Gà, vịt, cá lệch nhịp và mặt ao có gợn.
+- Kiểm build, 303 test, Chrome 2 cỡ, P1-9 và hướng dẫn tới Chương 1.
+- Chờ PO duyệt nhánh. P1-12 tiếp tục theo LT-13.
+
 ## Mẫu VFX tưới P1 · 11/11/2026 · codex/p1-vfx-tuoi
 - Giọt nước theo AR-31 chạy từ sự kiện đã tưới thành công trên `?p1`.
 - Đã kiểm đúng ô, kết thúc tự dọn, không phát lại khi chạm ô đã tưới.

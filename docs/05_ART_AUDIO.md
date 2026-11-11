@@ -57,10 +57,11 @@ Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixe
 - **Cây:** 4 giai đoạn (hạt → non → ra hoa/trái xanh → chín) + biến thể Hoàng Kim.
 - **Phản hồi chạm:** tween `scaleX 1,07 / scaleY 0,92` trong 90 ms + 6–12 hạt + âm thanh.
 - **Cảnh:** sóng lúa và mặt nước lệch pha theo vị trí.
+- Bản thử dùng sprite điền chủ hiện có và lớp công cụ pixel để tạo động tác rắc hạt, nghiêng bình và vung liềm. Chân giữ nguyên tại chỗ, bước đi ngắt động tác. Gà, vịt và cá dùng khung sẵn có, lệch nhịp giữa các ô.
 
 ### AR-31 · VFX
 - **Tối thiểu cho Đợt 1:** giọt nước (8×8), sao Hoàng Kim (6×6), mưa (2×12), đom đóm (8×8).
-- **Tưới trong bản thử:** khi thao tác thành công, giọt nước rơi và tan trên từng ô vừa tưới. Hiệu ứng bám theo ô đất khi camera di chuyển.
+- Trong bản thử, gieo bật bụi đất và hạt giống, tưới có giọt nước rơi và tan, gặt có hạt vàng bật lên. Hiệu ứng chỉ xuất hiện trên từng ô ruộng làm thành công và bám theo ô khi camera di chuyển.
 - **Đợt sau:** khói bếp, sao món ngon, hơi tàu, cảnh báo trộm, hào quang đột biến, pháo giấy cưới, lửa bánh chưng.
 - Code: `src/game/vfx/farmVfx.ts`.
 
