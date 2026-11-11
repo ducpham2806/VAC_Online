@@ -1,7 +1,7 @@
 # 07 · Lộ trình
 
 **Sở hữu:** các pha phát triển, cổng kiểm chứng, nội dung mỗi pha, thẻ việc đang chạy. **Không chứa:** luật chơi (`01`), con số (`03`), lý do chiến lược dài (`docs/REVIEW-2026-11-10.md`).
-Trạng thái: PO duyệt lộ trình này (QD-18, QD-20). Đang chạy P1 (LT-12), trừ P0-6. Việc tài liệu (LT-11) đã được PO cho làm trước (QD-17).
+Trạng thái: PO duyệt lộ trình này (QD-18, QD-20). Đang chạy P1 (LT-12). Việc tài liệu (LT-11) đã được PO cho làm trước (QD-17).
 
 ### LT-01 · Nguyên tắc
 1. Mỗi pha kết thúc bằng cổng đo được trên người chơi thật. Chưa qua cổng thì không mở nội dung mới.
@@ -50,7 +50,7 @@ Danh sách loài cụ thể của mỗi Đợt nằm ở dữ liệu (`unlockWav
 | P0-2 | 5 sprite mẫu (1 cây 4 giai đoạn + mùa, 1 gà, 1 cá, nhân vật đi 4 hướng, ô đất 2 mùa) qua `/vac-asset-audit` | QD-33, QD-80 | DONE 10/11: mẫu vẽ code + ảnh thật PO tạo, nhập bằng `import_sheet.py` (`art/source/p0_ai/`) |
 | P0-3 | ADR-001 một bản luật TS; ADR-002 trạng thái + sổ cái tiền tệ; ADR-003 pipeline dữ liệu (thêm cột `seasons`) | QD-20 | DONE 10/11 (`docs/adr/`, cột `Seasons`, `src/domain/season.ts`) |
 | P0-4 | Thử nghiệm kỹ thuật: "gieo → thu → bán" chạy luật TS trên Edge Function có khóa phiên bản, đo độ trễ | P0-3 | DONE 10/11 ở máy cục bộ (`prototypes/p0-4-edge/`) |
-| P0-6 | Đo độ trễ P0-4 trên Supabase thật (project cũ, mục tiêu p95 < 400 ms); bảng mới không trùng bảng MVP nên áp được kiểu thêm | QD-81 | BLOCKED: kết nối Supabase của phiên chưa thấy project VAC |
+| P0-6 | Đo độ trễ P0-4 trên Supabase thật (project cũ, mục tiêu p95 < 400 ms); bảng mới không trùng bảng MVP nên áp được kiểu thêm | QD-81 | DONE 11/11 (gộp P1-8: xử lý trên server p95 11 ms; đo từ máy cloud xa, tính cả mạng, p95 379 ms) |
 | P0-5 | Wireframe mới cho HUD điều khiển lai (`06` UI-20) | P0-1 | DONE 10/11 (`docs/wireframes/`) |
 
 ### LT-12 · Thẻ việc P1 (vertical slice LT-03)
@@ -63,12 +63,12 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 | P1-4 | Chạm ô → tự chọn công cụ (GP-02); xa thì đi tới rồi làm; kéo làm cả loạt ≤ 12 ô (KT-16); gọi engine | Test domain; quay màn hình gieo → tưới → gặt | P1-2, P1-3 | DONE 10/11 (`src/domain/tools.ts`, `tools/qa/p1-slice-smoke.cjs`) |
 | P1-5 | HUD lai React (UI-20, UI-30): nút hành động, thanh công cụ thu gọn, mùa + "còn N ngày", 🪙 ⚡ | Chụp 2 cỡ, mọi nút ≥ 44 px | P1-3 | DONE 10/11 (`src/ui/hud/SliceHud.tsx`; túi hạt đã lọc theo mùa) |
 | P1-6 | Mùa trên bản đồ: cỏ đổi màu theo mùa (AR-11), khay giống lọc theo mùa, công tắc đổi mùa cho bản thử (chỉ DEV/thử) | Test lọc mùa; chụp Xuân/Đông | P1-5 | DONE 10/11 (công tắc trong ⚙️; ảnh `docs/screenshots/p1-6-*`) |
-| P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | DONE 10/11 (lưu cục bộ; phần đồng bộ server làm cùng P1-8) |
-| P1-8 | Schema mới trên project VAC (viết lại một lần, QD-81): `farm_states`, `ledger`, `_commit_farm_state`, Edge Function `apply-actions` | test SQL; p95 < 400 ms (gộp P0-6) | Quyền Supabase project VAC; PO duyệt migration | BLOCKED |
+| P1-7 | Lưu cục bộ trạng thái bản thử (`version` + `migrate`), đồng bộ lô thao tác khi có server | Tải lại trang không mất tiến trình | P1-2 | DONE 10/11; đồng bộ server 11/11 (P1-8, `src/services/sliceSync.ts`) |
+| P1-8 | Schema mới trên project VAC (viết lại một lần, QD-81): `farm_states`, `ledger`, `_commit_farm_state`, Edge Function `apply-actions` | test SQL; p95 < 400 ms (gộp P0-6) | Quyền Supabase project VAC; PO duyệt migration | DONE 11/11 (QD-89; đã áp DB thật + đã triển khai function; `tools/qa/p1-8-online-smoke.cjs`) |
 | P1-9 | Nội dung 8 loài 2 mùa Bắc Bộ (5 cây, 2 vật nuôi, 1 cá) + art theo prompt; Bếp Củi; bảng đơn HTX | Dữ liệu từ `catalog.csv`; `/vac-balance-check` | P1-4; QD-86 | DONE 11/11 (QD-86, QD-87; `tools/qa/p1-9-smoke.cjs`; ảnh `docs/screenshots/p1-9-*`) |
 | P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4; QD-83 | DONE 10/11 (`src/domain/estate.ts`; ảnh `docs/screenshots/p1-10-*`) |
 | P1-11 | 2 NPC có tim, Chương 1, hướng dẫn 15 phút đầu (GP-50, GP-62, TG-30) | Người mới chơi hết hướng dẫn không kẹt | P1-5, P1-10; QD-84 | DONE 10/11 (`tools/qa/p1-tutorial-smoke.cjs`; ảnh `docs/screenshots/p1-11-*`) |
-| P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11; QD-88 | ĐANG LÀM: bộ đo + báo cáo + kế hoạch LT-13 xong 11/11; chờ P1-8 (gửi sự kiện lên server), PO triển khai link và mời người chơi |
+| P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11; QD-88 | ĐANG LÀM: bộ đo, báo cáo, kế hoạch LT-13, gửi sự kiện lên server (P1-8) xong 11/11; chờ PO triển khai link và mời người chơi |
 
 ### LT-13 · Kế hoạch chơi thử P1-12 (QD-88)
 - **Mục tiêu:** kiểm cổng LT-02 (tỉ lệ quay lại ngày hôm sau) và tìm chỗ người mới bị kẹt.
@@ -78,7 +78,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
   - Sự kiện: mở phiên, thao tác thành công theo loại, lên cấp, bước hướng dẫn. Dạng dữ liệu: `src/game/slice/playtest.ts`.
   - D1 = số người có sự kiện ở ngày (giờ VN) ngay sau ngày đầu ÷ số người đã qua hết ngày hôm sau đó.
   - Kèm: phễu 8 bước hướng dẫn, thời lượng phiên đầu, số phiên, cấp cao nhất (trung vị).
-  - Thu về: chờ P1-8 (server nhận sự kiện); trước đó số liệu nằm trên máy người chơi.
+  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8) mỗi 30 giây và khi rời trang. Xuất cho báo cáo: chạy `select json_agg(log) from public.playtest_logs;` trong SQL Editor, lưu kết quả thành `logs.json`.
 - **Báo cáo:** `npm run playtest:report -- <file.json>` (mảng nhật ký mỗi máy) → D1 so cổng LT-02, phễu, thao tác.
 - **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
 

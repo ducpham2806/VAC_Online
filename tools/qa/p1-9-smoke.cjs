@@ -18,7 +18,7 @@ const { chromium } = require('playwright');
     const p = await b.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1, hasTouch: true });
     p.on('pageerror', (e) => errs.push(`${w} PAGEERROR: ${e.message}`));
     p.on('console', (m) => { if (m.type() === 'error') errs.push(`${w}: ${m.text()}`); });
-    await p.goto('http://localhost:5179/?p1');
+    await p.goto('http://localhost:5179/?p1&offline');
     await p.evaluate(() => localStorage.clear());
     await p.reload();
     await p.waitForFunction(() => window.__vacSlice && window.__vacSlice.sys.isActive() && window.__vacSliceStore, null, { timeout: 15000 });

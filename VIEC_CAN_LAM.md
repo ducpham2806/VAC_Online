@@ -10,7 +10,7 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~Duyệt bộ tài liệu mới + mọi đề xuất~~ ✅ 2026-11-10 (QD-18…32)
 - [x] ~~QD-81: Supabase cho bản làm lại~~ ✅ 2026-11-10 — dùng project cũ, dữ liệu MVP bỏ được.
 - [x] ~~QD-80: tạo 5 ảnh mẫu~~ ✅ 2026-11-10 — đã nhập vào `art/source/p0_ai/`.
-- [ ] Kết nối Supabase của Claude đang trỏ vào tài khoản chỉ có project "Nam_A_CRM". Cần nối tài khoản/tổ chức chứa project VAC (`znabynzbcimpesrxxxsz`) → mở khóa P0-6.
+- [x] ~~Kết nối Supabase của Claude tới project VAC~~ (11/11, đã thấy `znabynzbcimpesrxxxsz`)
 - [x] ~~QD-82: cỡ gà + ảnh lúa không ụ bùn~~ ✅ 2026-11-10 (áp bằng script, không cần tạo lại ảnh).
 - [ ] Trong lúc chờ: tạm dừng mở GĐ2 bản cũ (A1) hay vẫn làm tiếp?
 
@@ -31,7 +31,8 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~P0-3 ADR kiến trúc + cột `Seasons`~~ ✅ 2026-11-10
 - [x] ~~P0-4 Thử nghiệm Edge Function một bản luật (máy cục bộ)~~ ✅ 2026-11-10
 - [x] ~~P0-5 Wireframe HUD điều khiển lai~~ ✅ 2026-11-10
-- [ ] P0-6 Đo độ trễ trên Supabase thật (chờ kết nối Supabase tới project VAC)
+- [x] ~~P0-6 Đo độ trễ trên Supabase thật~~ (11/11, gộp P1-8)
+- [ ] Trước khi mời người chơi thử: cho phép xóa dữ liệu kiểm thử của Claude trên DB thật (7 người chơi ẩn danh, 2 trạng thái, 4 dòng sổ cái, 8 sự kiện) hoặc giữ lại và bỏ qua khi báo cáo
 - [x] ~~Lập thẻ P1 vertical slice~~ ✅ 2026-11-10 (`docs/07_LO_TRINH.md` LT-12)
 
 ## C. Đang làm — P1 Vertical slice (`docs/07_LO_TRINH.md` LT-12)

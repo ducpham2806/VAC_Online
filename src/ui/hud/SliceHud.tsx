@@ -61,6 +61,7 @@ export const SliceHud: React.FC = () => {
   const short = useShort();
 
   const override = useSliceStore((s) => s.seasonOverride);
+  const net = useSliceStore((s) => s.net);
   const cal = seasonAt(now);
   const season = effectiveSeason({ now, seasonOverride: override });
   const daysLeft = Math.max(1, Math.ceil((cal.nextSeasonAt - now) / 86_400_000));
@@ -102,6 +103,11 @@ export const SliceHud: React.FC = () => {
             </div>
           )}
         </div>
+        {(net === 'RETRY' || net === 'CONNECTING') && (
+          <div className="mt-1 rounded-md border-2 bg-[#f6d2b8] px-2 py-0.5 text-[11px]" style={{ borderColor: WOOD_D }} data-testid="net-status">
+            {net === 'RETRY' ? '⚠️ Mất kết nối — đang thử lại, việc đã làm vẫn được giữ' : '⏳ Đang kết nối máy chủ…'}
+          </div>
+        )}
         <div className="mt-1 flex flex-col items-center gap-1">
           {toasts.map((t) => (
             <div
@@ -330,7 +336,21 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
   const setOverride = useSliceStore((s) => s.setSeasonOverride);
   const reset = useSliceStore((s) => s.reset);
   const toast = useSliceStore((s) => s.toast);
+  const online = useSliceStore((s) => s.net !== 'LOCAL');
   const [confirm, setConfirm] = useState(false);
+  if (online) {
+    // P1-8 (QD-89): online thì server dùng lịch thật và giữ tiến trình — không có công tắc mùa, không chơi lại
+    return (
+      <Sheet title="⚙️ Cài đặt bản thử" onClose={onClose}>
+        <p className="mb-1 text-xs" data-testid="online-note">
+          ☁️ Tiến trình được lưu trên máy chủ theo máy này (không cần tài khoản). Mùa theo lịch thật.
+        </p>
+        <p className="mb-1 text-xs" data-testid="playtest-code">
+          Mã chơi thử: <b>{playtestCode()}</b> — bản thử ghi lại thao tác chơi (không có tên, email) để cải thiện game.
+        </p>
+      </Sheet>
+    );
+  }
   return (
     <Sheet title="⚙️ Cài đặt bản thử" onClose={onClose}>
       <p className="mb-1 text-xs">

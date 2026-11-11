@@ -138,6 +138,18 @@ export function recordActions(actions: readonly Action[], results: readonly Acti
   save();
 }
 
+/** P1-8: sự kiện chưa gửi server (tối đa `max`). */
+export function takePending(max: number): { player: string; events: PlaytestEvent[] } {
+  const l = load();
+  return { player: l.player, events: pendingEvents(l).slice(0, max) };
+}
+
+/** P1-8: server đã nhận `n` sự kiện đầu hàng chờ. */
+export function confirmSent(n: number): void {
+  log = markSent(load(), n);
+  save(true);
+}
+
 /** Mã người chơi thử rút gọn (hiện ở Cài đặt để khớp với phiếu khảo sát). */
 export const playtestCode = () => load().player.slice(0, 8);
 

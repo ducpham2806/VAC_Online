@@ -17,3 +17,7 @@ graphify-out/
 
 # P0-4: bản đóng gói luật, sinh bằng build-engine.sh
 prototypes/*/supabase/functions/_shared/engine.js
+
+# P1-8: luật đóng gói cho Edge Function, sinh bằng npm run build:edge
+supabase/functions/apply-actions/engine.js
+supabase/.temp/

@@ -17,6 +17,7 @@
     "test:art": "python3 -m unittest discover -s tools/art -p 'test_*.py'",
     "check:docs": "python3 scripts/check-docs.py",
     "playtest:report": "tsx tools/qa/playtest-report.ts",
+    "build:edge": "bash scripts/build-edge.sh",
     "graph": "bash scripts/graphify-build.sh",
     "art:wave1": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1",
     "art:all": "python3 tools/art/codeart_wave1.py && python3 tools/art/pack_atlas.py art/source/wave1 --name wave1 && python3 tools/art/codeart_world.py && python3 tools/art/pack_atlas.py art/source/world --name world && python3 tools/art/codeart_ui.py",

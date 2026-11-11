@@ -1,4 +1,4 @@
-# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…7, P1-9, P1-10, P1-11 xong)
+# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…11 xong; P1-12 chờ PO mời người chơi)
 
 ## Việc vừa làm
 Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
@@ -18,14 +18,14 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 
 ## Chưa xác minh
 - Trên điện thoại thật (cảm ứng nhiều ngón, safe-area).
-- P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
+- Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. P1-8 khi có quyền Supabase project VAC: lưu online + bảng nhận sự kiện chơi thử (gửi `pendingEvents`, `markSent` trong `src/game/slice/playtest.ts`).
-2. P1-12: bộ đo + báo cáo + kế hoạch LT-13 đã xong (QD-88); PO triển khai link, mời 10–20 người sau P1-8.
+1. P1-12: PO triển khai link (`npm run build` → `dist/`), mời 10–20 người; xuất số liệu `select json_agg(log) from public.playtest_logs;` → `npm run playtest:report`.
+2. Hỏi PO có xóa dữ liệu kiểm thử trên DB thật không (VIEC_CAN_LAM).
 3. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên
-- Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). DB MVP chưa đổi.
+- Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). Bảng MVP chưa đổi; DB thật đã có thêm `0016` (P1-8). `?p1` mặc định chơi online; `?p1&offline` chơi trên máy (kiểm thử khói dùng cách này).
 - Không đụng project Supabase "Nam_A_CRM".
 - Mọi hình điền trang trong `?p1` (nhà, giếng, chuồng, NPC, cây đa, tre, đá, cỏ dại, rào) đã là ảnh thật của PO (atlas `estate`, `python3 tools/art/import_sheet.py --p1` rồi `pack_atlas.py art/source/p1_ai --name estate`).

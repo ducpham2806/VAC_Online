@@ -8,6 +8,7 @@ import { EstateScene } from './EstateScene';
 import { SliceHud } from '../../ui/hud/SliceHud';
 import { useSliceStore } from '../../store/useSliceStore';
 import { currentLog, startPlaytest } from './playtest';
+import { startSliceSync } from '../../services/sliceSync';
 
 declare global {
   interface Window {
@@ -40,9 +41,11 @@ export const SliceApp: React.FC = () => {
       });
     }
     const stopPlaytest = startPlaytest(useSliceStore, Date.now());
+    const stopSync = startSliceSync(); // P1-8: chơi online (thêm `?offline` để chơi trên máy)
     const timer = window.setInterval(() => useSliceStore.getState().tick(Date.now()), 1000);
     return () => {
       window.clearInterval(timer);
+      stopSync();
       stopPlaytest();
       game.destroy(true);
       delete window.__vacSlice;

@@ -6,6 +6,8 @@
  * P1-10: dọn đá/gốc cây, sửa hạng mục, khai hoang (GP-14); việc tốn vàng hỏi lại qua `pending`.
  * P1-11: NPC có tim (hộp thoại `dialog`), cảnh mở đầu chọn hướng, Gia Phả Chương 1, cờ hướng dẫn `tut`.
  * P1-9: chỗ nuôi gà/vịt/cá, Bếp Củi (bảng nấu `panel = 'KITCHEN'`), bảng đơn HTX (`panel = 'ORDERS'`).
+ * P1-8: chơi online (`net` ≠ LOCAL): thao tác vẫn hiện ngay (dự đoán), đồng thời chuyển cho `actionSink`
+ * (`src/services/sliceSync.ts`) gửi server; ảnh chụp server thay trạng thái qua `applyServer`.
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -78,6 +80,16 @@ export interface PendingEstate extends EstateConfirm {
   at: TilePos;
 }
 
+/** Chế độ lưu: LOCAL = chỉ trên máy; CONNECTING / ONLINE / RETRY = có máy chủ (P1-8). */
+export type NetMode = 'LOCAL' | 'CONNECTING' | 'ONLINE' | 'RETRY';
+
+export type ActionSink = (actions: Action[], results: ActionResult[]) => void;
+let actionSink: ActionSink | null = null;
+/** P1-8: nơi nhận lô thao tác (kèm kết quả dự đoán) để gửi server; null = chơi trên máy. */
+export function setActionSink(fn: ActionSink | null): void {
+  actionSink = fn;
+}
+
 /** Bảng đang mở trên HUD do chạm vật trên bản đồ hoặc nút dock. */
 export type SlicePanel = 'KITCHEN' | 'ORDERS';
 
@@ -94,6 +106,7 @@ interface SliceState {
   tut: TutorialFlags;
   dialog: NpcDialog | null;
   panel: SlicePanel | null;
+  net: NetMode;
   tick: (now: number) => void;
   setPlayerTile: (t: TilePos) => void;
   setSeed: (id: string) => void;
@@ -114,6 +127,9 @@ interface SliceState {
   claimChapter: (no: number) => void;
   setTutorialHidden: (hidden: boolean) => void;
   openPanel: (p: SlicePanel | null) => void;
+  setNet: (net: NetMode) => void;
+  /** Ảnh chụp server (đã cộng các thao tác còn chờ gửi) thay trạng thái trên máy. */
+  applyServer: (save: FarmSave) => void;
   cook: (productId: string) => void;
   collectDish: () => void;
   eat: (productId: string) => void;
@@ -155,11 +171,17 @@ function initial(now: number) {
   };
 }
 
+/** Ngữ cảnh luật của bản thử (client dự đoán và server dùng cùng luật; online thì không có công tắc mùa). */
+export function sliceCtx(now: number, seasonOverride: Season | null) {
+  return { now, rng: Math.random, gameStage: SLICE_GAME_STAGE, season: seasonOverride ?? undefined, slice: true } as const;
+}
+
 export const useSliceStore = create<SliceState>()(
   persist(
     (set, get) => ({
       ...initial(Date.now()),
       playerTile: { x: 0, y: 0 },
+      net: 'LOCAL' as NetMode,
 
       tick: (now) => set((s) => ({ now, save: withRegen(s.save, now) })),
 
@@ -198,13 +220,8 @@ export const useSliceStore = create<SliceState>()(
           now,
           seasonOverride: s.seasonOverride,
         });
-        const out = applyActions(s.save, actions, {
-          now,
-          rng: Math.random,
-          gameStage: SLICE_GAME_STAGE,
-          season: s.seasonOverride ?? undefined,
-          slice: true,
-        });
+        const out = applyActions(s.save, actions, sliceCtx(now, s.net === 'LOCAL' ? s.seasonOverride : null));
+        if (actionSink && out.results.some((r) => r.ok)) actionSink(actions, out.results);
         recordActions(actions, out.results, now); // P1-12: nhật ký chơi thử ẩn danh (LT-13)
         const okIdx = out.results.filter((r) => r.ok).map((r) => r.index);
         const fx: TileFx[] = okIdx.flatMap((i) => {
@@ -302,6 +319,14 @@ export const useSliceStore = create<SliceState>()(
       },
 
       setTutorialHidden: (hidden) => set((s) => ({ tut: { ...s.tut, hidden } })),
+
+      setNet: (net) => set((s) => (net === 'LOCAL' ? { net } : { net, seasonOverride: null })),
+
+      applyServer: (save) => {
+        const s = get();
+        const now = Date.now();
+        set({ save: withRegen(save, now), now, seedId: validSeed(save, effectiveSeason(s), s.seedId) });
+      },
 
       openPanel: (panel) => {
         set({ panel });
