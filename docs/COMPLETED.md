@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Mẫu VFX tưới P1 · 11/11/2026 · codex/p1-vfx-tuoi
+- Giọt nước theo AR-31 chạy từ sự kiện đã tưới thành công trên `?p1`.
+- Đã kiểm đúng ô, kết thúc tự dọn, không phát lại khi chạm ô đã tưới.
+- Typecheck, 303 test, build, check:docs và Chrome 2 cỡ PASS.
+- Chờ PO xem mẫu trên nhánh riêng. Bước tiếp của playtest vẫn ở LT-13.
+
 ## Rà soát dự án và bộ công cụ agent · 11/11/2026 · c58623e
 - Rà thiết kế, hai luồng MVP và P1, dữ liệu, migration, pipeline ảnh, kiểm thử và cấu hình agent.
 - Đọc các định nghĩa VAC; lập bản đồ 10 nhóm skill và 3 tầng vai trò của Game Studio theo chỉ mục ghim.

@@ -8,6 +8,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - P1-10 (QD-83): dọn đá/gốc cây → Gỗ/Đá, sửa giếng/chuồng/nhà, khai hoang 2 vùng (`src/domain/estate.ts`, `src/game/slice/estateTarget.ts`).
 - P1-11 (QD-84): cảnh mở đầu, 2 NPC có tim, Sổ Gia Phả Chương 1, hướng dẫn 8 bước (`src/domain/npc.ts`, `story.ts`, `src/game/slice/sliceTutorial.ts`, `src/ui/hud/SliceStoryHud.tsx`).
 - P1-9 (QD-86, QD-87): 8 loài (`src/data/sliceContent.ts`), chỗ nuôi + Bếp Củi (`src/domain/estate.ts`), đơn HTX (`src/domain/orders.ts`), HUD `src/ui/hud/SliceKitchenHud.tsx`; engine `ctx.slice`.
+- Mẫu VFX tưới P1 ở `codex/p1-vfx-tuoi`, chờ PO xem (AR-31, WORKLOG 11/11).
 - Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
 
 ## Đã xác minh

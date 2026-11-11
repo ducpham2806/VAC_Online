@@ -48,6 +48,7 @@ import { findItem } from '../../domain/farm';
 import { TOOL_EMOJI } from './toolIcons';
 import { NPCS, NPC_IDS, type NpcId, npcAt } from '../../data/npcs';
 import { npcOf, vnDay } from '../../domain/npc';
+import { VFX_COLORS } from '../../domain/vfxEvents';
 import { currentTutorialStep, tutorialTarget } from './sliceTutorial';
 
 export const SLICE_ATLAS = 'slice';
@@ -358,16 +359,53 @@ export class EstateScene extends Phaser.Scene {
     }
   }
 
-  /** Biểu tượng công cụ bay lên trên ô vừa làm. */
+  /** Phản hồi trên ô vừa làm thành công. */
   private playFx(): void {
     const list = useSliceStore.getState().fx.filter((f) => f.seq > this.lastFxSeq);
     for (const f of list) {
       this.lastFxSeq = Math.max(this.lastFxSeq, f.seq);
       const c = tileCenter({ x: f.x, y: f.y });
+      if (f.tool === 'WATER') {
+        this.waterFx(c.x, c.y);
+        continue;
+      }
       const txt = this.add.text(c.x, c.y - 8, TOOL_EMOJI[f.tool], { fontSize: '16px' }).setOrigin(0.5).setDepth(20_000);
       this.uiCam?.ignore(txt);
       this.tweens.add({ targets: txt, y: c.y - 30, alpha: 0, duration: 700, ease: 'Cubic.out', onComplete: () => txt.destroy() });
     }
+  }
+
+  /** Sáu giọt rơi lệch nhịp, chạm đất rồi tách ra thành hạt nước nhỏ. */
+  private waterFx(x: number, y: number): void {
+    const drops = this.add.graphics({ x, y }).setName('slice-water-fx').setDepth(20_000);
+    this.uiCam.ignore(drops);
+    this.tweens.addCounter({
+      from: 0,
+      to: 1.5,
+      duration: 460,
+      onUpdate: (tween) => {
+        drops.clear();
+        const elapsed = tween.getValue() ?? 0;
+        for (let i = 0; i < 6; i++) {
+          const age = elapsed - i * 0.1;
+          if (age < 0 || age >= 1) continue;
+          const px = (i % 3 - 1) * 9 + (i >= 3 ? 4 : -3);
+          const ground = i >= 3 ? 8 : 2;
+          if (age < 0.65) {
+            const py = ground - Math.round(24 * (1 - (age / 0.65) ** 2));
+            drops.fillStyle(VFX_COLORS.water).fillRect(px - 2, py - 5, 4, 5).fillRect(px - 1, py - 7, 2, 2);
+            drops.fillStyle(VFX_COLORS.foam).fillRect(px - 1, py - 4, 1, 2);
+          } else {
+            const splash = (age - 0.65) / 0.35;
+            const spread = 2 + Math.round(splash * 4);
+            drops.fillStyle(VFX_COLORS.foam, 1 - splash)
+              .fillRect(px - spread, ground - 1, 2, 2)
+              .fillRect(px + spread, ground - 1, 2, 2);
+          }
+        }
+      },
+      onComplete: () => drops.destroy(),
+    });
   }
 
   /** Texture + khung của hạng mục: ảnh PO trong atlas `estate`; Bếp Củi chưa có ảnh → hình tạm vẽ bằng code. */
