@@ -21,8 +21,8 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - P0-6 / P1-8: kết nối Supabase của Claude chỉ thấy project "Nam_A_CRM", không thấy project VAC `znabynzbcimpesrxxxsz`.
 
 ## Bước tiếp theo
-1. P1-8 khi có quyền Supabase project VAC (P1-9 xong 11/11).
-2. P1-12 chơi thử 10–20 người.
+1. P1-8 khi có quyền Supabase project VAC: lưu online + bảng nhận sự kiện chơi thử (gửi `pendingEvents`, `markSent` trong `src/game/slice/playtest.ts`).
+2. P1-12: bộ đo + báo cáo + kế hoạch LT-13 đã xong (QD-88); PO triển khai link, mời 10–20 người sau P1-8.
 3. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
 
 ## Bối cảnh giữ nguyên

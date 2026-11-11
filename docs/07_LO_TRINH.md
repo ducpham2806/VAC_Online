@@ -68,7 +68,20 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 | P1-9 | Nội dung 8 loài 2 mùa Bắc Bộ (5 cây, 2 vật nuôi, 1 cá) + art theo prompt; Bếp Củi; bảng đơn HTX | Dữ liệu từ `catalog.csv`; `/vac-balance-check` | P1-4; QD-86 | DONE 11/11 (QD-86, QD-87; `tools/qa/p1-9-smoke.cjs`; ảnh `docs/screenshots/p1-9-*`) |
 | P1-10 | Sửa 3 hạng mục điền trang (nhà, giếng, chuồng gà) (GP-14) | Bản đồ đổi hình khi sửa; test luật | P1-4; QD-83 | DONE 10/11 (`src/domain/estate.ts`; ảnh `docs/screenshots/p1-10-*`) |
 | P1-11 | 2 NPC có tim, Chương 1, hướng dẫn 15 phút đầu (GP-50, GP-62, TG-30) | Người mới chơi hết hướng dẫn không kẹt | P1-5, P1-10; QD-84 | DONE 10/11 (`tools/qa/p1-tutorial-smoke.cjs`; ảnh `docs/screenshots/p1-11-*`) |
-| P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11 | TODO |
+| P1-12 | Chơi thử 10–20 người, đo quay lại ngày hôm sau (cổng LT-02) | Báo cáo số liệu | P1-1…11; QD-88 | ĐANG LÀM: bộ đo + báo cáo + kế hoạch LT-13 xong 11/11; chờ P1-8 (gửi sự kiện lên server), PO triển khai link và mời người chơi |
+
+### LT-13 · Kế hoạch chơi thử P1-12 (QD-88)
+- **Mục tiêu:** kiểm cổng LT-02 (tỉ lệ quay lại ngày hôm sau) và tìm chỗ người mới bị kẹt.
+- **Người chơi:** 10–20 người chưa biết game, chơi trên điện thoại màn ngang hoặc máy tính. Không hướng dẫn thêm ngoài game; ngày 2 không nhắc để đo đúng việc tự quay lại.
+- **Link:** PO tự triển khai. `npm run build` ra thư mục tĩnh `dist/`, đưa lên hosting bất kỳ (`vercel.json` có sẵn rewrite), gửi người chơi `<link>/?p1`.
+- **Số liệu tự ghi trong game** (ẩn danh, không tên/email; mã chơi thử hiện ở ⚙️ Cài đặt):
+  - Sự kiện: mở phiên, thao tác thành công theo loại, lên cấp, bước hướng dẫn. Dạng dữ liệu: `src/game/slice/playtest.ts`.
+  - D1 = số người có sự kiện ở ngày (giờ VN) ngay sau ngày đầu ÷ số người đã qua hết ngày hôm sau đó.
+  - Kèm: phễu 8 bước hướng dẫn, thời lượng phiên đầu, số phiên, cấp cao nhất (trung vị).
+  - Thu về: chờ P1-8 (server nhận sự kiện); trước đó số liệu nằm trên máy người chơi.
+- **Báo cáo:** `npm run playtest:report -- <file.json>` (mảng nhật ký mỗi máy) → D1 so cổng LT-02, phễu, thao tác.
+- **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
+
 
 ### LT-11 · Việc tài liệu đã làm
 10/11: thay bộ `00 → 17` bằng `docs/00 → 08`, gộp nội dung đáng giữ, đổi hướng theo QD-12…15. Chi tiết: `docs/COMPLETED.md`.

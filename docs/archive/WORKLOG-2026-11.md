@@ -92,3 +92,10 @@
 - 11/11 (tiếp): nhập thêm 5 ảnh thiên nhiên (`580bca3`): cây đa, 2 bụi tre, 3 đá, 3 cỏ dại, 2 đoạn rào → atlas `estate` 28 khung (0 lạc bảng, 0 pixel đen). Rào AI vẽ xéo → `import_sheet.py` thêm `shear` nắn rail thành ngang; scene ghép rào chồng mép 6 px, dàn đều khớp mép. `?p1` bỏ hẳn atlas `world`. Smoke 2 cỡ + người mới PASS, 0 lỗi JS, 0 nút < 44 px.
 - 11/11 (tiếp 2): PO yêu cầu NPC +15% → QD-85, NPC nhập lại ở khung 56×74 (không phóng trong game, giữ nét pixel). PO tạo lại rào (vẽ thẳng, bỏ `shear`) và gửi cây xoan (`48edc92`, `7b73099`): gốc cây chặt lấy Gỗ đổi sang xoan già; cây đa thành 1 cây cổ thụ đầu làng `D` (góc trên phải, chắn lối, chạm thì nhắc không chặt). Atlas `estate` 29 khung, 0 lạc bảng, 0 pixel đen. 271 test; smoke 2 cỡ + người mới PASS. Ảnh: `docs/screenshots/p1-art-trees-1280x720.png`.
 - **Dừng ở:** P1-9 (chờ duyệt 8 loài), P1-8 (chờ quyền Supabase).
+
+## 11/11/2026 · P1-9 bắt đầu (QD-86 PO duyệt 8 loài) · claude/gifted-faraday-2q851c
+- PO duyệt bộ 8 loài Xuân + Thu → QD-86. Code: `src/data/sliceContent.ts` (8 loài, 2 món, 2 mùa); `sowableSeeds` chỉ còn 5 cây bản thử (Hạ: Lúa, Rau Muống; Đông: Ngô, Hành, Cải).
+- Prompt 7 ảnh mới: `art/prompts/p1_species.md` (4 cây, vịt, Bếp Củi đổ nát/đã sửa, 2 món).
+- Kiểm: typecheck, 273 test (+2) PASS.
+- Phát hiện: dữ liệu chưa có luật cho vật nuôi ăn cám (Cối Xay Cám hoãn); Bếp Củi khóa ở Giai đoạn 2 (`CRAFT_MIN_STAGE`); cấp mở của Cải/Bếp (Lv4), Vịt (Lv6) xa so với XP bản thử.
+- **Dừng ở:** chờ PO duyệt đề xuất số liệu Bếp Củi, chỗ nuôi, bảng đơn HTX (đã gửi trong chat); chờ 7 ảnh.

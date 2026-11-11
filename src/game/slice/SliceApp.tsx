@@ -7,11 +7,13 @@ import Phaser from 'phaser';
 import { EstateScene } from './EstateScene';
 import { SliceHud } from '../../ui/hud/SliceHud';
 import { useSliceStore } from '../../store/useSliceStore';
+import { currentLog, startPlaytest } from './playtest';
 
 declare global {
   interface Window {
     __vacSlice?: EstateScene;
     __vacSliceStore?: typeof useSliceStore;
+    __vacPlaytest?: typeof currentLog;
   }
 }
 
@@ -34,14 +36,18 @@ export const SliceApp: React.FC = () => {
       game.events.once(Phaser.Core.Events.READY, () => {
         window.__vacSlice = game.scene.getScene('EstateScene') as EstateScene;
         window.__vacSliceStore = useSliceStore;
+        window.__vacPlaytest = currentLog;
       });
     }
+    const stopPlaytest = startPlaytest(useSliceStore, Date.now());
     const timer = window.setInterval(() => useSliceStore.getState().tick(Date.now()), 1000);
     return () => {
       window.clearInterval(timer);
+      stopPlaytest();
       game.destroy(true);
       delete window.__vacSlice;
       delete window.__vacSliceStore;
+      delete window.__vacPlaytest;
     };
   }, []);
 

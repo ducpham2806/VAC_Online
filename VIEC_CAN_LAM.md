@@ -53,6 +53,8 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~PO duyệt danh sách 8 loài cho P1-9~~ (QD-86, 11/11)
 - [x] ~~PO duyệt số liệu P1-9: Bếp Củi, chỗ nuôi gà/vịt/cá, bảng đơn HTX~~ (QD-87, 11/11)
 - [x] ~~PO tạo 7 ảnh theo `art/prompts/p1_species.md`~~ (đã nhập 11/11)
+- [ ] P1-12: PO triển khai link `?p1` (`npm run build` → `dist/`, xem `docs/07_LO_TRINH.md` LT-13)
+- [ ] P1-12: PO mời 10–20 người chơi thử, gửi phiếu hỏi LT-13 (sau khi P1-8 xong để thu số liệu)
 
 ## F. Nhật ký
 Nhật ký chính: [docs/WORKLOG.md](docs/WORKLOG.md) (≤ 3 mục). Việc đã xong: [docs/COMPLETED.md](docs/COMPLETED.md).

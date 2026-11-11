@@ -16,6 +16,7 @@ import { GameIcon } from '../GameIcon';
 import { Sheet, btn } from './sliceUi';
 import { GiaPhaPanel, IntroScene, NpcDialogSheet, TutorialBar } from './SliceStoryHud';
 import { SlicePanels } from './SliceKitchenHud';
+import { playtestCode } from '../../game/slice/playtest';
 
 const SEASON_LABEL: Record<Season, { icon: string; name: string }> = {
   XUAN: { icon: '🌸', name: 'Xuân' },
@@ -351,6 +352,9 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
         ))}
       </div>
       <p className="mb-1 text-xs">Tiến trình được lưu trên máy này (tải lại trang không mất).</p>
+      <p className="mb-1 text-xs" data-testid="playtest-code">
+        Mã chơi thử: <b>{playtestCode()}</b> — bản thử ghi lại thao tác chơi (không có tên, email) để cải thiện game.
+      </p>
       {!confirm ? (
         <button className={`${btn} px-2 text-xs`} onClick={() => setConfirm(true)}>
           🔄 Chơi lại từ đầu

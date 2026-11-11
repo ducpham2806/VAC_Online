@@ -28,6 +28,7 @@ import {
   sowableSeeds,
 } from '../game/slice/sliceSave';
 import { type EstateConfirm, type EstateTarget, estateTargetAt } from '../game/slice/estateTarget';
+import { recordActions } from '../game/slice/playtest';
 
 export interface Toast {
   id: number;
@@ -204,6 +205,7 @@ export const useSliceStore = create<SliceState>()(
           season: s.seasonOverride ?? undefined,
           slice: true,
         });
+        recordActions(actions, out.results, now); // P1-12: nhật ký chơi thử ẩn danh (LT-13)
         const okIdx = out.results.filter((r) => r.ok).map((r) => r.index);
         const fx: TileFx[] = okIdx.flatMap((i) => {
           const a = actions[i];

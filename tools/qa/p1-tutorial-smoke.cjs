@@ -58,6 +58,10 @@ const { chromium } = require('playwright');
   const s = await p.evaluate(() => { const s = window.__vacSliceStore.getState().save; return { gold: s.gold, gems: s.gems, lv: s.level, st: s.stamina, story: s.story }; });
   console.log(JSON.stringify(log, null, 1));
   console.log('ket-qua', JSON.stringify(s), 'giay-that', Math.round((Date.now() - t0) / 1000));
+  // P1-12: nhật ký chơi thử ghi đủ phiên, các bước hướng dẫn tới DONE, cấp, thao tác (LT-13)
+  const pt = await p.evaluate(() => { const l = window.__vacPlaytest(); return { sessions: l.session, steps: l.events.filter((e) => e.type === 'TUTORIAL').map((e) => e.name),
+    levels: l.events.filter((e) => e.type === 'LEVEL').map((e) => e.value), actions: [...new Set(l.events.filter((e) => e.type === 'ACTION').map((e) => e.name))] }; });
+  console.log('nhat-ky-choi-thu', JSON.stringify(pt), pt.steps.at(-1) === 'DONE' && pt.actions.includes('PLANT') ? 'PASS' : 'FAIL');
   console.log(errs.join('\n') || 'no page errors');
   await b.close();
 })();
