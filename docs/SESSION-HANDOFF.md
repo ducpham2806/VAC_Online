@@ -22,7 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. LT-14 bước 0 đã xuất Web/PWA và thử lưu cục bộ. Kiểm mở từ icon, chạm, lưu và FPS trên Chrome Android và Safari iPhone thật.
+1. LT-14 bước 0 đã xuất Web/PWA, thử lưu và có bản đồ chỉnh trong Godot Editor ở `codex/godot-scene-nong-trai`. Kiểm mở từ icon, chạm, lưu và FPS trên Chrome Android và Safari iPhone thật.
 2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
 3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 

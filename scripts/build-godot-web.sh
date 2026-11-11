@@ -2,6 +2,10 @@
 # LT-14 bước 0. Dùng sprite gốc của VAC và xuất preset Web/PWA.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$1" != "--prepare-only" ]; }; then
+  printf 'Cách dùng: %s [--prepare-only]\n' "$0" >&2
+  exit 1
+fi
 GODOT_BIN="${GODOT_BIN:-godot}"
 GODOT_VERSION="$("$GODOT_BIN" --version)"
 case "$GODOT_VERSION" in
@@ -20,5 +24,8 @@ done
 cp public/icon-512.svg godot/generated/icon.svg
 
 "$GODOT_BIN" --headless --path godot --import
+if [ "${1:-}" = "--prepare-only" ]; then
+  exit 0
+fi
 "$GODOT_BIN" --headless --path godot --export-release Web dist/index.html
 gzip -n -c godot/dist/index.wasm > godot/dist/index.wasm.gz

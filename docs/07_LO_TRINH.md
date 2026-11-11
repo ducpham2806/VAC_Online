@@ -120,6 +120,8 @@ python3 tools/qa/serve-godot-probe.py
 
 Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qua handler và sổ cái thật trên PostgreSQL tạm với danh tính giả. Khi đưa qua HTTPS thử nghiệm, chạy máy chủ Web với `VAC_GODOT_PREVIEW_ORIGIN` bằng origin HTTPS chính xác. Trên máy thật, thử gieo khi ô trống, thêm vào màn hình chính, mở từ icon và đối chiếu trạng thái. HUD hiển thị FPS và thời gian tới khi đọc xong nông trại.
 
+- [x] ~~Bản đồ cảnh thử chỉnh được trong Godot Editor.~~ Mở `godot/project.godot` và scene `estate_map.tscn` ở chế độ 2D. Chọn `Terrain/Ground` hoặc `Terrain/Soil` để tô ô, chọn các node dưới `Scenery` để di chuyển vật trang trí. `PlayerSpawn` là điểm vào cảnh. Kéo `RicePlot` cùng ô đất đích để dời vùng chạm và hình cây lúa. Lưu scene rồi bấm F5 để chạy cảnh chính `estate_probe.tscn` có HUD và API thử. Bản mới clone có thể chạy lệnh build ở trên với `--prepare-only` để nhập sprite trước khi mở Editor, không cần Web export template.
+
 Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
 
 ### LT-11 · Việc tài liệu đã làm

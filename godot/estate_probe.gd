@@ -1,21 +1,16 @@
 extends Node2D
 ## Cảnh kiểm chứng LT-14. Thay đổi ô đất và vàng chỉ theo phản hồi từ apply-actions.
 
-const GRASS := preload("res://generated/tile_grass_xuan.png")
-const SOIL := preload("res://generated/tile_tilled_dry.png")
-const RICE := preload("res://generated/CROP_01_1.png")
-const FARMER := preload("res://generated/farmer_walk_down_0.png")
-const HOUSE := preload("res://generated/house_0.png")
-const TREE := preload("res://generated/tree_0.png")
-const ROCK := preload("res://generated/rock_0.png")
-const FENCE := preload("res://generated/fence_0.png")
-const TILE := 32
 const PLOT_ID := "P5_7"
 const CACHE_PATH := "user://vac_probe_snapshot.json"
 const INK := Color("#3d2314")
 const PAPER := Color("#f3e3c3")
 
-@onready var player: Sprite2D = $Player
+@onready var world: Node2D = $World
+@onready var player_spawn: Marker2D = $World/EstateMap/PlayerSpawn
+@onready var player: Sprite2D = $World/EstateMap/PlayerSpawn/Player
+@onready var plot_hit: CollisionShape2D = $World/EstateMap/RicePlot/HitArea
+@onready var crop: Sprite2D = $World/EstateMap/RicePlot/Rice
 @onready var transport: Node = $Transport
 @onready var header: PanelContainer = $HUD/Margin/Layout/Header
 @onready var footer: PanelContainer = $HUD/Margin/Layout/Footer
@@ -32,54 +27,21 @@ var walk: Tween
 
 
 func _ready() -> void:
-	player.texture = FARMER
-	player.offset = Vector2(0, -29)
 	_style_hud()
-	_position_scene()
-	get_viewport().size_changed.connect(_position_scene)
+	_center_world()
+	get_viewport().size_changed.connect(_center_world)
 	action.pressed.connect(_on_action)
 	$MetricsTimer.timeout.connect(_update_metrics)
 	_load_cache()
 	_refresh([])
 
 
-func _origin() -> Vector2:
-	return (get_viewport_rect().size * 0.5 + Vector2(0, 22)).floor()
-
-
-func _plot_rect() -> Rect2:
-	return Rect2(_origin() + Vector2(0, 8), Vector2(TILE, TILE))
-
-
-func _position_scene() -> void:
-	if walk != null and walk.is_running():
-		walk.kill()
-	player.position = _origin() + Vector2(-69, 12)
-	queue_redraw()
-
-
-func _draw() -> void:
-	draw_texture_rect(GRASS, get_viewport_rect(), true)
-	var center := _origin()
-	draw_rect(Rect2(center + Vector2(-185, 16), Vector2(105, 16)), Color("#c99e67"))
-	_draw_at_feet(HOUSE, center + Vector2(-158, 27))
-	_draw_at_feet(TREE, center + Vector2(145, 0))
-	_draw_at_feet(ROCK, center + Vector2(127, 70))
-	_draw_at_feet(ROCK, center + Vector2(-142, 84))
-	for column in range(4):
-		var fence_position := center + Vector2(-96 + 43 * column, -61)
-		_draw_at_feet(FENCE, fence_position)
-	for row in range(2):
-		for column in range(5):
-			draw_texture(SOIL, center + Vector2((column - 2) * TILE, 8 + row * TILE))
-	var plot := _plot_rect()
-	if _is_planted():
-		_draw_at_feet(RICE, plot.get_center() + Vector2(0, 15))
-	draw_rect(plot.grow(-1), Color("#fff3b0"), false, 2)
-
-
-func _draw_at_feet(texture: Texture2D, feet: Vector2) -> void:
-	draw_texture(texture, feet - Vector2(texture.get_width() * 0.5, texture.get_height()))
+func _center_world() -> void:
+	var base_size := Vector2(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height")
+	)
+	world.position = ((get_viewport_rect().size - base_size) * 0.5).floor()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -87,20 +49,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if busy:
 		return
-	if _plot_rect().has_point(get_global_mouse_position()):
+	var pointer := get_global_mouse_position()
+	var shape := plot_hit.shape as RectangleShape2D
+	var plot_bounds := Rect2(-shape.size * 0.5, shape.size)
+	if plot_bounds.has_point(plot_hit.to_local(pointer)):
 		_on_action()
 		return
 	var bounds := get_viewport_rect().grow(-24)
-	var target := get_global_mouse_position().clamp(bounds.position, bounds.end)
+	var target := pointer.clamp(bounds.position, bounds.end)
 	_walk_to(target)
 
 
 func _walk_to(target: Vector2) -> void:
 	if walk != null:
 		walk.kill()
-	player.flip_h = target.x < player.position.x
+	var local_target := player_spawn.to_local(target)
+	player.flip_h = local_target.x < player.position.x
 	walk = create_tween()
-	walk.tween_property(player, "position", target, 0.3).set_trans(Tween.TRANS_SINE)
+	walk.tween_property(player, "position", local_target, 0.3).set_trans(Tween.TRANS_SINE)
 
 
 func _on_action() -> void:
@@ -109,7 +75,7 @@ func _on_action() -> void:
 	if not connected or _is_planted():
 		_refresh([])
 		return
-	_walk_to(_plot_rect().get_center() + Vector2(-21, 0))
+	_walk_to(plot_hit.global_position + Vector2(-21, 0))
 	_refresh([{"type": "PLANT", "tileId": PLOT_ID, "itemId": "CROP_01"}])
 
 
@@ -149,9 +115,10 @@ func _refresh(actions: Array) -> void:
 
 func _update_view() -> void:
 	gold.text = "Vàng %d" % int(snapshot.get("gold", 0)) if not snapshot.is_empty() else "Vàng —"
-	action.text = "Gieo lúa" if connected and not _is_planted() else "Đọc lại"
+	var planted := _is_planted()
+	crop.visible = planted
+	action.text = "Gieo lúa" if connected and not planted else "Đọc lại"
 	action.disabled = busy
-	queue_redraw()
 
 
 func _update_metrics() -> void:
