@@ -85,7 +85,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 ### LT-14 · Kế hoạch chuyển P1 sang Godot 4 (QD-90)
 
-**Đề xuất chờ PO duyệt.** Chuyển P1 Bắc Bộ theo LT-12 trước khi mở nội dung P2. Chốt một commit Phaser làm mốc hành vi, hình ảnh và dữ liệu thử. Dùng bản đó để đối chiếu và quay lui trong thời gian chuyển. Sau khi nghiệm thu, tính năng mới đi vào client Godot.
+**PO đã duyệt bắt đầu bước 0 ngày 11/11.** Chuyển P1 Bắc Bộ theo LT-12 trước khi mở nội dung P2. Chốt một commit Phaser làm mốc hành vi, hình ảnh và dữ liệu thử. Dùng bản đó để đối chiếu và quay lui trong thời gian chuyển. Sau khi nghiệm thu, tính năng mới đi vào client Godot.
 
 **Tác động**
 
@@ -109,6 +109,16 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 **Phần offline cần PO chốt.** Bước 0–2 ưu tiên online và thử mở lại PWA đã tải. Đề xuất bản Godot đầu tiên cho xem trạng thái đã tải khi mất mạng, báo rõ thao tác đang chờ xác nhận và tiếp tục sau khi kết nối lại. Chơi hoàn toàn offline như chế độ thử `?p1&offline` cần phương án giữ một bộ luật theo ADR-001. Nếu bắt buộc có ở đợt đầu, thử khả năng dùng lại bộ luật trên cả Web và native rồi ước lượng riêng trước khi phát hành.
 
 **Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt lại sau bước 0 và sau khi xác định yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
+
+**Chạy lại bước 0.** Cài Godot 4.7.2 và Web export template đơn luồng đồng phiên bản. Dựng bản Web, chạy bộ thử Deno/PostgreSQL, rồi chạy máy chủ Web ở terminal khác.
+
+```bash
+GODOT_BIN=/duong/dan/Godot bash scripts/build-godot-web.sh
+PG_BIN=/duong/dan/postgresql/bin DENO=/duong/dan/deno bash tools/qa/edge/run-local.sh --serve
+python3 tools/qa/serve-godot-probe.py
+```
+
+Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qua handler và sổ cái thật trên PostgreSQL tạm với danh tính giả. Khi đưa qua HTTPS thử nghiệm, chạy máy chủ Web với `VAC_GODOT_PREVIEW_ORIGIN` bằng origin HTTPS chính xác. Trên máy thật, thử gieo khi ô trống, thêm vào màn hình chính, mở từ icon và đối chiếu trạng thái. HUD hiển thị FPS và thời gian tới khi đọc xong nông trại.
 
 Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
 

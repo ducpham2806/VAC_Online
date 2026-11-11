@@ -140,3 +140,10 @@
 - Mẫu dùng sự kiện tưới thành công của P1, vẽ giọt nước ở ô vừa tưới (AR-31). Tác động giới hạn ở hiển thị P1. Mẫu dùng lại atlas và bảng màu VAC.
 - Kiểm: typecheck, 303 test, build, check:docs PASS. Chrome 1280×720 và 844×390: dùng nút hành động, VFX đúng ô rồi tự dọn, ô đã tưới không phát lại, 0 lỗi JS. Bản production mở P1 ở cả hai cỡ.
 - **Dừng ở:** mẫu trên nhánh riêng, chờ PO xem. P1-12 vẫn theo LT-13.
+
+## 11/11/2026 · Hoạt ảnh nông trại P1 · codex/p1-hoat-anh-nong-trai
+- PO duyệt làm tiếp. Dùng vac-studio, game-feel, technical-artist, vac-asset-audit và vac-story-done.
+- Tái dùng sprite và bảng màu VAC. Lớp công cụ tạo trong Phaser, thêm tư thế và VFX gieo/tưới/gặt, vật nuôi lệch nhịp, gợn ao (AR-30, AR-31).
+- Typecheck, 303 test, build và check:docs PASS. Chrome ở 1280×720 và 844×390 xác nhận ba công cụ đạt kiểm màu/alpha, VFX đúng ô thành công, đi bộ ngắt tư thế, vật nuôi/ao chuyển động và không có lỗi JS.
+- Smoke P1-9 hai cỡ PASS, hướng dẫn 844×390 tới DONE và nhận Chương 1. Bản production mở P1 hai cỡ.
+- Nhánh đang chờ PO duyệt, còn bước kiểm trên điện thoại thật. Chơi thử P1-12 theo LT-13.

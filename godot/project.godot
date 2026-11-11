@@ -1,0 +1,23 @@
+; LT-14 · Bước 0
+config_version=5
+
+[application]
+
+config/name="VAC Online · Godot"
+run/main_scene="res://estate_probe.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://generated/icon.svg"
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.106, 0.231, 0.169, 1)
