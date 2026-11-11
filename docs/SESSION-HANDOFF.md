@@ -1,4 +1,4 @@
-# Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…11 xong; P1-12 chờ PO mời người chơi)
+# Bàn giao · 11/11/2026 · P1 Phaser làm mốc, chờ duyệt LT-14
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,10 +22,9 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-- Nếu phát hành P1 dưới dạng PWA, kiểm icon cài mở đúng bản P1 (xem WORKLOG 11/11).
-1. P1-12: PO triển khai link (`npm run build` → `dist/`), mời 10–20 người; xuất số liệu `select json_agg(log) from public.playtest_logs;` → `npm run playtest:report`.
-2. Hỏi PO có xóa dữ liệu kiểm thử trên DB thật không (VIEC_CAN_LAM).
-3. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
+1. PO đã chọn Godot 4 (QD-90). Duyệt LT-14 rồi thử Web/PWA trên điện thoại thật.
+2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
+3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). Bảng MVP chưa đổi; DB thật đã có thêm `0016` (P1-8). `?p1` mặc định chơi online; `?p1&offline` chơi trên máy (kiểm thử khói dùng cách này).

@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
+- Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.
+- Mốc đầu thử Web/PWA trên Chrome Android và Safari iPhone trước khi chuyển toàn P1.
+- Đã đối chiếu hợp đồng lưu hiện có và chạy check:docs.
+- Chờ PO duyệt kế hoạch và bước kiểm chứng đầu tiên.
+
 ## Đối chiếu engine cho web/PWA · 11/11/2026 · codex/doi-chieu-engine-web-pwa
 - Rà đường phát hành web/PWA và khả năng đóng gói Android/iOS.
 - Đề xuất giữ Phaser 3. Kết quả và căn cứ ở WORKLOG.

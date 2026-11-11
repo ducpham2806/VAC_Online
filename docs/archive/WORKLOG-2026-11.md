@@ -134,3 +134,9 @@
 - Đọc cấu hình Claude, 7 skill VAC, Graphify và 6 agent VAC; rà danh mục 116 skill và 21 playbook Game Studio (c5dac46). Skill dùng: Graphify, Supabase (đọc mã cục bộ).
 - Kiểm thật: build và check:docs PASS. Typecheck thiếu kiểu Node; Vitest chưa cài; SQL thiếu Postgres cục bộ; test art thiếu numpy (6 lỗi import).
 - **Dừng ở:** rà soát xong; P1-12 vẫn chờ PO phát hành link và mời người chơi.
+
+## 11/11/2026 · Mẫu VFX tưới trong P1 · codex/p1-vfx-tuoi
+- Kiểm atlas `slice` và `estate`, không pixel đen/lạc bảng/alpha lẻ. Skill dùng: vac-studio, vac-scope-check, vac-asset-audit, game-feel, technical-artist, vac-story-done.
+- Mẫu dùng sự kiện tưới thành công của P1, vẽ giọt nước ở ô vừa tưới (AR-31). Tác động giới hạn ở hiển thị P1. Mẫu dùng lại atlas và bảng màu VAC.
+- Kiểm: typecheck, 303 test, build, check:docs PASS. Chrome 1280×720 và 844×390: dùng nút hành động, VFX đúng ô rồi tự dọn, ô đã tưới không phát lại, 0 lỗi JS. Bản production mở P1 ở cả hai cỡ.
+- **Dừng ở:** mẫu trên nhánh riêng, chờ PO xem. P1-12 vẫn theo LT-13.
