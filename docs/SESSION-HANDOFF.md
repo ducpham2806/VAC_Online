@@ -1,7 +1,7 @@
 # Bàn giao · 11/11/2026 · P1 đang chạy (P1-1…11 xong; P1-12 chờ PO mời người chơi)
 
 ## Việc vừa làm
-Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa có PR).
+Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
 - QD-82 áp bằng script; atlas `slice`; engine ở `src/engine/`; scene đi bộ `?p1` (`src/game/slice/`).
 - P1-4/5: chạm ô, kéo cả loạt, nút hành động, HUD lai, Kho bán HTX (`src/domain/tools.ts`, `src/store/useSliceStore.ts`, `src/ui/hud/SliceHud.tsx`).
 - P1-6/7: mùa trên bản đồ + công tắc mùa (⚙️), lưu cục bộ `vac_slice_save_v1`.
@@ -11,7 +11,7 @@ Nhánh `claude/gifted-faraday-2q851c` (PR #3 cũ đã merge; phần này chưa c
 - Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
 
 ## Đã xác minh
-- typecheck, 270 test, build, test:art, check:docs PASS.
+- Lần nghiệm thu P1-8: typecheck, 303 test, test:sql, build, check:docs PASS (WORKLOG 11/11). Lần rà soát cục bộ sau đó xác nhận build và check:docs.
 - `tools/qa/p1-tutorial-smoke.cjs`: người mới theo hướng dẫn đi hết 8 bước + nhận Chương 1 ở 2 cỡ, không kẹt.
 - `tools/qa/p1-slice-smoke.cjs` (cần `npx vite --port 5179`): cả vòng gieo → bán, điền trang (dọn, sửa, khai hoang, giếng mở tưới cả loạt), 4 mùa, tải lại giữ tiến trình ở 2 cỡ, 0 nút < 44 px, 0 lỗi JS.
 - Playwright `?p1` ở 1280×720 và 844×390: chạm đi tới, joystick, 0 lỗi JS. Ảnh: `docs/screenshots/p1-3-*.png`.

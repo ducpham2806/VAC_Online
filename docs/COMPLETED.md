@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Rà soát dự án và bộ công cụ agent · 11/11/2026 · c58623e
+- Rà thiết kế, hai luồng MVP và P1, dữ liệu, migration, pipeline ảnh, kiểm thử và cấu hình agent.
+- Đọc các định nghĩa VAC; lập bản đồ 10 nhóm skill và 3 tầng vai trò của Game Studio theo chỉ mục ghim.
+- Đối chiếu kiến trúc bằng Graphify và mã nguồn. Build và check:docs qua tại checkout cục bộ.
+- Kiểm thử đầy đủ còn vướng thành phần môi trường, chi tiết trong WORKLOG. P1-12 tiếp tục theo LT-13.
+
 ## P1-8 · Lưu online bản thử · 11/11/2026 — DONE (đã áp DB thật, đã triển khai; chưa có người chơi thử)
 - DB VAC: `farm_states` + `ledger` + `_commit_farm_state` (ADR-002) và `playtest_events` (migration `0016`, chỉ thêm).
 - Edge Function `apply-actions` chạy đúng luật `src/engine` (ADR-001); giờ, số ngẫu nhiên, kết quả do server quyết.
