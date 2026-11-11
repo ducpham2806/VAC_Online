@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Đối chiếu engine cho web/PWA · 11/11/2026 · codex/doi-chieu-engine-web-pwa
+- Rà đường phát hành web/PWA và khả năng đóng gói Android/iOS.
+- Đề xuất giữ Phaser 3. Kết quả và căn cứ ở WORKLOG.
+- Ghi nhận cần kiểm điểm vào PWA khi phát hành P1 theo LT-13.
+- Chờ PO chọn bước triển khai. Đây là tư vấn kỹ thuật cho lộ trình hiện tại.
+
 ## Hoạt ảnh nông trại P1 · 11/11/2026 · codex/p1-hoat-anh-nong-trai
 - Gieo, tưới, gặt có tư thế công cụ và hiệu ứng theo AR-30, AR-31.
 - Dùng lại sprite P1. Gà, vịt, cá lệch nhịp và mặt ao có gợn.

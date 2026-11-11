@@ -22,6 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
+- Nếu phát hành P1 dưới dạng PWA, kiểm icon cài mở đúng bản P1 (xem WORKLOG 11/11).
 1. P1-12: PO triển khai link (`npm run build` → `dist/`), mời 10–20 người; xuất số liệu `select json_agg(log) from public.playtest_logs;` → `npm run playtest:report`.
 2. Hỏi PO có xóa dữ liệu kiểm thử trên DB thật không (VIEC_CAN_LAM).
 3. Kiểm trên điện thoại thật: ô trắng sau khung mùa ở 844×390 (nghi lỗi chụp headless).
