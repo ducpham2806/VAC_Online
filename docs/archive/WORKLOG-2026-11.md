@@ -153,3 +153,9 @@
 - Đối chiếu trực tiếp `src/main.tsx`, manifest, service worker và cấu hình Capacitor. Manifest mở `/`, còn P1 vào bằng `/?p1`. Nếu PWA phục vụ P1, cần chọn đúng điểm vào.
 - Kiểm thật `npm run build` trên main và `npm run check:docs` trên nhánh tư vấn. Chưa có số đo trên máy thật, APK hay bản iOS.
 - Ghi nhận đề xuất để PO cân nhắc. P1-12 tiếp tục theo LT-13.
+
+## 11/11/2026 · Kế hoạch chuyển P1 sang Godot · codex/ke-hoach-chuyen-godot
+- PO chọn Godot 4, Web/PWA trước (QD-90). LT-14 ghi phạm vi P1, tác động, các bước và tiêu chí qua bước.
+- Đối chiếu mã lưu/đồng bộ P1 và tài liệu Godot, Supabase chính thức. Dùng vac-studio, godot-export, game-production-scrum và Supabase.
+- Giữ engine luật TS và Supabase trong đề xuất. Chốt riêng hành vi offline và phương án mang phiên/lưu cũ trước phát hành.
+- `npm run check:docs` và `git diff --check` qua. Kế hoạch chờ PO duyệt bước thử Web/PWA trên máy thật.

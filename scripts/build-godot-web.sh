@@ -15,9 +15,10 @@ esac
 
 mkdir -p godot/generated godot/dist
 : > godot/dist/.gdignore
-for sprite in tile_grass_xuan tile_tilled_dry CROP_01_1 farmer_walk_down_0; do
+for sprite in tile_grass_xuan tile_tilled_dry CROP_01_1; do
   cp "art/source/p0_ai/$sprite.png" godot/generated/
 done
+cp art/source/p0_ai/farmer_walk_{up,down,left,right}_{0,1,2,3}.png godot/generated/
 for sprite in house_0 tree_0 rock_0 fence_0; do
   cp "art/source/p1_ai/$sprite.png" godot/generated/
 done

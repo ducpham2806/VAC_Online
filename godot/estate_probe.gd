@@ -5,12 +5,14 @@ const PLOT_ID := "P5_7"
 const CACHE_PATH := "user://vac_probe_snapshot.json"
 const INK := Color("#3d2314")
 const PAPER := Color("#f3e3c3")
+const Farmer := preload("res://farmer.gd")
 
 @onready var world: Node2D = $World
-@onready var player_spawn: Marker2D = $World/EstateMap/PlayerSpawn
-@onready var player: Sprite2D = $World/EstateMap/PlayerSpawn/Player
+@onready var player: Farmer = $World/EstateMap/PlayerSpawn/Player
 @onready var plot_hit: CollisionShape2D = $World/EstateMap/RicePlot/HitArea
 @onready var crop: Sprite2D = $World/EstateMap/RicePlot/Rice
+@onready var sow_dust: CPUParticles2D = $World/EstateMap/RicePlot/SowFx/Dust
+@onready var sow_seeds: CPUParticles2D = $World/EstateMap/RicePlot/SowFx/Seeds
 @onready var transport: Node = $Transport
 @onready var header: PanelContainer = $HUD/Margin/Layout/Header
 @onready var footer: PanelContainer = $HUD/Margin/Layout/Footer
@@ -23,7 +25,9 @@ var snapshot: Dictionary = {}
 var busy := false
 var connected := false
 var ready_ms := 0
-var walk: Tween
+var has_walk_target := false
+var walk_target := Vector2.ZERO
+var sow_fx_pending := false
 
 
 func _ready() -> void:
@@ -44,6 +48,20 @@ func _center_world() -> void:
 	world.position = ((get_viewport_rect().size - base_size) * 0.5).floor()
 
 
+func _physics_process(delta: float) -> void:
+	var keyboard := Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down")
+	if not busy and keyboard != Vector2.ZERO:
+		has_walk_target = false
+		var target := player.global_position + keyboard * player.walk_speed * delta
+		player.step_toward(_clamp_walk(target), delta)
+	elif has_walk_target:
+		has_walk_target = not player.step_toward(_clamp_walk(world.to_global(walk_target)), delta)
+	else:
+		player.stand()
+	if not has_walk_target:
+		_play_sow_fx()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is not InputEventMouseButton or event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
 		return
@@ -55,18 +73,26 @@ func _unhandled_input(event: InputEvent) -> void:
 	if plot_bounds.has_point(plot_hit.to_local(pointer)):
 		_on_action()
 		return
-	var bounds := get_viewport_rect().grow(-24)
-	var target := pointer.clamp(bounds.position, bounds.end)
-	_walk_to(target)
+	_walk_to(pointer)
 
 
 func _walk_to(target: Vector2) -> void:
-	if walk != null:
-		walk.kill()
-	var local_target := player_spawn.to_local(target)
-	player.flip_h = local_target.x < player.position.x
-	walk = create_tween()
-	walk.tween_property(player, "position", local_target, 0.3).set_trans(Tween.TRANS_SINE)
+	_play_sow_fx()
+	walk_target = world.to_local(target)
+	has_walk_target = true
+
+
+func _clamp_walk(target: Vector2) -> Vector2:
+	var bounds := get_viewport_rect().grow(-24)
+	return target.clamp(bounds.position, bounds.end)
+
+
+func _play_sow_fx() -> void:
+	if not sow_fx_pending:
+		return
+	sow_fx_pending = false
+	sow_dust.restart()
+	sow_seeds.restart()
 
 
 func _on_action() -> void:
@@ -108,6 +134,10 @@ func _refresh(actions: Array) -> void:
 			status.text = str(results[0].get("message", "Gieo chưa thành công."))
 		elif _is_planted():
 			status.text = "Lúa đã lưu trên máy chủ thử nghiệm."
+			if not actions.is_empty() and not results.is_empty():
+				sow_fx_pending = true
+				if not has_walk_target:
+					_play_sow_fx()
 		else:
 			status.text = "Chạm ô sáng hoặc bấm Gieo lúa."
 	_update_view()

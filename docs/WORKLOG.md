@@ -2,6 +2,12 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
+## 11/11/2026 · Hoạt ảnh đi và gieo trong Godot · codex/godot-hoat-anh-di-gieo
+- PO yêu cầu làm tiếp trên Mac. Godot có chạm để đi, phím mũi tên/WASD, hoạt ảnh 4 hướng và thứ tự lớp theo chân. Hai cột cỏ PO tô vẫn nằm trong bản cục bộ.
+- Mở SpriteFrames trong Editor. Dùng godot-animation và vac-asset-audit, 16 PNG qua kiểm kích thước, nền, viền và bảng màu.
+- Godot headless kiểm đi/dừng, phím ngắt chạm và VFX chỉ sau xác nhận gieo. Chrome hai cỡ và WebKit mô phỏng qua. Ảnh xác nhận che khuất, di chuyển và hiệu ứng. PostgreSQL tạm ghi một giao dịch.
+- Typecheck, 303 test, build, Godot Web/PWA export và check:docs qua. Dừng ở nhánh chờ PO duyệt, còn kiểm điện thoại thật.
+
 ## 11/11/2026 · Scene nông trại chỉnh tay trong Godot · codex/godot-scene-nong-trai
 - PO yêu cầu dùng Godot trên Mac và có scene chỉnh tay. Dùng godot-tilemap. Bản đồ có các lớp cỏ, đất, node vật trang trí, điểm xuất phát và ô gieo chỉnh được.
 - Mở Godot 4.7.2 từ ~/Applications, xác nhận bản đồ 2D và Inspector. Đã thử nhập sprite từ thư mục dự án sạch với `--prepare-only`.
@@ -15,9 +21,3 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - Link HTTPS thử đã qua Chrome và WebKit trên máy tính. Chrome đo một lần tải nguội khoảng 17,1 giây và tải lại 0,55 giây. WASM gửi dạng gzip 9,6 MiB.
 - Kiểm typecheck, 303 test, build, test:sql 8 file, check:docs, Godot headless/export và màu 8 PNG đều qua. Cách chạy lại ở LT-14.
 - Bước 0 đang chờ kiểm Chrome Android và Safari iPhone thật, gồm mở từ icon và đo tải/FPS.
-
-## 11/11/2026 · Kế hoạch chuyển P1 sang Godot · codex/ke-hoach-chuyen-godot
-- PO chọn Godot 4, Web/PWA trước (QD-90). LT-14 ghi phạm vi P1, tác động, các bước và tiêu chí qua bước.
-- Đối chiếu mã lưu/đồng bộ P1 và tài liệu Godot, Supabase chính thức. Dùng vac-studio, godot-export, game-production-scrum và Supabase.
-- Giữ engine luật TS và Supabase trong đề xuất. Chốt riêng hành vi offline và phương án mang phiên/lưu cũ trước phát hành.
-- `npm run check:docs` và `git diff --check` qua. Kế hoạch chờ PO duyệt bước thử Web/PWA trên máy thật.

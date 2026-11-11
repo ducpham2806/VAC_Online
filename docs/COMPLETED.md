@@ -2,9 +2,11 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
-## Scene nông trại Godot · 11/11/2026 · codex/godot-scene-nong-trai
+## Scene nông trại Godot · 11/11/2026 · codex/godot-hoat-anh-di-gieo
 - Bản đồ chỉnh trong Godot 4.7.2 bằng TileMapLayer và node 2D.
-- Editor trên Mac đã mở scene. Cách chỉnh và chạy ở LT-14.
+- Editor trên Mac đã mở SpriteFrames. Cách chỉnh và chạy ở LT-14.
+- Đi bốn hướng, sắp lớp theo chân và VFX gieo sau xác nhận.
+- Headless kiểm di chuyển, từ chối gieo và đọc lại. Chrome kiểm ảnh che khuất.
 - Chrome hai cỡ, PWA cache, WebKit và thử dời ô đều qua.
 - Typecheck, 303 test, build Web và check:docs qua.
 - Nhánh chờ PO duyệt. LT-14 còn kiểm điện thoại thật.

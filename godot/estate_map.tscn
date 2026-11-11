@@ -6,15 +6,18 @@
 [ext_resource type="Texture2D" path="res://generated/rock_0.png" id="5_phxvq"]
 [ext_resource type="Texture2D" path="res://generated/fence_0.png" id="6_xgnvb"]
 [ext_resource type="Texture2D" path="res://generated/CROP_01_1.png" id="7_djfqk"]
-[ext_resource type="Texture2D" path="res://generated/farmer_walk_down_0.png" id="8_iptkg"]
+[ext_resource type="PackedScene" path="res://farmer.tscn" id="8_farmer"]
+[ext_resource type="PackedScene" path="res://sow_fx.tscn" id="9_sow"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4p0ou"]
 size = Vector2(32, 32)
 
 [node name="EstateMap" type="Node2D" unique_id=1790185174]
 texture_filter = 1
+y_sort_enabled = true
 
 [node name="Terrain" type="Node2D" parent="." unique_id=1053894290]
+z_index = -2
 position = Vector2(0, 18)
 
 [node name="Ground" type="TileMapLayer" parent="Terrain" unique_id=666832953]
@@ -30,8 +33,10 @@ collision_enabled = false
 navigation_enabled = false
 
 [node name="Scenery" type="Node2D" parent="." unique_id=1185449013]
+y_sort_enabled = true
 
 [node name="Path" type="Polygon2D" parent="Scenery" unique_id=1588896423]
+z_index = -1
 position = Vector2(135, 218)
 color = Color(0.7882353, 0.61960787, 0.40392157, 1)
 polygon = PackedVector2Array(0, 0, 105, 0, 105, 16, 0, 16)
@@ -108,9 +113,10 @@ closed = true
 width = 2.0
 default_color = Color(1, 0.9529412, 0.6901961, 1)
 
+[node name="SowFx" parent="RicePlot" instance=ExtResource("9_sow")]
+
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1112181305]
+y_sort_enabled = true
 position = Vector2(251, 214)
 
-[node name="Player" type="Sprite2D" parent="PlayerSpawn" unique_id=164582634]
-texture = ExtResource("8_iptkg")
-offset = Vector2(0, -29)
+[node name="Player" parent="PlayerSpawn" instance=ExtResource("8_farmer") unique_id=164582634]
