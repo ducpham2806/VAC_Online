@@ -1,13 +1,23 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://estate_probe.gd" id="1"]
 [ext_resource type="Script" path="res://probe_transport.gd" id="2"]
 [ext_resource type="PackedScene" path="res://estate_map.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://touch_joystick.tscn" id="4"]
 [ext_resource type="Script" path="res://estate_camera.gd" id="5"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_xuan.png" id="6_spring"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_ha.png" id="7_summer"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_thu.png" id="8_autumn"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_dong.png" id="9_winter"]
 
 [node name="EstateProbe" type="Node2D"]
 script = ExtResource("1")
+grass_by_season = Dictionary[String, Texture2D]({
+"DONG": ExtResource("9_winter"),
+"HA": ExtResource("7_summer"),
+"THU": ExtResource("8_autumn"),
+"XUAN": ExtResource("6_spring")
+})
 
 [node name="World" type="Node2D" parent="."]
 
@@ -61,6 +71,7 @@ mouse_filter = 2
 
 [node name="Row" type="HBoxContainer" parent="HUD/Margin/Layout/Header"]
 layout_mode = 2
+theme_override_constants/separation = 12
 mouse_filter = 2
 
 [node name="Title" type="Label" parent="HUD/Margin/Layout/Header/Row"]
@@ -68,6 +79,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "VAC Online · Bắc Bộ"
+
+[node name="Season" type="Label" parent="HUD/Margin/Layout/Header/Row"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Mùa —"
 
 [node name="Gold" type="Label" parent="HUD/Margin/Layout/Header/Row"]
 layout_mode = 2

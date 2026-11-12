@@ -1,4 +1,4 @@
-# Bàn giao · 12/11/2026 · P1 Phaser làm mốc, Godot bước 0 đang kiểm
+# Bàn giao · 12/11/2026 · Godot P1 đã có lịch mùa và nền cỏ
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,7 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. LT-14 đã chạy staging HTTPS và giữ phiên Phaser ↔ Godot ở `codex/godot-staging-pwa`. Còn kiểm mở từ icon, hai ngón, FPS và độ trễ trên Android/iPhone thật. Sau đó hoàn tất nội dung P1.
+1. LT-14 bước 3 đã chuyển lịch và nền cỏ trên `codex/godot-p1-seasons`, đã kiểm qua ranh mùa trên Web. Tiếp theo chuyển điền trang. Staging HTTPS vẫn ở bản `codex/godot-staging-pwa`, chờ thử mở từ icon, hai ngón, FPS và độ trễ trên Android/iPhone thật.
 2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
 3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 

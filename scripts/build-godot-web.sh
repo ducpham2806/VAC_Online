@@ -37,7 +37,7 @@ fi
 
 mkdir -p godot/generated godot/dist
 : > godot/dist/.gdignore
-for sprite in tile_grass_xuan tile_tilled_dry tile_tilled_wet; do
+for sprite in tile_grass_{xuan,ha,thu,dong} tile_tilled_dry tile_tilled_wet; do
   cp "art/source/p0_ai/$sprite.png" godot/generated/
 done
 cp art/source/p0_ai/CROP_01_{0,1,2,3}.png godot/generated/
@@ -48,6 +48,7 @@ for sprite in house_0 tree_0 rock_0 fence_0; do
   cp "art/source/p1_ai/$sprite.png" godot/generated/
 done
 cp public/icon-512.svg godot/generated/icon.svg
+npx --no-install tsx scripts/export-godot-seasons.ts > godot/generated/season_calendar.gd
 
 "$GODOT_BIN" --headless --path godot --import
 if [ "${1:-}" = "--prepare-only" ]; then

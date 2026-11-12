@@ -8,8 +8,12 @@ const TouchJoystick := preload("res://touch_joystick.gd")
 const EstateCamera := preload("res://estate_camera.gd")
 const RicePlot := preload("res://rice_plot.gd")
 const FarmProbeState := preload("res://farm_probe_state.gd")
+const GRASS_SOURCE_ID := 0
+const SEASON_NAMES := {"XUAN": "Xuân", "HA": "Hạ", "THU": "Thu", "DONG": "Đông"}
 const TAP_SLOP := 12.0
 const MOUSE_POINTER := -2
+
+@export var grass_by_season: Dictionary[String, Texture2D] = {}
 
 @onready var camera: EstateCamera = $EstateCamera
 @onready var ground: TileMapLayer = $World/EstateMap/Terrain/Ground
@@ -19,6 +23,7 @@ const MOUSE_POINTER := -2
 @onready var header: PanelContainer = $HUD/Margin/Layout/Header
 @onready var footer: PanelContainer = $HUD/Margin/Layout/Footer
 @onready var joystick: TouchJoystick = $HUD/Margin/Layout/Space/Joystick
+@onready var season_label: Label = $HUD/Margin/Layout/Header/Row/Season
 @onready var gold: Label = $HUD/Margin/Layout/Header/Row/Gold
 @onready var metrics: Label = $HUD/Margin/Layout/Header/Row/Metrics
 @onready var plot_title: Label = $HUD/Margin/Layout/Footer/Row/Text/Title
@@ -40,10 +45,16 @@ var pointers: Dictionary[int, Vector2] = {}
 var tap_start := Vector2.ZERO
 var tap_possible := false
 var can_pan := false
+var grass_atlas: TileSetAtlasSource
+var base_grass: Texture2D
 
 
 func _ready() -> void:
 	_style_hud()
+	if ground.tile_set != null and ground.tile_set.has_source(GRASS_SOURCE_ID):
+		grass_atlas = ground.tile_set.get_source(GRASS_SOURCE_ID) as TileSetAtlasSource
+		if grass_atlas != null:
+			base_grass = grass_atlas.texture
 	world_bounds = _map_bounds()
 	camera.configure(world_bounds, player.global_position)
 	get_viewport().size_changed.connect(_on_viewport_resized)
@@ -244,6 +255,7 @@ func _refresh(actions: Array) -> void:
 
 
 func _update_view() -> void:
+	_update_season()
 	var tile := farm.tile()
 	var stage := farm.stage(tile)
 	var watered: bool = tile.get("watered", false)
@@ -254,8 +266,11 @@ func _update_view() -> void:
 	var command: String = farm.plot_command().get("type", "")
 	var labels := {"PLANT": "Gieo lúa", "WATER": "Tưới lúa", "HARVEST": "Gặt lúa"}
 	var waiting := connected and farm.clock_rate > 0.0 and command.is_empty()
+	var out_of_season := connected and not tile.is_empty() and stage < 0 and farm.rice_out_of_season()
 	action.text = labels.get(command, "Đang lớn" if waiting else "Đọc lại") if connected else "Đọc lại"
-	action.disabled = busy or pending_plot or waiting
+	if out_of_season:
+		action.text = "Trái vụ"
+	action.disabled = busy or pending_plot or waiting or out_of_season
 	sell.disabled = not connected or farm.clock_rate == 0.0 or busy or pending_plot or qty == 0
 	if not notice.is_empty():
 		status.text = notice
@@ -268,10 +283,22 @@ func _update_view() -> void:
 	elif stage >= 0:
 		var phase := "Đã tưới" if watered else "Chạm ô để tưới"
 		status.text = "%s · Chín sau %d giây" % [phase, farm.seconds_to_mature(tile)]
+	elif out_of_season:
+		status.text = "Lúa nghỉ vụ. Có thể bán lúa trong kho." if qty > 0 else "Mùa này không gieo lúa được."
 	elif qty > 0:
 		status.text = "Lúa đã vào kho. Có thể bán cho HTX."
 	else:
 		status.text = "Chạm ô sáng hoặc bấm Gieo lúa."
+
+
+func _update_season() -> void:
+	var current := farm.season_id()
+	season_label.text = "Mùa —" if current.is_empty() else "%s · ngày %d/%d" % [
+		SEASON_NAMES[current], farm.season_day(), FarmProbeState.Calendar.DAYS
+	]
+	var texture: Texture2D = grass_by_season.get(current, base_grass)
+	if grass_atlas != null and texture != grass_atlas.texture:
+		grass_atlas.texture = texture
 
 
 func _update_metrics() -> void:
@@ -322,7 +349,7 @@ func _panel(color: Color, margin: float = 10) -> StyleBoxFlat:
 func _style_hud() -> void:
 	header.add_theme_stylebox_override("panel", _panel(PAPER, 12))
 	footer.add_theme_stylebox_override("panel", _panel(PAPER))
-	for label: Label in [gold, metrics, $HUD/Margin/Layout/Header/Row/Title, plot_title, status]:
+	for label: Label in [gold, metrics, season_label, $HUD/Margin/Layout/Header/Row/Title, plot_title, status]:
 		label.add_theme_color_override("font_color", INK)
 	for button: Button in [action, sell]:
 		button.add_theme_stylebox_override("normal", _panel(Color("#ffd166")))

@@ -2,6 +2,7 @@ extends RefCounted
 
 const PLOT_ID := "P5_7"
 const RICE_ID := "CROP_01"
+const Calendar := preload("res://generated/season_calendar.gd")
 
 var snapshot: Dictionary = {}
 var server_now := 0.0
@@ -25,6 +26,23 @@ func freeze() -> void:
 
 func now() -> float:
 	return server_now + (Time.get_ticks_msec() - synced_at) * clock_rate
+
+
+func season_id() -> String:
+	if server_now <= 0.0:
+		return ""
+	var period := floori((now() - Calendar.EPOCH_MS) / Calendar.DURATION_MS)
+	return Calendar.ORDER[posmod(period, Calendar.ORDER.size())]
+
+
+func season_day() -> int:
+	var elapsed := fposmod(now() - Calendar.EPOCH_MS, Calendar.DURATION_MS)
+	return floori(elapsed * Calendar.DAYS / Calendar.DURATION_MS) + 1
+
+
+func rice_out_of_season() -> bool:
+	var current := season_id()
+	return not current.is_empty() and not Calendar.RICE_SOWING_SEASONS.has(current)
 
 
 func tile() -> Dictionary:
@@ -62,6 +80,8 @@ func plot_command() -> Dictionary:
 		return {}
 	var crop_stage := stage(plot)
 	if crop_stage == -1:
+		if rice_out_of_season():
+			return {}
 		return {"type": "PLANT", "tileId": PLOT_ID, "itemId": RICE_ID}
 	if clock_rate == 0.0:
 		return {}

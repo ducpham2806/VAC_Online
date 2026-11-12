@@ -191,3 +191,9 @@
 - Chrome mô phỏng 1280×720 và 844×390 kiểm kéo, giữ góc nhìn, chạm đúng ô sau kéo cùng joystick, bám lại và giữ mép. Mỗi lần ghi một giao dịch thử. WebKit đọc đúng ô đã lưu.
 - Typecheck, 303 test, build, Godot headless, Web/PWA export và check:docs qua. Chụp ảnh hai cỡ.
 - Dừng ở nhánh chờ PO duyệt. Bước 0 còn kiểm điện thoại thật. Bước 1 còn vòng ruộng bằng fixture.
+
+## 12/11/2026 · Vòng ruộng Godot · codex/godot-vong-ruong
+- PO duyệt làm tiếp LT-14. Dùng godot-gameplay-scripter. Một ô lúa nhận gieo, tưới, gặt theo trạng thái, kho có nút bán. Cảnh chỉnh được hình cây, đất ướt và VFX.
+- Fixture Deno gọi engine, tăng tốc đồng hồ và giữ nông trại riêng trong bộ nhớ. Chrome 1280×720 và 844×390 chơi hết vòng, tải lại giữ kho, vàng/XP/thể lực đúng. WebKit đọc lại đúng kết quả.
+- 303 test, typecheck, build, Godot headless và Web/PWA export, check:docs và kiểm 5 PNG qua. Ảnh hai cỡ đã chụp. Hai cột cỏ PO tô còn ở bản cục bộ.
+- Dừng ở nhánh chờ PO duyệt, máy Mac có ô trống để thử. Còn kiểm điện thoại thật và mốc lưu online LT-14.

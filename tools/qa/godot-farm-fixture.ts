@@ -1,9 +1,16 @@
 import { GROWTH_STAGE_CUTS } from '../../src/domain/growth';
 import type { FarmSave } from '../../src/domain/farm';
+import { SEASON_EPOCH_MS, SEASON_ORDER, seasonAt } from '../../src/domain/season';
 import { parseActions, serverApply } from '../../src/engine/sliceServer';
 
 // Đồng hồ và nông trại riêng cho LT-14. Trạng thái chỉ sống trong tiến trình thử.
-const epoch = 1767661200000;
+const season = Deno.args[0] ?? SEASON_ORDER[0];
+const seasonIndex = SEASON_ORDER.findIndex((entry) => entry === season);
+if (seasonIndex < 0 || Deno.args.length > 1) {
+  throw new Error(`Chọn mùa thử: ${SEASON_ORDER.join(', ')}.`);
+}
+const seasonMs = seasonAt(SEASON_EPOCH_MS).nextSeasonAt - SEASON_EPOCH_MS;
+const epoch = SEASON_EPOCH_MS + seasonIndex * seasonMs;
 const startedAt = performance.now();
 const clockRate = 8;
 const rice = 'CROP_01';

@@ -113,6 +113,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 **Chạy lại bước 0.** Cài Godot 4.7.2 và Web export template đơn luồng đồng phiên bản. Dựng bản Web, chạy bộ thử Deno/PostgreSQL, rồi chạy máy chủ Web ở terminal khác.
 
 ```bash
+npm ci
 GODOT_BIN=/duong/dan/Godot bash scripts/build-godot-web.sh
 PG_BIN=/duong/dan/postgresql/bin DENO=/duong/dan/deno bash tools/qa/edge/run-local.sh --serve
 python3 tools/qa/serve-godot-probe.py
@@ -125,6 +126,7 @@ Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qu
 - [x] ~~Thử joystick nổi theo UI-20.~~ Giữ và kéo ở vùng dưới trái, dùng ngón khác chạm ô gieo. Trên Mac, dùng chuột kéo để thử. Chỉnh hình trong `touch_joystick.tscn` và vùng nhận chạm ở `HUD/Margin/Layout/Space/Joystick` trong cảnh chính.
 - [x] ~~Thử camera theo UI-20.~~ Kéo ở đất trống hoặc kéo hai ngón để xem bản đồ. Điều khiển nhân vật để camera bám lại. Chọn `EstateCamera` trong cảnh chính để chỉnh độ lệch và tốc độ bám.
 - [x] ~~Chạy vòng gieo → tưới → gặt → bán trên một ô.~~ Chạy `bash tools/qa/run-godot-farm-fixture.sh`, rồi `python3 tools/qa/serve-godot-probe.py --farm-loop` ở terminal khác. F5 hoặc mở Web cục bộ. Bộ thử tăng tốc đồng hồ, giữ kho qua tải lại và đặt lại khi khởi động lại tiến trình Deno.
+- [x] ~~Lịch mùa, cỏ và gieo lúa theo GP-20.~~ Fixture nhận `XUAN`, `HA`, `THU` hoặc `DONG`.
 
 Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
 
