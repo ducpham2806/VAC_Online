@@ -173,3 +173,9 @@
 - Xuất Web/PWA, thử Chrome ở 1280×720 và 844×390, tải lại giữ lúa, đọc cache khi mất mạng. WebKit mô phỏng đọc được. Ảnh đã chụp ở hai cỡ.
 - Bản sao dời ô bằng scene nhận chạm ở vị trí mới, không gửi gieo ở vị trí cũ. PostgreSQL tạm ghi một lần trừ vàng. Typecheck, 303 test, build và check:docs qua.
 - Dừng ở scene chỉnh tay trên nhánh riêng chờ PO duyệt. LT-14 bước 0 còn kiểm trên Android và iPhone thật.
+
+## 11/11/2026 · Hoạt ảnh đi và gieo trong Godot · codex/godot-hoat-anh-di-gieo
+- PO yêu cầu làm tiếp trên Mac. Godot có chạm để đi, phím mũi tên/WASD, hoạt ảnh 4 hướng và thứ tự lớp theo chân. Hai cột cỏ PO tô vẫn nằm trong bản cục bộ.
+- Mở SpriteFrames trong Editor. Dùng godot-animation và vac-asset-audit. Kiểm 16 PNG về kích thước, nền, viền và bảng màu. Bỏ khung đi phải quay sai hướng khỏi clip Godot.
+- Godot headless kiểm đi/dừng, phím ngắt chạm và VFX chỉ sau xác nhận gieo. Chrome hai cỡ và WebKit mô phỏng qua. Ảnh xác nhận che khuất, di chuyển và hiệu ứng. PostgreSQL tạm ghi một giao dịch.
+- Typecheck, 303 test, build, Godot Web/PWA export và check:docs qua. Dừng ở nhánh chờ PO duyệt, còn kiểm điện thoại thật.

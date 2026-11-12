@@ -5,12 +5,8 @@
 [ext_resource type="Texture2D" path="res://generated/tree_0.png" id="4_mydo5"]
 [ext_resource type="Texture2D" path="res://generated/rock_0.png" id="5_phxvq"]
 [ext_resource type="Texture2D" path="res://generated/fence_0.png" id="6_xgnvb"]
-[ext_resource type="Texture2D" path="res://generated/CROP_01_1.png" id="7_djfqk"]
 [ext_resource type="PackedScene" path="res://farmer.tscn" id="8_farmer"]
-[ext_resource type="PackedScene" path="res://sow_fx.tscn" id="9_sow"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4p0ou"]
-size = Vector2(32, 32)
+[ext_resource type="PackedScene" path="res://rice_plot.tscn" id="9_rice"]
 
 [node name="EstateMap" type="Node2D" unique_id=1790185174]
 texture_filter = 1
@@ -89,31 +85,8 @@ texture = ExtResource("6_xgnvb")
 centered = false
 offset = Vector2(-32, -32)
 
-[node name="RicePlot" type="Area2D" parent="." unique_id=1753623591]
+[node name="RicePlot" parent="." instance=ExtResource("9_rice") unique_id=1753623591]
 position = Vector2(336, 226)
-collision_layer = 0
-collision_mask = 0
-input_pickable = false
-monitoring = false
-monitorable = false
-
-[node name="HitArea" type="CollisionShape2D" parent="RicePlot" unique_id=1699158726]
-shape = SubResource("RectangleShape2D_4p0ou")
-
-[node name="Rice" type="Sprite2D" parent="RicePlot" unique_id=1465593248]
-visible = false
-position = Vector2(0, 15)
-texture = ExtResource("7_djfqk")
-centered = false
-offset = Vector2(-16, -48)
-
-[node name="Outline" type="Line2D" parent="RicePlot" unique_id=940365871]
-points = PackedVector2Array(-15, -15, 15, -15, 15, 15, -15, 15)
-closed = true
-width = 2.0
-default_color = Color(1, 0.9529412, 0.6901961, 1)
-
-[node name="SowFx" parent="RicePlot" instance=ExtResource("9_sow")]
 
 [node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1112181305]
 y_sort_enabled = true

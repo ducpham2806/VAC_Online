@@ -124,6 +124,7 @@ Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qu
 - [x] ~~Thử hoạt ảnh theo AR-30, AR-31 trên cảnh hiện có.~~ Chạm để đi hoặc dùng phím mũi tên/WASD. Chỉnh khung hình và tốc độ trong `farmer.tscn`, chỉnh bụi đất và hạt trong `sow_fx.tscn`. Hiệu ứng chỉ chạy khi có phản hồi gieo thành công.
 - [x] ~~Thử joystick nổi theo UI-20.~~ Giữ và kéo ở vùng dưới trái, dùng ngón khác chạm ô gieo. Trên Mac, dùng chuột kéo để thử. Chỉnh hình trong `touch_joystick.tscn` và vùng nhận chạm ở `HUD/Margin/Layout/Space/Joystick` trong cảnh chính.
 - [x] ~~Thử camera theo UI-20.~~ Kéo ở đất trống hoặc kéo hai ngón để xem bản đồ. Điều khiển nhân vật để camera bám lại. Chọn `EstateCamera` trong cảnh chính để chỉnh độ lệch và tốc độ bám.
+- [x] ~~Chạy vòng gieo → tưới → gặt → bán trên một ô.~~ Chạy `bash tools/qa/run-godot-farm-fixture.sh`, rồi `python3 tools/qa/serve-godot-probe.py --farm-loop` ở terminal khác. F5 hoặc mở Web cục bộ. Bộ thử tăng tốc đồng hồ, giữ kho qua tải lại và đặt lại khi khởi động lại tiến trình Deno.
 
 Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
 

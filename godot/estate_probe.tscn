@@ -27,6 +27,10 @@ timeout = 8.0
 [node name="MetricsTimer" type="Timer" parent="."]
 autostart = true
 
+[node name="CropTimer" type="Timer" parent="."]
+wait_time = 0.25
+autostart = true
+
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="Margin" type="MarginContainer" parent="HUD"]
@@ -100,7 +104,7 @@ mouse_filter = 2
 [node name="Title" type="Label" parent="HUD/Margin/Layout/Footer/Row/Text"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Ruộng thử"
+text = "Ruộng lúa · Kho 0"
 
 [node name="Status" type="Label" parent="HUD/Margin/Layout/Footer/Row/Text"]
 layout_mode = 2
@@ -114,3 +118,10 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 disabled = true
 text = "Đọc lại"
+
+[node name="Sell" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+disabled = true
+text = "Bán lúa"

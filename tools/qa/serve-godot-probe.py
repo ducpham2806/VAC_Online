@@ -1,5 +1,6 @@
 """Phục vụ Web/PWA Godot và apply-actions thử nghiệm, chỉ trên loopback."""
 
+import argparse
 import json
 import os
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -17,6 +18,7 @@ HOSTS = {urlsplit(origin).netloc for origin in ORIGINS}
 EDGE = "http://127.0.0.1:8787"
 TEST_USER = "00000000-0000-0000-0000-0000000000c1"
 PROBE_ACTIONS = ([], [{"type": "PLANT", "tileId": "P5_7", "itemId": "CROP_01"}])
+FARM_LOOP = False
 
 
 class ProbeHandler(SimpleHTTPRequestHandler):
@@ -59,11 +61,12 @@ class ProbeHandler(SimpleHTTPRequestHandler):
             payload = json.loads(data)
         except (ValueError, UnicodeError):
             payload = None
-        if not isinstance(payload, dict) or payload.get("actions") not in PROBE_ACTIONS:
+        actions = payload.get("actions") if isinstance(payload, dict) else None
+        if not isinstance(actions, list) or (not FARM_LOOP and actions not in PROBE_ACTIONS):
             self.send_error(400)
             return
         request = Request(
-            EDGE, data=json.dumps({"actions": payload["actions"]}).encode("utf-8"), method="POST",
+            EDGE, data=json.dumps({"actions": actions}).encode("utf-8"), method="POST",
             headers={"content-type": "application/json", "x-test-user": TEST_USER},
         )
         try:
@@ -84,6 +87,11 @@ class ProbeHandler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--farm-loop", action="store_true", help="Dùng nông trại thử trong bộ nhớ ở cổng 8798.")
+    FARM_LOOP = parser.parse_args().farm_loop
+    if FARM_LOOP:
+        EDGE = "http://127.0.0.1:8798"
     if not (DIST / "index.html").is_file():
         raise SystemExit("Chạy scripts/build-godot-web.sh trước.")
     print(f"VAC Godot Web/PWA · {ORIGIN}", flush=True)
