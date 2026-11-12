@@ -13,6 +13,28 @@ case "$GODOT_VERSION" in
   *) printf 'Cần Godot 4.7.2 stable, đang dùng %s\n' "$GODOT_VERSION" >&2; exit 1 ;;
 esac
 
+if [ -f godot/generated/godot_online.json ]; then
+  python3 - godot/generated/godot_online.json <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+
+try:
+    config = json.loads(Path(sys.argv[1]).read_text())
+    if not isinstance(config, dict) or set(config) - {"url", "publishable_key", "region", "playtest"}:
+        raise ValueError
+    if not re.fullmatch(r"sb_publishable_[A-Za-z0-9_-]+", config.get("publishable_key", "")):
+        raise ValueError
+    if not re.fullmatch(r"https://[A-Za-z0-9.-]+(?::[0-9]+)?/?|http://(?:localhost|127\.0\.0\.1):[0-9]+/?", config.get("url", "")):
+        raise ValueError
+    if not re.fullmatch(r"[A-Za-z0-9_-]*", config.get("region", "")) or not isinstance(config.get("playtest", False), bool):
+        raise ValueError
+except (OSError, TypeError, ValueError):
+    raise SystemExit("godot_online.json cần URL project và khóa publishable hợp lệ.")
+PY
+fi
+
 mkdir -p godot/generated godot/dist
 : > godot/dist/.gdignore
 for sprite in tile_grass_xuan tile_tilled_dry tile_tilled_wet; do

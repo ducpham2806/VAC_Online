@@ -22,6 +22,12 @@ script = ExtResource("2")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="Transport"]
 accept_gzip = false
+max_redirects = 0
+timeout = 8.0
+
+[node name="PlaytestRequest" type="HTTPRequest" parent="Transport"]
+accept_gzip = false
+max_redirects = 0
 timeout = 8.0
 
 [node name="MetricsTimer" type="Timer" parent="."]

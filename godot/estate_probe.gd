@@ -1,7 +1,6 @@
 extends Node2D
 ## Cảnh kiểm chứng LT-14. Thay đổi ô đất và vàng chỉ theo phản hồi từ apply-actions.
 
-const CACHE_PATH := "user://vac_probe_snapshot.json"
 const INK := Color("#3d2314")
 const PAPER := Color("#f3e3c3")
 const Farmer := preload("res://farmer.gd")
@@ -216,7 +215,7 @@ func _refresh(actions: Array) -> void:
 	if reply.has("error"):
 		connected = false
 		farm.freeze()
-		notice = "Mất kết nối. Đang xem bản đã tải." if not farm.snapshot.is_empty() else str(reply.error)
+		notice = str(reply.error)
 	else:
 		connected = true
 		farm.receive(reply)
@@ -278,9 +277,10 @@ func _update_metrics() -> void:
 
 
 func _load_cache() -> void:
-	if not FileAccess.file_exists(CACHE_PATH):
+	var path: String = transport.cache_path()
+	if path.is_empty() or not FileAccess.file_exists(path):
 		return
-	var cached: Variant = JSON.parse_string(FileAccess.get_file_as_string(CACHE_PATH))
+	var cached: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if cached is Dictionary:
 		if cached.get("tiles") is Array:
 			farm.receive({"state": cached})
@@ -290,7 +290,10 @@ func _load_cache() -> void:
 
 
 func _store_cache() -> void:
-	var file := FileAccess.open(CACHE_PATH, FileAccess.WRITE)
+	var path: String = transport.cache_path()
+	if path.is_empty():
+		return
+	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		return
 	file.store_string(JSON.stringify(farm.cache_payload()))

@@ -2,14 +2,14 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
-## Scene nông trại Godot · 12/11/2026 · codex/godot-vong-ruong
+## Scene nông trại Godot · 12/11/2026 · codex/godot-luu-online
 - Bản đồ chỉnh trong Godot 4.7.2 bằng TileMapLayer và node 2D.
 - Cảnh chỉnh được camera, joystick, hình lúa và VFX. Cách chạy ở LT-14.
 - Đi bốn hướng, sắp lớp theo chân và VFX gieo sau xác nhận.
-- Camera bám, kéo hai ngón và dừng ở mép. Chrome kiểm chạm gieo sau khi kéo.
+- Camera bám, kéo hai ngón và dừng ở mép. Chạm gieo sau khi kéo.
 - Chrome hai cỡ chơi hết vòng gieo, tưới, gặt, bán. Tải lại giữ kho.
 - Typecheck, 303 test, build Web và check:docs qua.
-- Nhánh chờ PO duyệt. LT-14 còn kiểm điện thoại thật.
+- Lưu online đã kiểm cục bộ. Còn staging và điện thoại thật theo LT-14.
 
 ## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
 - Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.
