@@ -5,6 +5,7 @@ const RICE_ID := "CROP_01"
 const Calendar := preload("res://generated/season_calendar.gd")
 
 var snapshot: Dictionary = {}
+var land_tiles: Dictionary[String, Dictionary] = {}
 var server_now := 0.0
 var clock_rate := 0.0
 var growth_cuts: Array = []
@@ -13,6 +14,10 @@ var synced_at := 0
 
 func receive(reply: Dictionary) -> void:
 	snapshot = reply.state
+	land_tiles.clear()
+	for candidate: Dictionary in snapshot.get("tiles", []):
+		if candidate.get("zoneType") == "LAND":
+			land_tiles[candidate.id] = candidate
 	server_now = float(reply.get("serverNow", 0))
 	clock_rate = maxf(0.0, float(reply.get("clockRate", 0)))
 	growth_cuts = reply.get("growthCuts", [])
@@ -45,20 +50,17 @@ func rice_out_of_season() -> bool:
 	return not current.is_empty() and not Calendar.RICE_SOWING_SEASONS.has(current)
 
 
-func tile() -> Dictionary:
-	for candidate: Dictionary in snapshot.get("tiles", []):
-		if candidate.get("id") == PLOT_ID:
-			return candidate
-	return {}
+func tile(plot_id := PLOT_ID) -> Dictionary:
+	return land_tiles.get(plot_id, {})
 
 
-func stock() -> int:
+func stock(item_id := RICE_ID) -> int:
 	var inventory: Dictionary = snapshot.get("inventory", {})
-	return int(inventory.get(RICE_ID, 0))
+	return int(inventory.get(item_id, 0))
 
 
 func stage(plot: Dictionary) -> int:
-	if plot.get("itemId") != RICE_ID:
+	if not plot.get("itemId") is String:
 		return -1
 	var mature_at: float = plot.get("matureAt", 0)
 	if now() >= mature_at:
@@ -74,22 +76,22 @@ func stage(plot: Dictionary) -> int:
 	return 1 if plot.get("watered", false) else 0
 
 
-func plot_command() -> Dictionary:
-	var plot := tile()
+func plot_command(plot_id := PLOT_ID) -> Dictionary:
+	var plot := tile(plot_id)
 	if plot.is_empty():
 		return {}
 	var crop_stage := stage(plot)
 	if crop_stage == -1:
 		if rice_out_of_season():
 			return {}
-		return {"type": "PLANT", "tileId": PLOT_ID, "itemId": RICE_ID}
+		return {"type": "PLANT", "tileId": plot_id, "itemId": RICE_ID}
 	if clock_rate == 0.0:
 		return {}
 	match crop_stage:
-		3: return {"type": "HARVEST", "tileId": PLOT_ID}
+		3: return {"type": "HARVEST", "tileId": plot_id}
 		_:
 			if not plot.get("watered", false):
-				return {"type": "WATER", "tileId": PLOT_ID}
+				return {"type": "WATER", "tileId": plot_id}
 	return {}
 
 

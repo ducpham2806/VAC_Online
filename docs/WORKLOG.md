@@ -2,6 +2,12 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
+## 13/11/2026 · Điền trang Godot P1 · codex/godot-p1-estate
+- PO duyệt làm tiếp LT-14 bước 3. Chuyển dọn, sửa và khai hoang theo GP-14. Dùng sprite P1 và dữ liệu engine. Cảnh có marker chỉnh tay, tán cây và ao đổi màu theo mùa.
+- Godot headless kiểm sáu chướng ngại, sửa giếng/chuồng/nhà, hai vùng mở tới 28 ô ruộng, xác nhận chi phí, tưới cả loạt và đọc lại. Chrome hai cỡ kiểm hủy, mở vùng, gieo ô mới, kéo hai ô. WebKit đọc lại tiến trình.
+- Typecheck, 303 test, build, Web/PWA export, check:docs và audit ảnh qua. Đã chụp 1280×720 và 844×390.
+- Dừng ở bản chạy cục bộ và nhánh chờ duyệt. Còn chuyển vật nuôi, Bếp Củi và đơn HTX, cùng kiểm PWA trên thiết bị thật.
+
 ## 12/11/2026 · Lịch mùa trong Godot P1 · codex/godot-p1-seasons
 - PO duyệt làm tiếp LT-14 bước 3. Godot hiển thị ngày trong mùa, đổi nền cỏ bằng bốn ảnh P1 và báo khi lúa trái vụ. Lịch build từ dữ liệu chuẩn, dùng giờ máy chủ.
 - Chrome 1280×720 và 844×390 qua bốn mùa, Thu chuyển Đông khi đang chơi. Gặt và bán lúa trong Đông, gieo lại khi sang Xuân. Chạm ô và nút trái vụ đều không gửi lệnh. WebKit đọc đúng cây đã lưu.
@@ -13,9 +19,3 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - Godot Web dùng lại phiên Phaser qua Supabase SDK. Chrome và WebKit giữ cùng tài khoản. Chrome kiểm ô, kho, vàng, XP, token bị từ chối, hàng chờ Phaser và bán ở Godot rồi đọc lại trên Phaser.
 - Chrome qua kiểm cài PWA, mở cache offline và giữ joystick khi gieo ở 844×390. Một lượt đo trên Mac tới khi đọc nông trại là 10,3 giây lần đầu và 1,4 giây khi tải lại. Typecheck, 303 test, build và check:docs qua.
 - Dừng ở staging tạm chờ kiểm Android/iPhone thật và duyệt merge. Tiến trình người chơi thật chưa chuyển.
-
-## 12/11/2026 · Godot lưu online · codex/godot-luu-online
-- PO yêu cầu tiếp tục LT-14. Dùng skill Supabase. Web/native dùng chung transport, đăng nhập ẩn danh, làm mới phiên và lưu bản xem theo tài khoản. Nhật ký LT-13 bật bằng cấu hình.
-- Chrome với Supabase Auth và PostgreSQL cục bộ chạy hết vòng. Token bị từ chối thì làm mới cùng tài khoản. Lệnh gieo mất phản hồi được đối chiếu bằng đọc lại, sổ cái ghi một lần. PWA đọc cache khi offline.
-- WebKit có nông trại riêng, Godot native mở lại giữ phiên. Typecheck, 303 test, build Godot Web, check:docs qua. Ảnh hai cỡ đã chụp.
-- Dừng ở nhánh chờ PO duyệt. Còn kiểm staging, phiên Phaser và thiết bị thật. Chưa triển khai lên Supabase thật.

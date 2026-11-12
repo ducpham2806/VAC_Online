@@ -2,6 +2,8 @@ import { GROWTH_STAGE_CUTS } from '../../src/domain/growth';
 import type { FarmSave } from '../../src/domain/farm';
 import { SEASON_EPOCH_MS, SEASON_ORDER, seasonAt } from '../../src/domain/season';
 import { parseActions, serverApply } from '../../src/engine/sliceServer';
+import { OBSTACLES, RECLAIM_REGIONS, plotId, plotPositions } from '../../src/domain/estate';
+import { BATCH_DRAG_MAX } from '../../src/domain/tools';
 
 // Đồng hồ và nông trại riêng cho LT-14. Trạng thái chỉ sống trong tiến trình thử.
 const season = Deno.args[0] ?? SEASON_ORDER[0];
@@ -14,7 +16,7 @@ const epoch = SEASON_EPOCH_MS + seasonIndex * seasonMs;
 const startedAt = performance.now();
 const clockRate = 8;
 const rice = 'CROP_01';
-const plot = 'P5_7';
+const plots = new Set(plotPositions({ cleared: [], repaired: [], reclaimed: RECLAIM_REGIONS.length }).map(({ x, y }) => plotId(x, y)));
 let save: FarmSave | null = null;
 
 Deno.serve({ hostname: '127.0.0.1', port: 8798 }, async (request) => {
@@ -23,12 +25,15 @@ Deno.serve({ hostname: '127.0.0.1', port: 8798 }, async (request) => {
   }
   const payload: unknown = await request.json().catch(() => null);
   const actions = parseActions(payload && typeof payload === 'object' && 'actions' in payload ? payload.actions : null);
-  if (!actions || actions.length > 1 || actions.some((action) => {
+  if (!actions || actions.length > BATCH_DRAG_MAX || actions.some((action) => {
     switch (action.type) {
-      case 'PLANT': return action.tileId !== plot || action.itemId !== rice;
+      case 'PLANT': return !plots.has(action.tileId) || action.itemId !== rice;
       case 'WATER':
-      case 'HARVEST': return action.tileId !== plot;
+      case 'HARVEST': return !plots.has(action.tileId);
       case 'SELL': return action.itemId !== rice;
+      case 'CLEAR': return !OBSTACLES.some(({ id }) => id === action.obstacleId);
+      case 'REPAIR': return false;
+      case 'RECLAIM': return action.regionIndex >= RECLAIM_REGIONS.length;
       default: return true;
     }
   })) {

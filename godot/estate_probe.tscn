@@ -147,3 +147,51 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 disabled = true
 text = "Bán lúa"
+
+[node name="Confirm" type="ColorRect" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.239216, 0.137255, 0.0784314, 0.55)
+
+[node name="Center" type="CenterContainer" parent="HUD/Confirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="HUD/Confirm/Center"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="HUD/Confirm/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="Details" type="Label" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="Buttons" type="HBoxContainer" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="Cancel" type="Button" parent="HUD/Confirm/Center/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(92, 44)
+layout_mode = 2
+text = "Để sau"
+
+[node name="Apply" type="Button" parent="HUD/Confirm/Center/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(108, 44)
+layout_mode = 2
+text = "Xác nhận"

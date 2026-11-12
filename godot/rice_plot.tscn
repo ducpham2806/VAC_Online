@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" path="res://generated/tile_tilled_wet.png" id="6_wet"]
 [ext_resource type="PackedScene" path="res://sow_fx.tscn" id="7_sow"]
 
+[ext_resource type="Texture2D" path="res://generated/tile_tilled_dry.png" id="8_dry"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hit"]
 size = Vector2(32, 32)
 
@@ -28,6 +30,10 @@ growth_textures = Array[Texture2D]([ExtResource("2_stage0"), ExtResource("3_stag
 
 [node name="HitArea" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_hit")
+
+[node name="DrySoil" type="Sprite2D" parent="."]
+z_index = -1
+texture = ExtResource("8_dry")
 
 [node name="WetSoil" type="Sprite2D" parent="."]
 visible = false

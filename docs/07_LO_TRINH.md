@@ -121,12 +121,13 @@ python3 tools/qa/serve-godot-probe.py
 
 Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qua handler và sổ cái thật trên PostgreSQL tạm với danh tính giả. Khi đưa qua HTTPS thử nghiệm, chạy máy chủ Web với `VAC_GODOT_PREVIEW_ORIGIN` bằng origin HTTPS chính xác. Trên máy thật, thử gieo khi ô trống, thêm vào màn hình chính, mở từ icon và đối chiếu trạng thái. HUD hiển thị FPS và thời gian tới khi đọc xong nông trại.
 
-- [x] ~~Bản đồ cảnh thử chỉnh được trong Godot Editor.~~ Mở `godot/project.godot` và scene `estate_map.tscn` ở chế độ 2D. Chọn `Terrain/Ground` hoặc `Terrain/Soil` để tô ô, chọn các node dưới `Scenery` để di chuyển vật trang trí. `PlayerSpawn` là điểm vào cảnh. Kéo `RicePlot` cùng ô đất đích để dời vùng chạm và hình cây lúa. Lưu scene rồi bấm F5 để chạy cảnh chính `estate_probe.tscn` có HUD và API thử. Bản mới clone có thể chạy lệnh build ở trên với `--prepare-only` để nhập sprite trước khi mở Editor, không cần Web export template.
+- [x] ~~Bản đồ cảnh thử chỉnh được trong Godot Editor.~~ Mở `estate_map.tscn` để tô `Terrain/Ground` và dời `PlayerSpawn`. Mở `estate_features.tscn` để dời công trình, đá, cây và vùng đất. Bấm F5 chạy `estate_probe.tscn`. Khi mới clone, chạy build với `--prepare-only` để nhập dữ liệu và sprite vào Editor.
 - [x] ~~Thử hoạt ảnh theo AR-30, AR-31 trên cảnh hiện có.~~ Chạm để đi hoặc dùng phím mũi tên/WASD. Chỉnh khung hình và tốc độ trong `farmer.tscn`, chỉnh bụi đất và hạt trong `sow_fx.tscn`. Hiệu ứng chỉ chạy khi có phản hồi gieo thành công.
 - [x] ~~Thử joystick nổi theo UI-20.~~ Giữ và kéo ở vùng dưới trái, dùng ngón khác chạm ô gieo. Trên Mac, dùng chuột kéo để thử. Chỉnh hình trong `touch_joystick.tscn` và vùng nhận chạm ở `HUD/Margin/Layout/Space/Joystick` trong cảnh chính.
 - [x] ~~Thử camera theo UI-20.~~ Kéo ở đất trống hoặc kéo hai ngón để xem bản đồ. Điều khiển nhân vật để camera bám lại. Chọn `EstateCamera` trong cảnh chính để chỉnh độ lệch và tốc độ bám.
 - [x] ~~Chạy vòng gieo → tưới → gặt → bán trên một ô.~~ Chạy `bash tools/qa/run-godot-farm-fixture.sh`, rồi `python3 tools/qa/serve-godot-probe.py --farm-loop` ở terminal khác. F5 hoặc mở Web cục bộ. Bộ thử tăng tốc đồng hồ, giữ kho qua tải lại và đặt lại khi khởi động lại tiến trình Deno.
 - [x] ~~Lịch mùa, cỏ và gieo lúa theo GP-20.~~ Fixture nhận `XUAN`, `HA`, `THU` hoặc `DONG`.
+- [x] ~~Dọn, sửa, khai hoang theo GP-14.~~ Kiểm hủy xác nhận, tưới cả loạt sau sửa giếng và mở lại ô mới.
 
 Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
 

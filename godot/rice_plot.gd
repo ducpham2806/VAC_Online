@@ -8,25 +8,20 @@ extends Area2D
 
 
 func hits(point: Vector2) -> bool:
+	return world_area().has_point(point)
+
+
+func world_area() -> Rect2:
 	var shape := hit_area.shape as RectangleShape2D
-	return Rect2(-shape.size * 0.5, shape.size).has_point(hit_area.to_local(point))
+	return hit_area.global_transform * Rect2(-shape.size * 0.5, shape.size)
 
 
-func in_reach(point: Vector2) -> bool:
-	var shape := hit_area.shape as RectangleShape2D
-	return Rect2(-shape.size * 1.5, shape.size * 3.0).has_point(hit_area.to_local(point))
-
-
-func approach_point() -> Vector2:
-	var shape := hit_area.shape as RectangleShape2D
-	return hit_area.to_global(Vector2(-shape.size.x, 0))
-
-
-func render(stage: int, watered: bool) -> void:
+func render(stage: int, watered: bool, selected: bool, frames: Array) -> void:
 	rice.visible = stage >= 0
 	if rice.visible:
-		rice.texture = growth_textures[stage]
+		rice.texture = growth_textures[stage] if frames.is_empty() else frames[stage]
 	wet_soil.visible = watered
+	$Outline.visible = selected
 
 
 func play_effect(action_type: String) -> void:

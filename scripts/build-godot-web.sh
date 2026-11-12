@@ -40,15 +40,16 @@ mkdir -p godot/generated godot/dist
 for sprite in tile_grass_{xuan,ha,thu,dong} tile_tilled_dry tile_tilled_wet; do
   cp "art/source/p0_ai/$sprite.png" godot/generated/
 done
-cp art/source/p0_ai/CROP_01_{0,1,2,3}.png godot/generated/
+cp art/source/p0_ai/CROP_{01,02,03,04,05}_{0,1,2,3}.png godot/generated/
 cp art/source/p0_ai/farmer_walk_{up,down,left}_{0,1,2,3}.png godot/generated/
 # Khung right_0 trong bộ gốc quay trái.
 cp art/source/p0_ai/farmer_walk_right_{1,2,3}.png godot/generated/
-for sprite in house_0 tree_0 rock_0 fence_0; do
+for sprite in {house,well,coop,kitchen}_{0,1} tree_0 xoan_0 rock_{0,1,2} fence_0 weed_2; do
   cp "art/source/p1_ai/$sprite.png" godot/generated/
 done
 cp public/icon-512.svg godot/generated/icon.svg
 npx --no-install tsx scripts/export-godot-seasons.ts > godot/generated/season_calendar.gd
+npx --no-install tsx scripts/export-godot-estate.ts > godot/generated/estate.json
 
 "$GODOT_BIN" --headless --path godot --import
 if [ "${1:-}" = "--prepare-only" ]; then

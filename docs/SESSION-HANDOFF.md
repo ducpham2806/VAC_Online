@@ -1,4 +1,4 @@
-# Bàn giao · 12/11/2026 · Godot P1 đã có lịch mùa và nền cỏ
+# Bàn giao · 13/11/2026 · Godot P1 đã có điền trang
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,7 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. LT-14 bước 3 đã chuyển lịch và nền cỏ trên `codex/godot-p1-seasons`, đã kiểm qua ranh mùa trên Web. Tiếp theo chuyển điền trang. Staging HTTPS vẫn ở bản `codex/godot-staging-pwa`, chờ thử mở từ icon, hai ngón, FPS và độ trễ trên Android/iPhone thật.
+1. LT-14 bước 3 đã chuyển mùa và điền trang qua `codex/godot-p1-estate`. Tiếp theo chuyển vật nuôi, Bếp Củi và đơn HTX. Còn kiểm PWA từ icon, hai ngón, FPS và độ trễ trên Android/iPhone thật.
 2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
 3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 
