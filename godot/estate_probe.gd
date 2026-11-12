@@ -12,6 +12,7 @@ const EstateFeatures := preload("res://estate_features.gd")
 const FarmProbeState := preload("res://farm_probe_state.gd")
 const GRASS_SOURCE_ID := 0
 const SEASON_NAMES := {"XUAN": "Xuân", "HA": "Hạ", "THU": "Thu", "DONG": "Đông"}
+const RESULT_ICON := "[\\x{1F000}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{FE0F}]"
 const TAP_SLOP := 12.0
 const MOUSE_POINTER := -2
 
@@ -62,6 +63,8 @@ var can_pan := false
 var grass_atlas: TileSetAtlasSource
 var base_grass: Texture2D
 var shown_season := ""
+var leading_icons := RegEx.create_from_string("^" + RESULT_ICON + "+\\s*")
+var inline_icons := RegEx.create_from_string(RESULT_ICON)
 
 
 func _ready() -> void:
@@ -449,7 +452,7 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 		var command: Dictionary = actions[index]
 		if not result.get("ok", false):
 			if notice.is_empty():
-				notice = str(result.get("message", "Thao tác chưa thành công."))
+				notice = _result_text(result, "Thao tác chưa thành công.")
 			continue
 		succeeded += 1
 		var plot_id: String = command.get("tileId", "")
@@ -459,11 +462,18 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 			plot.play_effect(command.type)
 		elif command.type != "SELL":
 			player.work_toward(work_point)
-			notice = str(result.get("message", "Đã xong."))
+			notice = _result_text(result, "Đã xong.")
 		else:
 			notice = "Đã bán lúa cho HTX."
 	if succeeded > 1 and notice.is_empty():
 		notice = "Đã làm xong %d ô ruộng." % succeeded
+
+
+func _result_text(result: Dictionary, fallback: String) -> String:
+	# Font mặc định của bản Web thiếu emoji trong thông báo dùng chung với Phaser.
+	var message := leading_icons.sub(str(result.get("message", fallback)), "")
+	message = message.replace("🪙", "vàng").replace("⚡", "năng lượng")
+	return inline_icons.sub(message, "", true).replace("  ", " ").strip_edges()
 
 
 func _update_view() -> void:
