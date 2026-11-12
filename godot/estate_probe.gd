@@ -7,9 +7,12 @@ const INK := Color("#3d2314")
 const PAPER := Color("#f3e3c3")
 const Farmer := preload("res://farmer.gd")
 const TouchJoystick := preload("res://touch_joystick.gd")
+const EstateCamera := preload("res://estate_camera.gd")
 const TAP_SLOP := 12.0
+const MOUSE_POINTER := -2
 
-@onready var world: Node2D = $World
+@onready var camera: EstateCamera = $EstateCamera
+@onready var ground: TileMapLayer = $World/EstateMap/Terrain/Ground
 @onready var player: Farmer = $World/EstateMap/PlayerSpawn/Player
 @onready var plot_hit: CollisionShape2D = $World/EstateMap/RicePlot/HitArea
 @onready var crop: Sprite2D = $World/EstateMap/RicePlot/Rice
@@ -31,28 +34,36 @@ var ready_ms := 0
 var has_walk_target := false
 var walk_target := Vector2.ZERO
 var sow_fx_pending := false
-var touch_id := -1
-var touch_start := Vector2.ZERO
-var touch_dragged := false
+var world_bounds := Rect2()
+var pointers: Dictionary[int, Vector2] = {}
+var tap_start := Vector2.ZERO
+var tap_possible := false
+var can_pan := false
 
 
 func _ready() -> void:
 	_style_hud()
-	_center_world()
-	get_viewport().size_changed.connect(_center_world)
+	world_bounds = _map_bounds()
+	camera.configure(world_bounds, player.global_position)
+	get_viewport().size_changed.connect(_on_viewport_resized)
 	action.pressed.connect(_on_action)
 	$MetricsTimer.timeout.connect(_update_metrics)
 	_load_cache()
 	_refresh([])
 
 
-func _center_world() -> void:
-	touch_id = -1
-	var base_size := Vector2(
-		ProjectSettings.get_setting("display/window/size/viewport_width"),
-		ProjectSettings.get_setting("display/window/size/viewport_height")
-	)
-	world.position = ((get_viewport_rect().size - base_size) * 0.5).floor()
+func _map_bounds() -> Rect2:
+	var used := ground.get_used_rect()
+	if not used.has_area() or ground.tile_set == null:
+		return get_viewport_rect()
+	var tile_size := Vector2(ground.tile_set.tile_size)
+	var corner := ground.map_to_local(used.position) - tile_size * 0.5
+	return ground.global_transform * Rect2(corner, Vector2(used.size) * tile_size)
+
+
+func _on_viewport_resized() -> void:
+	pointers.clear()
+	camera.fit_viewport()
 
 
 func _physics_process(delta: float) -> void:
@@ -60,43 +71,76 @@ func _physics_process(delta: float) -> void:
 	var manual := joystick.direction if using_joystick else Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down")
 	if not busy and (using_joystick or manual != Vector2.ZERO):
 		has_walk_target = false
+		if manual != Vector2.ZERO:
+			camera.follow()
 		var target := player.global_position + manual * player.walk_speed * delta
 		player.step_toward(_clamp_walk(target), delta)
 	elif has_walk_target:
-		has_walk_target = not player.step_toward(_clamp_walk(world.to_global(walk_target)), delta)
+		has_walk_target = not player.step_toward(walk_target, delta)
 	else:
 		player.stand()
 	if not has_walk_target:
 		_play_sow_fx()
+	camera.track(player.global_position, delta)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	# A real touch owns the world tap. Emulated mouse input still reaches HUD buttons.
 	if event.device == InputEvent.DEVICE_ID_EMULATION:
 		return
-	if event is InputEventScreenTouch:
-		_track_touch(event)
-	elif event is InputEventScreenDrag and event.index == touch_id:
-		touch_dragged = touch_dragged or event.position.distance_to(touch_start) > TAP_SLOP
+	if event is InputEventScreenTouch and event.pressed:
+		_press_world(event.index, event.position)
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		_tap_world(event.position)
+		_press_world(MOUSE_POINTER, event.position)
+
+
+func _input(event: InputEvent) -> void:
+	if event.device == InputEvent.DEVICE_ID_EMULATION:
+		return
+	if event is InputEventScreenDrag:
+		_drag_world(event.index, event.position)
+	elif event is InputEventScreenTouch and not event.pressed:
+		_release_world(event.index, event.position, event.canceled)
+	elif event is InputEventMouseMotion:
+		_drag_world(MOUSE_POINTER, event.position)
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_release_world(MOUSE_POINTER, event.position, false)
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		touch_id = -1
+		pointers.clear()
 
 
-func _track_touch(event: InputEventScreenTouch) -> void:
-	if event.pressed:
-		if touch_id == -1 and not _on_hud(event.position):
-			touch_id = event.index
-			touch_start = event.position
-			touch_dragged = false
-	elif event.index == touch_id:
-		touch_id = -1
-		if not event.canceled and not touch_dragged and event.position.distance_to(touch_start) <= TAP_SLOP:
-			_tap_world(event.position)
+func _press_world(id: int, point: Vector2) -> void:
+	if _on_hud(point) or pointers.has(id) or pointers.size() >= 2:
+		return
+	tap_possible = pointers.is_empty()
+	tap_start = point
+	can_pan = not tap_possible or not _hits_plot(_to_world(point))
+	pointers[id] = point
+
+
+func _drag_world(id: int, point: Vector2) -> void:
+	if not pointers.has(id):
+		return
+	var previous := pointers[id]
+	pointers[id] = point
+	if tap_possible:
+		if point.distance_to(tap_start) <= TAP_SLOP:
+			return
+		tap_possible = false
+		previous = tap_start
+	if can_pan and not joystick.is_engaged():
+		camera.pan((point - previous) / float(pointers.size()))
+
+
+func _release_world(id: int, point: Vector2, canceled: bool) -> void:
+	if not pointers.erase(id):
+		return
+	if tap_possible and not canceled and point.distance_to(tap_start) <= TAP_SLOP:
+		_tap_world(point)
+	tap_possible = false
 
 
 func _on_hud(point: Vector2) -> bool:
@@ -106,24 +150,33 @@ func _on_hud(point: Vector2) -> bool:
 func _tap_world(viewport_point: Vector2) -> void:
 	if busy or _on_hud(viewport_point):
 		return
-	var pointer := get_canvas_transform().affine_inverse() * viewport_point
-	var shape := plot_hit.shape as RectangleShape2D
-	var plot_bounds := Rect2(-shape.size * 0.5, shape.size)
-	if plot_bounds.has_point(plot_hit.to_local(pointer)):
+	var pointer := _to_world(viewport_point)
+	if _hits_plot(pointer):
 		_on_action()
 		return
 	_walk_to(pointer)
 
 
+func _to_world(viewport_point: Vector2) -> Vector2:
+	return get_canvas_transform().affine_inverse() * viewport_point
+
+
+func _hits_plot(world_point: Vector2) -> bool:
+	var shape := plot_hit.shape as RectangleShape2D
+	var plot_bounds := Rect2(-shape.size * 0.5, shape.size)
+	return plot_bounds.has_point(plot_hit.to_local(world_point))
+
+
 func _walk_to(target: Vector2) -> void:
 	_play_sow_fx()
-	walk_target = world.to_local(target)
+	camera.follow()
+	walk_target = _clamp_walk(target)
 	has_walk_target = true
 
 
 func _clamp_walk(target: Vector2) -> Vector2:
-	var bounds := get_viewport_rect().grow(-24)
-	return target.clamp(bounds.position, bounds.end)
+	var margin := Vector2(24, 24).min(world_bounds.size * 0.5)
+	return target.clamp(world_bounds.position + margin, world_bounds.end - margin)
 
 
 func _play_sow_fx() -> void:

@@ -2,11 +2,11 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
-## Scene nông trại Godot · 12/11/2026 · codex/godot-joystick-cam-ung
+## Scene nông trại Godot · 12/11/2026 · codex/godot-camera-nong-trai
 - Bản đồ chỉnh trong Godot 4.7.2 bằng TileMapLayer và node 2D.
-- Editor trên Mac mở scene joystick. Cách chỉnh và chạy ở LT-14.
+- Editor trên Mac mở cảnh chính. Cách chỉnh camera và joystick ở LT-14.
 - Đi bốn hướng, sắp lớp theo chân và VFX gieo sau xác nhận.
-- Joystick nổi. Headless kiểm mất focus, Chrome hai cỡ kiểm gieo bằng ngón thứ hai.
+- Camera bám, kéo hai ngón và dừng ở mép. Chrome kiểm chạm gieo sau khi kéo.
 - Chrome hai cỡ, PWA cache, WebKit và thử dời ô đều qua.
 - Typecheck, 303 test, build Web và check:docs qua.
 - Nhánh chờ PO duyệt. LT-14 còn kiểm điện thoại thật.
