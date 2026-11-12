@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://estate_probe.gd" id="1"]
 [ext_resource type="Script" path="res://probe_transport.gd" id="2"]
 [ext_resource type="PackedScene" path="res://estate_map.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://touch_joystick.tscn" id="4"]
 
 [node name="EstateProbe" type="Node2D"]
 script = ExtResource("1")
@@ -67,6 +68,14 @@ text = "— FPS"
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
+
+[node name="Joystick" parent="HUD/Margin/Layout/Space" instance=ExtResource("4")]
+layout_mode = 1
+anchor_top = 0.58
+anchor_right = 0.333333
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
 
 [node name="Footer" type="PanelContainer" parent="HUD/Margin/Layout"]
 layout_mode = 2

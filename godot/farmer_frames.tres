@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_1.png" id="left_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_2.png" id="left_2"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_3.png" id="left_3"]
-[ext_resource type="Texture2D" path="res://generated/farmer_walk_right_0.png" id="right_0"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_right_1.png" id="right_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_right_2.png" id="right_2"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_right_3.png" id="right_3"]
@@ -44,13 +43,13 @@ animations = [
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("right_0")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("right_1")}],
 "loop": false,
 "name": &"idle_right",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("right_0")}, {"duration": 1.0, "texture": ExtResource("right_1")}, {"duration": 1.0, "texture": ExtResource("right_2")}, {"duration": 1.0, "texture": ExtResource("right_3")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("right_1")}, {"duration": 1.0, "texture": ExtResource("right_2")}, {"duration": 1.0, "texture": ExtResource("right_3")}, {"duration": 1.0, "texture": ExtResource("right_2")}],
 "loop": true,
 "name": &"walk_right",
 "speed": 8.0

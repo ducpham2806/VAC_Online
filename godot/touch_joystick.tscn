@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://touch_joystick.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_base"]
+bg_color = Color(0.878431, 0.780392, 0.603922, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.137255, 0.078431, 0.95)
+corner_radius_top_left = 48
+corner_radius_top_right = 48
+corner_radius_bottom_left = 48
+corner_radius_bottom_right = 48
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_knob"]
+bg_color = Color(0.627451, 0.403922, 0.227451, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.239216, 0.137255, 0.078431, 1)
+corner_radius_top_left = 17
+corner_radius_top_right = 17
+corner_radius_bottom_left = 17
+corner_radius_bottom_right = 17
+
+[node name="TouchJoystick" type="Control"]
+layout_mode = 0
+offset_right = 176.0
+offset_bottom = 104.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="Base" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 4.0
+offset_right = 136.0
+offset_bottom = 100.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_base")
+
+[node name="Knob" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 71.0
+offset_top = 35.0
+offset_right = 105.0
+offset_bottom = 69.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_knob")

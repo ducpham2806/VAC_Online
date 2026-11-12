@@ -1,4 +1,4 @@
-# Bàn giao · 11/11/2026 · P1 Phaser làm mốc, Godot bước 0 đang kiểm
+# Bàn giao · 12/11/2026 · P1 Phaser làm mốc, Godot bước 0 đang kiểm
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,7 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. LT-14 có bản đồ, đi bốn hướng và VFX gieo chỉnh trong Godot ở `codex/godot-hoat-anh-di-gieo`. Bước 0 còn kiểm mở từ icon, chạm, lưu và FPS trên Chrome Android và Safari iPhone thật.
+1. LT-14 có bản đồ, hoạt ảnh, VFX gieo và joystick nổi chỉnh trong Godot ở `codex/godot-joystick-cam-ung`. Bước 0 còn kiểm mở từ icon, hai ngón, lưu và FPS trên Chrome Android và Safari iPhone thật.
 2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
 3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 

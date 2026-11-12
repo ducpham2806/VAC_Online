@@ -6,6 +6,8 @@ const CACHE_PATH := "user://vac_probe_snapshot.json"
 const INK := Color("#3d2314")
 const PAPER := Color("#f3e3c3")
 const Farmer := preload("res://farmer.gd")
+const TouchJoystick := preload("res://touch_joystick.gd")
+const TAP_SLOP := 12.0
 
 @onready var world: Node2D = $World
 @onready var player: Farmer = $World/EstateMap/PlayerSpawn/Player
@@ -16,6 +18,7 @@ const Farmer := preload("res://farmer.gd")
 @onready var transport: Node = $Transport
 @onready var header: PanelContainer = $HUD/Margin/Layout/Header
 @onready var footer: PanelContainer = $HUD/Margin/Layout/Footer
+@onready var joystick: TouchJoystick = $HUD/Margin/Layout/Space/Joystick
 @onready var gold: Label = $HUD/Margin/Layout/Header/Row/Gold
 @onready var metrics: Label = $HUD/Margin/Layout/Header/Row/Metrics
 @onready var status: Label = $HUD/Margin/Layout/Footer/Row/Text/Status
@@ -28,6 +31,9 @@ var ready_ms := 0
 var has_walk_target := false
 var walk_target := Vector2.ZERO
 var sow_fx_pending := false
+var touch_id := -1
+var touch_start := Vector2.ZERO
+var touch_dragged := false
 
 
 func _ready() -> void:
@@ -41,6 +47,7 @@ func _ready() -> void:
 
 
 func _center_world() -> void:
+	touch_id = -1
 	var base_size := Vector2(
 		ProjectSettings.get_setting("display/window/size/viewport_width"),
 		ProjectSettings.get_setting("display/window/size/viewport_height")
@@ -49,10 +56,11 @@ func _center_world() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var keyboard := Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down")
-	if not busy and keyboard != Vector2.ZERO:
+	var using_joystick := joystick.is_engaged()
+	var manual := joystick.direction if using_joystick else Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down")
+	if not busy and (using_joystick or manual != Vector2.ZERO):
 		has_walk_target = false
-		var target := player.global_position + keyboard * player.walk_speed * delta
+		var target := player.global_position + manual * player.walk_speed * delta
 		player.step_toward(_clamp_walk(target), delta)
 	elif has_walk_target:
 		has_walk_target = not player.step_toward(_clamp_walk(world.to_global(walk_target)), delta)
@@ -63,11 +71,42 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is not InputEventMouseButton or event.button_index != MOUSE_BUTTON_LEFT or not event.pressed:
+	# A real touch owns the world tap. Emulated mouse input still reaches HUD buttons.
+	if event.device == InputEvent.DEVICE_ID_EMULATION:
 		return
-	if busy:
+	if event is InputEventScreenTouch:
+		_track_touch(event)
+	elif event is InputEventScreenDrag and event.index == touch_id:
+		touch_dragged = touch_dragged or event.position.distance_to(touch_start) > TAP_SLOP
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		_tap_world(event.position)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		touch_id = -1
+
+
+func _track_touch(event: InputEventScreenTouch) -> void:
+	if event.pressed:
+		if touch_id == -1 and not _on_hud(event.position):
+			touch_id = event.index
+			touch_start = event.position
+			touch_dragged = false
+	elif event.index == touch_id:
+		touch_id = -1
+		if not event.canceled and not touch_dragged and event.position.distance_to(touch_start) <= TAP_SLOP:
+			_tap_world(event.position)
+
+
+func _on_hud(point: Vector2) -> bool:
+	return header.get_global_rect().has_point(point) or footer.get_global_rect().has_point(point)
+
+
+func _tap_world(viewport_point: Vector2) -> void:
+	if busy or _on_hud(viewport_point):
 		return
-	var pointer := get_global_mouse_position()
+	var pointer := get_canvas_transform().affine_inverse() * viewport_point
 	var shape := plot_hit.shape as RectangleShape2D
 	var plot_bounds := Rect2(-shape.size * 0.5, shape.size)
 	if plot_bounds.has_point(plot_hit.to_local(pointer)):
