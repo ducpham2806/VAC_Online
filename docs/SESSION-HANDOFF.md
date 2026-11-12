@@ -22,7 +22,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. LT-14 có vòng ruộng và lưu online thử cục bộ ở `codex/godot-luu-online`. Bước 2 còn kiểm staging và độ trễ trên máy thật. Bước 0 còn mở từ icon, hai ngón và FPS trên Android/iPhone thật.
+1. LT-14 đã chạy staging HTTPS và giữ phiên Phaser ↔ Godot ở `codex/godot-staging-pwa`. Còn kiểm mở từ icon, hai ngón, FPS và độ trễ trên Android/iPhone thật. Sau đó hoàn tất nội dung P1.
 2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
 3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 

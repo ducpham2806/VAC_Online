@@ -185,3 +185,9 @@
 - Chrome mô phỏng 1280×720 và 844×390: giữ joystick, dùng ngón khác gieo đúng một lần trên PostgreSQL tạm. Kéo qua ô, thả ngón, hủy chạm và nút HUD đều qua. Chụp ảnh hai cỡ.
 - Godot headless kiểm vùng chết, giới hạn lực, mất focus và resize. Mở scene trong Godot Editor trên Mac. Typecheck, 303 test, build, Web/PWA export và check:docs qua.
 - Dừng ở nhánh chờ PO duyệt, còn kiểm joystick, safe-area và mở từ icon trên điện thoại thật theo LT-14.
+
+## 12/11/2026 · Camera nông trại Godot · codex/godot-camera-nong-trai
+- PO yêu cầu tiếp tục LT-14. Camera bám chân, kéo đất trống hoặc hai ngón để xem, giới hạn theo lớp Ground. HUD và joystick neo màn hình. Scene chính mở trên Mac.
+- Chrome mô phỏng 1280×720 và 844×390 kiểm kéo, giữ góc nhìn, chạm đúng ô sau kéo cùng joystick, bám lại và giữ mép. Mỗi lần ghi một giao dịch thử. WebKit đọc đúng ô đã lưu.
+- Typecheck, 303 test, build, Godot headless, Web/PWA export và check:docs qua. Chụp ảnh hai cỡ.
+- Dừng ở nhánh chờ PO duyệt. Bước 0 còn kiểm điện thoại thật. Bước 1 còn vòng ruộng bằng fixture.

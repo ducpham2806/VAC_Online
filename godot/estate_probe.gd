@@ -210,11 +210,15 @@ func _refresh(actions: Array) -> void:
 	busy = true
 	notice = "Đang gửi thao tác…" if not actions.is_empty() else "Đang đọc nông trại…"
 	_update_view()
+	var previous_cache: String = transport.cache_path()
 	var reply: Dictionary = await transport.send(actions)
 	busy = false
 	if reply.has("error"):
 		connected = false
-		farm.freeze()
+		if previous_cache != transport.cache_path():
+			farm.receive({"state": {}})
+		else:
+			farm.freeze()
 		notice = str(reply.error)
 	else:
 		connected = true

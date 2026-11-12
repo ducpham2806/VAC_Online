@@ -1,5 +1,7 @@
 extends RefCounted
 
+signal web_session_received(payload: String)
+
 const Playtest := preload("res://online_playtest.gd")
 const REFRESH_MARGIN_SECONDS := 30.0
 
@@ -13,6 +15,9 @@ var http: HTTPRequest
 var event_http: HTTPRequest
 var playtest: Playtest
 var events_inflight := false
+var web_auth: JavaScriptObject
+var web_callback: JavaScriptObject
+var web_account := ""
 
 
 func _init(config: Dictionary, game_request: HTTPRequest, event_request: HTTPRequest) -> void:
@@ -30,6 +35,12 @@ func _init(config: Dictionary, game_request: HTTPRequest, event_request: HTTPReq
 			session_invalid = true
 	if config.get("playtest", false) == true:
 		playtest = Playtest.new()
+	if OS.has_feature("web") and is_configured():
+		web_auth = JavaScriptBridge.get_interface("vacGodotAuth")
+		if web_auth != null:
+			web_account = str(web_auth.account(endpoint))
+			if web_account.is_empty() and not session.is_empty():
+				web_account = session.user_id
 
 
 func is_configured() -> bool:
@@ -40,21 +51,27 @@ func is_configured() -> bool:
 
 
 func cache_path() -> String:
-	if session.is_empty():
+	var account: String = web_account if web_auth != null else session.get("user_id", "")
+	if account.is_empty():
 		return ""
-	var account: String = session.user_id
 	return "user://vac_online_farm_%s.json" % (endpoint + "|" + account).sha256_text().left(32)
 
 
 func send(actions: Array) -> Dictionary:
+	var previous_cache := cache_path()
 	var auth_error := await _ensure_session()
 	if not auth_error.is_empty():
 		return {"error": auth_error}
+	if not actions.is_empty() and previous_cache != cache_path():
+		return {"error": "Tài khoản đã đổi. Bấm Đọc lại để mở đúng nông trại."}
 	var reply := await _apply(actions)
 	if reply.status == 401:
+		var attempted_cache := cache_path()
 		auth_error = await _ensure_session(true)
 		if not auth_error.is_empty():
 			return {"error": auth_error}
+		if not actions.is_empty() and attempted_cache != cache_path():
+			return {"error": "Tài khoản đã đổi. Bấm Đọc lại để mở đúng nông trại."}
 		reply = await _apply(actions)
 	var body: Variant = reply.body
 	if reply.status != 200 or not _valid_snapshot(body):
@@ -80,6 +97,8 @@ func _apply(actions: Array) -> Dictionary:
 
 
 func _ensure_session(force_refresh := false) -> String:
+	if web_auth != null:
+		return await _ensure_web_session(force_refresh)
 	if session_invalid:
 		return "Không đọc được phiên đã lưu. Dữ liệu nông trại đã tải vẫn dùng để xem."
 	if not session.is_empty() and not force_refresh:
@@ -109,6 +128,26 @@ func _ensure_session(force_refresh := false) -> String:
 	session = next
 	_save_session()
 	return ""
+
+
+func _ensure_web_session(force_refresh: bool) -> String:
+	web_callback = JavaScriptBridge.create_callback(_on_web_session)
+	web_auth.ensureSession(endpoint, api_key, JSON.stringify(session), force_refresh, web_callback)
+	var payload: String = await web_session_received
+	web_callback = null
+	var result: Variant = JSON.parse_string(payload)
+	if result is Dictionary:
+		if result.has("error"):
+			return str(result.error)
+		if result.get("user_id") is String and result.get("access_token") is String:
+			web_account = result.user_id
+			session = result
+			return ""
+	return "Dịch vụ đăng nhập trả phiên sai định dạng."
+
+
+func _on_web_session(args: Array) -> void:
+	web_session_received.emit(str(args[0]))
 
 
 func _save_session() -> void:

@@ -54,4 +54,22 @@ if [ "${1:-}" = "--prepare-only" ]; then
   exit 0
 fi
 "$GODOT_BIN" --headless --path godot --export-release Web dist/index.html
+if [ -f godot/generated/godot_online.json ]; then
+  bridge_file="$(mktemp)"
+  trap 'rm -f "$bridge_file"' EXIT
+  npx --no-install esbuild src/services/godotWebAuth.ts --bundle --minify --platform=browser \
+    --format=iife --outfile="$bridge_file"
+  python3 - godot/dist/index.html "$bridge_file" <<'PY'
+import sys
+from pathlib import Path
+
+page = Path(sys.argv[1])
+script = Path(sys.argv[2]).read_text()
+html = page.read_text()
+tag = "<script src=\"index.js\"></script>"
+if html.count(tag) != 1 or "</script" in script.lower():
+    raise SystemExit("Không thể gắn cầu nối Auth vào bản xuất Godot.")
+page.write_text(html.replace(tag, "<script>" + script + "</script>\n" + tag))
+PY
+fi
 gzip -n -c godot/dist/index.wasm > godot/dist/index.wasm.gz

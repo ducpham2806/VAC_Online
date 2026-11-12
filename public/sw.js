@@ -1,6 +1,7 @@
 // Service Worker PWA — chỉ cache tài nguyên tĩnh CÙNG ORIGIN.
 // Không cache API Supabase / dịch vụ bên ngoài (dữ liệu game phải luôn mới).
-const CACHE_NAME = 'vac-online-pwa-v3';
+const CACHE_PREFIX = 'vac-online-pwa-';
+const CACHE_NAME = CACHE_PREFIX + 'v4';
 const CORE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.svg', '/icon-512.svg'];
 
 self.addEventListener('install', (event) => {
@@ -13,7 +14,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -23,6 +24,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return; // để trình duyệt tự xử lý (Supabase, CDN...)
+  if (['/godot/', '/auth/v1/', '/rest/v1/', '/functions/v1/'].some((path) => url.pathname.startsWith(path))) return;
 
   event.respondWith(
     fetch(request)
