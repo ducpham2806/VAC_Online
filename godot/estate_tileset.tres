@@ -1,0 +1,21 @@
+[gd_resource type="TileSet" format=3 uid="uid://bmtmxe6ruubt4"]
+
+[ext_resource type="Texture2D" uid="uid://bvn7d4ahftbab" path="res://generated/tile_grass_xuan.png" id="1_2v130"]
+[ext_resource type="Texture2D" uid="uid://c3fsxq2c8hyjh" path="res://generated/tile_tilled_dry.png" id="2_mtwg0"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qx16r"]
+resource_name = "tile_grass_xuan"
+texture = ExtResource("1_2v130")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3iipq"]
+resource_name = "tile_tilled_dry"
+texture = ExtResource("2_mtwg0")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[resource]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_qx16r")
+sources/1 = SubResource("TileSetAtlasSource_3iipq")
