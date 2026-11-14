@@ -6,6 +6,8 @@ import { handle } from '../../../supabase/functions/apply-actions/index.ts';
 const sql = postgres(Deno.env.get('SUPABASE_DB_URL') ?? '', { max: 5, prepare: false });
 let rngSeed = 1;
 const rng = () => ((rngSeed = (rngSeed * 16807) % 2147483647) / 2147483647);
-Deno.serve({ port: Number(Deno.env.get('PORT') ?? 8787) }, (req) =>
-  handle(req, { sql, userId: async (r) => r.headers.get('x-test-user'), now: Date.now, rng }),
+const fixtureNow = Number(Deno.env.get('VAC_QA_NOW_MS') ?? '');
+const now = Number.isFinite(fixtureNow) && fixtureNow > 0 ? () => fixtureNow : Date.now;
+Deno.serve({ hostname: '127.0.0.1', port: Number(Deno.env.get('PORT') ?? 8787) }, (req) =>
+  handle(req, { sql, userId: async (r) => r.headers.get('x-test-user'), now, rng }),
 );

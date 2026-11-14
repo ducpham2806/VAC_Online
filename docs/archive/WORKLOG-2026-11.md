@@ -106,3 +106,106 @@
 - Kiểm: typecheck, 289 test (+16), build, check:docs PASS. Smoke cũ 2 cỡ + người mới (844×390) PASS. `tools/qa/p1-9-smoke.cjs` (mới) 2 cỡ: sửa chuồng → thả gà/vịt/cá → thu; sửa Bếp → nấu Cơm → lấy → Nồi Đất tìm Canh → ăn hồi ⚡; bảng 3 đơn → giao đúng thưởng → bỏ đơn; tải lại giữ; 0 nút < 44 px; 0 lỗi JS. Ảnh `docs/screenshots/p1-9-*`.
 - `/vac-balance-check`: Lúa lãi/phút và XP/phút cao nhất (3,33🪙, 0,56 XP mỗi ô) — cây cấp cao kém cây cấp 1 (cần chạm nhiều hơn, chưa đo); Cơm bán lỗ 1🪙 so với bán Lúa, Canh lời 1🪙 (món dùng để hồi ⚡ và giao đơn); Sources/Sinks NOT ASSESSED — chưa có người chơi.
 - **Dừng ở:** chờ 7 ảnh PO (`art/prompts/p1_species.md`); đang dùng hình tạm (atlas `wave1`, Bếp vẽ bằng code). Sau đó P1-8 (Supabase), P1-12.
+
+## 11/11/2026 · P1-9 DONE: nhập 7 ảnh loài mới của PO · claude/gifted-faraday-2q851c
+- Gộp `main` (`9730ada`): Rau Muống, Ngô, Hành & Mùi, Cải (4 giai đoạn), vịt, Bếp Củi (đổ nát/đã sửa), 2 món.
+- `import_sheet.py`: cây/vịt vào `art/source/p0_ai/` → atlas `slice` (48 khung, khung cũ giữ nguyên); Bếp + món vào `art/source/p1_ai/` → atlas `estate` (33 khung); icon món chép sang `src/assets/icons/PROD_01|03.png`. Thêm tách 2 hình chạm nhau trong cùng dải (Hành giai đoạn 3–4 chạm lá) + test (9 test art).
+- HUD: icon món ở bảng nấu và Kho. 0 pixel đen, 0 lạc bảng.
+- Kiểm: typecheck, 289 test, test:art, build, check:docs PASS; `p1-9-smoke.cjs` 2 cỡ PASS (thêm ảnh ruộng 5 cây), 0 lỗi JS, 0 nút < 44 px. Ảnh `docs/screenshots/p1-9-*`.
+- **Dừng ở:** P1-8 (chờ quyền Supabase), rồi P1-12 chơi thử.
+
+## 11/11/2026 · P1-12 chuẩn bị chơi thử (QD-88) · claude/gifted-faraday-2q851c
+- PO chọn: thu số liệu qua server sau P1-8; PO tự triển khai link (không có project Vercel cho VAC, tài khoản Vercel nối chỉ có nama-crm-hrm) → QD-88, kế hoạch `07` LT-13.
+- Code: `src/game/slice/playtest.ts` (nhật ký ẩn danh `vac_slice_playtest_v1`: phiên, thao tác thành công theo loại, cấp, bước hướng dẫn; tối đa 3.000 sự kiện; mốc `sent` cho P1-8; gộp phiên mở 2 lần do StrictMode); `playtestMetrics.ts` (D1 theo giờ VN, phễu 8 bước, phiên đầu, cấp); `npm run playtest:report`; mã chơi thử ở ⚙️ Cài đặt.
+- Kiểm: typecheck, 295 test (+6), build, check:docs PASS; smoke người mới 844×390: nhật ký đủ MOVE→DONE, 1 phiên; smoke p1-9 + slice 2 cỡ PASS, 0 lỗi JS, 0 nút < 44 px; bản build production (`vite preview`) chạy `?p1`, ghi sự kiện, không lộ công cụ dev.
+- **Dừng ở:** chờ P1-8 (quyền Supabase VAC) để gửi sự kiện lên server; PO triển khai link + mời người chơi. Chưa có người chơi thử nào.
+
+## 11/11/2026 · P1-8 DONE: lưu online (QD-89) — ĐÃ ÁP DB THẬT, ĐÃ TRIỂN KHAI FUNCTION · claude/gifted-faraday-2q851c
+- PO duyệt QD-89, bật đăng nhập ẩn danh. Kết nối Supabase nay thấy project VAC `znabynzbcimpesrxxxsz` (17 bảng MVP, 0 dòng, chưa có function).
+- Migration `0016_p1_state_ledger.sql` (chỉ thêm): `farm_states`, `ledger`, `_commit_farm_state` (chỉ service_role), `playtest_events` (chỉ thêm dòng của mình), view `playtest_logs`. Test `supabase/tests/p1_state.test.sql`. **Đã áp lên DB thật 11/11** (`apply_migration`); advisors: không cảnh báo mới ngoài "anonymous đọc dòng của mình" (chủ ý), cảnh báo cũ của MVP giữ nguyên.
+- Edge Function `apply-actions` (luật `src/engine/sliceServer.ts` đóng gói `npm run build:edge`, kiểm dạng lô, token qua `getClaims`, CORS + `x-region`). **Đã triển khai 11/11** bằng Supabase CLI (`--use-api`; access token PO lưu ở môi trường, không vào repo). Môi trường cloud thêm host `znabynzbcimpesrxxxsz.supabase.co`.
+- Client `src/services/sliceSync.ts`: đăng nhập ẩn danh (gộp gọi trùng), hàng chờ lưu máy, gửi lô 0,8 s, dựng lại = ảnh chụp server + hàng chờ, mất mạng thử lại 2–30 s, 404 → về chơi trên máy; gửi nhật ký chơi thử; HUD báo mất kết nối; online ẩn công tắc mùa / chơi lại; `?offline` cho kiểm thử khói.
+- Kiểm: typecheck, 303 test, test:sql (8 file), build, check:docs PASS. Cục bộ (Postgres + Deno): p95 3,6 ms, sổ cái khớp. Thật: xử lý trên server p95 11 ms; từ máy cloud (xa, qua proxy) tính cả mạng p95 379 ms (vùng mặc định p95 ~3,4 s → ép `ap-southeast-1`); sổ cái khớp số dư. `tools/qa/p1-8-online-smoke.cjs` PASS (ONLINE → gieo lên server → xóa bản lưu máy, tải lại lấy từ server → nhật ký lên server). Smoke offline 3 kịch bản PASS.
+- Dữ liệu kiểm thử còn trên DB thật: 7 người chơi ẩn danh, 2 trạng thái, 4 dòng sổ cái, 8 sự kiện (chờ PO cho xóa).
+- **Dừng ở:** P1-12 — PO triển khai link, mời người chơi.
+
+## 11/11/2026 · Rà soát dự án và bộ công cụ agent · codex/ra-soat-du-an (nền c58623e)
+- Kiểm kê 999 tệp Git; tra Graphify cục bộ (1.984 nút), đối chiếu hai luồng MVP và P1 từ điểm vào tới lưu trạng thái.
+- Đọc cấu hình Claude, 7 skill VAC, Graphify và 6 agent VAC; rà danh mục 116 skill và 21 playbook Game Studio (c5dac46). Skill dùng: Graphify, Supabase (đọc mã cục bộ).
+- Kiểm thật: build và check:docs PASS. Typecheck thiếu kiểu Node; Vitest chưa cài; SQL thiếu Postgres cục bộ; test art thiếu numpy (6 lỗi import).
+- **Dừng ở:** rà soát xong; P1-12 vẫn chờ PO phát hành link và mời người chơi.
+
+## 11/11/2026 · Mẫu VFX tưới trong P1 · codex/p1-vfx-tuoi
+- Kiểm atlas `slice` và `estate`, không pixel đen/lạc bảng/alpha lẻ. Skill dùng: vac-studio, vac-scope-check, vac-asset-audit, game-feel, technical-artist, vac-story-done.
+- Mẫu dùng sự kiện tưới thành công của P1, vẽ giọt nước ở ô vừa tưới (AR-31). Tác động giới hạn ở hiển thị P1. Mẫu dùng lại atlas và bảng màu VAC.
+- Kiểm: typecheck, 303 test, build, check:docs PASS. Chrome 1280×720 và 844×390: dùng nút hành động, VFX đúng ô rồi tự dọn, ô đã tưới không phát lại, 0 lỗi JS. Bản production mở P1 ở cả hai cỡ.
+- **Dừng ở:** mẫu trên nhánh riêng, chờ PO xem. P1-12 vẫn theo LT-13.
+
+## 11/11/2026 · Hoạt ảnh nông trại P1 · codex/p1-hoat-anh-nong-trai
+- PO duyệt làm tiếp. Dùng vac-studio, game-feel, technical-artist, vac-asset-audit và vac-story-done.
+- Tái dùng sprite và bảng màu VAC. Lớp công cụ tạo trong Phaser, thêm tư thế và VFX gieo/tưới/gặt, vật nuôi lệch nhịp, gợn ao (AR-30, AR-31).
+- Typecheck, 303 test, build và check:docs PASS. Chrome ở 1280×720 và 844×390 xác nhận ba công cụ đạt kiểm màu/alpha, VFX đúng ô thành công, đi bộ ngắt tư thế, vật nuôi/ao chuyển động và không có lỗi JS.
+- Smoke P1-9 hai cỡ PASS, hướng dẫn 844×390 tới DONE và nhận Chương 1. Bản production mở P1 hai cỡ.
+- Nhánh đang chờ PO duyệt, còn bước kiểm trên điện thoại thật. Chơi thử P1-12 theo LT-13.
+
+## 11/11/2026 · Đối chiếu engine cho web/PWA · codex/doi-chieu-engine-web-pwa
+- Đối chiếu Godot 4, PixiJS và Phaser đang chạy. Đề xuất giữ Phaser 3 để phát hành P1 qua web/PWA, đóng gói `dist/` bằng Capacitor khi cần app.
+- Đối chiếu trực tiếp `src/main.tsx`, manifest, service worker và cấu hình Capacitor. Manifest mở `/`, còn P1 vào bằng `/?p1`. Nếu PWA phục vụ P1, cần chọn đúng điểm vào.
+- Kiểm thật `npm run build` trên main và `npm run check:docs` trên nhánh tư vấn. Chưa có số đo trên máy thật, APK hay bản iOS.
+- Ghi nhận đề xuất để PO cân nhắc. P1-12 tiếp tục theo LT-13.
+
+## 11/11/2026 · Kế hoạch chuyển P1 sang Godot · codex/ke-hoach-chuyen-godot
+- PO chọn Godot 4, Web/PWA trước (QD-90). LT-14 ghi phạm vi P1, tác động, các bước và tiêu chí qua bước.
+- Đối chiếu mã lưu/đồng bộ P1 và tài liệu Godot, Supabase chính thức. Dùng vac-studio, godot-export, game-production-scrum và Supabase.
+- Giữ engine luật TS và Supabase trong đề xuất. Chốt riêng hành vi offline và phương án mang phiên/lưu cũ trước phát hành.
+- `npm run check:docs` và `git diff --check` qua. Kế hoạch chờ PO duyệt bước thử Web/PWA trên máy thật.
+
+## 11/11/2026 · Godot P1 bước 0 · codex/godot-p1-kiem-chung
+- PO duyệt bắt đầu LT-14. Cảnh Godot 4.7.2 dùng lại sprite, mở Web/PWA, chạm gieo một ô và đọc lại trạng thái. Dùng vac-studio, godot-export và Supabase.
+- Handler `apply-actions` dùng PostgreSQL tạm và danh tính thử. Chrome đọc đúng ô lúa sau tải lại, sổ cái có một giao dịch. Chrome mở lại từ cache khi mất mạng. WebKit trên máy tính đọc được nông trại.
+- Link HTTPS thử đã qua Chrome và WebKit trên máy tính. Chrome đo một lần tải nguội khoảng 17,1 giây và tải lại 0,55 giây. WASM gửi dạng gzip 9,6 MiB.
+- Kiểm typecheck, 303 test, build, test:sql 8 file, check:docs, Godot headless/export và màu 8 PNG đều qua. Cách chạy lại ở LT-14.
+- Bước 0 đang chờ kiểm Chrome Android và Safari iPhone thật, gồm mở từ icon và đo tải/FPS.
+
+## 11/11/2026 · Scene nông trại chỉnh tay trong Godot · codex/godot-scene-nong-trai
+- PO yêu cầu dùng Godot trên Mac và có scene chỉnh tay. Dùng godot-tilemap. Bản đồ có các lớp cỏ, đất, node vật trang trí, điểm xuất phát và ô gieo chỉnh được.
+- Mở Godot 4.7.2 từ ~/Applications, xác nhận bản đồ 2D và Inspector. Đã thử nhập sprite từ thư mục dự án sạch với `--prepare-only`.
+- Xuất Web/PWA, thử Chrome ở 1280×720 và 844×390, tải lại giữ lúa, đọc cache khi mất mạng. WebKit mô phỏng đọc được. Ảnh đã chụp ở hai cỡ.
+- Bản sao dời ô bằng scene nhận chạm ở vị trí mới, không gửi gieo ở vị trí cũ. PostgreSQL tạm ghi một lần trừ vàng. Typecheck, 303 test, build và check:docs qua.
+- Dừng ở scene chỉnh tay trên nhánh riêng chờ PO duyệt. LT-14 bước 0 còn kiểm trên Android và iPhone thật.
+
+## 11/11/2026 · Hoạt ảnh đi và gieo trong Godot · codex/godot-hoat-anh-di-gieo
+- PO yêu cầu làm tiếp trên Mac. Godot có chạm để đi, phím mũi tên/WASD, hoạt ảnh 4 hướng và thứ tự lớp theo chân. Hai cột cỏ PO tô vẫn nằm trong bản cục bộ.
+- Mở SpriteFrames trong Editor. Dùng godot-animation và vac-asset-audit. Kiểm 16 PNG về kích thước, nền, viền và bảng màu. Bỏ khung đi phải quay sai hướng khỏi clip Godot.
+- Godot headless kiểm đi/dừng, phím ngắt chạm và VFX chỉ sau xác nhận gieo. Chrome hai cỡ và WebKit mô phỏng qua. Ảnh xác nhận che khuất, di chuyển và hiệu ứng. PostgreSQL tạm ghi một giao dịch.
+- Typecheck, 303 test, build, Godot Web/PWA export và check:docs qua. Dừng ở nhánh chờ PO duyệt, còn kiểm điện thoại thật.
+
+## 12/11/2026 · Joystick hai ngón trong Godot · codex/godot-joystick-cam-ung
+- PO yêu cầu tiếp tục. Dùng godot-ui-control, dựng joystick nổi góc dưới trái trong scene chỉnh tay. Nhập clip đi phải đã bỏ khung sai hướng. Hai cột cỏ PO tô vẫn ở bản cục bộ.
+- Chrome mô phỏng 1280×720 và 844×390: giữ joystick, dùng ngón khác gieo đúng một lần trên PostgreSQL tạm. Kéo qua ô, thả ngón, hủy chạm và nút HUD đều qua. Chụp ảnh hai cỡ.
+- Godot headless kiểm vùng chết, giới hạn lực, mất focus và resize. Mở scene trong Godot Editor trên Mac. Typecheck, 303 test, build, Web/PWA export và check:docs qua.
+- Dừng ở nhánh chờ PO duyệt, còn kiểm joystick, safe-area và mở từ icon trên điện thoại thật theo LT-14.
+
+## 12/11/2026 · Camera nông trại Godot · codex/godot-camera-nong-trai
+- PO yêu cầu tiếp tục LT-14. Camera bám chân, kéo đất trống hoặc hai ngón để xem, giới hạn theo lớp Ground. HUD và joystick neo màn hình. Scene chính mở trên Mac.
+- Chrome mô phỏng 1280×720 và 844×390 kiểm kéo, giữ góc nhìn, chạm đúng ô sau kéo cùng joystick, bám lại và giữ mép. Mỗi lần ghi một giao dịch thử. WebKit đọc đúng ô đã lưu.
+- Typecheck, 303 test, build, Godot headless, Web/PWA export và check:docs qua. Chụp ảnh hai cỡ.
+- Dừng ở nhánh chờ PO duyệt. Bước 0 còn kiểm điện thoại thật. Bước 1 còn vòng ruộng bằng fixture.
+
+## 12/11/2026 · Vòng ruộng Godot · codex/godot-vong-ruong
+- PO duyệt làm tiếp LT-14. Dùng godot-gameplay-scripter. Một ô lúa nhận gieo, tưới, gặt theo trạng thái, kho có nút bán. Cảnh chỉnh được hình cây, đất ướt và VFX.
+- Fixture Deno gọi engine, tăng tốc đồng hồ và giữ nông trại riêng trong bộ nhớ. Chrome 1280×720 và 844×390 chơi hết vòng, tải lại giữ kho, vàng/XP/thể lực đúng. WebKit đọc lại đúng kết quả.
+- 303 test, typecheck, build, Godot headless và Web/PWA export, check:docs và kiểm 5 PNG qua. Ảnh hai cỡ đã chụp. Hai cột cỏ PO tô còn ở bản cục bộ.
+- Dừng ở nhánh chờ PO duyệt, máy Mac có ô trống để thử. Còn kiểm điện thoại thật và mốc lưu online LT-14.
+
+## 12/11/2026 · Godot lưu online · codex/godot-luu-online
+- PO yêu cầu tiếp tục LT-14. Dùng skill Supabase. Web/native dùng chung transport, đăng nhập ẩn danh, làm mới phiên và lưu bản xem theo tài khoản. Nhật ký LT-13 bật bằng cấu hình.
+- Chrome với Supabase Auth và PostgreSQL cục bộ chạy hết vòng. Token bị từ chối thì làm mới cùng tài khoản. Lệnh gieo mất phản hồi được đối chiếu bằng đọc lại, sổ cái ghi một lần. PWA đọc cache khi offline.
+- WebKit có nông trại riêng, Godot native mở lại giữ phiên. Typecheck, 303 test, build Godot Web, check:docs qua. Ảnh hai cỡ đã chụp.
+- Dừng ở nhánh chờ PO duyệt. Còn kiểm staging, phiên Phaser và thiết bị thật. Chưa triển khai lên Supabase thật.
+
+## 12/11/2026 · Staging Godot Web/PWA · codex/godot-staging-pwa
+- PO duyệt triển khai staging. Xuất Phaser và Godot cùng origin HTTPS tạm qua Cloudflare Tunnel, dùng Supabase Auth và PostgreSQL thử trên Mac.
+- Godot Web dùng lại phiên Phaser qua Supabase SDK. Chrome và WebKit giữ cùng tài khoản. Chrome kiểm ô, kho, vàng, XP, token bị từ chối, hàng chờ Phaser và bán ở Godot rồi đọc lại trên Phaser.
+- Chrome qua kiểm cài PWA, mở cache offline và giữ joystick khi gieo ở 844×390. Một lượt đo trên Mac tới khi đọc nông trại là 10,3 giây lần đầu và 1,4 giây khi tải lại. Typecheck, 303 test, build và check:docs qua.
+- Dừng ở staging tạm chờ kiểm Android/iPhone thật và duyệt merge. Tiến trình người chơi thật chưa chuyển.

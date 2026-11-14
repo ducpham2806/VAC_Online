@@ -2,6 +2,43 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Scene nông trại Godot · 14/11/2026 · main
+- Bản đồ, công trình, chướng ngại và vùng đất chỉnh trong Godot Editor. Cách chạy ở LT-14.
+- Dọn, sửa, khai hoang theo GP-14. Kiểm hủy xác nhận, tưới cả loạt và mở lại ô mới.
+- Vòng lúa qua fixture. HUD, cỏ, cây và ao theo mùa GP-20.
+- Typecheck, 303 test, build, Web/PWA và check:docs qua. Ảnh hai cỡ.
+- PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
+
+## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
+- Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.
+- Mốc đầu thử Web/PWA trên Chrome Android và Safari iPhone trước khi chuyển toàn P1.
+- Đã đối chiếu hợp đồng lưu hiện có và chạy check:docs.
+- Chờ PO duyệt kế hoạch và bước kiểm chứng đầu tiên.
+
+## Đối chiếu engine cho web/PWA · 11/11/2026 · codex/doi-chieu-engine-web-pwa
+- Rà đường phát hành web/PWA và khả năng đóng gói Android/iOS.
+- Đề xuất giữ Phaser 3. Kết quả và căn cứ ở WORKLOG.
+- Ghi nhận cần kiểm điểm vào PWA khi phát hành P1 theo LT-13.
+- Chờ PO chọn bước triển khai. Đây là tư vấn kỹ thuật cho lộ trình hiện tại.
+
+## Hoạt ảnh nông trại P1 · 11/11/2026 · codex/p1-hoat-anh-nong-trai
+- Gieo, tưới, gặt có tư thế công cụ và hiệu ứng theo AR-30, AR-31.
+- Dùng lại sprite P1. Gà, vịt, cá lệch nhịp và mặt ao có gợn.
+- Kiểm build, 303 test, Chrome 2 cỡ, P1-9 và hướng dẫn tới Chương 1.
+- Chờ PO duyệt nhánh. P1-12 tiếp tục theo LT-13.
+
+## Mẫu VFX tưới P1 · 11/11/2026 · codex/p1-vfx-tuoi
+- Giọt nước theo AR-31 chạy từ sự kiện đã tưới thành công trên `?p1`.
+- Đã kiểm đúng ô, kết thúc tự dọn, không phát lại khi chạm ô đã tưới.
+- Typecheck, 303 test, build, check:docs và Chrome 2 cỡ PASS.
+- Chờ PO xem mẫu trên nhánh riêng. Bước tiếp của playtest vẫn ở LT-13.
+
+## Rà soát dự án và bộ công cụ agent · 11/11/2026 · c58623e
+- Rà thiết kế, hai luồng MVP và P1, dữ liệu, migration, pipeline ảnh, kiểm thử và cấu hình agent.
+- Đọc các định nghĩa VAC; lập bản đồ 10 nhóm skill và 3 tầng vai trò của Game Studio theo chỉ mục ghim.
+- Đối chiếu kiến trúc bằng Graphify và mã nguồn. Build và check:docs qua tại checkout cục bộ.
+- Kiểm thử đầy đủ còn vướng thành phần môi trường, chi tiết trong WORKLOG. P1-12 tiếp tục theo LT-13.
+
 ## P1-8 · Lưu online bản thử · 11/11/2026 — DONE (đã áp DB thật, đã triển khai; chưa có người chơi thử)
 - DB VAC: `farm_states` + `ledger` + `_commit_farm_state` (ADR-002) và `playtest_events` (migration `0016`, chỉ thêm).
 - Edge Function `apply-actions` chạy đúng luật `src/engine` (ADR-001); giờ, số ngẫu nhiên, kết quả do server quyết.

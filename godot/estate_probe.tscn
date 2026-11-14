@@ -1,0 +1,197 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://estate_probe.gd" id="1"]
+[ext_resource type="Script" path="res://probe_transport.gd" id="2"]
+[ext_resource type="PackedScene" path="res://estate_map.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://touch_joystick.tscn" id="4"]
+[ext_resource type="Script" path="res://estate_camera.gd" id="5"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_xuan.png" id="6_spring"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_ha.png" id="7_summer"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_thu.png" id="8_autumn"]
+[ext_resource type="Texture2D" path="res://generated/tile_grass_dong.png" id="9_winter"]
+
+[node name="EstateProbe" type="Node2D"]
+script = ExtResource("1")
+grass_by_season = Dictionary[String, Texture2D]({
+"DONG": ExtResource("9_winter"),
+"HA": ExtResource("7_summer"),
+"THU": ExtResource("8_autumn"),
+"XUAN": ExtResource("6_spring")
+})
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="EstateMap" parent="World" instance=ExtResource("3")]
+
+[node name="EstateCamera" type="Camera2D" parent="."]
+position = Vector2(320, 180)
+script = ExtResource("5")
+
+[node name="Transport" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="Transport"]
+accept_gzip = false
+max_redirects = 0
+timeout = 8.0
+
+[node name="PlaytestRequest" type="HTTPRequest" parent="Transport"]
+accept_gzip = false
+max_redirects = 0
+timeout = 8.0
+
+[node name="MetricsTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="CropTimer" type="Timer" parent="."]
+wait_time = 0.25
+autostart = true
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Margin" type="MarginContainer" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 14.0
+offset_right = -16.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Layout" type="VBoxContainer" parent="HUD/Margin"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Header" type="PanelContainer" parent="HUD/Margin/Layout"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="HUD/Margin/Layout/Header"]
+layout_mode = 2
+theme_override_constants/separation = 12
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="HUD/Margin/Layout/Header/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "VAC Online · Bắc Bộ"
+
+[node name="Season" type="Label" parent="HUD/Margin/Layout/Header/Row"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Mùa —"
+
+[node name="Gold" type="Label" parent="HUD/Margin/Layout/Header/Row"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Vàng —"
+
+[node name="Metrics" type="Label" parent="HUD/Margin/Layout/Header/Row"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "— FPS"
+
+[node name="Space" type="Control" parent="HUD/Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Joystick" parent="HUD/Margin/Layout/Space" instance=ExtResource("4")]
+layout_mode = 1
+anchor_top = 0.58
+anchor_right = 0.333333
+anchor_bottom = 1.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Footer" type="PanelContainer" parent="HUD/Margin/Layout"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="HUD/Margin/Layout/Footer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+mouse_filter = 2
+
+[node name="Text" type="VBoxContainer" parent="HUD/Margin/Layout/Footer/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="HUD/Margin/Layout/Footer/Row/Text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Ruộng lúa · Kho 0"
+
+[node name="Status" type="Label" parent="HUD/Margin/Layout/Footer/Row/Text"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Đang đọc nông trại…"
+autowrap_mode = 3
+
+[node name="Action" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(124, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+disabled = true
+text = "Đọc lại"
+
+[node name="Sell" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+disabled = true
+text = "Bán lúa"
+
+[node name="Confirm" type="ColorRect" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.239216, 0.137255, 0.0784314, 0.55)
+
+[node name="Center" type="CenterContainer" parent="HUD/Confirm"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="HUD/Confirm/Center"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="HUD/Confirm/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+
+[node name="Details" type="Label" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="Buttons" type="HBoxContainer" parent="HUD/Confirm/Center/Panel/Content"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 12
+
+[node name="Cancel" type="Button" parent="HUD/Confirm/Center/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(92, 44)
+layout_mode = 2
+text = "Để sau"
+
+[node name="Apply" type="Button" parent="HUD/Confirm/Center/Panel/Content/Buttons"]
+custom_minimum_size = Vector2(108, 44)
+layout_mode = 2
+text = "Xác nhận"

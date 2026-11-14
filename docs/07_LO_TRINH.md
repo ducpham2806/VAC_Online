@@ -83,5 +83,55 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 - **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
 
 
+### LT-14 · Kế hoạch chuyển P1 sang Godot 4 (QD-90)
+
+**PO đã duyệt bắt đầu bước 0 ngày 11/11.** Chuyển P1 Bắc Bộ theo LT-12 trước khi mở nội dung P2. Chốt một commit Phaser làm mốc hành vi, hình ảnh và dữ liệu thử. Dùng bản đó để đối chiếu và quay lui trong thời gian chuyển. Sau khi nghiệm thu, tính năng mới đi vào client Godot.
+
+**14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
+
+**Tác động**
+
+1. **Core VAC.** Giữ hành vi gieo, tưới, thu, bán và điều khiển theo GP-02. Dùng các kịch bản P1 hiện có làm tiêu chí đối chiếu.
+2. **Kinh tế.** Dùng lại engine TypeScript của server và dữ liệu chuẩn KY-20. So kết quả tiền, kho, XP, thể lực theo cùng chuỗi thao tác.
+3. **Art/UI.** Nhập lại PNG và vùng cắt atlas `slice`, `estate`, giữ lưới và điểm neo theo AR-20. Chuyển hoạt ảnh, VFX và HUD sang Godot theo AR-30, AR-31, UI-20 và UI-30. Làm lại phần âm thanh đang tổng hợp bằng WebAudio.
+4. **Module cũ.** Viết client mới trong `godot/`. Tách scene bản đồ và UI khỏi lớp gửi thao tác, lưu tiến trình và đăng nhập. Dùng lại dữ liệu và kịch bản kiểm thử.
+5. **DB.** Giữ schema, RLS và `apply-actions` hiện tại cho P1 theo QD-89. Dùng môi trường thử được phép. Nếu phát sinh nhu cầu đổi hợp đồng hoặc schema, trình PO duyệt riêng trước khi sửa.
+
+| Bước | Việc và đầu ra | Điều kiện qua bước | Ước lượng ngày làm việc |
+|---|---|---|---:|
+| 0. Kiểm chứng web | Ghim Godot 4.7.2 stable và export templates đồng phiên bản. Dùng GDScript, renderer Compatibility và Web export đơn luồng. Dựng một cảnh có người, ruộng, nút chạm và một lượt lưu/đọc qua `apply-actions` ở môi trường thử. Xuất Web/PWA trên HTTPS. | Chrome Android và Safari iPhone thật mở được từ URL lẫn icon đã cài. Kiểm màn ngang, chạm, đóng rồi mở lại thấy đúng dữ liệu. Ghi thiết bị, thời gian tải nguội/ấm tới lúc chơi được và FPS, đối chiếu Phaser trên cùng máy. Chốt cấu hình sau kết quả. | 2–3 |
+| 1. Dựng lát cắt ruộng | Tạo `TileMapLayer`, camera, sắp lớp theo y, chạm-đi-tới, joystick và HUD. Sinh tài nguyên Godot từ dữ liệu/atlas hiện có. Dùng dữ liệu kiểm thử cố định để dựng luồng gieo → tưới → gặt → bán cùng hoạt ảnh. | Đối chiếu hành vi, lớp hình và thao tác theo LT-12. Chụp hai cỡ UI-10. CI nhập dự án, chạy kịch bản headless và xuất Web được. | 4–6 |
+| 2. Nối lưu online | Nối Supabase Auth và `apply-actions` cho Web và native, làm mới phiên, đồng bộ trạng thái và ghi nhật ký LT-13. Xem [cấu hình và kiểm thử](GODOT-ONLINE.md). | Cùng tài khoản thử mở lại đúng nông trại. So vàng/kho/XP và lỗi từng thao tác. Kiểm CORS, tải lại, hết hạn phiên và mất mạng khi gửi. Đo độ trễ trên điện thoại theo QD-89. | 3–5 |
+| 3. Hoàn tất P1 | Chuyển mùa vụ, điền trang, vật nuôi, bếp, đơn HTX, NPC, Chương 1, hướng dẫn và âm thanh. Dùng atlas và mã sự kiện sẵn có. | Các kịch bản LT-12 đi hết. Người mới hoàn tất hướng dẫn, nhật ký đọc được bằng báo cáo LT-13. Chạy lại kiểm thử web trên máy thật. | 6–9 |
+| 4. Phát hành web/PWA | Thử trên bản dựng staging. Chốt phương án phiên, bản lưu cũ và hành vi offline. Kiểm tải lại khi lên phiên bản, mở từ icon, mất mạng và quay lui bằng artifact Phaser đã chốt. | PO duyệt bản Godot, QA xác nhận tiến trình, cache và điều khiển đạt yêu cầu. Sau đó chuyển URL chính và chạy chơi thử theo LT-13. | 3–5 |
+| 5. Xuất app khi cần | Dùng cùng dự án Godot để xuất Android trước. APK để thử nội bộ, AAB khi phát hành Google Play. iOS dùng Xcode trên macOS và TestFlight khi có nhu cầu. | Kiểm cài mới, nâng phiên bản, lưu, cảm ứng, safe-area, âm thanh và trở lại sau khi chạy nền trên máy thật. | Tách khỏi mốc web |
+
+**Giữ tiến trình khi chuyển client.** Trạng thái online gắn với tài khoản Supabase. Thử giữ phiên khi chuyển trên cùng origin. Nếu khác origin hoặc chuyển sang app, thử phương án liên kết tài khoản để người chơi truy cập lại nông trại. Bản lưu offline và hàng chờ cũ cần bộ mẫu đọc thử, xác nhận sau nhập và cách quay lui. Khi một yêu cầu gửi đi có kết quả chưa rõ, đối chiếu trạng thái server trước khi gửi lại thao tác có thể cộng/trừ hai lần. Đề xuất bổ sung chống xử lý trùng ở server nếu kiểm thử chứng minh cần, theo RULE D1.
+
+**Phần offline cần PO chốt.** Bước 0–2 ưu tiên online và thử mở lại PWA đã tải. Đề xuất bản Godot đầu tiên cho xem trạng thái đã tải khi mất mạng, báo rõ thao tác đang chờ xác nhận và tiếp tục sau khi kết nối lại. Chơi hoàn toàn offline như chế độ thử `?p1&offline` cần phương án giữ một bộ luật theo ADR-001. Nếu bắt buộc có ở đợt đầu, thử khả năng dùng lại bộ luật trên cả Web và native rồi ước lượng riêng trước khi phát hành.
+
+**Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt lại sau bước 0 và sau khi xác định yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
+
+**Chạy lại bước 0.** Cài Godot 4.7.2 và Web export template đơn luồng đồng phiên bản. Dựng bản Web, chạy bộ thử Deno/PostgreSQL, rồi chạy máy chủ Web ở terminal khác.
+
+```bash
+npm ci
+GODOT_BIN=/duong/dan/Godot bash scripts/build-godot-web.sh
+PG_BIN=/duong/dan/postgresql/bin DENO=/duong/dan/deno bash tools/qa/edge/run-local.sh --serve
+python3 tools/qa/serve-godot-probe.py
+```
+
+Mở `http://127.0.0.1:4173/`. Bộ thử chỉ có một nông trại mẫu, qua handler và sổ cái thật trên PostgreSQL tạm với danh tính giả. Khi đưa qua HTTPS thử nghiệm, chạy máy chủ Web với `VAC_GODOT_PREVIEW_ORIGIN` bằng origin HTTPS chính xác. Trên máy thật, thử gieo khi ô trống, thêm vào màn hình chính, mở từ icon và đối chiếu trạng thái. HUD hiển thị FPS và thời gian tới khi đọc xong nông trại.
+
+- [x] ~~Bản đồ cảnh thử chỉnh được trong Godot Editor.~~ Mở `estate_map.tscn` để tô `Terrain/Ground` và dời `PlayerSpawn`. Mở `estate_features.tscn` để dời công trình, đá, cây và vùng đất. Bấm F5 chạy `estate_probe.tscn`. Khi mới clone, chạy build với `--prepare-only` để nhập dữ liệu và sprite vào Editor.
+- [x] ~~Thử hoạt ảnh theo AR-30, AR-31 trên cảnh hiện có.~~ Chạm để đi hoặc dùng phím mũi tên/WASD. Chỉnh khung hình và tốc độ trong `farmer.tscn`, chỉnh bụi đất và hạt trong `sow_fx.tscn`. Hiệu ứng chỉ chạy khi có phản hồi gieo thành công.
+- [x] ~~Thử joystick nổi theo UI-20.~~ Giữ và kéo ở vùng dưới trái, dùng ngón khác chạm ô gieo. Trên Mac, dùng chuột kéo để thử. Chỉnh hình trong `touch_joystick.tscn` và vùng nhận chạm ở `HUD/Margin/Layout/Space/Joystick` trong cảnh chính.
+- [x] ~~Thử camera theo UI-20.~~ Kéo ở đất trống hoặc kéo hai ngón để xem bản đồ. Điều khiển nhân vật để camera bám lại. Chọn `EstateCamera` trong cảnh chính để chỉnh độ lệch và tốc độ bám.
+- [x] ~~Chạy vòng gieo → tưới → gặt → bán trên một ô.~~ Chạy `bash tools/qa/run-godot-farm-fixture.sh`, rồi `python3 tools/qa/serve-godot-probe.py --farm-loop` ở terminal khác. F5 hoặc mở Web cục bộ. Bộ thử tăng tốc đồng hồ, giữ kho qua tải lại và đặt lại khi khởi động lại tiến trình Deno.
+- [x] ~~Lịch mùa, cỏ và gieo lúa theo GP-20.~~ Fixture nhận `XUAN`, `HA`, `THU` hoặc `DONG`.
+- [x] ~~Dọn, sửa, khai hoang theo GP-14.~~ Kiểm hủy xác nhận, tưới cả loạt sau sửa giếng và mở lại ô mới.
+
+Nguồn kỹ thuật chính thức gồm [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/), [Web và PWA](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html), [Android](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_android.html), [iOS](https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html) và [Supabase Auth ẩn danh](https://supabase.com/docs/guides/auth/auth-anonymous).
+
 ### LT-11 · Việc tài liệu đã làm
 10/11: thay bộ `00 → 17` bằng `docs/00 → 08`, gộp nội dung đáng giữ, đổi hướng theo QD-12…15. Chi tiết: `docs/COMPLETED.md`.
