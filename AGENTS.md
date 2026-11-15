@@ -46,5 +46,5 @@ Quy trình phiên và budget ký tự: [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
 ## 7. Công cụ có thật
 - Agent dự án: `.claude/agents/vac-{designer,economy,backend,frontend,art-pipeline,qa}`.
-- Skill dự án: `/vac-consistency-check`, `/vac-balance-check`, `/vac-propagate-change`, `/vac-story-done`, `/vac-scope-check`, `/vac-asset-audit`, `/vac-studio` (bộ định tuyến 116 skill Game Studio), `/graphify`.
-- Thư viện Game Studio đầy đủ: `.agents/game-studio/` (bản ghim, xem [docs/studio/INSTALLATION.md](docs/studio/INSTALLATION.md)). 21 vai trò trong đó là playbook tham khảo, không phải tiến trình chạy. Dự án dùng **Phaser 3** — skill viết cho Phaser 4 phải đối chiếu API trước khi dùng.
+- Skill dự án: `/vac-consistency-check`, `/vac-balance-check`, `/vac-propagate-change`, `/vac-story-done`, `/vac-scope-check`, `/vac-asset-audit`, `/vac-studio` (bộ định tuyến 125 skill Game Studio), `/graphify`.
+- Thư viện Game Studio đầy đủ: `.agents/game-studio/` (bản ghim, xem [docs/studio/INSTALLATION.md](docs/studio/INSTALLATION.md)). 21 vai trò trong đó là playbook tham khảo, không phải tiến trình chạy. Client P1 mới dùng **Godot 4.7.2** (`godot/`, LT-14); bản cũ dùng **Phaser 3** — skill viết cho Phaser 4 phải đối chiếu API trước khi dùng.

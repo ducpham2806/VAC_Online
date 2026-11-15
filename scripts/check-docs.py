@@ -78,8 +78,8 @@ if not 1 <= len(entries) <= 3:
     errors.append(f'WORKLOG: cần 1–3 mục, đang có {len(entries)}')
 
 studio = ROOT / '.agents/game-studio'
-for pattern, expected in [('skills/*/*/SKILL.md', 116), ('agents/*/*.md', 21),
-                          ('rules/*.md', 4), ('templates/*.md', 6)]:
+for pattern, expected in [('skills/*/*/SKILL.md', 125), ('agents/*/*.md', 21),
+                          ('rules/*.md', 4), ('templates/*.md', 7)]:
     found = len(list(studio.glob(pattern)))
     if found != expected:
         errors.append(f'Game Studio {pattern}: {found}, cần {expected}')
@@ -87,8 +87,8 @@ for pattern, expected in [('skills/*/*/SKILL.md', 116), ('agents/*/*.md', 21),
 manifest = ROOT / 'docs/studio/SOURCE-MANIFEST.md'
 rows = re.findall(r'^\| `([^`]+)` \| `([^`]+)` \| `([a-f0-9]{40})` \|$',
                   manifest.read_text(encoding='utf-8'), flags=re.M) if manifest.is_file() else []
-if len(rows) != 297 or len({r[1] for r in rows}) != 297:
-    errors.append(f'SOURCE-MANIFEST phải có 297 file khác nhau, đang có {len(rows)}')
+if len(rows) != 340 or len({r[1] for r in rows}) != 340:
+    errors.append(f'SOURCE-MANIFEST phải có 340 file khác nhau, đang có {len(rows)}')
 listed = {r[1] for r in rows}
 for f in studio.rglob('*'):
     if f.is_file() and f.relative_to(ROOT).as_posix() not in listed:

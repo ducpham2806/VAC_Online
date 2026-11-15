@@ -8,7 +8,7 @@
 3. Câu hỏi về code/tài liệu: `graphify query` → chỉ đọc đúng dòng đồ thị chỉ ra.
 4. Cần chuyên môn: [studio/INDEX](studio/INDEX.md) → 1–3 skill.
 
-Không đọc cả WORKLOG cũ, archive hay 116 skill. Không làm lại kiểm toán toàn repo mỗi phiên — hiện trạng ở `04` KY-90.
+Không đọc cả WORKLOG cũ, archive hay 125 skill. Không làm lại kiểm toán toàn repo mỗi phiên — hiện trạng ở `04` KY-90.
 
 ## Trạng thái việc
 `READY` → `ACTIVE` → `DONE`. `WAITING` phải ghi đang chờ gì (thường là PO hoặc áp DB). `BACKLOG` = chưa lên kế hoạch.
