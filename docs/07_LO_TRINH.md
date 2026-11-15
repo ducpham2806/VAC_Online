@@ -89,6 +89,8 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
 
+15/11: thêm vật nuôi, Bếp, đơn HTX.
+
 **Tác động**
 
 1. **Core VAC.** Giữ hành vi gieo, tưới, thu, bán và điều khiển theo GP-02. Dùng các kịch bản P1 hiện có làm tiêu chí đối chiếu.

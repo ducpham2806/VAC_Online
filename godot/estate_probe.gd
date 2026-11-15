@@ -8,6 +8,8 @@ const TouchJoystick := preload("res://touch_joystick.gd")
 const EstateCamera := preload("res://estate_camera.gd")
 const RicePlot := preload("res://rice_plot.gd")
 const RicePlotScene := preload("res://rice_plot.tscn")
+const AnimalSlotScene := preload("res://animal_slot.tscn")
+const Sheet := preload("res://sheet.gd")
 const EstateFeatures := preload("res://estate_features.gd")
 const FarmProbeState := preload("res://farm_probe_state.gd")
 const GRASS_SOURCE_ID := 0
@@ -33,8 +35,10 @@ const MOUSE_POINTER := -2
 @onready var plot_title: Label = $HUD/Margin/Layout/Footer/Row/Text/Title
 @onready var status: Label = $HUD/Margin/Layout/Footer/Row/Text/Status
 @onready var action: Button = $HUD/Margin/Layout/Footer/Row/Action
-
-@onready var sell: Button = $HUD/Margin/Layout/Footer/Row/Sell
+@onready var seeds_button: Button = $HUD/Margin/Layout/Footer/Row/Seeds
+@onready var store_button: Button = $HUD/Margin/Layout/Footer/Row/Store
+@onready var orders_button: Button = $HUD/Margin/Layout/Footer/Row/Orders
+@onready var sheet: Sheet = $HUD/Sheet
 @onready var confirm_overlay: Control = $HUD/Confirm
 @onready var confirm_panel: PanelContainer = $HUD/Confirm/Center/Panel
 @onready var confirm_title: Label = $HUD/Confirm/Center/Panel/Content/Title
@@ -47,7 +51,12 @@ var notice := ""
 var busy := false
 var connected := false
 var ready_ms := 0
-var plots: Dictionary[String, RicePlot] = {}
+var plots: Dictionary[String, Node2D] = {}
+var slot_items: Dictionary[String, String] = {}
+var seed_id := FarmProbeState.RICE_ID
+var sheet_kind := ""
+var pot: Array[String] = []
+var orders_key := ""
 var plot_specs: Dictionary[String, Dictionary] = {}
 var crop_frames: Dictionary[String, Array] = {}
 var selected_plot := FarmProbeState.PLOT_ID
@@ -67,6 +76,12 @@ var leading_icons := RegEx.create_from_string("^" + RESULT_ICON + "+\\s*")
 var inline_icons := RegEx.create_from_string(RESULT_ICON)
 
 
+func _enter_tree() -> void:
+	var board: Sheet = $HUD/Sheet
+	board.style_button = _style_button
+	board.style_panel = _panel.bind(PAPER, 14)
+
+
 func _ready() -> void:
 	_style_hud()
 	if ground.tile_set != null and ground.tile_set.has_source(GRASS_SOURCE_ID):
@@ -79,7 +94,11 @@ func _ready() -> void:
 	camera.configure(world_bounds, player.global_position)
 	get_viewport().size_changed.connect(_on_viewport_resized)
 	action.pressed.connect(_on_action)
-	sell.pressed.connect(_on_sell)
+	seeds_button.pressed.connect(_open_sheet.bind("SEEDS"))
+	store_button.pressed.connect(_open_sheet.bind("STORE"))
+	orders_button.pressed.connect(_open_sheet.bind("ORDERS"))
+	sheet.chosen.connect(_on_sheet_chosen)
+	sheet.closed.connect(_on_sheet_closed)
 	cancel_button.pressed.connect(_close_confirmation)
 	confirm_button.pressed.connect(_approve_estate)
 	$CropTimer.timeout.connect(_update_view)
@@ -99,12 +118,23 @@ func _add_plots() -> void:
 		for stage in range(4):
 			frames.append(load("res://generated/%s_%d.png" % [id, stage]))
 		crop_frames[id] = frames
+	for spec: Dictionary in features.data.slots:
+		var slot := AnimalSlotScene.instantiate()
+		slot.name = "Animal"
+		features.slot_marker(spec.id).add_child(slot)
+		var textures: Array[Texture2D] = []
+		for frame in range(2):
+			textures.append(load("res://generated/%s_%d.png" % [spec.item, frame]))
+		slot.setup(textures)
+		slot.hide()
+		plots[spec.id] = slot
+		slot_items[spec.id] = spec.item
 
 
 func _render_plots() -> void:
 	if not farm.snapshot.is_empty() and farm.tile(selected_plot).is_empty():
 		selected_plot = FarmProbeState.PLOT_ID
-	for id: String in farm.land_tiles:
+	for id: String in farm.tiles:
 		if plots.has(id) or not plot_specs.has(id):
 			continue
 		var plot := RicePlotScene.instantiate() as RicePlot
@@ -115,7 +145,7 @@ func _render_plots() -> void:
 		)
 		plots[id] = plot
 	for id: String in plots:
-		var plot := plots[id]
+		var plot: Node2D = plots[id]
 		var cell := farm.tile(id)
 		plot.visible = not cell.is_empty() or (id == FarmProbeState.PLOT_ID and farm.snapshot.is_empty())
 		if plot.visible:
@@ -141,7 +171,7 @@ func _on_viewport_resized() -> void:
 func _physics_process(delta: float) -> void:
 	var using_joystick := joystick.is_engaged()
 	var manual := joystick.direction if using_joystick else Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down")
-	if confirm_overlay.visible:
+	if _modal():
 		player.stand()
 	elif not busy and pending_task.is_empty() and (using_joystick or manual != Vector2.ZERO):
 		walk_path.clear()
@@ -253,14 +283,14 @@ func _release_world(id: int, point: Vector2, canceled: bool) -> void:
 
 func _plot_at(point: Vector2) -> String:
 	for id: String in plots:
-		var plot := plots[id]
+		var plot: Node2D = plots[id]
 		if plot.visible and plot.hits(point):
 			return id
 	return ""
 
 
 func _on_hud(point: Vector2) -> bool:
-	return confirm_overlay.visible or header.get_global_rect().has_point(point) or footer.get_global_rect().has_point(point)
+	return _modal() or header.get_global_rect().has_point(point) or footer.get_global_rect().has_point(point)
 
 
 func _tap_world(viewport_point: Vector2) -> void:
@@ -325,7 +355,7 @@ func _finish_task(task: Dictionary) -> void:
 	var ids: Array = task.ids
 	var kind: String = task.kind
 	for id: String in ids:
-		var command := farm.plot_command(id)
+		var command := _plot_command(id)
 		if command.get("type") != kind:
 			continue
 		commands.append(command)
@@ -337,22 +367,45 @@ func _finish_task(task: Dictionary) -> void:
 		_update_view()
 
 
+func _modal() -> bool:
+	return confirm_overlay.visible or sheet.visible
+
+
+## Giống cho ô: chỗ nuôi dùng đúng loài của chỗ đó, ô ruộng dùng giống đang chọn nếu đúng mùa.
+func _seed_for(id: String) -> String:
+	if slot_items.has(id):
+		return slot_items[id]
+	return seed_id if farm.in_season(features.data.items[seed_id].seasons) else ""
+
+
+func _plot_command(id: String) -> Dictionary:
+	return farm.plot_command(id, _seed_for(id))
+
+
+func _item_name(id: String) -> String:
+	if features.data.items.has(id):
+		return features.data.items[id].name
+	if features.data.materials.has(id):
+		return features.data.materials[id].name
+	return id
+
+
 func _on_action() -> void:
-	if busy or not pending_task.is_empty() or confirm_overlay.visible:
+	if busy or not pending_task.is_empty() or _modal():
 		return
 	if not connected or (farm.clock_rate == 0.0 and farm.stage(farm.tile(selected_plot)) >= 0):
 		_refresh([])
 		return
-	var command := farm.plot_command(selected_plot)
+	var command := _plot_command(selected_plot)
 	if not command.is_empty():
 		_queue_task({"ids": [selected_plot], "kind": command.type}, plots[selected_plot].world_area())
 
 
 func _batch_plots() -> void:
-	if not connected or busy or not pending_task.is_empty() or confirm_overlay.visible:
+	if not connected or busy or not pending_task.is_empty() or _modal():
 		return
 	var first := drag_ids[0]
-	var command := farm.plot_command(first)
+	var command := _plot_command(first)
 	if command.is_empty():
 		return
 	selected_plot = first
@@ -361,7 +414,9 @@ func _batch_plots() -> void:
 
 func _interact_estate(target: Dictionary) -> void:
 	var command := features.command(target, int(farm.snapshot.get("level", 1)))
-	if not command.has("action"):
+	if command.has("panel"):
+		_open_sheet(command.panel)
+	elif not command.has("action"):
 		notice = command.get("hint", "")
 	elif not command.has("title"):
 		_refresh([command.action], features.world_area(target).get_center())
@@ -409,10 +464,215 @@ func _approve_estate() -> void:
 	_refresh([approved.action], approved.point)
 
 
-func _on_sell() -> void:
-	var qty := farm.stock()
-	if connected and farm.clock_rate > 0.0 and not busy and pending_task.is_empty() and not confirm_overlay.visible and qty > 0:
-		_refresh([{"type": "SELL", "itemId": FarmProbeState.RICE_ID, "qty": qty}])
+func _open_sheet(kind: String) -> void:
+	if busy or not pending_task.is_empty() or confirm_overlay.visible:
+		return
+	walk_path.clear()
+	sheet_kind = kind
+	notice = ""
+	orders_key = ""
+	_update_view()
+
+
+func _on_sheet_closed() -> void:
+	sheet_kind = ""
+	pot.clear()
+	notice = ""
+	_update_view()
+
+
+func _on_sheet_chosen(id: String) -> void:
+	if busy:
+		return
+	var parts := id.split(":")
+	var value := parts[1] if parts.size() > 1 else ""
+	match parts[0]:
+		"seed":
+			seed_id = value
+			sheet.close()
+			notice = "Đã chọn giống %s." % _item_name(value)
+		"pot":
+			if pot.size() < int(features.data.kitchen.potMax):
+				pot.append(value)
+		"empty":
+			pot.clear()
+		_:
+			var command := _sheet_command(parts[0], value)
+			if connected and not command.is_empty():
+				if parts[0] == "discover":
+					pot.clear()
+				_refresh([command])
+				return
+	_update_view()
+
+
+func _sheet_command(kind: String, value: String) -> Dictionary:
+	match kind:
+		"sell": return {"type": "SELL", "itemId": value, "qty": farm.stock(value)}
+		"eat": return {"type": "EAT", "productId": value}
+		"cook": return {"type": "COOK", "productId": value}
+		"collect": return {"type": "COLLECT_DISH"}
+		"discover": return {"type": "DISCOVER", "ingredientIds": pot.duplicate()}
+		"deliver": return {"type": "DELIVER_ORDER", "slot": int(value)}
+		"skip": return {"type": "SKIP_ORDER", "slot": int(value)}
+	return {}
+
+
+func _render_sheet() -> void:
+	if sheet_kind.is_empty():
+		return
+	var level := int(farm.snapshot.get("level", 1))
+	var rows: Array = []
+	var title := ""
+	var info := ""
+	match sheet_kind:
+		"SEEDS":
+			title = "Chọn giống"
+			info = "Giống đang chọn dùng cho mọi ô ruộng trống."
+			for id: String in features.data.crops:
+				var item: Dictionary = features.data.items[id]
+				var button := {"id": "seed:" + id, "label": "Chọn"}
+				if level < int(item.level):
+					button = {"id": "seed:" + id, "label": "Cấp %d" % int(item.level), "disabled": true}
+				elif not farm.in_season(item.seasons):
+					button = {"id": "seed:" + id, "label": "Trái vụ", "disabled": true}
+				elif id == seed_id:
+					button = {"id": "seed:" + id, "label": "Đang chọn", "disabled": true}
+				rows.append({
+					"text": "%s\nHạt %d vàng · %d phút · bán %d vàng" % [item.name, int(item.cost), int(item.minutes), int(item.sell)],
+					"buttons": [button],
+				})
+		"STORE":
+			title = "Kho"
+			info = "Bán thẳng cho HTX, hoặc để dành giao đơn được thưởng cao hơn."
+			rows = _store_rows()
+		"KITCHEN":
+			title = "Bếp Củi"
+			rows = _kitchen_rows(level)
+		"ORDERS":
+			title = "Bảng đơn HTX"
+			info = "Giao đủ hàng được thưởng cao hơn bán thẳng."
+			rows = _order_rows(level)
+	sheet.present(title, notice if not notice.is_empty() else info, rows)
+
+
+func _store_rows() -> Array:
+	var rows: Array = []
+	var inventory: Dictionary = farm.snapshot.get("inventory", {})
+	for id: String in inventory:
+		var qty := int(inventory[id])
+		if qty <= 0:
+			continue
+		var item: Dictionary = features.data.items.get(id, {})
+		var buttons: Array = []
+		var text := "%s × %d" % [_item_name(id), qty]
+		if item.has("stamina"):
+			text += " · ăn +%d năng lượng" % int(item.stamina)
+			buttons.append({"id": "eat:" + id, "label": "Ăn", "disabled": busy})
+		if int(item.get("sell", 0)) > 0:
+			text += "\nBán %d vàng mỗi đơn vị" % int(item.sell)
+			buttons.append({"id": "sell:" + id, "label": "Bán hết", "disabled": busy or farm.clock_rate == 0.0})
+		rows.append({"text": text, "buttons": buttons})
+	if rows.is_empty():
+		rows.append({"text": "Kho chưa có gì. Thu hoạch để có nông sản."})
+	return rows
+
+
+func _kitchen_rows(level: int) -> Array:
+	var rows: Array = []
+	var kitchen: Dictionary = features.data.kitchen
+	var machines: Dictionary = farm.snapshot.get("machines", {})
+	var machine: Dictionary = machines.get(kitchen.id, {})
+	var cooking: Variant = machine.get("craftItemId")
+	if not cooking is String:
+		rows.append({"text": "Bếp đang rảnh. Chọn món để nấu."})
+	elif farm.now() < float(machine.get("readyAt", 0)):
+		rows.append({"text": "Đang nấu %s · còn %d giây" % [_item_name(cooking), farm.seconds_until(float(machine.readyAt))]})
+	else:
+		rows.append({
+			"text": "%s đã chín." % _item_name(cooking),
+			"buttons": [{"id": "collect", "label": "Lấy món", "disabled": busy}],
+		})
+	var known: Array = farm.snapshot.get("discoveredRecipes", [])
+	for id: String in kitchen.recipes:
+		var item: Dictionary = features.data.items[id]
+		var text := "%s · %d phút · ăn +%d năng lượng\n" % [item.name, int(item.minutes), int(item.stamina)]
+		var buttons: Array = []
+		if id == kitchen.starter or known.has(id):
+			var needs := PackedStringArray()
+			var enough := true
+			for part: Dictionary in item.recipe:
+				needs.append("%d %s (có %d)" % [int(part.qty), _item_name(part.itemId), farm.stock(part.itemId)])
+				enough = enough and farm.stock(part.itemId) >= int(part.qty)
+			text += "Cần " + ", ".join(needs)
+			buttons.append({"id": "cook:" + id, "label": "Nấu", "disabled": busy or cooking is String or not enough})
+		else:
+			text += "Chưa biết công thức. Thử ở Nồi Đất: %d nguyên liệu, có %s." % [int(item.hint.totalQty), _item_name(item.hint.firstItemId)]
+		if level < int(item.level):
+			buttons = [{"id": "cook:" + id, "label": "Cấp %d" % int(item.level), "disabled": true}]
+		rows.append({"text": text, "buttons": buttons})
+	var inside := PackedStringArray()
+	var counts: Dictionary[String, int] = {}
+	for id in pot:
+		counts[id] = counts.get(id, 0) + 1
+	for id: String in counts:
+		inside.append("%d %s" % [counts[id], _item_name(id)])
+	rows.append({
+		"text": "Nồi Đất · bỏ 1–%d nguyên liệu để tìm món mới, nguyên liệu không mất\nTrong nồi: %s" % [
+			int(kitchen.potMax), ", ".join(inside) if not pot.is_empty() else "trống"
+		],
+		"buttons": [
+			{"id": "empty", "label": "Bỏ hết", "disabled": pot.is_empty()},
+			{"id": "discover", "label": "Thử nấu", "disabled": busy or pot.is_empty()},
+		],
+	})
+	var inventory: Dictionary = farm.snapshot.get("inventory", {})
+	for id: String in inventory:
+		var qty := int(inventory[id])
+		var item: Dictionary = features.data.items.get(id, {})
+		if qty <= 0 or item.is_empty() or item.has("recipe"):
+			continue
+		var used: int = counts.get(id, 0)
+		rows.append({
+			"text": "%s · có %d · trong nồi %d" % [item.name, qty, used],
+			"buttons": [{"id": "pot:" + id, "label": "Thêm", "disabled": pot.size() >= int(kitchen.potMax) or used >= qty}],
+		})
+	return rows
+
+
+func _order_rows(level: int) -> Array:
+	var rows: Array = []
+	var board: Dictionary = farm.snapshot.get("orders") if farm.snapshot.get("orders") is Dictionary else {}
+	var slots: Array = board.get("slots", [null, null, null])
+	var ready_at: Array = board.get("readyAt", [0, 0, 0])
+	var due := PackedInt32Array()
+	for index in range(slots.size()):
+		var order: Variant = slots[index]
+		if order is Dictionary:
+			var lines := PackedStringArray()
+			var enough := true
+			for line: Dictionary in order.lines:
+				var have := farm.stock(line.itemId)
+				lines.append("%s %d/%d" % [_item_name(line.itemId), mini(have, int(line.qty)), int(line.qty)])
+				enough = enough and have >= int(line.qty)
+			rows.append({
+				"text": "%s\nThưởng +%d vàng · +%d XP" % [" · ".join(lines), int(order.gold), int(order.xp)],
+				"buttons": [
+					{"id": "deliver:%d" % index, "label": "Giao", "disabled": busy or not enough},
+					{"id": "skip:%d" % index, "label": "Bỏ", "disabled": busy},
+				],
+			})
+		elif farm.now() < float(ready_at[index]):
+			rows.append({"text": "Đơn mới sau %d giây." % farm.seconds_until(float(ready_at[index]))})
+		else:
+			due.append(index)
+			rows.append({"text": "Chưa có hàng để HTX đặt. Trồng thêm hoặc lên cấp."})
+	# Chỗ trống hết thời gian chờ thì xin đơn mới. Mỗi tình trạng chỉ xin một lần.
+	var key := "%d|%s" % [level, due]
+	if not due.is_empty() and key != orders_key and connected and not busy and farm.clock_rate > 0.0:
+		orders_key = key
+		_refresh.call_deferred([{"type": "REFRESH_ORDERS"}])
+	return rows
 
 
 func _refresh(actions: Array, work_point := Vector2.ZERO) -> void:
@@ -451,7 +711,7 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 			continue
 		var command: Dictionary = actions[index]
 		if not result.get("ok", false):
-			if notice.is_empty():
+			if notice.is_empty() and command.type != "REFRESH_ORDERS":
 				notice = _result_text(result, "Thao tác chưa thành công.")
 			continue
 		succeeded += 1
@@ -460,19 +720,18 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 			var plot := plots[plot_id]
 			player.work_toward(plot.global_position)
 			plot.play_effect(command.type)
-		elif command.type != "SELL":
-			player.work_toward(work_point)
+		elif command.type != "REFRESH_ORDERS":
+			if work_point != Vector2.ZERO:
+				player.work_toward(work_point)
 			notice = _result_text(result, "Đã xong.")
-		else:
-			notice = "Đã bán lúa cho HTX."
 	if succeeded > 1 and notice.is_empty():
-		notice = "Đã làm xong %d ô ruộng." % succeeded
+		notice = "Đã làm xong %d ô." % succeeded
 
 
 func _result_text(result: Dictionary, fallback: String) -> String:
 	# Font mặc định của bản Web thiếu emoji trong thông báo dùng chung với Phaser.
 	var message := leading_icons.sub(str(result.get("message", fallback)), "")
-	message = message.replace("🪙", "vàng").replace("⚡", "năng lượng")
+	message = message.replace("🪙", "vàng").replace("⚡", "năng lượng").replace("💎", "ngọc")
 	return inline_icons.sub(message, "", true).replace("  ", " ").strip_edges()
 
 
@@ -480,22 +739,29 @@ func _update_view() -> void:
 	_update_season()
 	features.sync(farm.snapshot)
 	_render_plots()
+	_render_sheet()
 	var tile := farm.tile(selected_plot)
 	var stage := farm.stage(tile)
 	var watered: bool = tile.get("watered", false)
-	var qty := farm.stock()
-	gold.text = "Vàng %d · NL %d" % [int(farm.snapshot.get("gold", 0)), int(farm.snapshot.get("stamina", 0))] if not farm.snapshot.is_empty() else "Vàng —"
-	plot_title.text = "Kho · Lúa %d · Gỗ %d · Đá %d" % [qty, farm.stock("MAT_GO"), farm.stock("MAT_DA")]
-	var crop_name: String = features.data.crops.get(tile.get("itemId"), "Cây")
-	var command: String = farm.plot_command(selected_plot).get("type", "")
-	var labels := {"PLANT": "Gieo lúa", "WATER": "Tưới", "HARVEST": "Thu hoạch"}
+	var is_slot := slot_items.has(selected_plot)
+	var blocked := busy or not pending_task.is_empty()
+	gold.text = "Cấp %d · Vàng %d · NL %d" % [
+		int(farm.snapshot.get("level", 1)), int(farm.snapshot.get("gold", 0)), int(farm.snapshot.get("stamina", 0))
+	] if not farm.snapshot.is_empty() else "Vàng —"
+	plot_title.text = "Kho · Lúa %d · Gỗ %d · Đá %d" % [farm.stock(), farm.stock("MAT_GO"), farm.stock("MAT_DA")]
+	var held: Variant = tile.get("itemId")
+	var crop_name := _item_name(held) if held is String else "Cây"
+	var seed_name := _item_name(slot_items[selected_plot] if is_slot else seed_id)
+	var command: String = _plot_command(selected_plot).get("type", "")
+	var labels := {"PLANT": "Thả nuôi" if is_slot else "Gieo hạt", "WATER": "Tưới", "HARVEST": "Thu hoạch"}
 	var waiting := connected and farm.clock_rate > 0.0 and command.is_empty()
-	var out_of_season := connected and not tile.is_empty() and stage < 0 and farm.rice_out_of_season()
+	var out_of_season := connected and not tile.is_empty() and stage < 0 and _seed_for(selected_plot).is_empty()
 	action.text = labels.get(command, "Đang lớn" if waiting else "Đọc lại") if connected else "Đọc lại"
 	if out_of_season:
 		action.text = "Trái vụ"
-	action.disabled = busy or not pending_task.is_empty() or waiting or out_of_season
-	sell.disabled = not connected or farm.clock_rate == 0.0 or busy or not pending_task.is_empty() or qty == 0
+	action.disabled = blocked or waiting or out_of_season
+	for button: Button in [seeds_button, store_button, orders_button]:
+		button.disabled = not connected or blocked
 	if not notice.is_empty():
 		status.text = notice
 	elif not pending_task.is_empty():
@@ -503,16 +769,16 @@ func _update_view() -> void:
 	elif stage >= 0 and farm.clock_rate == 0.0:
 		status.text = "%s đã lưu trên máy chủ thử nghiệm." % crop_name
 	elif stage == 3:
-		status.text = "%s đã chín. Chạm ô để thu hoạch." % crop_name
+		status.text = "%s đã tới lứa. Chạm để thu." % crop_name if is_slot else "%s đã chín. Chạm ô để thu hoạch." % crop_name
 	elif stage >= 0:
-		var phase := "Đã tưới" if watered else "Chạm ô để tưới"
-		status.text = "%s · Chín sau %d giây" % [phase, farm.seconds_to_mature(tile)]
+		var phase := crop_name if is_slot or watered else "Chạm ô để tưới"
+		status.text = "%s · %s sau %d giây" % [phase, "Tới lứa" if is_slot else "Chín", farm.seconds_to_mature(tile)]
 	elif out_of_season:
-		status.text = "Lúa nghỉ vụ. Có thể bán lúa trong kho." if qty > 0 else "Mùa này không gieo lúa được."
-	elif qty > 0:
-		status.text = "Lúa đã vào kho. Có thể bán cho HTX."
+		status.text = "Mùa này không gieo %s được. Bấm Giống để đổi." % seed_name
+	elif is_slot:
+		status.text = "Chỗ nuôi %s. Chạm để thả, giá %d vàng." % [seed_name, int(features.data.items[slot_items[selected_plot]].cost)]
 	else:
-		status.text = "Chạm ô ruộng để gieo, chạm chướng ngại để dọn."
+		status.text = "Giống %s. Chạm ô ruộng để gieo, chạm chướng ngại để dọn." % seed_name
 
 
 func _update_season() -> void:
@@ -579,10 +845,14 @@ func _style_hud() -> void:
 	footer.add_theme_stylebox_override("panel", _panel(PAPER))
 	for label: Label in [gold, metrics, season_label, $HUD/Margin/Layout/Header/Row/Title, plot_title, status, confirm_title, confirm_details]:
 		label.add_theme_color_override("font_color", INK)
-	for button: Button in [action, sell, cancel_button, confirm_button]:
-		button.add_theme_stylebox_override("normal", _panel(Color("#ffd166")))
-		button.add_theme_stylebox_override("hover", _panel(Color("#fff3b0")))
-		button.add_theme_stylebox_override("pressed", _panel(Color("#f5b700")))
-		button.add_theme_stylebox_override("disabled", _panel(Color("#e0c79a")))
-		for style in ["font_color", "font_pressed_color", "font_hover_color", "font_focus_color", "font_disabled_color"]:
-			button.add_theme_color_override(style, INK)
+	for button: Button in [action, seeds_button, store_button, orders_button, cancel_button, confirm_button]:
+		_style_button(button)
+
+
+func _style_button(button: Button) -> void:
+	button.add_theme_stylebox_override("normal", _panel(Color("#ffd166")))
+	button.add_theme_stylebox_override("hover", _panel(Color("#fff3b0")))
+	button.add_theme_stylebox_override("pressed", _panel(Color("#f5b700")))
+	button.add_theme_stylebox_override("disabled", _panel(Color("#e0c79a")))
+	for style in ["font_color", "font_pressed_color", "font_hover_color", "font_focus_color", "font_disabled_color"]:
+		button.add_theme_color_override(style, INK)

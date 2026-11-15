@@ -1,4 +1,4 @@
-# Bàn giao · 14/11/2026 · PO duyệt merge Godot điền trang vào main
+# Bàn giao · 15/11/2026 · Godot P1 thêm vật nuôi, Bếp Củi, đơn HTX (nhánh chờ duyệt)
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,9 +22,10 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. PO duyệt merge `codex/godot-p1-estate` vào main ngày 14/11. Đã xử lý xung đột bằng scene Editor trên main. Tiếp theo chuyển vật nuôi, Bếp Củi và đơn HTX theo LT-14. Còn kiểm PWA trên Android/iPhone thật.
-2. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
-3. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
+1. PO duyệt nhánh `ccr-b91fc534-n2yctl`: vật nuôi, Bếp Củi, đơn HTX trong Godot, Game Studio 125 skill. Kiểm bằng `tools/qa/godot-p1-9-flow.sh`.
+2. LT-14 bước 3 còn NPC, Chương 1, hướng dẫn, âm thanh. Rồi thử PWA trên điện thoại thật.
+3. Đề xuất chạy P1-12 theo LT-13 sau khi bản Godot qua cổng phát hành LT-14.
+4. Việc cũ còn chờ gồm kiểm ô trắng ở 844×390 trên điện thoại thật và PO cho phép xóa dữ liệu thử trên DB thật.
 
 ## Bối cảnh giữ nguyên
 - Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). Bảng MVP chưa đổi; DB thật đã có thêm `0016` (P1-8). `?p1` mặc định chơi online; `?p1&offline` chơi trên máy (kiểm thử khói dùng cách này).

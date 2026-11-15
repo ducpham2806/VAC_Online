@@ -35,3 +35,12 @@
 
 ## Hạ tầng AI dự án · 31/10–01/11/2026 — DONE
 - 6 agent `vac-*`, 6 skill `vac-*`, 7 rule theo đường dẫn, hook `read-guard`/`secret-guard`/SessionStart, plugin `agent-sprite-forge` — chuyển thể chọn lọc từ Claude-Code-Game-Studios (`.claude/THIRD_PARTY.md`).
+
+## TOOLING-01 · Game Studio + Graphify + hệ nhật ký · 10/11/2026
+- Nhánh `claude/gifted-faraday-2q851c`. Cài thư viện Game_Studio_Agent `c5dac46` (297 file, 116 skill, 21 vai trò) ở `.agents/game-studio/`, manifest băm từng file, skill định tuyến `/vac-studio`, chỉ mục riêng cho VAC.
+- Graphify `0.9.105` (+SQL): skill `/graphify`, hook nhắc tra đồ thị, SessionStart tự cài và dựng `graphify-out/` (~1.350 nút, không commit).
+- Rút `AGENTS.md` 19,7 KB → ~6 KB, giữ đủ RULE D0/D1 (bản cũ nguyên văn ở archive). Nhật ký chuyển từ `VIEC_CAN_LAM.md` mục F sang `docs/WORKLOG.md` + COMPLETED + HANDOFF, có `npm run check:docs`.
+- Bản đánh giá plan: `docs/REVIEW-2026-11-10.md`; kế hoạch đề xuất sau đó gộp vào `docs/07_LO_TRINH.md`.
+- Không đổi code game, DB hay kinh tế.
+
+Mục cũ hơn (S0–S5, hạ tầng AI, MVP cũ): [archive/COMPLETED-MVP-2026-11.md](archive/COMPLETED-MVP-2026-11.md).

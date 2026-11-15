@@ -41,6 +41,7 @@ for sprite in tile_grass_{xuan,ha,thu,dong} tile_tilled_dry tile_tilled_wet; do
   cp "art/source/p0_ai/$sprite.png" godot/generated/
 done
 cp art/source/p0_ai/CROP_{01,02,03,04,05}_{0,1,2,3}.png godot/generated/
+cp art/source/p0_ai/{ANI_01,ANI_03,AQUA_01}_{0,1}.png godot/generated/
 cp art/source/p0_ai/farmer_walk_{up,down,left}_{0,1,2,3}.png godot/generated/
 # Khung right_0 trong bộ gốc quay trái.
 cp art/source/p0_ai/farmer_walk_right_{1,2,3}.png godot/generated/

@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://estate_probe.gd" id="1"]
 [ext_resource type="Script" path="res://probe_transport.gd" id="2"]
 [ext_resource type="PackedScene" path="res://estate_map.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://touch_joystick.tscn" id="4"]
 [ext_resource type="Script" path="res://estate_camera.gd" id="5"]
+[ext_resource type="Script" path="res://sheet.gd" id="10_sheet"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_xuan.png" id="6_spring"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_ha.png" id="7_summer"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_thu.png" id="8_autumn"]
@@ -114,7 +115,7 @@ mouse_filter = 2
 
 [node name="Row" type="HBoxContainer" parent="HUD/Margin/Layout/Footer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 mouse_filter = 2
 
 [node name="Text" type="VBoxContainer" parent="HUD/Margin/Layout/Footer/Row"]
@@ -135,18 +136,29 @@ text = "Đang đọc nông trại…"
 autowrap_mode = 3
 
 [node name="Action" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
-custom_minimum_size = Vector2(124, 44)
+custom_minimum_size = Vector2(108, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 disabled = true
 text = "Đọc lại"
 
-[node name="Sell" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
-custom_minimum_size = Vector2(96, 44)
+[node name="Seeds" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(76, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-disabled = true
-text = "Bán lúa"
+text = "Giống"
+
+[node name="Store" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(64, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Kho"
+
+[node name="Orders" type="Button" parent="HUD/Margin/Layout/Footer/Row"]
+custom_minimum_size = Vector2(64, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Đơn"
 
 [node name="Confirm" type="ColorRect" parent="HUD"]
 visible = false
@@ -195,3 +207,12 @@ text = "Để sau"
 custom_minimum_size = Vector2(108, 44)
 layout_mode = 2
 text = "Xác nhận"
+
+[node name="Sheet" type="ColorRect" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_sheet")

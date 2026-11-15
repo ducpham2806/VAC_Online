@@ -102,6 +102,11 @@ func _draw() -> void:
 			draw_rect(Rect2(inside.end.x - 2, inside.position.y, 2, inside.size.y), PAPER)
 
 
+## Marker `Slot_<id>` của từng chỗ nuôi, chỉnh vị trí trong Editor.
+func slot_marker(id: String) -> Marker2D:
+	return get_node("Slot_" + id) as Marker2D
+
+
 func reclaimed() -> int:
 	return int(estate.get("reclaimed", 0))
 
@@ -140,6 +145,8 @@ func command(target: Dictionary, level: int) -> Dictionary:
 			return {"action": {"type": "CLEAR", "obstacleId": rule.id}}
 		"REPAIR":
 			if estate.get("repaired", []).has(rule.id):
+				if rule.id == "KITCHEN":
+					return {"panel": "KITCHEN"}
 				return {"hint": "%s đã sửa." % rule.name}
 			if level < int(rule.get("minLevel", 0)):
 				return {"hint": "Sửa %s mở ở cấp %d." % [rule.name, rule.minLevel]}

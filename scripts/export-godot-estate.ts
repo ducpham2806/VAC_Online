@@ -1,4 +1,6 @@
-import { SLICE_CROPS } from '../src/data/sliceContent';
+import { ANIMAL_SLOTS, SLICE_CROPS, SLICE_KITCHEN_ID, SLICE_RECIPES, SLICE_SPECIES, SLOT_SPECIES, sliceUnlockLevel } from '../src/data/sliceContent';
+import { CROP_SEASONS } from '../src/data/seasons';
+import { POT_MAX_INGREDIENTS, STARTER_RECIPE_ID, recipeHint } from '../src/domain/cooking';
 import { GAME_CATALOG } from '../src/data/masterData';
 import {
   CLEAR_RULES, MATERIALS, OBSTACLES, RECLAIM_REGIONS, REPAIRS, STRUCTURE_CHAR, STRUCTURE_IDS,
@@ -30,9 +32,20 @@ const regions = RECLAIM_REGIONS.map((tiles, index) => ({
 const plots = plotPositions({ cleared: [], repaired: [], reclaimed: regions.length })
   .map(({ x, y }) => ({ id: plotId(x, y), x, y, region: regionIndexAt(x, y) }));
 const crops = Object.fromEntries(GAME_CATALOG.filter(({ id }) => SLICE_CROPS.includes(id)).map(({ id, name }) => [id, name]));
+// Chỗ nuôi dùng cùng id với ô lưu trên server; vị trí trong Godot lấy từ Marker2D `Slot_<id>`.
+const slots = ANIMAL_SLOTS.map(({ kind, x, y }) => ({ id: plotId(x, y), kind, item: SLOT_SPECIES[kind] }));
+// Tên, giá, thời gian và cấp mở để HUD hiển thị. Luật vẫn do server quyết định.
+const items = Object.fromEntries(
+  GAME_CATALOG.filter(({ id }) => SLICE_SPECIES.includes(id) || SLICE_RECIPES.includes(id)).map((item) => [item.id, {
+    name: item.name, cost: item.buyCostGold, sell: item.baseSellGold, minutes: item.growOrCraftMinutes,
+    level: sliceUnlockLevel(item), seasons: CROP_SEASONS[item.id] ?? null,
+    ...(SLICE_RECIPES.includes(item.id) ? { stamina: item.staminaDelta, recipe: item.recipe ?? [], hint: recipeHint(item) } : {}),
+  }]),
+);
+const kitchen = { id: SLICE_KITCHEN_ID, recipes: SLICE_RECIPES, starter: STARTER_RECIPE_ID, potMax: POT_MAX_INGREDIENTS };
 const scenery = { Pond: boundsOf('P'), SacredTree: boundsOf('D') };
 
 process.stdout.write(JSON.stringify({
-  obstacles, repairs, regions, plots, crops, scenery, materials: MATERIALS,
+  obstacles, repairs, regions, plots, crops, slots, items, kitchen, scenery, materials: MATERIALS,
   reach: REACH_TILES, dragMax: BATCH_DRAG_MAX,
 }) + '\n');

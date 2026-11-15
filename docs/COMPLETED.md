@@ -2,6 +2,12 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
+- Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.
+- Kiểm bằng `tools/qa/godot-p1-9-flow.sh` (41 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-p1-9-*`.
+- Bản ghim Game Studio lên `fa7b1db`, 125 skill. Cách cập nhật ở docs/studio/INSTALLATION.md.
+- Đã đẩy nhánh, chờ PO duyệt merge. Chưa thử Supabase thật và điện thoại.
+
 ## Scene nông trại Godot · 14/11/2026 · main
 - Bản đồ, công trình, chướng ngại và vùng đất chỉnh trong Godot Editor. Cách chạy ở LT-14.
 - Dọn, sửa, khai hoang theo GP-14. Kiểm hủy xác nhận, tưới cả loạt và mở lại ô mới.
@@ -98,12 +104,3 @@ Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đ
 - CSV `04` → `data/catalog.csv`; key art → `art/key_art/`. `VIEC_CAN_LAM.md` rút gọn (bản cũ ở `docs/archive/`). Cập nhật agent/skill/rule `vac-*`, AGENTS, README, chú thích code.
 - Bằng chứng: typecheck, 178 test, build, check:docs PASS. Không đổi luật code, DB hay số kinh tế.
 - Giới hạn: các mục "(đề xuất)" và các câu chờ PO (PO duyệt hết ngày 10/11, nay là QD-18…33); code vẫn theo thiết kế cũ (KY-90).
-
-## TOOLING-01 · Game Studio + Graphify + hệ nhật ký · 10/11/2026
-- Nhánh `claude/gifted-faraday-2q851c`. Cài thư viện Game_Studio_Agent `c5dac46` (297 file, 116 skill, 21 vai trò) ở `.agents/game-studio/`, manifest băm từng file, skill định tuyến `/vac-studio`, chỉ mục riêng cho VAC.
-- Graphify `0.9.105` (+SQL): skill `/graphify`, hook nhắc tra đồ thị, SessionStart tự cài và dựng `graphify-out/` (~1.350 nút, không commit).
-- Rút `AGENTS.md` 19,7 KB → ~6 KB, giữ đủ RULE D0/D1 (bản cũ nguyên văn ở archive). Nhật ký chuyển từ `VIEC_CAN_LAM.md` mục F sang `docs/WORKLOG.md` + COMPLETED + HANDOFF, có `npm run check:docs`.
-- Bản đánh giá plan: `docs/REVIEW-2026-11-10.md`; kế hoạch đề xuất sau đó gộp vào `docs/07_LO_TRINH.md`.
-- Không đổi code game, DB hay kinh tế.
-
-Mục cũ hơn (S0–S5, hạ tầng AI, MVP cũ): [archive/COMPLETED-MVP-2026-11.md](archive/COMPLETED-MVP-2026-11.md).

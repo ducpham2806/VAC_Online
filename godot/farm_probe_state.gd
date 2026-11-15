@@ -5,7 +5,8 @@ const RICE_ID := "CROP_01"
 const Calendar := preload("res://generated/season_calendar.gd")
 
 var snapshot: Dictionary = {}
-var land_tiles: Dictionary[String, Dictionary] = {}
+## Mọi ô trong bản lưu: ô ruộng (LAND) và chỗ nuôi (COOP, POND).
+var tiles: Dictionary[String, Dictionary] = {}
 var server_now := 0.0
 var clock_rate := 0.0
 var growth_cuts: Array = []
@@ -14,10 +15,9 @@ var synced_at := 0
 
 func receive(reply: Dictionary) -> void:
 	snapshot = reply.state
-	land_tiles.clear()
+	tiles.clear()
 	for candidate: Dictionary in snapshot.get("tiles", []):
-		if candidate.get("zoneType") == "LAND":
-			land_tiles[candidate.id] = candidate
+		tiles[candidate.id] = candidate
 	server_now = float(reply.get("serverNow", 0))
 	clock_rate = maxf(0.0, float(reply.get("clockRate", 0)))
 	growth_cuts = reply.get("growthCuts", [])
@@ -45,13 +45,14 @@ func season_day() -> int:
 	return floori(elapsed * Calendar.DAYS / Calendar.DURATION_MS) + 1
 
 
-func rice_out_of_season() -> bool:
+## Cây có danh sách mùa gieo. Vật nuôi không theo mùa.
+func in_season(seasons: Variant) -> bool:
 	var current := season_id()
-	return not current.is_empty() and not Calendar.RICE_SOWING_SEASONS.has(current)
+	return current.is_empty() or not seasons is Array or seasons.has(current)
 
 
 func tile(plot_id := PLOT_ID) -> Dictionary:
-	return land_tiles.get(plot_id, {})
+	return tiles.get(plot_id, {})
 
 
 func stock(item_id := RICE_ID) -> int:
@@ -76,28 +77,31 @@ func stage(plot: Dictionary) -> int:
 	return 1 if plot.get("watered", false) else 0
 
 
-func plot_command(plot_id := PLOT_ID) -> Dictionary:
+## `seed_id` rỗng khi giống đang chọn chưa gieo được. Chỗ nuôi không cần tưới.
+func plot_command(plot_id := PLOT_ID, seed_id := RICE_ID) -> Dictionary:
 	var plot := tile(plot_id)
 	if plot.is_empty():
 		return {}
 	var crop_stage := stage(plot)
 	if crop_stage == -1:
-		if rice_out_of_season():
+		if seed_id.is_empty():
 			return {}
-		return {"type": "PLANT", "tileId": plot_id, "itemId": RICE_ID}
+		return {"type": "PLANT", "tileId": plot_id, "itemId": seed_id}
 	if clock_rate == 0.0:
 		return {}
-	match crop_stage:
-		3: return {"type": "HARVEST", "tileId": plot_id}
-		_:
-			if not plot.get("watered", false):
-				return {"type": "WATER", "tileId": plot_id}
+	if crop_stage == 3:
+		return {"type": "HARVEST", "tileId": plot_id}
+	if plot.get("zoneType") == "LAND" and not plot.get("watered", false):
+		return {"type": "WATER", "tileId": plot_id}
 	return {}
 
 
+func seconds_until(at: float) -> int:
+	return maxi(0, ceili((at - now()) / (1000.0 * maxf(1.0, clock_rate))))
+
+
 func seconds_to_mature(plot: Dictionary) -> int:
-	var mature_at := float(plot.get("matureAt", 0))
-	return maxi(0, ceili((mature_at - now()) / (1000.0 * maxf(1.0, clock_rate))))
+	return seconds_until(float(plot.get("matureAt", 0)))
 
 
 func cache_payload() -> Dictionary:
