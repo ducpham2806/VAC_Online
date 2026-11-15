@@ -6,7 +6,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - PO duyệt nhánh vật nuôi, Bếp, đơn HTX: đã merge vào `main` tại `225f9b5`. PO yêu cầu làm tiếp cho xong Chương 1.
 - LT-14 bước 3: Godot có cảnh mở đầu chọn hướng (TG-40), hướng dẫn 8 bước của Bác Bảy kèm mũi tên (GP-62), hai NPC có tim với nói chuyện và tặng quà (GP-50), Sổ Gia Phả nhận thưởng Chương 1 (TG-30), âm thanh tổng hợp theo AR-40 có nút tắt. Lời cảnh mở đầu chuyển vào `src/data/sliceStory.ts` để Phaser và Godot dùng chung. HUD hết tràn lề ở 1280×720. Không đổi luật, DB hay kinh tế.
 - Kiểm thật: `tools/qa/godot-chapter1-flow.sh` 50/50 bước từ người chơi mới, `godot-p1-9-flow.sh` 41/41. Typecheck, 303 test, build, xuất Web, check:docs và kiểm thử hướng dẫn Phaser qua. Chrome hai cỡ bấm chuột thật qua cảnh mở đầu, NPC, Sổ; 0 lỗi JS. Ảnh `docs/screenshots/godot-ch1-*`.
-- Đã code và đẩy nhánh, chưa merge phần Chương 1, chưa deploy. Chưa nghe âm thanh bằng tai (chỉ kiểm không lỗi), chưa thử Supabase thật và điện thoại. Tiếp theo là LT-14 bước 4.
+- PO duyệt, đã merge vào `main` tại `667445e`. Chưa deploy. Chưa nghe âm thanh bằng tai (chỉ kiểm không lỗi), chưa thử Supabase thật và điện thoại. Tiếp theo là LT-14 bước 4.
 
 ## 15/11/2026 · Vật nuôi, Bếp Củi, đơn HTX trong Godot P1 · ccr-b91fc534-n2yctl
 - PO yêu cầu làm tiếp theo kế hoạch, dùng bản Game Studio mới và graphify. Nâng bản ghim Game Studio lên `fa7b1db` (125 skill, 340 file), mở nhóm skill Godot trong INDEX. Dựng lại đồ thị graphify và dùng để tra luật P1-9.
