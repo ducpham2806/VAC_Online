@@ -15,6 +15,10 @@ var estate: Dictionary
 var tile_size := 32.0
 var ground: TileMapLayer
 var navigation := AStarGrid2D.new()
+var npc_frames: Dictionary[String, Dictionary] = {}
+var npc_frame := 0
+var talking := ""
+var talk_steps := 0
 
 
 func configure(terrain: TileMapLayer) -> void:
@@ -28,6 +32,17 @@ func configure(terrain: TileMapLayer) -> void:
 	for rule: Dictionary in data.regions:
 		_add_target("Region%d" % (int(rule.index) + 1), rule, "RECLAIM")
 		regions.append(targets.back())
+	for npc: Dictionary in data.npcs:
+		_add_target("Npc_" + npc.id, {"id": npc.id, "name": npc.name, "size": [1, 1]}, "NPC")
+		var frames: Dictionary[String, Array] = {}
+		for pose in ["idle", "talk"]:
+			frames[pose] = [load("res://generated/%s_%s_0.png" % [npc.sprite, pose]), load("res://generated/%s_%s_1.png" % [npc.sprite, pose])]
+		npc_frames[npc.id] = frames
+	var pose_timer := Timer.new()
+	pose_timer.wait_time = 0.6
+	pose_timer.autostart = true
+	pose_timer.timeout.connect(_step_npcs)
+	add_child(pose_timer)
 	navigation.region = ground.get_used_rect()
 	navigation.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	navigation.update()
@@ -77,6 +92,8 @@ func _render_estate() -> void:
 				marker.get_node("Rubble").visible = not repaired
 				marker.get_node("Repaired").visible = repaired
 				_block(target.rect)
+			"NPC":
+				_block(target.rect)
 	queue_redraw()
 
 
@@ -100,6 +117,40 @@ func _draw() -> void:
 			draw_rect(Rect2(inside.position.x, inside.end.y - 2, inside.size.x, 2), PAPER)
 			draw_rect(Rect2(inside.position, Vector2(2, inside.size.y)), PAPER)
 			draw_rect(Rect2(inside.end.x - 2, inside.position.y, 2, inside.size.y), PAPER)
+
+
+func _step_npcs() -> void:
+	npc_frame = 1 - npc_frame
+	if talk_steps > 0:
+		talk_steps -= 1
+		if talk_steps == 0:
+			talking = ""
+	for id: String in npc_frames:
+		var pose := "talk" if id == talking else "idle"
+		(get_node("Npc_%s/Sprite" % id) as Sprite2D).texture = npc_frames[id][pose][npc_frame]
+
+
+## NPC đổi sang dáng nói trong chốc lát sau khi trò chuyện.
+func npc_talk(id: String) -> void:
+	talking = id
+	talk_steps = 4
+	_step_npcs()
+
+
+## Mục tương tác theo ID dữ liệu (đá, cây, hạng mục, NPC).
+func target_by_id(id: String) -> Dictionary:
+	for target in targets:
+		if target.rule.get("id") == id:
+			return target
+	return {}
+
+
+## Chướng ngại loại `kind` chưa dọn đầu tiên, chỗ lấy thêm vật liệu.
+func first_obstacle(kind: String) -> Dictionary:
+	for target in targets:
+		if target.kind == "CLEAR" and target.rule.kind == kind and not estate.get("cleared", []).has(target.rule.id):
+			return target
+	return {}
 
 
 ## Marker `Slot_<id>` của từng chỗ nuôi, chỉnh vị trí trong Editor.
@@ -154,6 +205,8 @@ func command(target: Dictionary, level: int) -> Dictionary:
 				"action": {"type": "REPAIR", "structureId": rule.id},
 				"title": "Sửa %s" % rule.name, "unlocks": "Mở %s" % rule.unlocks, "rule": rule,
 			}
+		"NPC":
+			return {"panel": "NPC:" + str(rule.id)}
 		"RECLAIM":
 			if int(rule.index) != reclaimed():
 				return {"hint": "Khai hoang vùng %d trước." % (reclaimed() + 1)}

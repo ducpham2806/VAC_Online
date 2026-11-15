@@ -16,6 +16,8 @@ var info_label := Label.new()
 var rows_box := VBoxContainer.new()
 var close_button := Button.new()
 var scroll := ScrollContainer.new()
+var portrait_rect := TextureRect.new()
+var closable := true
 
 
 func _ready() -> void:
@@ -38,7 +40,13 @@ func _ready() -> void:
 	content.add_theme_constant_override("separation", 4)
 	panel.add_child(content)
 	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 8)
 	content.add_child(head)
+	portrait_rect.custom_minimum_size = Vector2(44, 44)
+	portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	portrait_rect.hide()
+	head.add_child(portrait_rect)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_label.add_theme_font_size_override("font_size", 20)
 	title_label.add_theme_color_override("font_color", INK)
@@ -46,6 +54,7 @@ func _ready() -> void:
 	close_button.name = "Close"
 	close_button.text = "Đóng"
 	close_button.custom_minimum_size = Vector2(72, ROW_HEIGHT)
+	close_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(close)
 	_style(close_button)
 	head.add_child(close_button)
@@ -62,8 +71,13 @@ func _ready() -> void:
 
 
 ## rows: [{"text": String, "buttons": [{"id": String, "label": String, "disabled": bool}]}]
-func present(title: String, info: String, rows: Array) -> void:
+## `can_close` tắt nút Đóng cho cảnh buộc phải trả lời.
+func present(title: String, info: String, rows: Array, portrait: Texture2D = null, can_close := true) -> void:
 	var first := not visible
+	closable = can_close
+	close_button.visible = can_close
+	portrait_rect.texture = portrait
+	portrait_rect.visible = portrait != null
 	title_label.text = title
 	info_label.text = info
 	info_label.visible = not info.is_empty()
@@ -74,13 +88,19 @@ func present(title: String, info: String, rows: Array) -> void:
 	if first:
 		scroll.scroll_vertical = 0
 		show()
-		close_button.grab_focus()
+		if can_close:
+			close_button.grab_focus()
 
 
 func close() -> void:
 	if visible:
 		hide()
 		closed.emit()
+
+
+## Ẩn bảng mà không báo `closed`, dùng khi cảnh tự kết thúc.
+func dismiss() -> void:
+	hide()
 
 
 func _build(rows: Array) -> void:
@@ -120,6 +140,6 @@ func _style(button: Button) -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	if visible and event.is_action_pressed("ui_cancel"):
+	if visible and closable and event.is_action_pressed("ui_cancel"):
 		close()
 		get_viewport().set_input_as_handled()

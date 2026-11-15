@@ -48,6 +48,7 @@ cp art/source/p0_ai/farmer_walk_right_{1,2,3}.png godot/generated/
 for sprite in {house,well,coop,kitchen}_{0,1} tree_0 xoan_0 rock_{0,1,2} fence_0 weed_2; do
   cp "art/source/p1_ai/$sprite.png" godot/generated/
 done
+cp art/source/p1_ai/npc_{bacbay,cohuong}_{idle,talk}_{0,1}.png art/source/p1_ai/portrait_{bacbay,bakien,cohuong}.png godot/generated/
 cp public/icon-512.svg godot/generated/icon.svg
 npx --no-install tsx scripts/export-godot-seasons.ts > godot/generated/season_calendar.gd
 npx --no-install tsx scripts/export-godot-estate.ts > godot/generated/estate.json

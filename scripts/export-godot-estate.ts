@@ -9,6 +9,13 @@ import {
 import { EXPAND_STAMINA } from '../src/domain/farm';
 import { BATCH_DRAG_MAX, REACH_TILES } from '../src/domain/tools';
 import { boundsOf } from '../src/game/slice/estateMap';
+import { NPCS, NPC_IDS } from '../src/data/npcs';
+import { QUEST_BRANCH_REWARDS, QUEST_XP_REWARD } from '../src/data/quests';
+import { INTRO_CHOICES, INTRO_PAGES, INTRO_QUESTION, INTRO_TITLE } from '../src/data/sliceStory';
+import { HEART_POINTS, MAX_HEARTS } from '../src/domain/npc';
+import { chapterGoals, chapterQuest } from '../src/domain/story';
+import { newSliceSave } from '../src/game/slice/sliceSave';
+import { SLICE_TUTORIAL } from '../src/game/slice/sliceTutorial';
 
 function bounds(tiles: readonly TilePos[]) {
   const xs = tiles.map(({ x }) => x);
@@ -43,9 +50,29 @@ const items = Object.fromEntries(
   }]),
 );
 const kitchen = { id: SLICE_KITCHEN_ID, recipes: SLICE_RECIPES, starter: STARTER_RECIPE_ID, potMax: POT_MAX_INGREDIENTS };
+// Cốt truyện Chương 1 (TG-30, TG-40), NPC có tim (GP-50) và lời hướng dẫn (GP-62).
+const npcs = NPC_IDS.map((id) => ({ id, name: NPCS[id].name, portrait: NPCS[id].portrait, sprite: NPCS[id].sprite }));
+const quest = chapterQuest(1);
+if (!quest) throw new Error('Thiếu dữ liệu Chương 1.');
+const goalLabels = chapterGoals(newSliceSave(0), 1).map(({ label }) => label);
+const story = {
+  intro: { title: INTRO_TITLE, pages: INTRO_PAGES, question: INTRO_QUESTION, choices: INTRO_CHOICES },
+  chapter: {
+    no: 1, title: quest.title, gold: quest.rewardGold, gems: quest.rewardGems, xp: QUEST_XP_REWARD,
+    branches: QUEST_BRANCH_REWARDS,
+    // Mục đầu là chọn hướng, mục cuối là sửa Nhà, ở giữa là bộ đếm nhiệm vụ.
+    goals: [
+      { label: goalLabels[0], kind: 'PATH' },
+      ...(quest.objectives ?? []).map(({ counter, target, label }) => ({ label, kind: 'COUNTER', counter, target })),
+      { label: goalLabels[goalLabels.length - 1], kind: 'HOUSE' },
+    ],
+  },
+  hearts: { points: HEART_POINTS, max: MAX_HEARTS },
+  tutorial: SLICE_TUTORIAL.map(({ id, speech, hint }) => ({ id, speech, hint })),
+};
 const scenery = { Pond: boundsOf('P'), SacredTree: boundsOf('D') };
 
 process.stdout.write(JSON.stringify({
-  obstacles, repairs, regions, plots, crops, slots, items, kitchen, scenery, materials: MATERIALS,
+  obstacles, repairs, regions, plots, crops, slots, items, kitchen, npcs, story, scenery, materials: MATERIALS,
   reach: REACH_TILES, dragMax: BATCH_DRAG_MAX,
 }) + '\n');

@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" path="res://generated/tree_0.png" id="tree_0"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_dong.png" id="tile_grass_dong"]
 [ext_resource type="Texture2D" path="res://generated/weed_2.png" id="weed_2"]
+[ext_resource type="Texture2D" path="res://generated/npc_bacbay_idle_0.png" id="npc_bacbay"]
+[ext_resource type="Texture2D" path="res://generated/npc_cohuong_idle_0.png" id="npc_cohuong"]
 
 [node name="EstateFeatures" type="Node2D"]
 y_sort_enabled = true
@@ -218,3 +220,19 @@ position = Vector2(1008, 258)
 
 [node name="Slot_P27_8" type="Marker2D" parent="."]
 position = Vector2(1040, 258)
+
+[node name="Npc_BAC_BAY" type="Marker2D" parent="."]
+position = Vector2(688, 210)
+
+[node name="Sprite" type="Sprite2D" parent="Npc_BAC_BAY"]
+texture = ExtResource("npc_bacbay")
+centered = false
+offset = Vector2(-28, -74)
+
+[node name="Npc_CO_HUONG" type="Marker2D" parent="."]
+position = Vector2(848, 338)
+
+[node name="Sprite" type="Sprite2D" parent="Npc_CO_HUONG"]
+texture = ExtResource("npc_cohuong")
+centered = false
+offset = Vector2(-28, -74)

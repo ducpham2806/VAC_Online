@@ -17,6 +17,11 @@ const SEASON_NAMES := {"XUAN": "Xuân", "HA": "Hạ", "THU": "Thu", "DONG": "Đ�
 const RESULT_ICON := "[\\x{1F000}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{FE0F}]"
 const TAP_SLOP := 12.0
 const MOUSE_POINTER := -2
+const RESULT_SOUNDS := {
+	"PLANT": "plant", "WATER": "water", "HARVEST": "harvest", "SELL": "coin", "DELIVER_ORDER": "coin",
+	"CLEAR": "work", "REPAIR": "work", "RECLAIM": "work", "TALK": "page", "GIFT": "page", "CHOOSE_PATH": "page",
+	"COLLECT_DISH": "harvest", "DISCOVER": "fanfare", "CLAIM_CHAPTER": "fanfare",
+}
 
 @export var grass_by_season: Dictionary[String, Texture2D] = {}
 
@@ -39,6 +44,11 @@ const MOUSE_POINTER := -2
 @onready var store_button: Button = $HUD/Margin/Layout/Footer/Row/Store
 @onready var orders_button: Button = $HUD/Margin/Layout/Footer/Row/Orders
 @onready var sheet: Sheet = $HUD/Sheet
+@onready var guide_panel: PanelContainer = $HUD/Margin/Layout/Space/Guide
+@onready var guide_text: Label = $HUD/Margin/Layout/Space/Guide/Row/Text
+@onready var book_button: Button = $HUD/Margin/Layout/Space/Guide/Row/Book
+@onready var guide_arrow: Node2D = $World/GuideArrow
+@onready var sfx: Node = $Sfx
 @onready var confirm_overlay: Control = $HUD/Confirm
 @onready var confirm_panel: PanelContainer = $HUD/Confirm/Center/Panel
 @onready var confirm_title: Label = $HUD/Confirm/Center/Panel/Content/Title
@@ -57,6 +67,11 @@ var seed_id := FarmProbeState.RICE_ID
 var sheet_kind := ""
 var pot: Array[String] = []
 var orders_key := ""
+var intro_page := 0
+## Cờ hướng dẫn lưu trên máy: đã tự đi, đã bán HTX, ẩn hướng dẫn, tắt tiếng.
+var guide := {"moved": false, "sold": false, "hidden": false, "muted": false}
+var guide_step := ""
+var portraits: Dictionary[String, Texture2D] = {}
 var plot_specs: Dictionary[String, Dictionary] = {}
 var crop_frames: Dictionary[String, Array] = {}
 var selected_plot := FarmProbeState.PLOT_ID
@@ -99,11 +114,15 @@ func _ready() -> void:
 	orders_button.pressed.connect(_open_sheet.bind("ORDERS"))
 	sheet.chosen.connect(_on_sheet_chosen)
 	sheet.closed.connect(_on_sheet_closed)
+	book_button.pressed.connect(_open_sheet.bind("GIAPHA"))
+	for id in ["bacbay", "bakien", "cohuong"]:
+		portraits[id] = load("res://generated/portrait_%s.png" % id)
 	cancel_button.pressed.connect(_close_confirmation)
 	confirm_button.pressed.connect(_approve_estate)
 	$CropTimer.timeout.connect(_update_view)
 	$MetricsTimer.timeout.connect(_update_metrics)
 	_load_cache()
+	_load_guide()
 	_refresh([])
 
 
@@ -177,6 +196,7 @@ func _physics_process(delta: float) -> void:
 		walk_path.clear()
 		if manual != Vector2.ZERO:
 			camera.follow()
+			_mark_guide("moved")
 		_step_manual(manual * player.walk_speed * delta, delta)
 	elif not walk_path.is_empty():
 		if player.step_toward(walk_path[0], delta):
@@ -290,7 +310,9 @@ func _plot_at(point: Vector2) -> String:
 
 
 func _on_hud(point: Vector2) -> bool:
-	return _modal() or header.get_global_rect().has_point(point) or footer.get_global_rect().has_point(point)
+	return _modal() or header.get_global_rect().has_point(point) or footer.get_global_rect().has_point(point) or (
+		guide_panel.visible and guide_panel.get_global_rect().has_point(point)
+	)
 
 
 func _tap_world(viewport_point: Vector2) -> void:
@@ -322,6 +344,7 @@ func _walk_to(target: Vector2) -> void:
 	walk_path = features.walk_path(player.global_position, _clamp_walk(target))
 	if not walk_path.is_empty():
 		camera.follow()
+		_mark_guide("moved")
 
 
 func _clamp_walk(target: Vector2) -> Vector2:
@@ -471,7 +494,128 @@ func _open_sheet(kind: String) -> void:
 	sheet_kind = kind
 	notice = ""
 	orders_key = ""
+	if kind.begins_with("NPC:") and connected:
+		# Gặp là chào: lần đầu trong ngày được cộng tim (GP-50).
+		_refresh([{"type": "TALK", "npcId": kind.trim_prefix("NPC:")}])
+		return
 	_update_view()
+
+
+func _story() -> Dictionary:
+	return farm.snapshot.get("story") if farm.snapshot.get("story") is Dictionary else {}
+
+
+func _counter(key: String) -> int:
+	var counters: Dictionary = farm.snapshot.get("counters") if farm.snapshot.get("counters") is Dictionary else {}
+	return int(counters.get(key, 0))
+
+
+func _repaired(id: String) -> bool:
+	return features.estate.get("repaired", []).has(id)
+
+
+## Mục tiêu Chương 1 theo thứ tự dữ liệu: chọn hướng, bộ đếm nhiệm vụ, sửa Nhà (TG-30).
+func _goal_done(goal: Dictionary) -> bool:
+	match goal.kind:
+		"PATH": return _story().get("path") is String
+		"COUNTER": return _counter(goal.counter) >= int(goal.target)
+		"HOUSE": return _repaired("HOUSE")
+	return false
+
+
+## Bước hướng dẫn đang làm (GP-62). Mỗi bước tự xong theo trạng thái thật; -1 khi xong cả 8 bước.
+func _tutorial_index() -> int:
+	var planted := false
+	for id: String in farm.tiles:
+		planted = planted or farm.tiles[id].get("itemId") is String
+	var watered := _counter("WATER") > 0
+	var harvested := _counter("HARVEST:" + FarmProbeState.RICE_ID) > 0
+	var cleared: bool = not features.estate.get("cleared", []).is_empty()
+	var done := {
+		"MOVE": guide.moved or planted or watered, "PLANT": planted or watered or harvested, "WATER": watered,
+		"HARVEST": harvested, "SELL": guide.sold, "CLEAR": cleared, "WELL": _repaired("WELL"), "HOUSE": _repaired("HOUSE"),
+	}
+	var steps: Array = features.data.story.tutorial
+	for index in range(steps.size()):
+		if not done.get(steps[index].id, false):
+			return index
+	return -1
+
+
+## Chỗ mũi tên chỉ tới. Thiếu vật liệu sửa thì chỉ chỗ lấy: đá trước, rồi gỗ.
+func _guide_target(step_id: String) -> Variant:
+	var target := {}
+	match step_id:
+		"PLANT", "WATER", "HARVEST":
+			var plot: Node2D = plots.get("P6_7", primary_plot)
+			return plot.global_position + Vector2(0, -14)
+		"CLEAR":
+			target = features.first_obstacle("ROCK")
+		"WELL", "HOUSE":
+			target = features.target_by_id(step_id)
+			var needs: Dictionary = target.rule.get("mats", {})
+			if farm.stock("MAT_DA") < int(needs.get("MAT_DA", 0)):
+				target = features.first_obstacle("ROCK")
+			elif farm.stock("MAT_GO") < int(needs.get("MAT_GO", 0)):
+				target = features.first_obstacle("TREE")
+	if target.is_empty():
+		return null
+	var area: Rect2 = features.world_area(target)
+	return Vector2(area.get_center().x, area.position.y - 8)
+
+
+func _update_guide() -> void:
+	var story := _story()
+	var started := connected and story.get("path") is String
+	var claimed: bool = story.get("claimed", []).has(1.0)
+	var index := _tutorial_index() if started else -1
+	var steps: Array = features.data.story.tutorial
+	guide_panel.visible = started
+	guide_text.visible = not guide.hidden and not claimed
+	guide_arrow.point_at(_guide_target(steps[index].id) if index >= 0 and not guide.hidden else null)
+	if index >= 0:
+		guide_text.text = "Bác Bảy · Bước %d/%d\n%s" % [index + 1, steps.size(), _plain(steps[index].hint)]
+		if guide_step != steps[index].id:
+			if not guide_step.is_empty() and notice.is_empty():
+				notice = "Bác Bảy: %s" % _plain(steps[index].speech)
+			guide_step = steps[index].id
+	elif started:
+		guide_text.text = "Bác Bảy\nNhà sửa xong rồi! Bấm Sổ để nhận thưởng Chương 1."
+
+
+func _mark_guide(flag: String) -> void:
+	if not guide[flag]:
+		guide[flag] = true
+		_store_guide()
+
+
+func _guide_path() -> String:
+	var path: String = transport.cache_path()
+	return "" if path.is_empty() else path + ".guide"
+
+
+func _load_guide() -> void:
+	var path := _guide_path()
+	if path.is_empty() or not FileAccess.file_exists(path):
+		return
+	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if saved is Dictionary:
+		for flag: String in guide:
+			guide[flag] = saved.get(flag, false) == true
+	sfx.muted = guide.muted
+
+
+func _store_guide() -> void:
+	var path := _guide_path()
+	if path.is_empty():
+		return
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return
+	file.store_string(JSON.stringify(guide))
+	file.close()
+	if OS.has_feature("web"):
+		JavaScriptBridge.force_fs_sync()
 
 
 func _on_sheet_closed() -> void:
@@ -496,6 +640,13 @@ func _on_sheet_chosen(id: String) -> void:
 				pot.append(value)
 		"empty":
 			pot.clear()
+		"next":
+			intro_page += 1
+		"guide", "sound":
+			var flag := "hidden" if parts[0] == "guide" else "muted"
+			guide[flag] = not guide[flag]
+			sfx.muted = guide.muted
+			_store_guide()
 		_:
 			var command := _sheet_command(parts[0], value)
 			if connected and not command.is_empty():
@@ -515,17 +666,69 @@ func _sheet_command(kind: String, value: String) -> Dictionary:
 		"discover": return {"type": "DISCOVER", "ingredientIds": pot.duplicate()}
 		"deliver": return {"type": "DELIVER_ORDER", "slot": int(value)}
 		"skip": return {"type": "SKIP_ORDER", "slot": int(value)}
+		"talk": return {"type": "TALK", "npcId": value}
+		"gift": return {"type": "GIFT", "npcId": sheet_kind.trim_prefix("NPC:"), "itemId": value}
+		"path": return {"type": "CHOOSE_PATH", "path": value}
+		"claim": return {"type": "CLAIM_CHAPTER", "chapterNo": int(value)}
 	return {}
 
 
 func _render_sheet() -> void:
+	var path_chosen := _story().get("path") is String
+	if sheet_kind == "INTRO" and path_chosen:
+		sheet_kind = ""
+		sheet.dismiss()
+	elif sheet_kind.is_empty() and connected and not farm.snapshot.is_empty() and not path_chosen and not confirm_overlay.visible:
+		# Cảnh mở đầu hiện tới khi người chơi trả lời Bá Kiến (TG-40).
+		sheet_kind = "INTRO"
+		intro_page = 0
+		walk_path.clear()
+		pending_task = {}
 	if sheet_kind.is_empty():
 		return
 	var level := int(farm.snapshot.get("level", 1))
 	var rows: Array = []
 	var title := ""
 	var info := ""
+	var portrait: Texture2D = null
+	if sheet_kind.begins_with("NPC:"):
+		var npc_id := sheet_kind.trim_prefix("NPC:")
+		for npc: Dictionary in features.data.npcs:
+			if npc.id == npc_id:
+				title = npc.name
+				portrait = portraits[npc.portrait]
+		info = "Mỗi ngày nói chuyện một lần và tặng một món để thêm tim."
+		rows = _npc_rows(npc_id)
 	match sheet_kind:
+		"INTRO":
+			var intro: Dictionary = features.data.story.intro
+			title = intro.title
+			if intro_page < intro.pages.size():
+				var page: Dictionary = intro.pages[intro_page]
+				portrait = portraits[page.portrait]
+				info = "%s: %s" % [_plain(page.who), page.text]
+				rows.append({"text": "Trang %d/%d" % [intro_page + 1, intro.pages.size() + 1], "buttons": [{"id": "next", "label": "Tiếp"}]})
+			else:
+				portrait = portraits["bakien"]
+				info = intro.question
+				var branches: Dictionary = features.data.story.chapter.branches
+				for path: String in intro.choices:
+					var branch: Dictionary = branches[path]
+					var gain := PackedStringArray()
+					if int(branch.gold) > 0:
+						gain.append("+%d vàng" % int(branch.gold))
+					gain.append("+%d Phong Thủy" % int(branch.fengShui))
+					gain.append("+%d Nghĩa Xóm" % int(branch.neighbor))
+					rows.append({
+						"text": "%s\n%s · xong Chương 1: %s" % [intro.choices[path].quote, intro.choices[path].tone, ", ".join(gain)],
+						"buttons": [{"id": "path:" + path, "label": "Chọn", "disabled": busy}],
+					})
+			sheet.present(title, notice if not notice.is_empty() else info, rows, portrait, false)
+			return
+		"GIAPHA":
+			title = "Sổ Gia Phả"
+			info = "Chương 1 · %s" % features.data.story.chapter.title
+			rows = _giapha_rows()
 		"SEEDS":
 			title = "Chọn giống"
 			info = "Giống đang chọn dùng cho mọi ô ruộng trống."
@@ -553,7 +756,74 @@ func _render_sheet() -> void:
 			title = "Bảng đơn HTX"
 			info = "Giao đủ hàng được thưởng cao hơn bán thẳng."
 			rows = _order_rows(level)
-	sheet.present(title, notice if not notice.is_empty() else info, rows)
+	sheet.present(title, notice if not notice.is_empty() else info, rows, portrait)
+
+
+func _hearts_text(npc_id: String) -> String:
+	var npcs: Dictionary = farm.snapshot.get("npcs") if farm.snapshot.get("npcs") is Dictionary else {}
+	var state: Dictionary = npcs.get(npc_id, {})
+	var hearts: Dictionary = features.data.story.hearts
+	var points := int(state.get("points", 0))
+	var count := mini(int(hearts.max), points / int(hearts.points))
+	return "Tim %d/%d · %d/%d tới tim kế" % [count, int(hearts.max), points % int(hearts.points), int(hearts.points)]
+
+
+func _npc_rows(npc_id: String) -> Array:
+	var rows: Array = [{
+		"text": _hearts_text(npc_id),
+		"buttons": [{"id": "talk:" + npc_id, "label": "Nói chuyện", "disabled": busy}],
+	}]
+	var npcs: Dictionary = farm.snapshot.get("npcs") if farm.snapshot.get("npcs") is Dictionary else {}
+	var state: Dictionary = npcs.get(npc_id, {})
+	var inventory: Dictionary = farm.snapshot.get("inventory", {})
+	for id: String in inventory:
+		var qty := int(inventory[id])
+		if qty <= 0:
+			continue
+		var text := "Tặng %s · có %d" % [_item_name(id), qty]
+		# Chỉ hiện sở thích đã phát hiện qua tặng quà.
+		if state.get("knownLikes", []).has(id):
+			text += " · thích"
+		elif state.get("knownDislikes", []).has(id):
+			text += " · không ưng"
+		rows.append({"text": text, "buttons": [{"id": "gift:" + id, "label": "Tặng", "disabled": busy}]})
+	if rows.size() == 1:
+		rows.append({"text": "Kho trống. Gặt lúa hoặc dọn đá để có quà."})
+	return rows
+
+
+func _giapha_rows() -> Array:
+	var rows: Array = []
+	var chapter: Dictionary = features.data.story.chapter
+	var story := _story()
+	var ready := true
+	for goal: Dictionary in chapter.goals:
+		var done := _goal_done(goal)
+		ready = ready and done
+		rows.append({"text": "%s · %s" % ["Xong" if done else "Chưa", _plain(goal.label)]})
+	var gold := int(chapter.gold)
+	var extra := ""
+	if story.get("path") is String:
+		var branch: Dictionary = chapter.branches[story.path]
+		gold += int(branch.gold)
+		extra = ", +%d Phong Thủy, +%d Nghĩa Xóm" % [int(branch.fengShui), int(branch.neighbor)]
+	var reward := "Thưởng %d vàng, %d ngọc, %d XP%s" % [gold, int(chapter.gems), int(chapter.xp), extra]
+	if story.get("claimed", []).has(1.0):
+		rows.append({"text": "%s\nĐã nhận thưởng Chương 1. Chương 2 mở ở bản sau." % reward})
+	else:
+		rows.append({"text": reward, "buttons": [{"id": "claim:1", "label": "Nhận thưởng", "disabled": busy or not ready}]})
+	for npc: Dictionary in features.data.npcs:
+		rows.append({"text": "%s · %s" % [npc.name, _hearts_text(npc.id)]})
+	rows.append({"text": "Nghĩa Xóm: %d" % int(story.get("neighbor", 0))})
+	rows.append({
+		"text": "Hướng dẫn của Bác Bảy: %s" % ("đang ẩn" if guide.hidden else "đang hiện"),
+		"buttons": [{"id": "guide", "label": "Hiện" if guide.hidden else "Ẩn"}],
+	})
+	rows.append({
+		"text": "Âm thanh: %s" % ("đang tắt" if guide.muted else "đang bật"),
+		"buttons": [{"id": "sound", "label": "Bật" if guide.muted else "Tắt"}],
+	})
+	return rows
 
 
 func _store_rows() -> Array:
@@ -571,7 +841,7 @@ func _store_rows() -> Array:
 			buttons.append({"id": "eat:" + id, "label": "Ăn", "disabled": busy})
 		if int(item.get("sell", 0)) > 0:
 			text += "\nBán %d vàng mỗi đơn vị" % int(item.sell)
-			buttons.append({"id": "sell:" + id, "label": "Bán hết", "disabled": busy or farm.clock_rate == 0.0})
+			buttons.append({"id": "sell:" + id, "label": "Bán HTX", "disabled": busy or farm.clock_rate == 0.0})
 		rows.append({"text": text, "buttons": buttons})
 	if rows.is_empty():
 		rows.append({"text": "Kho chưa có gì. Thu hoạch để có nông sản."})
@@ -713,8 +983,13 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 		if not result.get("ok", false):
 			if notice.is_empty() and command.type != "REFRESH_ORDERS":
 				notice = _result_text(result, "Thao tác chưa thành công.")
+				sfx.play("error")
 			continue
 		succeeded += 1
+		sfx.play(RESULT_SOUNDS.get(command.type, "tap"))
+		match command.type:
+			"SELL": _mark_guide("sold")
+			"TALK", "GIFT": features.npc_talk(command.npcId)
 		var plot_id: String = command.get("tileId", "")
 		if plots.has(plot_id):
 			var plot := plots[plot_id]
@@ -729,16 +1004,22 @@ func _show_results(actions: Array, results: Array, work_point: Vector2) -> void:
 
 
 func _result_text(result: Dictionary, fallback: String) -> String:
-	# Font mặc định của bản Web thiếu emoji trong thông báo dùng chung với Phaser.
-	var message := leading_icons.sub(str(result.get("message", fallback)), "")
-	message = message.replace("🪙", "vàng").replace("⚡", "năng lượng").replace("💎", "ngọc")
-	return inline_icons.sub(message, "", true).replace("  ", " ").strip_edges()
+	return _plain(str(result.get("message", fallback)))
+
+
+## Font mặc định của bản Web thiếu emoji trong lời dùng chung với Phaser: đổi sang chữ rồi bỏ phần còn lại.
+func _plain(text: String) -> String:
+	var message := leading_icons.sub(text, "")
+	for pair: Array in [["🪨 Đá", "Đá"], ["🪵 Gỗ", "Gỗ"], ["🪙", "vàng"], ["⚡", "năng lượng"], ["💎", "ngọc"], ["❤️", "tim"], ["🪨", "đá"], ["🪵", "gỗ"]]:
+		message = message.replace(pair[0], pair[1])
+	return inline_icons.sub(message, "", true).replace("  ", " ").replace(" ,", ",").strip_edges()
 
 
 func _update_view() -> void:
 	_update_season()
 	features.sync(farm.snapshot)
 	_render_plots()
+	_update_guide()
 	_render_sheet()
 	var tile := farm.tile(selected_plot)
 	var stage := farm.stage(tile)
@@ -778,7 +1059,7 @@ func _update_view() -> void:
 	elif is_slot:
 		status.text = "Chỗ nuôi %s. Chạm để thả, giá %d vàng." % [seed_name, int(features.data.items[slot_items[selected_plot]].cost)]
 	else:
-		status.text = "Giống %s. Chạm ô ruộng để gieo, chạm chướng ngại để dọn." % seed_name
+		status.text = "Giống %s. Chạm ô ruộng để gieo." % seed_name
 
 
 func _update_season() -> void:
@@ -843,13 +1124,21 @@ func _style_hud() -> void:
 	header.add_theme_stylebox_override("panel", _panel(PAPER, 12))
 	confirm_panel.add_theme_stylebox_override("panel", _panel(PAPER, 18))
 	footer.add_theme_stylebox_override("panel", _panel(PAPER))
-	for label: Label in [gold, metrics, season_label, $HUD/Margin/Layout/Header/Row/Title, plot_title, status, confirm_title, confirm_details]:
+	guide_panel.add_theme_stylebox_override("panel", _panel(Color(PAPER, 0.92), 8))
+	_style_button(book_button)
+	for label: Label in [guide_text, gold, metrics, season_label, $HUD/Margin/Layout/Header/Row/Title, plot_title, status, confirm_title, confirm_details]:
 		label.add_theme_color_override("font_color", INK)
 	for button: Button in [action, seeds_button, store_button, orders_button, cancel_button, confirm_button]:
 		_style_button(button)
 
 
+## Bảng danh sách tạo nút trước khi cảnh sẵn sàng, nên tra nút âm thanh lúc bấm.
+func _play_tap() -> void:
+	sfx.play("tap")
+
+
 func _style_button(button: Button) -> void:
+	button.pressed.connect(_play_tap)
 	button.add_theme_stylebox_override("normal", _panel(Color("#ffd166")))
 	button.add_theme_stylebox_override("hover", _panel(Color("#fff3b0")))
 	button.add_theme_stylebox_override("pressed", _panel(Color("#f5b700")))

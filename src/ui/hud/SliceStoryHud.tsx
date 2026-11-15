@@ -4,6 +4,7 @@
  */
 import React, { useState } from 'react';
 import { NPCS, NPC_IDS } from '../../data/npcs';
+import { INTRO_CHOICES, INTRO_PAGES, INTRO_QUESTION, INTRO_TITLE } from '../../data/sliceStory';
 import { QUEST_BRANCH_REWARDS, QUEST_XP_REWARD } from '../../data/quests';
 import { HEART_POINTS, MAX_HEARTS, heartsOf, npcOf } from '../../domain/npc';
 import { chapterGoals, chapterQuest, storyOf } from '../../domain/story';
@@ -35,19 +36,11 @@ export function IntroScene() {
   const choose = useSliceStore((s) => s.choosePath);
   const [page, setPage] = useState(0);
   if (path) return null;
-  const q = chapterQuest(1);
-  const pages = [
-    {
-      portrait: 'bacbay',
-      who: '👴 Bác Trưởng Thôn Bảy',
-      text: 'Cháu về rồi đấy à. Ông nội cháu dặn bác giữ cái tráp gỗ lim này: cuốn Sổ Gia Phả, túi thóc giống tổ tiên, và tờ khế ước. Nhà cửa đổ nát cả, nhưng đất vẫn còn.',
-    },
-    { portrait: 'bakien', who: '🎩 Thương Nhân Bá Kiến', text: `Hừm… ${q?.npcQuote ?? ''}` },
-  ];
+  const pages = INTRO_PAGES;
   return (
     <div className="pointer-events-auto absolute inset-0 flex items-center justify-center bg-black/50" data-testid="intro">
       <div className="vac-paper vac-pop-in max-h-[90vh] w-[min(520px,92vw)] overflow-y-auto bg-[#f3e3c0] p-3 text-sm">
-        <b className="text-xs">📜 Bức Thư Trong Chiếc Tráp Gỗ Lim</b>
+        <b className="text-xs">📜 {INTRO_TITLE}</b>
         {page < pages.length ? (
           <>
             <div className="mt-1 flex gap-2">
@@ -67,16 +60,20 @@ export function IntroScene() {
           <>
             <div className="mt-1 flex items-center gap-2">
               <Portrait id="bakien" size={48} />
-              <p className="font-bold">Cháu trả lời Bá Kiến thế nào?</p>
+              <p className="font-bold">{INTRO_QUESTION}</p>
             </div>
             <div className="mt-2 flex flex-col gap-2">
               <button className={`${btn} flex-col px-3 py-1 text-left`} onClick={() => choose('EMP')} data-testid="choose-EMP">
-                <b>🤝 "Cháu tự cày trả sạch nợ, đất này không bán."</b>
-                <small>Tình nghĩa — xong Chương 1: +{EMP.fengShui} Phong Thủy, +{EMP.neighbor} Nghĩa Xóm</small>
+                <b>
+                  {INTRO_CHOICES.EMP.icon} {INTRO_CHOICES.EMP.quote}
+                </b>
+                <small>{INTRO_CHOICES.EMP.tone} — xong Chương 1: +{EMP.fengShui} Phong Thủy, +{EMP.neighbor} Nghĩa Xóm</small>
               </button>
               <button className={`${btn} flex-col px-3 py-1 text-left`} onClick={() => choose('PRAG')} data-testid="choose-PRAG">
-                <b>🪙 "Mười mùa vụ nữa, ông sẽ mua lúa Hoàng Kim của tôi."</b>
-                <small>Thực dụng — xong Chương 1: +{PRAG.gold} 🪙, +{PRAG.fengShui} Phong Thủy</small>
+                <b>
+                  {INTRO_CHOICES.PRAG.icon} {INTRO_CHOICES.PRAG.quote}
+                </b>
+                <small>{INTRO_CHOICES.PRAG.tone} — xong Chương 1: +{PRAG.gold} 🪙, +{PRAG.fengShui} Phong Thủy</small>
               </button>
             </div>
           </>

@@ -2,11 +2,16 @@
 
 Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Chương 1 trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
+- Cảnh mở đầu, hướng dẫn 8 bước, NPC có tim, Sổ Gia Phả, âm thanh AR-40. Hết nội dung LT-14 bước 3.
+- Kiểm bằng `tools/qa/godot-chapter1-flow.sh` (50 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-ch1-*`.
+- Đã đẩy nhánh, chờ PO duyệt merge. Chưa thử Supabase thật và điện thoại.
+
 ## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
 - Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.
 - Kiểm bằng `tools/qa/godot-p1-9-flow.sh` (41 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-p1-9-*`.
 - Bản ghim Game Studio lên `fa7b1db`, 125 skill. Cách cập nhật ở docs/studio/INSTALLATION.md.
-- Đã đẩy nhánh, chờ PO duyệt merge. Chưa thử Supabase thật và điện thoại.
+- PO duyệt, đã merge `main` tại `225f9b5`. Chưa thử Supabase thật và điện thoại.
 
 ## Scene nông trại Godot · 14/11/2026 · main
 - Bản đồ, công trình, chướng ngại và vùng đất chỉnh trong Godot Editor. Cách chạy ở LT-14.

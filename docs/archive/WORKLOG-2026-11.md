@@ -215,3 +215,9 @@
 - Chrome 1280×720 và 844×390 qua bốn mùa, Thu chuyển Đông khi đang chơi. Gặt và bán lúa trong Đông, gieo lại khi sang Xuân. Chạm ô và nút trái vụ đều không gửi lệnh. WebKit đọc đúng cây đã lưu.
 - Typecheck, 303 test, build, Godot headless và Web/PWA export, check:docs và audit bốn ảnh qua. Chụp ảnh hai cỡ.
 - Dừng ở bản cục bộ và nhánh chờ PO duyệt. Tiếp theo chuyển điền trang. Staging trước vẫn dùng để thử mở từ icon, cảm ứng và hiệu năng trên điện thoại thật.
+
+## 13/11/2026 · Điền trang Godot P1 · codex/godot-p1-estate
+- PO duyệt làm tiếp LT-14 bước 3. Chuyển dọn, sửa và khai hoang theo GP-14. Dùng sprite P1 và dữ liệu engine. Cảnh có marker chỉnh tay, tán cây và ao đổi màu theo mùa.
+- Godot headless kiểm sáu chướng ngại, sửa giếng/chuồng/nhà, hai vùng mở tới 28 ô ruộng, xác nhận chi phí, tưới cả loạt và đọc lại. Chrome hai cỡ kiểm hủy, mở vùng, gieo ô mới, kéo hai ô. WebKit đọc lại tiến trình.
+- Typecheck, 303 test, build, Web/PWA export, check:docs và audit ảnh qua. Đã chụp 1280×720 và 844×390.
+- Dừng ở bản chạy cục bộ và nhánh chờ duyệt. Còn chuyển vật nuôi, Bếp Củi và đơn HTX, cùng kiểm PWA trên thiết bị thật.

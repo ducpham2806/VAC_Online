@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://estate_probe.gd" id="1"]
 [ext_resource type="Script" path="res://probe_transport.gd" id="2"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://touch_joystick.tscn" id="4"]
 [ext_resource type="Script" path="res://estate_camera.gd" id="5"]
 [ext_resource type="Script" path="res://sheet.gd" id="10_sheet"]
+[ext_resource type="Script" path="res://sfx.gd" id="11_sfx"]
+[ext_resource type="Script" path="res://guide_arrow.gd" id="12_arrow"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_xuan.png" id="6_spring"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_ha.png" id="7_summer"]
 [ext_resource type="Texture2D" path="res://generated/tile_grass_thu.png" id="8_autumn"]
@@ -23,6 +25,14 @@ grass_by_season = Dictionary[String, Texture2D]({
 [node name="World" type="Node2D" parent="."]
 
 [node name="EstateMap" parent="World" instance=ExtResource("3")]
+
+[node name="GuideArrow" type="Node2D" parent="World"]
+visible = false
+z_index = 20
+script = ExtResource("12_arrow")
+
+[node name="Sfx" type="Node" parent="."]
+script = ExtResource("11_sfx")
 
 [node name="EstateCamera" type="Camera2D" parent="."]
 position = Vector2(320, 180)
@@ -80,6 +90,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "VAC Online · Bắc Bộ"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="Season" type="Label" parent="HUD/Margin/Layout/Header/Row"]
 layout_mode = 2
@@ -109,6 +121,33 @@ anchor_bottom = 1.0
 offset_right = 0.0
 offset_bottom = 0.0
 
+[node name="Guide" type="PanelContainer" parent="HUD/Margin/Layout/Space"]
+visible = false
+layout_mode = 1
+offset_top = 4.0
+offset_right = 300.0
+offset_bottom = 52.0
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="HUD/Margin/Layout/Space/Guide"]
+layout_mode = 2
+theme_override_constants/separation = 6
+mouse_filter = 2
+
+[node name="Text" type="Label" parent="HUD/Margin/Layout/Space/Guide/Row"]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+
+[node name="Book" type="Button" parent="HUD/Margin/Layout/Space/Guide/Row"]
+custom_minimum_size = Vector2(52, 44)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 15
+text = "Sổ"
+
 [node name="Footer" type="PanelContainer" parent="HUD/Margin/Layout"]
 layout_mode = 2
 mouse_filter = 2
@@ -128,6 +167,8 @@ mouse_filter = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 text = "Ruộng lúa · Kho 0"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="Status" type="Label" parent="HUD/Margin/Layout/Footer/Row/Text"]
 layout_mode = 2

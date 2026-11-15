@@ -89,7 +89,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
 
-15/11: thêm vật nuôi, Bếp, đơn HTX.
+15/11: bước 3 đủ nội dung P1.
 
 **Tác động**
 
