@@ -89,6 +89,7 @@ Code đang chạy theo **thiết kế cũ**: chạm thẳng, không có mùa, nh
 - Godot đọc giờ máy chủ. Lịch GP-20 được xuất từ `scripts/export-godot-seasons.ts`. `Grass By Season` trong Inspector đổi ảnh cỏ, còn tán cây và ao đổi màu theo mùa.
 - Fixture gọi engine qua `tools/qa/godot-farm-fixture.ts`. Chế độ online dùng `supabase_farm.gd` để gọi `apply-actions`. Web dùng `godotWebAuth.ts` để mở phiên Supabase cùng Phaser. Cách chạy ở LT-14.
 - Phaser giữ bản lưu cũ khi tách ô lưu cho `?p1&offline`. `useSliceStore` vẫn đọc định dạng cũ theo phiên bản. Cách mở lại ở [hướng dẫn staging](GODOT-ONLINE.md).
+- Khi bật `playtest`, Godot ghi mốc hướng dẫn và hàng chờ theo tài khoản bằng `online_playtest.gd`. Mã chơi thử ở cuối Sổ Gia Phả. Báo cáo dùng định dạng LT-13.
 - **Engine dùng chung:** `src/engine/applyActions.ts` (ADR-001), Edge Function thử nghiệm đóng gói từ đây. Thao tác: `PLANT`, `WATER`, `HARVEST`, `SELL`, `CLEAR`, `REPAIR`, `RECLAIM`, `TALK`, `GIFT`, `CHOOSE_PATH`, `CLAIM_CHAPTER`; 7 thao tác mới chỉ có trong engine mới, không có RPC SQL cũ.
 - **Store:** 6 slice.
 - **Test:** 303 test TS, 8 file test SQL, 9 test asset.

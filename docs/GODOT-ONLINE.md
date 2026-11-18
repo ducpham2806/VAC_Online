@@ -21,6 +21,10 @@ Web và native dùng chung cách gọi API. Godot Web dùng Supabase SDK để �
 
 Mở Phaser tại `/?p1`, chờ gửi xong thao tác rồi mở `/godot/index.html` trong cùng trình duyệt. Nếu Phaser còn hàng chờ, quay lại Phaser để đồng bộ rồi bấm **Đọc lại** trong Godot. Khi thử trên Android và iPhone, mở link Godot trong Chrome hoặc Safari, thêm vào màn hình chính, sau đó kiểm phiên, kho, cảm ứng và tốc độ tải khi mở từ icon.
 
+### Kiểm nhật ký Godot trước đợt chơi thử
+
+Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** và cuộn xuống cuối để lấy mã chơi thử. Chơi qua các mốc hướng dẫn rồi xuất dữ liệu và chạy báo cáo theo LT-13. Lượt diễn tập dùng dữ liệu thử riêng với nhóm chơi thật. Dùng một client cho mỗi nhóm để đối chiếu D1, vì mã chơi thử do từng client tạo.
+
 ### Nghiệm thu trước khi chuyển URL chính
 
 - Dùng nông trại thử, gieo một ô và ghi lại ô, vàng, kho. Mở cùng origin trong Godot, tải lại và đối chiếu.

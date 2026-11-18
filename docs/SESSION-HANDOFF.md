@@ -24,7 +24,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 ## Bước tiếp theo
 1. Chương 1 đã ở main và qua 50/50 bước với fixture.
 2. LT-14 bước 4: staging qua thử phiên, cache, cập nhật và quay về Phaser. Nhánh `codex/godot-p1-save-qa` giữ bản lưu offline trong Phaser. Còn kiểm Android/iPhone và duyệt chính sách offline.
-3. Đề xuất chạy P1-12 theo LT-13 sau cổng phát hành LT-14.
+3. Đã diễn tập báo cáo LT-13 từ Godot. Chạy P1-12 sau cổng LT-14.
 4. Việc cũ: ô trắng 844×390 trên điện thoại thật, PO cho phép xóa dữ liệu thử trên DB thật.
 
 ## Bối cảnh giữ nguyên

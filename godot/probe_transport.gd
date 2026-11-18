@@ -55,3 +55,17 @@ func send(actions: Array) -> Dictionary:
 	if payload is Dictionary and payload.get("state") is Dictionary:
 		return payload
 	return {"error": "Phản hồi thử nghiệm sai định dạng."}
+
+
+func record_tutorial(mark: String) -> void:
+	if online != null:
+		online.record_tutorial(mark)
+
+
+func flush_playtest() -> void:
+	if online != null:
+		online.flush_playtest()
+
+
+func playtest_code() -> String:
+	return online.playtest_code() if online != null else ""
