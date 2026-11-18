@@ -2,6 +2,11 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
+## 18/11/2026 · Giữ bản lưu Phaser khi thử Godot P1 · codex/godot-p1-save-qa
+- PO duyệt tiếp LT-14 bước 4. Tái hiện online ghi đè bản offline vì dùng chung ô lưu. Tách ô lưu cho `?p1&offline` và sao chép một lần bản chung còn trong trình duyệt.
+- Chrome staging 1280×720 và 844×390 đọc mẫu v1 sau khi mở online. Giữ 4.321 vàng, 3 lúa và lựa chọn mở đầu qua tải lại. Godot đợi hàng chờ, Phaser gửi một lần và Godot thấy đúng ô lúa. Chụp đủ hai cỡ.
+- Typecheck, 305 test, build và check:docs qua. Bản sửa chạy trên staging, chờ duyệt merge. Còn kiểm Android/iPhone thật và chốt phương án online/offline trước phát hành.
+
 ## 18/11/2026 · Staging phát hành Godot P1 · codex/godot-p1-release-qa
 - PO duyệt tiếp LT-14 bước 4. Dựng lại Godot và Phaser cùng origin HTTPS tạm, dùng Supabase Auth và PostgreSQL thử trên Mac.
 - Chrome giữ cùng tài khoản, ô lúa và vàng qua hai client. Giả lập token lỗi thì làm mới phiên. Đạt kiểm điều kiện cài PWA, xem bản lưu khi mất mạng, kết nối lại, nhận phiên bản cache mới và mở lại nông trại trên Phaser. WebKit mở được cảnh đầu. Chrome phát tín hiệu âm thanh khi chuyển trang.
@@ -13,9 +18,3 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - LT-14 bước 3: Godot có cảnh mở đầu chọn hướng (TG-40), hướng dẫn 8 bước của Bác Bảy kèm mũi tên (GP-62), hai NPC có tim với nói chuyện và tặng quà (GP-50), Sổ Gia Phả nhận thưởng Chương 1 (TG-30), âm thanh tổng hợp theo AR-40 có nút tắt. Lời cảnh mở đầu chuyển vào `src/data/sliceStory.ts` để Phaser và Godot dùng chung. HUD hết tràn lề ở 1280×720. Không đổi luật, DB hay kinh tế.
 - Kiểm thật: `tools/qa/godot-chapter1-flow.sh` 50/50 bước từ người chơi mới, `godot-p1-9-flow.sh` 41/41. Typecheck, 303 test, build, xuất Web, check:docs và kiểm thử hướng dẫn Phaser qua. Chrome hai cỡ bấm chuột thật qua cảnh mở đầu, NPC, Sổ; 0 lỗi JS. Ảnh `docs/screenshots/godot-ch1-*`.
 - PO duyệt, đã merge vào `main` tại `667445e`. Chưa deploy. Chưa nghe âm thanh bằng tai (chỉ kiểm không lỗi), chưa thử Supabase thật và điện thoại. Tiếp theo là LT-14 bước 4.
-
-## 15/11/2026 · Vật nuôi, Bếp Củi, đơn HTX trong Godot P1 · ccr-b91fc534-n2yctl
-- PO yêu cầu làm tiếp theo kế hoạch, dùng bản Game Studio mới và graphify. Nâng bản ghim Game Studio lên `fa7b1db` (125 skill, 340 file), mở nhóm skill Godot trong INDEX. Dựng lại đồ thị graphify và dùng để tra luật P1-9.
-- LT-14 bước 3: Godot có 9 chỗ nuôi (gà, vịt, cá) theo marker `Slot_<id>`, chọn 5 giống, bảng Kho (bán, ăn), Bếp Củi (nấu, lấy món, Nồi Đất) và bảng đơn HTX (giao, bỏ, tự xin đơn). Luật vẫn ở server, không đổi DB hay kinh tế.
-- Kiểm thật: `tools/qa/godot-p1-9-flow.sh` chạy cảnh Godot không cửa sổ qua máy chủ thử, 41/41 bước. Typecheck, 303 test, build, xuất Web và check:docs qua. Chrome 1280×720 và 844×390 mở các bảng, 0 lỗi JS, ảnh `docs/screenshots/godot-p1-9-*`.
-- Đã code và đẩy nhánh, chưa merge, chưa deploy. Chưa thử với Supabase thật và trên điện thoại. Còn NPC, Chương 1, hướng dẫn và âm thanh của bước 3.

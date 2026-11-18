@@ -2,12 +2,42 @@ import { describe, expect, it } from 'vitest';
 import { ESTATE_COLS, ESTATE_ROWS, boundsOf, isWalkable, spawnTile, tilesOf } from './estateMap';
 import { facing, inJoystickZone, isDrag, joystickVector, JOYSTICK_RADIUS_PX } from './gesture';
 import { findPath, pathToward } from './pathfinding';
-import { newSliceSave, plotId, reconcileSliceSave, sowableSeeds, targetAt } from './sliceSave';
+import {
+  SLICE_OFFLINE_SAVE_KEY, SLICE_SAVE_KEY, newSliceSave, plotId, preserveOfflineSliceSave,
+  reconcileSliceSave, sowableSeeds, targetAt,
+} from './sliceSave';
 import { SLICE_CROPS, SLICE_RECIPES, SLICE_SPECIES } from '../../data/sliceContent';
 import { GAME_CATALOG } from '../../data/masterData';
 import { estateTargetAt } from './estateTarget';
 import { SLICE_TUTORIAL, currentTutorialStep, tutorialTarget } from './sliceTutorial';
 import { NPCS, NPC_IDS, npcAt } from '../../data/npcs';
+
+describe('Giữ bản lưu Phaser khi tách chế độ', () => {
+  function memoryStorage(initial: Record<string, string> = {}) {
+    const values = new Map(Object.entries(initial));
+    return {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => { values.set(key, value); },
+    };
+  }
+
+  it('giữ nguyên định dạng cũ và chỉ sao chép một lần trước khi online ghi', () => {
+    const legacy = JSON.stringify({ version: 1, state: { save: newSliceSave(0) } });
+    const storage = memoryStorage({ [SLICE_SAVE_KEY]: legacy });
+    preserveOfflineSliceSave(storage);
+    storage.setItem(SLICE_SAVE_KEY, '{"version":4,"state":{}}');
+    preserveOfflineSliceSave(storage);
+    expect(storage.getItem(SLICE_OFFLINE_SAVE_KEY)).toBe(legacy);
+  });
+
+  it('trình duyệt mới không lấy nông trại online làm bản offline về sau', () => {
+    const storage = memoryStorage();
+    preserveOfflineSliceSave(storage);
+    storage.setItem(SLICE_SAVE_KEY, '{"version":4,"state":{}}');
+    preserveOfflineSliceSave(storage);
+    expect(storage.getItem(SLICE_OFFLINE_SAVE_KEY)).toBe('null');
+  });
+});
 
 describe('P1-3 bản đồ điền trang', () => {
   it('mọi hàng cùng độ rộng, viền kín', () => {

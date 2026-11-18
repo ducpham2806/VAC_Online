@@ -74,6 +74,13 @@ export function sowableSeeds(save: FarmSave, season: Season): CatalogItem[] {
  */
 export const SLICE_SAVE_VERSION = 4;
 export const SLICE_SAVE_KEY = 'vac_slice_save_v1';
+export const SLICE_OFFLINE_SAVE_KEY = 'vac_slice_offline_save_v1';
+
+/** Giữ bản lưu chung trước lần ghi đầu tiên của bản Phaser đã tách chế độ. */
+export function preserveOfflineSliceSave(storage: Pick<Storage, 'getItem' | 'setItem'>): void {
+  if (storage.getItem(SLICE_OFFLINE_SAVE_KEY) !== null) return;
+  storage.setItem(SLICE_OFFLINE_SAVE_KEY, storage.getItem(SLICE_SAVE_KEY) ?? 'null');
+}
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
 

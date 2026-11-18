@@ -19,6 +19,7 @@ Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đ
 - Vòng lúa qua fixture. HUD, cỏ, cây và ao theo mùa GP-20.
 - Typecheck, 303 test, build, Web/PWA và check:docs qua. Ảnh hai cỡ.
 - PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
+- 18/11 staging kiểm giữ bản lưu Phaser v1 và gửi hàng chờ trước khi mở Godot. Chờ duyệt nhánh.
 
 ## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
 - Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.

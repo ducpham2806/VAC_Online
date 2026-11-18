@@ -23,7 +23,20 @@ Mở Phaser tại `/?p1`, chờ gửi xong thao tác rồi mở `/godot/index.ht
 
 ### Nghiệm thu trước khi chuyển URL chính
 
-- Dùng nông trại thử, gieo một ô và ghi lại ô, vàng, kho. Mở cùng origin trong Godot, tải lại và đối chiếu. Ghi riêng trường hợp chuyển từ bản lưu offline cũ, vì bản lưu đó nằm trên thiết bị.
+- Dùng nông trại thử, gieo một ô và ghi lại ô, vàng, kho. Mở cùng origin trong Godot, tải lại và đối chiếu.
 - Trên Android và iPhone, cài từ Chrome hoặc Safari rồi mở bằng icon. Ghi thiết bị, phiên bản hệ điều hành, thời gian sẵn sàng lần đầu và lần mở lại, FPS, điều khiển hai ngón, vùng an toàn và âm thanh.
 - Sau khi nông trại đã lưu, thử mở lại khi mất mạng. Đối chiếu bản xem với số dư đã ghi. Kết nối lại và đọc trạng thái máy chủ trước khi thử thao tác tiếp.
 - Giữ artifact Phaser đã kiểm. Đưa bản Godot mới lên cùng origin, đóng cửa sổ Godot và mở lại để kiểm mã bản dựng đã đổi và tiến trình còn đủ. Sau đó mở `/?p1` để diễn tập quay về Phaser và kiểm lại cùng nông trại.
+
+### Mở bản lưu offline cũ của Phaser
+
+Giữ đường dẫn `/?p1&offline` trên origin cũ khi thử chuyển URL chính. Mở bằng trình duyệt đã chơi để tiếp tục bản lưu có trên máy. Lần đầu mở bản Phaser đã tách chế độ, trình duyệt sao chép bản lưu chung hiện có sang ô offline. Sau đó `/?p1&offline` tiếp tục ghi vào ô riêng. Cơ chế này chỉ giữ được dữ liệu còn trong trình duyệt tại thời điểm sao chép. Nhập bản lưu offline vào tài khoản Godot là quyết định riêng ở LT-14.
+
+Nếu Godot báo Phaser còn thao tác chờ, mở `/?p1` cùng origin, chờ đồng bộ rồi quay lại Godot và bấm **Đọc lại**. Kiểm ô ruộng và số dư sau khi đọc lại.
+
+### Phiếu thử PWA trên thiết bị
+
+| Thiết bị và bản hệ điều hành | Trình duyệt | Mở từ icon lần đầu / mở lại | FPS khi đi bộ | Hai ngón, vùng an toàn | Nghe hiệu ứng | Lưu, mất mạng, đọc lại |
+|---|---|---|---|---|---|---|
+| Android | Chrome | | | | | |
+| iPhone | Safari | | | | | |

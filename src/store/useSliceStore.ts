@@ -22,9 +22,11 @@ import { type Action, type ActionResult, applyActions } from '../engine/applyAct
 import type { TilePos } from '../game/slice/estateMap';
 import {
   SLICE_GAME_STAGE,
+  SLICE_OFFLINE_SAVE_KEY,
   SLICE_SAVE_KEY,
   SLICE_SAVE_VERSION,
   newSliceSave,
+  preserveOfflineSliceSave,
   reconcileSliceSave,
   seedForTile,
   sowableSeeds,
@@ -364,9 +366,14 @@ export const useSliceStore = create<SliceState>()(
       reset: (now) => set({ ...initial(now) }),
     }),
     {
-      name: SLICE_SAVE_KEY,
+      name: typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('offline')
+        ? SLICE_OFFLINE_SAVE_KEY
+        : SLICE_SAVE_KEY,
       version: SLICE_SAVE_VERSION,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        preserveOfflineSliceSave(localStorage);
+        return localStorage;
+      }),
       partialize: (s) => ({
         save: s.save,
         seedId: s.seedId,
