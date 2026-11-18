@@ -2,10 +2,11 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
-## 18/11/2026 · Rà bước phát hành Godot P1 · codex/godot-p1-release-qa
-- Bản Chương 1 từ main `b568391` qua 50/50 bước với fixture. Typecheck, 303 test, build Phaser, xuất Godot Web và check:docs qua.
-- Staging HTTPS tạm từng mở được Godot và đọc nông trại mới qua Supabase Auth và PostgreSQL thử trên Mac. Kiểm lại ngày 18/11, hostname tạm không còn phân giải.
-- Dừng ở LT-14 bước 4. Dựng lại staging, hoàn tất kiểm phiên chung, cache, bản lưu và quay lui. Còn mở từ icon, cảm ứng và nghe hiệu ứng trên Android/iPhone thật. Script kiểm Godot trên Mac còn ở bản sửa cục bộ.
+## 18/11/2026 · Staging phát hành Godot P1 · codex/godot-p1-release-qa
+- PO duyệt tiếp LT-14 bước 4. Dựng lại Godot và Phaser cùng origin HTTPS tạm, dùng Supabase Auth và PostgreSQL thử trên Mac.
+- Chrome giữ cùng tài khoản, ô lúa và vàng qua hai client. Giả lập token lỗi thì làm mới phiên. Đạt kiểm điều kiện cài PWA, xem bản lưu khi mất mạng, kết nối lại, nhận phiên bản cache mới và mở lại nông trại trên Phaser. WebKit mở được cảnh đầu. Chrome phát tín hiệu âm thanh khi chuyển trang.
+- Đo một lượt Chrome trên Mac từ tải đến đọc nông trại, 10,0 giây lần đầu và 1,3 giây với cache. Chụp ảnh hai cỡ. Typecheck, 303 test, build, Godot Web/PWA và check:docs qua.
+- Script kiểm fixture chạy trên macOS bằng Python và tách cache từng lượt. Chương 1 qua 50/50, vật nuôi/Bếp/đơn HTX qua 41/41. Chờ kiểm mở từ icon, cảm ứng, âm thanh và hiệu năng trên Android/iPhone thật, cùng phương án cho bản lưu offline cũ.
 
 ## 15/11/2026 · Chương 1 trong Godot P1 · ccr-b91fc534-n2yctl
 - PO duyệt nhánh vật nuôi, Bếp, đơn HTX: đã merge vào `main` tại `225f9b5`. PO yêu cầu làm tiếp cho xong Chương 1.

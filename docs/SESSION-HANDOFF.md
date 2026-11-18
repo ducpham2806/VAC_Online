@@ -23,7 +23,7 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 
 ## Bước tiếp theo
 1. Chương 1 đã ở main và qua 50/50 bước với fixture.
-2. LT-14 bước 4: dựng lại staging HTTPS, kiểm phiên, bản lưu, nâng phiên bản và quay lui. Thử PWA và âm thanh trên Android/iPhone thật.
+2. LT-14 bước 4: staging HTTPS qua phiên chung, cache offline, cập nhật và quay lại Phaser trên Chrome. Còn thử PWA trên Android/iPhone và chốt bản lưu offline cũ.
 3. Đề xuất chạy P1-12 theo LT-13 sau cổng phát hành LT-14.
 4. Việc cũ: ô trắng 844×390 trên điện thoại thật, PO cho phép xóa dữ liệu thử trên DB thật.
 

@@ -24,7 +24,13 @@ func _ready() -> void:
 func cache_path() -> String:
 	if config_error:
 		return ""
-	return online.cache_path() if online != null else FIXTURE_CACHE
+	if online != null:
+		return online.cache_path()
+	if OS.has_feature("editor") and DisplayServer.get_name() == "headless":
+		var qa_cache := OS.get_environment("VAC_GODOT_QA_CACHE")
+		if not qa_cache.is_empty():
+			return qa_cache
+	return FIXTURE_CACHE
 
 
 func send(actions: Array) -> Dictionary:
