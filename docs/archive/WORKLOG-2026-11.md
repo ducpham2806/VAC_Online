@@ -221,3 +221,9 @@
 - Godot headless kiểm sáu chướng ngại, sửa giếng/chuồng/nhà, hai vùng mở tới 28 ô ruộng, xác nhận chi phí, tưới cả loạt và đọc lại. Chrome hai cỡ kiểm hủy, mở vùng, gieo ô mới, kéo hai ô. WebKit đọc lại tiến trình.
 - Typecheck, 303 test, build, Web/PWA export, check:docs và audit ảnh qua. Đã chụp 1280×720 và 844×390.
 - Dừng ở bản chạy cục bộ và nhánh chờ duyệt. Còn chuyển vật nuôi, Bếp Củi và đơn HTX, cùng kiểm PWA trên thiết bị thật.
+
+## 14/11/2026 · Merge Godot điền trang vào main · codex/merge-godot-p1-estate
+- PO yêu cầu merge main. Nhánh nguồn là `codex/godot-p1-estate` tại `953d210`, bản main trước gộp là `2d42566`.
+- Giải quyết ba xung đột thêm cùng file bằng scene `estate_map.tscn`, TileSet và cấu hình Godot của main. Bản đồ 902 ô, tài nguyên và thiết lập Editor của PO được giữ trong cây gộp.
+- Kiểm bản gộp bằng typecheck, 303 test, build và check:docs. Godot headless kiểm cảnh, lịch mùa, xác nhận/hủy, thiếu vật liệu và tìm đường. Xuất Web/PWA qua.
+- Gộp mã và bàn giao vào main theo duyệt của PO. Còn chuyển vật nuôi, Bếp Củi, đơn HTX và kiểm PWA trên Android/iPhone thật.
