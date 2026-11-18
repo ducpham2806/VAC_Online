@@ -89,7 +89,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
 
-15/11: bước 3 đủ nội dung P1.
+15/11 xong bước 3. 18/11 thử lưu offline.
 
 **Tác động**
 

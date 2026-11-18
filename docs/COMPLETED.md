@@ -6,6 +6,7 @@ Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đ
 - Cảnh mở đầu, hướng dẫn 8 bước, NPC có tim, Sổ Gia Phả, âm thanh AR-40. Hết nội dung LT-14 bước 3.
 - Kiểm bằng `tools/qa/godot-chapter1-flow.sh` (50 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-ch1-*`.
 - PO duyệt, đã merge `main` tại `667445e`. Chưa thử Supabase thật và điện thoại.
+- 18/11 kiểm báo cáo LT-13 với nhật ký hướng dẫn Godot trong DB thử.
 
 ## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
 - Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.
@@ -19,6 +20,7 @@ Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đ
 - Vòng lúa qua fixture. HUD, cỏ, cây và ao theo mùa GP-20.
 - Typecheck, 303 test, build, Web/PWA và check:docs qua. Ảnh hai cỡ.
 - PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
+- 18/11 staging kiểm giữ bản lưu Phaser v1 và gửi hàng chờ trước khi mở Godot. Chờ duyệt nhánh.
 
 ## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
 - Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.

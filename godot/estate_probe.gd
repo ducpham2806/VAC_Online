@@ -573,6 +573,8 @@ func _update_guide() -> void:
 	guide_panel.visible = started
 	guide_text.visible = not guide.hidden and not claimed
 	guide_arrow.point_at(_guide_target(steps[index].id) if index >= 0 and not guide.hidden else null)
+	if started:
+		transport.record_tutorial(steps[index].id if index >= 0 else "DONE")
 	if index >= 0:
 		guide_text.text = "Bác Bảy · Bước %d/%d\n%s" % [index + 1, steps.size(), _plain(steps[index].hint)]
 		if guide_step != steps[index].id:
@@ -823,6 +825,9 @@ func _giapha_rows() -> Array:
 		"text": "Âm thanh: %s" % ("đang tắt" if guide.muted else "đang bật"),
 		"buttons": [{"id": "sound", "label": "Bật" if guide.muted else "Tắt"}],
 	})
+	var code: String = transport.playtest_code()
+	if not code.is_empty():
+		rows.append({"text": "Mã chơi thử: %s" % code})
 	return rows
 
 
@@ -1076,6 +1081,7 @@ func _update_season() -> void:
 
 
 func _update_metrics() -> void:
+	transport.flush_playtest()
 	metrics.text = "  %d FPS" % Engine.get_frames_per_second()
 	if ready_ms > 0:
 		metrics.text += " · Tải %.1f s" % (ready_ms / 1000.0)

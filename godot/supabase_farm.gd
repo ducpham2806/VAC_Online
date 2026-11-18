@@ -15,6 +15,7 @@ var http: HTTPRequest
 var event_http: HTTPRequest
 var playtest: Playtest
 var events_inflight := false
+var events_retry_at := 0
 var web_auth: JavaScriptObject
 var web_callback: JavaScriptObject
 var web_account := ""
@@ -84,8 +85,11 @@ func send(actions: Array) -> Dictionary:
 		return {"error": "Chưa đọc được nông trại online. Bấm Đọc lại để kết nối."}
 	body["clockRate"] = 1.0
 	if playtest != null:
-		playtest.record(cache_path(), actions, body)
-		_send_events()
+		var farm_cache := cache_path()
+		if not playtest.path.is_empty() and playtest.path != Playtest.journal_path(farm_cache):
+			playtest = Playtest.new()
+		playtest.record(farm_cache, actions, body)
+		flush_playtest()
 	return body
 
 
@@ -161,16 +165,35 @@ func _save_session() -> void:
 		JavaScriptBridge.force_fs_sync()
 
 
-func _send_events() -> void:
-	if events_inflight or playtest.pending.is_empty():
+func record_tutorial(mark: String) -> void:
+	if playtest == null or playtest.path != Playtest.journal_path(cache_path()):
+		return
+	if playtest.record_tutorial(mark):
+		flush_playtest()
+
+
+func playtest_code() -> String:
+	if playtest == null or playtest.path != Playtest.journal_path(cache_path()):
+		return ""
+	return playtest.player.left(8)
+
+
+func flush_playtest() -> void:
+	var journal := playtest
+	if journal == null or journal.pending.is_empty() or events_inflight or Time.get_ticks_msec() < events_retry_at:
+		return
+	if journal.path != Playtest.journal_path(cache_path()):
 		return
 	events_inflight = true
-	var batch := playtest.pending.slice(0, 500)
+	var batch := journal.pending.slice(0, 500)
 	var headers := _headers(session.access_token)
 	headers.append("Prefer: return=minimal")
 	var reply := await _post(event_http, "/rest/v1/playtest_events", headers, batch)
 	if reply.status >= 200 and reply.status < 300:
-		playtest.confirm(batch.size())
+		journal.confirm(batch.size())
+		events_retry_at = 0
+	else:
+		events_retry_at = Time.get_ticks_msec() + 30000
 	events_inflight = false
 
 

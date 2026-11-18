@@ -88,6 +88,8 @@ Code đang chạy theo **thiết kế cũ**: chạm thẳng, không có mùa, nh
 - `estate_probe.tscn` ghép bản đồ, HUD và API thử. `estate_features.tscn` giữ các marker tương tác với ID P1. Godot lấy ID, kích thước vùng và báo giá GP-14 từ `scripts/export-godot-estate.ts`. Đá và cây mở lối sau khi server xác nhận dọn. Ô khai hoang hiển thị từ bản lưu và đi theo marker vùng. `RicePlot` trong bản đồ là mốc cho cụm ô ban đầu. Godot gieo 5 giống P1, thả nuôi ở marker `Slot_<id>`, mở Kho, Bếp Củi và bảng đơn HTX qua `sheet.gd`. Cảnh mở đầu, hướng dẫn, NPC và Sổ Gia Phả cũng nằm trong `estate_probe.gd`; âm thanh ở `sfx.gd`. Kịch bản kiểm ở `tools/qa/godot-p1-9-flow.sh` và `godot-chapter1-flow.sh`.
 - Godot đọc giờ máy chủ. Lịch GP-20 được xuất từ `scripts/export-godot-seasons.ts`. `Grass By Season` trong Inspector đổi ảnh cỏ, còn tán cây và ao đổi màu theo mùa.
 - Fixture gọi engine qua `tools/qa/godot-farm-fixture.ts`. Chế độ online dùng `supabase_farm.gd` để gọi `apply-actions`. Web dùng `godotWebAuth.ts` để mở phiên Supabase cùng Phaser. Cách chạy ở LT-14.
+- Phaser giữ bản lưu cũ khi tách ô lưu cho `?p1&offline`. `useSliceStore` vẫn đọc định dạng cũ theo phiên bản. Cách mở lại ở [hướng dẫn staging](GODOT-ONLINE.md).
+- Khi bật `playtest`, Godot ghi mốc hướng dẫn và hàng chờ theo tài khoản bằng `online_playtest.gd`. Mã chơi thử ở cuối Sổ Gia Phả. Báo cáo dùng định dạng LT-13.
 - **Engine dùng chung:** `src/engine/applyActions.ts` (ADR-001), Edge Function thử nghiệm đóng gói từ đây. Thao tác: `PLANT`, `WATER`, `HARVEST`, `SELL`, `CLEAR`, `REPAIR`, `RECLAIM`, `TALK`, `GIFT`, `CHOOSE_PATH`, `CLAIM_CHAPTER`; 7 thao tác mới chỉ có trong engine mới, không có RPC SQL cũ.
 - **Store:** 6 slice.
 - **Test:** 303 test TS, 8 file test SQL, 9 test asset.

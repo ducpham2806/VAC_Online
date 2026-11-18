@@ -1,4 +1,4 @@
-# Bàn giao · 15/11/2026 · Godot P1 đủ nội dung Chương 1, đã merge main
+# Bàn giao · 18/11/2026 · Godot P1 ở bước thử phát hành
 
 ## Việc vừa làm
 Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
@@ -22,9 +22,9 @@ Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo 
 - Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
 
 ## Bước tiếp theo
-1. Chương 1 Godot đã ở `main` (`667445e`). Kiểm lại bằng `tools/qa/godot-chapter1-flow.sh`.
-2. LT-14 bước 4: staging với Supabase thử, PWA trên Android/iPhone thật, nghe thử âm thanh.
-3. Đề xuất chạy P1-12 theo LT-13 sau cổng phát hành LT-14.
+1. Chương 1 đã ở main và qua 50/50 bước với fixture.
+2. LT-14 bước 4: staging qua thử phiên, cache, cập nhật và quay về Phaser. Phần giữ bản lưu offline và nhật ký Godot đã được PO duyệt merge. Còn kiểm Android/iPhone và duyệt chính sách offline.
+3. Đã diễn tập báo cáo LT-13 từ Godot. Chạy P1-12 sau cổng LT-14.
 4. Việc cũ: ô trắng 844×390 trên điện thoại thật, PO cho phép xóa dữ liệu thử trên DB thật.
 
 ## Bối cảnh giữ nguyên

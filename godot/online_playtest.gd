@@ -4,13 +4,16 @@ var pending: Array = []
 var player := ""
 var session := 0
 var last_level := -1
+var last_tutorial := ""
 var path := ""
 
+static func journal_path(cache_path: String) -> String:
+	return cache_path.get_basename() + "_events.json"
 
 func record(cache_path: String, actions: Array, reply: Dictionary) -> void:
 	var timestamp := Time.get_datetime_string_from_system(true) + "Z"
 	if path.is_empty():
-		path = cache_path.get_basename() + "_events.json"
+		path = journal_path(cache_path)
 		_open()
 		_add("SESSION", timestamp)
 	var counts := {}
@@ -26,6 +29,15 @@ func record(cache_path: String, actions: Array, reply: Dictionary) -> void:
 		_add("LEVEL", timestamp, "", level)
 	last_level = level
 	_save()
+
+
+func record_tutorial(mark: String) -> bool:
+	if path.is_empty() or mark.is_empty() or mark == last_tutorial:
+		return false
+	last_tutorial = mark
+	_add("TUTORIAL", Time.get_datetime_string_from_system(true) + "Z", mark)
+	_save()
+	return true
 
 
 func confirm(count: int) -> void:
