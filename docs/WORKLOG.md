@@ -6,6 +6,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - PO duyệt tiếp LT-14 bước 4. Tái hiện online ghi đè bản offline vì dùng chung ô lưu. Tách ô lưu cho `?p1&offline` và sao chép một lần bản chung còn trong trình duyệt.
 - Chrome staging 1280×720 và 844×390 đọc mẫu v1 sau khi mở online. Giữ 4.321 vàng, 3 lúa và lựa chọn mở đầu qua tải lại. Godot đợi hàng chờ, Phaser gửi một lần và Godot thấy đúng ô lúa. Chụp đủ hai cỡ.
 - Typecheck, 305 test, build và check:docs qua. Bản sửa chạy trên staging, chờ duyệt merge. Còn kiểm Android/iPhone thật và chốt phương án online/offline trước phát hành.
+- PO yêu cầu tiếp tục kiểm PWA. Chrome 844×390 mô phỏng hai ngón giữ joystick, gieo và tải lại đúng ô. Mac kết nối iPhone 14 Pro Max qua iPhone Mirroring, điều khiển Safari gián đoạn trước khi mở staging. Chrome trên Mac thiếu lệnh cài qua DevTools. Chờ thử từ icon trực tiếp trên iPhone và Android.
 
 ## 18/11/2026 · Staging phát hành Godot P1 · codex/godot-p1-release-qa
 - PO duyệt tiếp LT-14 bước 4. Dựng lại Godot và Phaser cùng origin HTTPS tạm, dùng Supabase Auth và PostgreSQL thử trên Mac.

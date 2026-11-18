@@ -36,6 +36,10 @@ Nếu Godot báo Phaser còn thao tác chờ, mở `/?p1` cùng origin, chờ đ
 
 ### Phiếu thử PWA trên thiết bị
 
+1. Mở link staging trong Safari hoặc Chrome. Thêm vào màn hình chính, sau đó mở Godot từ icon vừa tạo.
+2. Xoay ngang và giữ joystick bằng một ngón. Dùng ngón kia chạm ô ruộng để gieo. Nghe hiệu ứng lúc lật trang hoặc gieo. Ghi FPS trên HUD khi đi.
+3. Ghi số vàng và ô đã gieo. Đóng app rồi mở lại từ icon. Ghi thời gian HUD báo tải và đối chiếu nông trại. Lặp lại một lần khi mất mạng rồi kết nối lại.
+
 | Thiết bị và bản hệ điều hành | Trình duyệt | Mở từ icon lần đầu / mở lại | FPS khi đi bộ | Hai ngón, vùng an toàn | Nghe hiệu ứng | Lưu, mất mạng, đọc lại |
 |---|---|---|---|---|---|---|
 | Android | Chrome | | | | | |
