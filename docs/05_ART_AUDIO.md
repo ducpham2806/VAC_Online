@@ -52,8 +52,8 @@ Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixe
 ### AR-30 · Hoạt ảnh
 - **Vòng lặp:** 8–12 frame ở 8–15 FPS. Chân bám đất (planted feet).
 - **Nhân vật người chơi** (4 hướng, 8 frame mỗi clip): đứng, đi, cuốc, tưới, gặt (liềm), rìu/búa, câu cá, cho ăn, cầm đồ.
-- **Vật nuôi:** đứng, đi, ăn, vui.
-- **NPC:** đứng, đi, nói chuyện. Thợ làm việc thì thêm clip làm việc.
+- **Vật nuôi:** đứng, đi, ăn, vui. Gà/vịt nghỉ giữa các đợt mổ, rỉa lông và bước ngắn; cá chủ yếu lặn, thỉnh thoảng nổi → nhảy → lặn, có gợn nước. Nhịp độc lập từng con, không gắn hoạt ảnh vào trạng thái tới lứa.
+- **NPC:** đứng, đi, nói chuyện. Với bộ ảnh P1 hiện có, dùng thở nhẹ, đổi dáng và bước ngắn quanh chỗ đứng, giữ marker tương tác; chưa có clip đi đủ hướng. Thợ làm việc thì thêm clip làm việc.
 - **Cây:** 4 giai đoạn (hạt → non → ra hoa/trái xanh → chín) + biến thể Hoàng Kim.
 - **Phản hồi chạm:** tween `scaleX 1,07 / scaleY 0,92` trong 90 ms + 6–12 hạt + âm thanh.
 - **Cảnh:** sóng lúa và mặt nước lệch pha theo vị trí.

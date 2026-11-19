@@ -8,9 +8,6 @@
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_1.png" id="left_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_2.png" id="left_2"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_left_3.png" id="left_3"]
-[ext_resource type="Texture2D" path="res://generated/farmer_walk_right_1.png" id="right_1"]
-[ext_resource type="Texture2D" path="res://generated/farmer_walk_right_2.png" id="right_2"]
-[ext_resource type="Texture2D" path="res://generated/farmer_walk_right_3.png" id="right_3"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_0.png" id="up_0"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_1.png" id="up_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_2.png" id="up_2"]
@@ -19,7 +16,7 @@
 [resource]
 animations = [
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("down_0")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("down_1")}],
 "loop": false,
 "name": &"idle_down",
 "speed": 8.0
@@ -31,31 +28,31 @@ animations = [
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("left_0")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_2")}],
 "loop": false,
 "name": &"idle_left",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("left_0")}, {"duration": 1.0, "texture": ExtResource("left_1")}, {"duration": 1.0, "texture": ExtResource("left_2")}, {"duration": 1.0, "texture": ExtResource("left_3")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_0")} , {"duration": 1.0, "texture": ExtResource("left_2")} , {"duration": 1.0, "texture": ExtResource("left_1")} , {"duration": 1.0, "texture": ExtResource("left_3")} ],
 "loop": true,
 "name": &"walk_left",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("right_1")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_2")}],
 "loop": false,
 "name": &"idle_right",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("right_1")}, {"duration": 1.0, "texture": ExtResource("right_2")}, {"duration": 1.0, "texture": ExtResource("right_3")}, {"duration": 1.0, "texture": ExtResource("right_2")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_0")} , {"duration": 1.0, "texture": ExtResource("left_2")} , {"duration": 1.0, "texture": ExtResource("left_1")} , {"duration": 1.0, "texture": ExtResource("left_3")} ],
 "loop": true,
 "name": &"walk_right",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": ExtResource("up_0")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("up_1")}],
 "loop": false,
 "name": &"idle_up",
 "speed": 8.0

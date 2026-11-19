@@ -2,6 +2,15 @@
 
 Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
+- Theo prompt nguồn, AR-30; dùng ảnh hiện có.
+- Gà/vịt có khoảng nghỉ; cá chủ yếu lặn; chân điền chủ theo quãng đường.
+- NPC có nhịp riêng và bước ngắn; cây/lúa có gió giữ gốc.
+- F6 `godot/animation_preview.tscn` để xem riêng, không đổi bản lưu.
+- Kiểm chuyển động 19/19, Chương 1 50/50, P1-9 41/41; Chrome hai cỡ qua.
+- Typecheck, 305 test, build qua. Chưa merge/phát hành; chưa có clip NPC đi đủ hướng.
+- [Scene nông trại đã merge](archive/COMPLETED-2026-11.md). Tiếp LT-14.
+
 ## Vùng an toàn Godot Web/PWA · 19/11/2026 · codex/godot-pwa-safe-area
 - HUD, bảng và xác nhận dùng chung `safe_area.gd`, giữ lề scene.
 - Quy đổi CSS env sang đơn vị UI theo canvas; cập nhật khi đổi kích thước.
@@ -15,14 +24,6 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - Kiểm bằng `tools/qa/godot-p1-9-flow.sh` (41 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-p1-9-*`.
 - Bản ghim Game Studio lên `fa7b1db`, 125 skill. Cách cập nhật ở docs/studio/INSTALLATION.md.
 - PO duyệt, đã merge `main` tại `225f9b5`. Chưa thử Supabase thật và điện thoại.
-
-## Scene nông trại Godot · 14/11/2026 · main
-- Bản đồ, công trình, chướng ngại và vùng đất chỉnh trong Godot Editor. Cách chạy ở LT-14.
-- Dọn, sửa, khai hoang theo GP-14. Kiểm hủy xác nhận, tưới cả loạt và mở lại ô mới.
-- Vòng lúa qua fixture. HUD, cỏ, cây và ao theo mùa GP-20.
-- Typecheck, 303 test, build, Web/PWA và check:docs qua. Ảnh hai cỡ.
-- PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
-- 18/11 staging kiểm giữ bản lưu Phaser v1 và gửi hàng chờ trước khi mở Godot. Chờ duyệt nhánh.
 
 ## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
 - Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.

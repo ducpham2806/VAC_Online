@@ -89,7 +89,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
 
-15/11 xong bước 3; 19/11 thử safe-area.
+15/11 xong bước 3; 19/11 rà animation.
 
 **Tác động**
 
