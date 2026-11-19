@@ -14,3 +14,10 @@
 - PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
 - 18/11 staging kiểm giữ bản lưu Phaser v1 và gửi hàng chờ trước khi mở Godot. Chờ duyệt nhánh.
 
+## Vùng an toàn Godot Web/PWA · 19/11/2026 · codex/godot-pwa-safe-area
+- HUD, bảng và xác nhận dùng chung `safe_area.gd`, giữ lề scene.
+- Quy đổi CSS env sang đơn vị UI theo canvas; cập nhật khi đổi kích thước.
+- Xuất Web; Chrome hai cỡ UI-10 qua mô phỏng vùng khuyết và đổi cỡ.
+- Chương 1 50/50, typecheck, 305 test, build, kiểm scene qua.
+- Chưa merge/phát hành; native và điện thoại thật chưa nghiệm thu.
+- Tiếp cổng LT-14 trước P1-12. [Chương 1 đã merge](archive/COMPLETED-2026-11.md).

@@ -2,6 +2,13 @@
 
 Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
+- Hai client cùng commit, một origin, có mã bản dựng và checksum.
+- Qua thử nâng cấp `3fb5ea0 → e26571b` bằng hai gói thật.
+- Chrome giữ phiên, bản xem khi mất mạng và dữ liệu khi quay lui.
+- Hai ngón mô phỏng qua. Typecheck, 305 test, build qua.
+- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn thử điện thoại thật trước LT-13.
+
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
 - Điền chủ dùng 4 khung gốc xen 4 khung chèn. NPC nhấc chân, cây/lúa có gió.
@@ -9,14 +16,6 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - Motion 30/30, Chương 1 50/50, P1-9 41/41, Chrome hai cỡ qua.
 - Typecheck, 305 test, build, test art qua. Chưa merge/phát hành.
 - [Scene nông trại đã merge](archive/COMPLETED-2026-11.md). Tiếp LT-14.
-
-## Vùng an toàn Godot Web/PWA · 19/11/2026 · codex/godot-pwa-safe-area
-- HUD, bảng và xác nhận dùng chung `safe_area.gd`, giữ lề scene.
-- Quy đổi CSS env sang đơn vị UI theo canvas; cập nhật khi đổi kích thước.
-- Xuất Web; Chrome hai cỡ UI-10 qua mô phỏng vùng khuyết và đổi cỡ.
-- Chương 1 50/50, typecheck, 305 test, build, kiểm scene qua.
-- Chưa merge/phát hành; native và điện thoại thật chưa nghiệm thu.
-- Tiếp cổng LT-14 trước P1-12. [Chương 1 đã merge](archive/COMPLETED-2026-11.md).
 
 ## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
 - Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.

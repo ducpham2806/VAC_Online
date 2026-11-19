@@ -1,6 +1,6 @@
 # Lưu online cho bản thử Godot
 
-Thuộc LT-14 bước 2. Tạo `godot/generated/godot_online.json` trước khi mở Editor hoặc xuất Web. Thư mục `generated` nằm ngoài Git.
+Thuộc LT-14 bước 2. Tạo `godot/generated/godot_online.json` trước khi mở Editor hoặc xuất Web. Tệp cấu hình này được bỏ qua khi commit.
 
 ```json
 {
@@ -18,6 +18,17 @@ Web và native dùng chung cách gọi API. Godot Web dùng Supabase SDK để �
 ## Staging Web và PWA
 
 Đặt bản Phaser ở gốc và bản Godot ở `/godot/` trên cùng origin HTTPS. Dùng cùng URL và khóa công khai trong cấu hình Vite của Phaser và tệp Godot. Chạy `npm run build` cho Phaser, rồi `bash scripts/build-godot-web.sh` cho Godot. Đưa nội dung `godot/dist/` vào `dist/godot/` sau khi xuất. Script Godot đóng gói SDK cho phiên Web vào HTML để PWA vẫn mở được từ cache.
+
+Đóng gói cả hai client từ cùng commit vào một thư mục mới:
+
+```bash
+VAC_STAGING_API_URL=https://api-thu.example.org \
+VAC_STAGING_PUBLISHABLE_KEY=sb_publishable_... \
+GODOT_BIN=/duong/dan/Godot \
+bash scripts/build-godot-staging.sh /duong/dan/staging-moi
+```
+
+Mặc định đóng gói HEAD. Đặt `VAC_STAGING_REF` để chọn commit cần kiểm hoặc bản cũ lúc thử cập nhật. Script lấy mã đã commit, dựng trong thư mục tạm và chỉ xuất kết quả khi đủ tệp. `/godot/build-info.json` ghi commit và SHA-256 của các tệp PWA chính để đối chiếu khi đổi bản. Gói staging này tắt nhật ký chơi thử.
 
 Mở Phaser tại `/?p1`, chờ gửi xong thao tác rồi mở `/godot/index.html` trong cùng trình duyệt. Nếu Phaser còn hàng chờ, quay lại Phaser để đồng bộ rồi bấm **Đọc lại** trong Godot. Khi thử trên Android và iPhone, mở link Godot trong Chrome hoặc Safari, thêm vào màn hình chính, sau đó kiểm phiên, kho, cảm ứng và tốc độ tải khi mở từ icon.
 

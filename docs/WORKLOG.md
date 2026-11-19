@@ -2,6 +2,11 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
+## 19/11/2026 · Nghiệm thu staging Web/PWA · codex/godot-pwa-staging-qa
+- Tiếp LT-14 bước 4. Thêm script đóng gói Phaser và Godot từ cùng commit để phục vụ cùng origin, kèm checksum. Xuất `3fb5ea0` và `e26571b` bằng Godot trên Mac.
+- HTTPS staging dùng GoTrue và PostgreSQL thử. Chrome giữ một danh tính và ô lúa/2.498 vàng sau làm mới phiên, mất mạng, cập nhật PWA và quay Phaser. Hai ngón mô phỏng đạt. WebKit giữ phiên khi tải lại bản mới. Typecheck, 305 test, build, check:docs qua.
+- Đang phục vụ `e26571b` trên tunnel thử. Chưa phát hành URL chính. Dừng ở nghiệm thu từ icon trên Android/iPhone thật và PO chốt offline. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
+
 ## 19/11/2026 · Sửa hoạt ảnh nông trại Godot · codex/godot-living-farm-animation
 - PO yêu cầu sửa theo prompt repo. Đối chiếu `p0_samples`, `p1_estate_npc`, `p1_nature` và AR-30. Gà/vịt có nghỉ, mổ, rỉa lông, bước ngắn; cá lặn/nổi/nhảy; chân điền chủ theo quãng đường, sửa thứ tự đi ngang và hướng phải. NPC thở, nói, bước quanh trong vùng marker. Cây/lúa có gió giữ gốc. Dùng khung sẵn có, chưa có clip NPC đi đủ hướng.
 - Thêm cảnh `animation_preview.tscn` chạy F6 không chạm bản lưu. Godot trên Mac xuất Web; kiểm chuyển động 19/19, Chương 1 50/50, vật nuôi/Bếp/đơn 41/41. Chrome cảnh thật và preview hai cỡ UI-10 không lỗi; đã chụp ảnh và ghi WebM. Kiểm màu/viền/nền 52 PNG nguồn qua; không đổi PNG. Typecheck, 305 test và build qua.
@@ -15,9 +20,3 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - Tiếp LT-14 bước 4 theo PO. Thêm `safe_area.gd` cho HUD, bảng danh sách và nội dung xác nhận; giữ lề gốc chỉnh trong scene. Bản Web đọc CSS safe-area, quy đổi theo canvas; cập nhật khi đổi kích thước. Native có nhánh đọc vùng an toàn nhưng chưa kiểm thiết bị.
 - Xuất Web bằng Godot trên Mac từ bản sao tạm. Chrome 1280×720 và 844×390 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía; có ảnh, không lỗi trình duyệt. Chương 1 qua 50/50; cảnh/tài nguyên qua kiểm cấu trúc. Typecheck, 305 test và build qua.
 - Đã code trên nhánh riêng, chưa merge/phát hành. Còn kiểm icon PWA, cảm ứng, âm thanh và hiệu năng Android/iPhone thật. Dừng ở cổng nghiệm thu LT-14, chưa mở P1-12.
-
-## 18/11/2026 · Nhật ký chơi thử Godot P1 · codex/godot-p1-playtest-report
-- PO yêu cầu phát triển tiếp. Nối mốc hướng dẫn và DONE vào nhật ký LT-13. Hàng chờ lưu theo tài khoản và tự thử lại. Mã chơi thử ở cuối Sổ Gia Phả.
-- Godot online cục bộ qua Supabase Auth và PostgreSQL thử chạy Chương 1 50/50. Xuất view và chạy báo cáo thật, nhận đúng tám bước, DONE và nhận thưởng. D1 còn 0 người đủ điều kiện vì đây là lượt diễn tập.
-- Chrome hai cỡ gửi phiên và mốc MOVE, có ảnh. Typecheck, 305 test, build, xuất Web/PWA và check:docs qua. Đã code trên nhánh riêng, chưa bật nhật ký trên URL thử công khai. Còn kiểm PWA trên Android/iPhone và chờ duyệt phát hành.
-- PO duyệt merge `codex/godot-p1-playtest-report` tại `cf53a36` vào main, gồm bản lưu offline và bộ kiểm Godot trên Mac. Phát hành PWA và mời nhóm thử theo LT-13 vẫn chờ kiểm điện thoại thật.
