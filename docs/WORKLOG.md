@@ -7,6 +7,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - Thêm cảnh `animation_preview.tscn` chạy F6 không chạm bản lưu. Godot trên Mac xuất Web; kiểm chuyển động 19/19, Chương 1 50/50, vật nuôi/Bếp/đơn 41/41. Chrome cảnh thật và preview hai cỡ UI-10 không lỗi; đã chụp ảnh và ghi WebM. Kiểm màu/viền/nền 52 PNG nguồn qua; không đổi PNG. Typecheck, 305 test và build qua.
 - Nhánh kế thừa safe-area `94ae93e`, chưa merge/phát hành, không đổi DB/kinh tế. Dừng ở nghiệm thu hình ảnh; điện thoại thật chưa kiểm. Bằng chứng tạm tại `/private/tmp/vac-animation-current`, ảnh/video `godot-animation-*` trong thư mục visualizations của phiên.
 - PO góp ý bước ngang và đầu cá. Đã dựng 8 khung đi ngang có chân trụ và chân vung, thêm atlas bước gà/vịt và NPC. Cá xoay theo cung, đầu lên khi bật và chúi khi rơi. Motion 25/25, 5 atlas qua kiểm palette và alpha. Chrome cảnh F6 hai cỡ qua, có WebM lượt sửa. Chờ PO xem lại chuyển động trên nhánh.
+- PO thấy chân bị bóp. Phục hồi dáng đứng và bốn khung đi ngang gốc trong clip. Chỉ chèn bốn khung dịch pixel ống quần/giày. Motion 28/28 có kiểm texture gốc và pixel thân. Typecheck, 305 test, 9 test art, build và check:docs qua. Có dải khung đối chiếu và video lượt sửa. Nhánh chờ duyệt hình ảnh.
 
 ## 19/11/2026 · Vùng an toàn Web/PWA Godot · codex/godot-pwa-safe-area
 - Tiếp LT-14 bước 4 theo PO. Thêm `safe_area.gd` cho HUD, bảng danh sách và nội dung xác nhận; giữ lề gốc chỉnh trong scene. Bản Web đọc CSS safe-area, quy đổi theo canvas; cập nhật khi đổi kích thước. Native có nhánh đọc vùng an toàn nhưng chưa kiểm thiết bị.

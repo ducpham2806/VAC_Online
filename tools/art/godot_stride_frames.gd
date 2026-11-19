@@ -1,41 +1,15 @@
 extends SceneTree
 ## From the repository root: godot --headless --script tools/art/godot_stride_frames.gd
-## Build pixel keyframes on the original sprites, with palette colours and pinned contact feet.
+## Build walk in-betweens from the original sprite pixels.
 
 const INK := Color("#3d2314")
-const DARK := Color("#3e474d")
-const CLOTH := Color("#5c6b73")
-const LIGHT := Color("#8e9a9f")
 const SHOE := Color("#a0673a")
-const SHOE_LIGHT := Color("#dca57a")
 const SOURCE := "art/source/p0_ai/"
 const OUTPUT := "godot/sprites/"
 
 
 func _initialize() -> void:
-	var torso := Image.load_from_file(SOURCE + "farmer_walk_left_2.png")
-	var atlas := Image.create_empty(48 * 9, 64, false, Image.FORMAT_RGBA8)
-	# One leg plants and travels back under the hip. The other bends, clears it and reaches forward.
-	var ankle_x := [11, 17, 23, 29, 35, 31, 23, 16]
-	var ankle_y := [59, 59, 59, 58, 57, 51, 52, 56]
-	var knee_x := [19, 20, 22, 25, 27, 25, 18, 17]
-	var knee_y := [50, 51, 51, 51, 51, 48, 48, 50]
-	var lift := [0, 1, 0, -1, 0, 1, 0, -1]
-	for i in range(8):
-		var art := Image.create_empty(48, 64, false, Image.FORMAT_RGBA8)
-		var far := (i + 4) % 8
-		_leg(art, Vector2i(27, 44 + lift[i]), Vector2i(knee_x[far] + 2, knee_y[far]),
-			Vector2i(ankle_x[far], ankle_y[far] - 1), true, far)
-		_leg(art, Vector2i(23, 44 + lift[i]), Vector2i(knee_x[i], knee_y[i]),
-			Vector2i(ankle_x[i], ankle_y[i]), false, i)
-		_torso(art, torso, lift[i])
-		atlas.blit_rect(art, Rect2i(0, 0, 48, 64), Vector2i(i * 48, 0))
-	var idle := Image.create_empty(48, 64, false, Image.FORMAT_RGBA8)
-	_leg(idle, Vector2i(27, 44), Vector2i(28, 51), Vector2i(27, 58), true, 2)
-	_leg(idle, Vector2i(23, 44), Vector2i(22, 51), Vector2i(22, 59), false, 2)
-	_torso(idle, torso, 0)
-	atlas.blit_rect(idle, Rect2i(0, 0, 48, 64), Vector2i(8 * 48, 0))
-	var error := atlas.save_png(OUTPUT + "farmer_stride.png")
+	var error := _farmer_inbetweens()
 	for id in ["ANI_01", "ANI_03"]:
 		if error == OK:
 			error = _bird_stride(id)
@@ -45,32 +19,37 @@ func _initialize() -> void:
 	quit(error)
 
 
-func _torso(art: Image, source: Image, bob: int) -> void:
-	art.blit_rect_mask(source, source, Rect2i(0, 0, 48, 45), Vector2i(0, bob + 1))
-	# Preserve the dangling hand below the shirt hem.
-	art.blit_rect_mask(source, source, Rect2i(24, 45, 6, 2), Vector2i(24, 46 + bob))
+func _farmer_inbetweens() -> Error:
+	var atlas := Image.create_empty(48 * 4, 64, false, Image.FORMAT_RGBA8)
+	# Match the four original contacts in SpriteFrames. The legs overlap on the passing poses,
+	# but every row retains its original width, outline and colours.
+	var contacts := [0, 2, 1, 3]
+	var front_in := [6, 3, 8, 5]
+	var rear_in := [9, 6, 5, 3]
+	var bend_front := [0, 2, 2, 0]
+	var bend_rear := [2, 0, 0, 2]
+	for i in range(contacts.size()):
+		var source := Image.load_from_file(SOURCE + "farmer_walk_left_%d.png" % contacts[i])
+		if source == null or source.get_size() != Vector2i(48, 64):
+			push_error("Missing 48x64 farmer contact frame %d" % contacts[i])
+			return ERR_FILE_CORRUPT
+		var pose := source.duplicate() as Image
+		# At row 53 the two legs separate. Everything above it comes directly from the contact.
+		pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
+		_shift_leg_rows(pose, source, 26, 48, -rear_in[i], bend_rear[i])
+		_shift_leg_rows(pose, source, 0, 26, front_in[i], bend_front[i])
+		atlas.blit_rect(pose, Rect2i(0, 0, 48, 64), Vector2i(i * 48, 0))
+	return atlas.save_png(OUTPUT + "farmer_stride.png")
 
 
-func _leg(art: Image, hip: Vector2i, knee: Vector2i, ankle: Vector2i, far: bool, phase: int) -> void:
-	var hx := hip.x
-	var kx := knee.x
-	var ax := ankle.x
-	var upper := PackedVector2Array([hip + Vector2i(-4, -1), hip + Vector2i(4, -1),
-		knee + Vector2i(3, -1), ankle + Vector2i(2, 1), ankle + Vector2i(-3, 1),
-		knee + Vector2i(-4, 0)])
-	_polygon(art, upper, INK)
-	_polygon(art, PackedVector2Array([Vector2i(hx - 3, hip.y), Vector2i(hx + 3, hip.y),
-		Vector2i(kx + 2, knee.y), Vector2i(ax + 1, ankle.y), Vector2i(ax - 2, ankle.y),
-		Vector2i(kx - 3, knee.y)]), DARK if far else CLOTH)
-	if not far:
-		_polygon(art, PackedVector2Array([knee + Vector2i(-2, -3), knee + Vector2i(1, -2),
-			knee + Vector2i(1, 1), knee + Vector2i(-2, 0)]), LIGHT)
-	var toe := ankle + Vector2i(-5, -1 if phase in [0, 7] else (2 if phase == 4 else 1))
-	_polygon(art, PackedVector2Array([toe + Vector2i(0, -1), ankle + Vector2i(2, -2),
-		ankle + Vector2i(3, 1), ankle + Vector2i(2, 2), toe + Vector2i(1, 2),
-		toe + Vector2i(-1, 0)]), INK)
-	_polygon(art, PackedVector2Array([toe, ankle + Vector2i(1, -1), ankle + Vector2i(2, 1),
-		toe + Vector2i(1, 1)]), SHOE if far else SHOE_LIGHT)
+func _shift_leg_rows(pose: Image, source: Image, left: int, right: int, travel: int, lift: int) -> void:
+	for y in range(53, 63):
+		var weight := smoothstep(53.0, 61.0, float(y))
+		var dx := roundi(travel * weight)
+		var dy := roundi(lift * smoothstep(56.0, 62.0, float(y)))
+		# Keep the calf and shoe pixels attached, reaching the toe lift over several rows.
+		var row := Rect2i(left, y, right - left, 1)
+		pose.blit_rect_mask(source, source, row, Vector2i(left + dx, y - dy))
 
 
 func _bird_stride(id: String) -> Error:

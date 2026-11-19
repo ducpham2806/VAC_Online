@@ -50,7 +50,7 @@ Viền ấm chọn lọc theo chất liệu:
 Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixel đen.
 
 ### AR-30 · Hoạt ảnh
-- **Vòng lặp:** 8–12 frame ở 8–15 FPS. Chân bám đất (planted feet). Bước ngang có đặt gót, dồn lực, chân vung đi qua và nhấc gót ở mỗi nửa vòng.
+- **Vòng lặp:** 8–12 frame ở 8–15 FPS. Chân bám đất (planted feet). Bước ngang xen khung chuyển tiếp giữa các dáng gốc để thấy dồn lực và chân vung. Giữ thân, độ dài và độ dày ống quần theo sprite gốc.
 - **Nhân vật người chơi** (4 hướng, 8 frame mỗi clip): đứng, đi, cuốc, tưới, gặt (liềm), rìu/búa, câu cá, cho ăn, cầm đồ.
 - **Vật nuôi:** đứng, đi, ăn, vui. Gà/vịt nghỉ giữa các đợt mổ, rỉa lông và bước ngắn; cá chủ yếu lặn, thỉnh thoảng nổi → nhảy → lặn. Đầu cá xoay theo hướng bay, tới nước có gợn và giọt bắn. Nhịp độc lập từng con, không gắn hoạt ảnh vào trạng thái tới lứa.
 - **NPC:** đứng, đi, nói chuyện. Với bộ ảnh P1 hiện có, dùng thở nhẹ, đổi dáng và nhấc từng chân khi bước ngắn quanh chỗ đứng, giữ marker tương tác; chưa có clip đi đủ hướng. Thợ làm việc thì thêm clip làm việc.

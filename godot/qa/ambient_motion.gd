@@ -13,6 +13,16 @@ func check(ok: bool, label: String) -> void:
 		failures += 1
 	print(("PASS " if ok else "FAIL ") + label)
 
+func same_visible_pixels(actual: Image, original: Image, region: Rect2i) -> bool:
+	for y in range(region.position.y, region.end.y):
+		for x in range(region.position.x, region.end.x):
+			var a := actual.get_pixel(x, y)
+			var b := original.get_pixel(x, y)
+			# Godot may fill the RGB of transparent texels at import to prevent edge halos.
+			if (a.a > 0.0 or b.a > 0.0) and a != b:
+				return false
+	return true
+
 func _run() -> void:
 	var farmer = load("res://farmer.tscn").instantiate()
 	root.add_child(farmer)
@@ -25,6 +35,22 @@ func _run() -> void:
 	for i in range(stride.get_frame_count(&"walk_right")):
 		unique_poses[stride.get_frame_texture(&"walk_right", i).get_image().get_data()] = true
 	check(unique_poses.size() == 8, "duỗi, dồn lực, chân ngang và nhấc gót có 8 dáng riêng")
+	var contacts := [0, 2, 1, 3]
+	var originals_match := true
+	var inbetweens_keep_body := true
+	var body := Rect2i(0, 0, 48, 53)
+	for i in range(contacts.size()):
+		var original: Texture2D = load("res://generated/farmer_walk_left_%d.png" % contacts[i])
+		for clip in [&"walk_left", &"walk_right"]:
+			originals_match = originals_match and stride.get_frame_texture(clip, i * 2) == original
+			var inserted := stride.get_frame_texture(clip, i * 2 + 1).get_image()
+			inbetweens_keep_body = inbetweens_keep_body and same_visible_pixels(inserted, original.get_image(), body)
+	check(originals_match, "bốn khung chính của mỗi hướng trỏ đúng texture gốc theo thứ tự")
+	check(inbetweens_keep_body, "bốn khung chèn giữ nguyên pixel đầu, thân và hông")
+	var idle_original := load("res://generated/farmer_walk_left_2.png") as Texture2D
+	check(stride.get_frame_texture(&"idle_left", 0) == idle_original and
+		stride.get_frame_texture(&"idle_right", 0) == idle_original, "dáng đứng ngang dùng lại texture gốc")
+
 	var distance: float = farmer.walk_distance
 	farmer.step_toward(farmer.position, 1.0)
 	check(farmer.walk_distance == distance and str(farmer.animation).begins_with("idle"), "dừng thì không chạy chân")

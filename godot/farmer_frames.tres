@@ -4,6 +4,10 @@
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_down_1.png" id="down_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_down_2.png" id="down_2"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_down_3.png" id="down_3"]
+[ext_resource type="Texture2D" path="res://generated/farmer_walk_left_0.png" id="left_0"]
+[ext_resource type="Texture2D" path="res://generated/farmer_walk_left_1.png" id="left_1"]
+[ext_resource type="Texture2D" path="res://generated/farmer_walk_left_2.png" id="left_2"]
+[ext_resource type="Texture2D" path="res://generated/farmer_walk_left_3.png" id="left_3"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_0.png" id="up_0"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_1.png" id="up_1"]
 [ext_resource type="Texture2D" path="res://generated/farmer_walk_up_2.png" id="up_2"]
@@ -11,41 +15,21 @@
 
 [ext_resource type="Texture2D" path="res://sprites/farmer_stride.png" id="stride"]
 
-[sub_resource type="AtlasTexture" id="stride_0"]
+[sub_resource type="AtlasTexture" id="inbetween_0"]
 atlas = ExtResource("stride")
 region = Rect2(0, 0, 48, 64)
 
-[sub_resource type="AtlasTexture" id="stride_1"]
+[sub_resource type="AtlasTexture" id="inbetween_1"]
 atlas = ExtResource("stride")
 region = Rect2(48, 0, 48, 64)
 
-[sub_resource type="AtlasTexture" id="stride_2"]
+[sub_resource type="AtlasTexture" id="inbetween_2"]
 atlas = ExtResource("stride")
 region = Rect2(96, 0, 48, 64)
 
-[sub_resource type="AtlasTexture" id="stride_3"]
+[sub_resource type="AtlasTexture" id="inbetween_3"]
 atlas = ExtResource("stride")
 region = Rect2(144, 0, 48, 64)
-
-[sub_resource type="AtlasTexture" id="stride_4"]
-atlas = ExtResource("stride")
-region = Rect2(192, 0, 48, 64)
-
-[sub_resource type="AtlasTexture" id="stride_5"]
-atlas = ExtResource("stride")
-region = Rect2(240, 0, 48, 64)
-
-[sub_resource type="AtlasTexture" id="stride_6"]
-atlas = ExtResource("stride")
-region = Rect2(288, 0, 48, 64)
-
-[sub_resource type="AtlasTexture" id="stride_7"]
-atlas = ExtResource("stride")
-region = Rect2(336, 0, 48, 64)
-
-[sub_resource type="AtlasTexture" id="stride_8"]
-atlas = ExtResource("stride")
-region = Rect2(384, 0, 48, 64)
 
 [resource]
 animations = [
@@ -62,25 +46,25 @@ animations = [
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": SubResource("stride_8")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_2")}],
 "loop": false,
 "name": &"idle_left",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": SubResource("stride_0")}, {"duration": 1.0, "texture": SubResource("stride_1")}, {"duration": 1.0, "texture": SubResource("stride_2")}, {"duration": 1.0, "texture": SubResource("stride_3")}, {"duration": 1.0, "texture": SubResource("stride_4")}, {"duration": 1.0, "texture": SubResource("stride_5")}, {"duration": 1.0, "texture": SubResource("stride_6")}, {"duration": 1.0, "texture": SubResource("stride_7")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_0")}, {"duration": 1.0, "texture": SubResource("inbetween_0")}, {"duration": 1.0, "texture": ExtResource("left_2")}, {"duration": 1.0, "texture": SubResource("inbetween_1")}, {"duration": 1.0, "texture": ExtResource("left_1")}, {"duration": 1.0, "texture": SubResource("inbetween_2")}, {"duration": 1.0, "texture": ExtResource("left_3")}, {"duration": 1.0, "texture": SubResource("inbetween_3")}],
 "loop": true,
 "name": &"walk_left",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": SubResource("stride_8")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_2")}],
 "loop": false,
 "name": &"idle_right",
 "speed": 8.0
 },
 {
-"frames": [{"duration": 1.0, "texture": SubResource("stride_0")}, {"duration": 1.0, "texture": SubResource("stride_1")}, {"duration": 1.0, "texture": SubResource("stride_2")}, {"duration": 1.0, "texture": SubResource("stride_3")}, {"duration": 1.0, "texture": SubResource("stride_4")}, {"duration": 1.0, "texture": SubResource("stride_5")}, {"duration": 1.0, "texture": SubResource("stride_6")}, {"duration": 1.0, "texture": SubResource("stride_7")}],
+"frames": [{"duration": 1.0, "texture": ExtResource("left_0")}, {"duration": 1.0, "texture": SubResource("inbetween_0")}, {"duration": 1.0, "texture": ExtResource("left_2")}, {"duration": 1.0, "texture": SubResource("inbetween_1")}, {"duration": 1.0, "texture": ExtResource("left_1")}, {"duration": 1.0, "texture": SubResource("inbetween_2")}, {"duration": 1.0, "texture": ExtResource("left_3")}, {"duration": 1.0, "texture": SubResource("inbetween_3")}],
 "loop": true,
 "name": &"walk_right",
 "speed": 8.0
