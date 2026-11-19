@@ -5,6 +5,7 @@ const PAPER := Color("#f3e3c3")
 const FOLIAGE := {"HA": Color("#e8ffe0"), "THU": Color("#ffd890"), "DONG": Color("#b8b0a0")}
 const WATER := {"THU": Color("#3a7f7a"), "DONG": Color("#5e7f78")}
 
+@export_range(0.0, 3.0) var tree_wind_strength := 1.2
 @export var wild_grass: Texture2D
 @export var wild_weed: Texture2D
 
@@ -16,9 +17,7 @@ var tile_size := 32.0
 var ground: TileMapLayer
 var navigation := AStarGrid2D.new()
 var npc_frames: Dictionary[String, Dictionary] = {}
-var npc_frame := 0
-var talking := ""
-var talk_steps := 0
+const Wind := preload("res://ambient_wind.gdshader")
 
 
 func configure(terrain: TileMapLayer) -> void:
@@ -38,11 +37,12 @@ func configure(terrain: TileMapLayer) -> void:
 		for pose in ["idle", "talk"]:
 			frames[pose] = [load("res://generated/%s_%s_0.png" % [npc.sprite, pose]), load("res://generated/%s_%s_1.png" % [npc.sprite, pose])]
 		npc_frames[npc.id] = frames
-	var pose_timer := Timer.new()
-	pose_timer.wait_time = 0.6
-	pose_timer.autostart = true
-	pose_timer.timeout.connect(_step_npcs)
-	add_child(pose_timer)
+		var sprite := get_node("Npc_%s/Sprite" % npc.id) as Sprite2D
+		sprite.call("configure", frames)
+	_add_wind($SacredTree/Sprite, tree_wind_strength)
+	for target in targets:
+		if target.rule.get("kind") == "TREE":
+			_add_wind(target.marker.get_node("Sprite"), tree_wind_strength * 0.75)
 	navigation.region = ground.get_used_rect()
 	navigation.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 	navigation.update()
@@ -119,22 +119,18 @@ func _draw() -> void:
 			draw_rect(Rect2(inside.end.x - 2, inside.position.y, 2, inside.size.y), PAPER)
 
 
-func _step_npcs() -> void:
-	npc_frame = 1 - npc_frame
-	if talk_steps > 0:
-		talk_steps -= 1
-		if talk_steps == 0:
-			talking = ""
-	for id: String in npc_frames:
-		var pose := "talk" if id == talking else "idle"
-		(get_node("Npc_%s/Sprite" % id) as Sprite2D).texture = npc_frames[id][pose][npc_frame]
+func _add_wind(sprite: Sprite2D, strength: float) -> void:
+	var wind := ShaderMaterial.new()
+	wind.shader = Wind
+	wind.set_shader_parameter("strength", strength)
+	wind.set_shader_parameter("phase", sprite.global_position.x * 0.019 + sprite.global_position.y * 0.011)
+	sprite.material = wind
 
 
-## NPC đổi sang dáng nói trong chốc lát sau khi trò chuyện.
+## NPC gestures use only supplied idle/talk artwork and keep interaction markers fixed.
 func npc_talk(id: String) -> void:
-	talking = id
-	talk_steps = 4
-	_step_npcs()
+	if npc_frames.has(id):
+		get_node("Npc_%s/Sprite" % id).talk()
 
 
 ## Mục tương tác theo ID dữ liệu (đá, cây, hạng mục, NPC).

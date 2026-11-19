@@ -50,14 +50,14 @@ Viền ấm chọn lọc theo chất liệu:
 Hậu kỳ bắt buộc: `tools/art/recolor_outline.py --check` phải ra 0 pixel đen.
 
 ### AR-30 · Hoạt ảnh
-- **Vòng lặp:** 8–12 frame ở 8–15 FPS. Chân bám đất (planted feet).
+- **Vòng lặp:** 8–12 frame ở 8–15 FPS. Nhịp đi xen hai pha chân qua dưới hông với hai pha đặt chân đổi bên. Các khung chuyển tiếp cho bàn chân mở dần tới dáng đặt gốc. Giữ thân, độ dài ống quần và dáng giày của sprite gốc. Chân trụ bám đất.
 - **Nhân vật người chơi** (4 hướng, 8 frame mỗi clip): đứng, đi, cuốc, tưới, gặt (liềm), rìu/búa, câu cá, cho ăn, cầm đồ.
-- **Vật nuôi:** đứng, đi, ăn, vui.
-- **NPC:** đứng, đi, nói chuyện. Thợ làm việc thì thêm clip làm việc.
+- **Vật nuôi:** đứng, đi, ăn, vui. Gà/vịt nghỉ giữa các đợt mổ, rỉa lông và bước ngắn; cá chủ yếu lặn, thỉnh thoảng nổi → nhảy → lặn. Đầu cá xoay theo hướng bay, tới nước có gợn và giọt bắn. Nhịp độc lập từng con, không gắn hoạt ảnh vào trạng thái tới lứa.
+- **NPC:** đứng, đi, nói chuyện. Với bộ ảnh P1 hiện có, dùng thở nhẹ, đổi dáng và nhấc từng chân khi bước ngắn quanh chỗ đứng, giữ marker tương tác; chưa có clip đi đủ hướng. Thợ làm việc thì thêm clip làm việc.
 - **Cây:** 4 giai đoạn (hạt → non → ra hoa/trái xanh → chín) + biến thể Hoàng Kim.
 - **Phản hồi chạm:** tween `scaleX 1,07 / scaleY 0,92` trong 90 ms + 6–12 hạt + âm thanh.
 - **Cảnh:** sóng lúa và mặt nước lệch pha theo vị trí.
-- Bản thử dùng sprite điền chủ hiện có và lớp công cụ pixel để tạo động tác rắc hạt, nghiêng bình và vung liềm. Chân giữ nguyên tại chỗ, bước đi ngắt động tác. Gà, vịt và cá dùng khung sẵn có, lệch nhịp giữa các ô.
+- Bản thử dùng sprite điền chủ hiện có và lớp công cụ pixel để tạo động tác rắc hạt, nghiêng bình và vung liềm. Chân giữ nguyên tại chỗ, bước đi ngắt động tác. Gà, vịt và cá lệch nhịp giữa các ô.
 
 ### AR-31 · VFX
 - **Tối thiểu cho Đợt 1:** giọt nước (8×8), sao Hoàng Kim (6×6), mưa (2×12), đom đóm (8×8).

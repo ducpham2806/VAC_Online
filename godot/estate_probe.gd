@@ -144,7 +144,7 @@ func _add_plots() -> void:
 		var textures: Array[Texture2D] = []
 		for frame in range(2):
 			textures.append(load("res://generated/%s_%d.png" % [spec.item, frame]))
-		slot.setup(textures)
+		slot.setup(textures, str(spec.item).begins_with("AQUA_"), spec.item)
 		slot.hide()
 		plots[spec.id] = slot
 		slot_items[spec.id] = spec.item

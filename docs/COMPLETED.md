@@ -1,26 +1,28 @@
 # Tóm tắt việc đã hoàn tất
 
-Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
+Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
-## Chương 1 trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
-- Cảnh mở đầu, hướng dẫn 8 bước, NPC có tim, Sổ Gia Phả, âm thanh AR-40. Hết nội dung LT-14 bước 3.
-- Kiểm bằng `tools/qa/godot-chapter1-flow.sh` (50 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-ch1-*`.
-- PO duyệt, đã merge `main` tại `667445e`. Chưa thử Supabase thật và điện thoại.
-- 18/11 kiểm báo cáo LT-13 với nhật ký hướng dẫn Godot trong DB thử.
+## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
+- Hai client cùng commit, một origin, có mã bản dựng và checksum.
+- Qua thử nâng cấp `3fb5ea0 → e26571b` bằng hai gói thật.
+- Chrome giữ phiên và dữ liệu khi quay lui. Chrome/WebKit mở cache offline ngay sau lần đầu.
+- Hai ngón mô phỏng, 305 test và build qua. Staging có hướng dẫn cài cho iOS mới.
+- iPhone mở icon, gieo và giữ tiến trình. Safari và icon tách phiên khách.
+- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn các mục thiết bị LT-14.
+
+## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
+- Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
+- Điền chủ đi bốn hướng theo mẫu Walk của PO. NPC nhấc chân, cây/lúa có gió.
+- F6 `godot/animation_preview.tscn` xem riêng.
+- Motion 35/35, Chương 1 50/50, P1-9 41/41, Chrome hai cỡ qua.
+- Typecheck, 305 test, build, test art qua. Đã merge, chưa phát hành.
+- [Scene nông trại đã merge](archive/COMPLETED-2026-11.md). Tiếp LT-14.
 
 ## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
 - Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.
 - Kiểm bằng `tools/qa/godot-p1-9-flow.sh` (41 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-p1-9-*`.
 - Bản ghim Game Studio lên `fa7b1db`, 125 skill. Cách cập nhật ở docs/studio/INSTALLATION.md.
 - PO duyệt, đã merge `main` tại `225f9b5`. Chưa thử Supabase thật và điện thoại.
-
-## Scene nông trại Godot · 14/11/2026 · main
-- Bản đồ, công trình, chướng ngại và vùng đất chỉnh trong Godot Editor. Cách chạy ở LT-14.
-- Dọn, sửa, khai hoang theo GP-14. Kiểm hủy xác nhận, tưới cả loạt và mở lại ô mới.
-- Vòng lúa qua fixture. HUD, cỏ, cây và ao theo mùa GP-20.
-- Typecheck, 303 test, build, Web/PWA và check:docs qua. Ảnh hai cỡ.
-- PO duyệt merge nhánh điền trang vào main. Còn kiểm PWA trên điện thoại thật.
-- 18/11 staging kiểm giữ bản lưu Phaser v1 và gửi hàng chờ trước khi mở Godot. Chờ duyệt nhánh.
 
 ## Kế hoạch chuyển P1 sang Godot · 11/11/2026 · codex/ke-hoach-chuyen-godot
 - Quyết định chọn engine ở QD-90, lộ trình và nghiệm thu ở LT-14.

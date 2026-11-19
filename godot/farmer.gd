@@ -2,8 +2,32 @@ extends AnimatedSprite2D
 
 @export_range(1.0, 500.0, 1.0, "suffix:px/s") var walk_speed := 96.0
 
+@export_range(16.0, 96.0) var walk_cycle_distance := 56.0
+var walk_distance := 0.0
 var facing := "down"
+var _foot_offsets: Dictionary = {}
+var idle_time := 0.0
+var base_scale := Vector2.ONE
 var work_pose: Tween
+
+
+func _ready() -> void:
+	base_scale = scale
+	frame_changed.connect(_ground_feet)
+	_ground_feet()
+
+
+func _process(delta: float) -> void:
+	idle_time += delta
+	scale = base_scale * Vector2(1.0, 1.0 + sin(idle_time * 1.8) * 0.005) if str(animation).begins_with("idle_") else base_scale
+
+
+func _ground_feet() -> void:
+	var image_texture := sprite_frames.get_frame_texture(animation, frame)
+	if not _foot_offsets.has(image_texture):
+		var image := image_texture.get_image()
+		_foot_offsets[image_texture] = image.get_height() * 0.5 - image.get_used_rect().end.y
+	offset.y = _foot_offsets[image_texture]
 
 
 func step_toward(target: Vector2, delta: float) -> bool:
@@ -18,7 +42,17 @@ func step_toward(target: Vector2, delta: float) -> bool:
 		work_pose.kill()
 		rotation_degrees = 0.0
 	_face(movement)
-	play("walk_" + facing)
+	flip_h = facing == "right"
+	var clip := StringName("walk_" + facing)
+	if animation != clip:
+		if str(animation).begins_with("idle_"):
+			walk_distance = 0.0
+		animation = clip
+	pause()
+	walk_distance += movement.length()
+	var frame_count := sprite_frames.get_frame_count(clip)
+	frame = int(walk_distance / walk_cycle_distance * frame_count) % frame_count
+	_ground_feet()
 	return next.is_equal_approx(target)
 
 
@@ -30,10 +64,12 @@ func _face(movement: Vector2) -> void:
 
 
 func stand() -> void:
+	flip_h = facing == "right"
 	var idle := StringName("idle_" + facing)
 	if animation != idle:
 		animation = idle
 		stop()
+		_ground_feet()
 
 
 func work_toward(target: Vector2) -> void:

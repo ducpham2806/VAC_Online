@@ -1,6 +1,6 @@
 # Lưu online cho bản thử Godot
 
-Thuộc LT-14 bước 2. Tạo `godot/generated/godot_online.json` trước khi mở Editor hoặc xuất Web. Thư mục `generated` nằm ngoài Git.
+Thuộc LT-14 bước 2. Tạo `godot/generated/godot_online.json` trước khi mở Editor hoặc xuất Web. Tệp cấu hình này được bỏ qua khi commit.
 
 ```json
 {
@@ -19,7 +19,24 @@ Web và native dùng chung cách gọi API. Godot Web dùng Supabase SDK để �
 
 Đặt bản Phaser ở gốc và bản Godot ở `/godot/` trên cùng origin HTTPS. Dùng cùng URL và khóa công khai trong cấu hình Vite của Phaser và tệp Godot. Chạy `npm run build` cho Phaser, rồi `bash scripts/build-godot-web.sh` cho Godot. Đưa nội dung `godot/dist/` vào `dist/godot/` sau khi xuất. Script Godot đóng gói SDK cho phiên Web vào HTML để PWA vẫn mở được từ cache.
 
+Đóng gói cả hai client từ cùng commit vào một thư mục mới:
+
+```bash
+VAC_STAGING_API_URL=https://api-thu.example.org \
+VAC_STAGING_PUBLISHABLE_KEY=sb_publishable_... \
+GODOT_BIN=/duong/dan/Godot \
+bash scripts/build-godot-staging.sh /duong/dan/staging-moi
+```
+
+Mặc định đóng gói HEAD. Đặt `VAC_STAGING_REF` để chọn commit cần kiểm hoặc bản cũ lúc thử cập nhật. Script lấy mã đã commit, dựng trong thư mục tạm và chỉ xuất kết quả khi đủ tệp. `/godot/build-info.json` ghi commit và SHA-256 của các tệp PWA chính để đối chiếu khi đổi bản. Gói staging này tắt nhật ký chơi thử. Ở iPhone/iPad chưa có phiên, trang Godot hiển thị hướng dẫn cài icon trước khi tải game. Người chơi có thể chọn chơi trong trình duyệt. Mở từ icon hoặc đã có phiên sẽ vào thẳng game.
+
 Mở Phaser tại `/?p1`, chờ gửi xong thao tác rồi mở `/godot/index.html` trong cùng trình duyệt. Nếu Phaser còn hàng chờ, quay lại Phaser để đồng bộ rồi bấm **Đọc lại** trong Godot. Khi thử trên Android và iPhone, mở link Godot trong Chrome hoặc Safari, thêm vào màn hình chính, sau đó kiểm phiên, kho, cảm ứng và tốc độ tải khi mở từ icon.
+
+### Safari và icon trên iPhone
+
+Khi chơi bằng tài khoản khách, giữ cách mở đã dùng để có đúng nông trại. Nếu đã chơi trong Safari, tiếp tục dùng tab Safari. Nếu bắt đầu mới và muốn chơi từ icon, thêm vào Màn hình chính trước khi bắt đầu hướng dẫn. iOS tách dữ liệu của ứng dụng web khỏi Safari. Khi cài, WebKit có thể sao chép cookie đăng nhập nhưng không sao chép localStorage, nơi bản thử đang giữ phiên Supabase. Xem [WebKit về cookie đăng nhập khi cài ứng dụng web](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#login-cookies).
+
+Chuyển nông trại của người chơi cũ giữa hai nơi mở cần luồng đăng nhập hoặc liên kết tài khoản đã nghiệm thu. Xem [kết quả iPhone thật](qa/GODOT-PWA-STAGING-2026-11-19.md#iphone-14-pro-max-thật).
 
 ### Kiểm nhật ký Godot trước đợt chơi thử
 
@@ -31,6 +48,12 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 - Trên Android và iPhone, cài từ Chrome hoặc Safari rồi mở bằng icon. Ghi thiết bị, phiên bản hệ điều hành, thời gian sẵn sàng lần đầu và lần mở lại, FPS, điều khiển hai ngón, vùng an toàn và âm thanh.
 - Sau khi nông trại đã lưu, thử mở lại khi mất mạng. Đối chiếu bản xem với số dư đã ghi. Kết nối lại và đọc trạng thái máy chủ trước khi thử thao tác tiếp.
 - Giữ artifact Phaser đã kiểm. Đưa bản Godot mới lên cùng origin, đóng cửa sổ Godot và mở lại để kiểm mã bản dựng đã đổi và tiến trình còn đủ. Sau đó mở `/?p1` để diễn tập quay về Phaser và kiểm lại cùng nông trại.
+
+### Mở lại khi mất mạng
+
+Mở từ đúng nơi đã chơi và đã đọc nông trại online ít nhất một lần. Nếu trình duyệt đã lưu đủ gói Web và bản xem nông trại, game mở được từ cache để xem lại. Khi kết nối lại, bấm **Đọc lại**. Nếu mất phản hồi lúc gửi thao tác, dùng nút này để đối chiếu trước khi tiếp tục.
+
+Script xuất Web đợi service worker kiểm soát lần tải đầu trong một khoảng giới hạn để lưu gói game ngay lần đó. Khi bộ nhớ đệm bị chặn hoặc chậm, game vẫn có thể khởi động online. Kết quả thử ở [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#đóng-và-mở-lại-offline-sau-lần-đầu).
 
 ### Mở bản lưu offline cũ của Phaser
 
