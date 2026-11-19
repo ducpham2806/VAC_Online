@@ -67,3 +67,17 @@ Ngày 19/11/2026, xuất `5687b0ef21951e7fef58a30bd76d7dc82414ab84` bằng Godot
 | Nghiệm thu thiết bị còn lại | Chờ Android thật và thử ngang, hai ngón, âm thanh, offline trên iPhone thật. Giữ dấu mốc trước khi mở URL chính và nhóm P1-12. |
 
 Typecheck, 305 test, build, xuất Web và check:docs qua. Log `main-5687b0e-update.log`, `main-5687b0e-current.log` và `main-5687b0e-webkit.log` trong thư mục staging. Lượt nâng cấp đầu đã qua kiểm SHA-256 và dữ liệu. Bộ lọc log ban đầu bỏ qua query của request Phaser, nên kiểm quay về Phaser được chạy lại với bộ lọc đã sửa. Ảnh 844×390, 1280×720 và offline có tiền tố `godot-main-5687b0e-`. Phần cập nhật staging và kiểm trình duyệt đã xong, cổng phát hành LT-14 còn mở.
+
+## Ngang, hai chạm, âm thanh và offline trên bản staging hiện tại
+
+| Kiểm tra | Kết quả trên `5687b0e` |
+|---|---|
+| Vùng an toàn WebKit mô phỏng iPhone | 844×390 với lề khuyết 55 px trái rồi phải, phần nền HUD trên dịch đúng 55 px ở cả hai đầu. Đổi sang 393×852 có ảnh bố cục dọc. |
+| Tiếng nút trên WebKit mô phỏng | SHA-256 PCK khớp. Bộ phân tích ở đầu ra WebAudio đọc khoảng −34 dBFS quanh 880 Hz sau khi chạm nút, nền im lặng. Còn nghe tiếng trực tiếp trên iPhone. |
+| Hai chạm Chrome mô phỏng Android | Một ngón giữ joystick, ngón kia chạm gieo. Web nhận hai điểm chạm, gửi một PLANT, trừ đúng 2 vàng, tải lại còn lúa ở P5_7. |
+| Mở offline với cấu hình iPhone standalone mô phỏng | Có sẵn gói game trong cache. Đóng tab, giả lập mất mạng và mở lại thấy nông trại. Nối mạng, bấm **Đọc lại**, phiên và ô P5_7 cùng 2.498 vàng khớp. |
+| Thiết bị thật | Lượt này iPhone Mirroring không có cửa sổ để điều khiển, Mac chưa thấy Android. Còn xác nhận ngang, hai ngón, âm thanh và mất mạng trực tiếp. |
+
+Ảnh tiền tố `godot-lt14-current-`. Log `lt14-current-device.log`, `lt14-current-two-touch.log`, `lt14-ios-standalone-offline.log`. Trang đo âm thanh và SHA-256 tạm tại `/godot/lt14-device-check-5687b0e.html` trên cùng origin staging. Trang ghi tín hiệu bằng WebAudio trong trình duyệt và giữ trang mở từ icon như cũ.
+
+Khi có thiết bị, mở icon đã cài, xoay ngang và kiểm HUD hai chiều. Thử giữ joystick và dùng ngón còn lại chạm ô trên nông trại thử, nghe tiếng nút, đóng app khi mất mạng rồi mở lại. Nối mạng, bấm **Đọc lại** và so ô ruộng, vàng, bước hướng dẫn. Android cần thử cả Chrome từ URL và từ icon, ghi tải đầu, tải lại và FPS để đối chiếu Phaser.
