@@ -32,6 +32,12 @@ Mặc định đóng gói HEAD. Đặt `VAC_STAGING_REF` để chọn commit c�
 
 Mở Phaser tại `/?p1`, chờ gửi xong thao tác rồi mở `/godot/index.html` trong cùng trình duyệt. Nếu Phaser còn hàng chờ, quay lại Phaser để đồng bộ rồi bấm **Đọc lại** trong Godot. Khi thử trên Android và iPhone, mở link Godot trong Chrome hoặc Safari, thêm vào màn hình chính, sau đó kiểm phiên, kho, cảm ứng và tốc độ tải khi mở từ icon.
 
+### Safari và icon trên iPhone
+
+Khi chơi bằng tài khoản khách, giữ cách mở đã dùng để có đúng nông trại. Nếu đã chơi trong Safari, tiếp tục dùng tab Safari. Nếu bắt đầu mới và muốn chơi từ icon, thêm vào Màn hình chính trước khi bắt đầu hướng dẫn. iOS tách dữ liệu của ứng dụng web khỏi Safari. Khi cài, WebKit có thể sao chép cookie đăng nhập nhưng không sao chép localStorage, nơi bản thử đang giữ phiên Supabase. Xem [WebKit về cookie đăng nhập khi cài ứng dụng web](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#login-cookies).
+
+Chuyển nông trại của người chơi cũ giữa hai nơi mở cần luồng đăng nhập hoặc liên kết tài khoản đã nghiệm thu. Xem [kết quả iPhone thật](qa/GODOT-PWA-STAGING-2026-11-19.md#iphone-14-pro-max-thật).
+
 ### Kiểm nhật ký Godot trước đợt chơi thử
 
 Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** và cuộn xuống cuối để lấy mã chơi thử. Chơi qua các mốc hướng dẫn rồi xuất dữ liệu và chạy báo cáo theo LT-13. Lượt diễn tập dùng dữ liệu thử riêng với nhóm chơi thật. Dùng một client cho mỗi nhóm để đối chiếu D1, vì mã chơi thử do từng client tạo.

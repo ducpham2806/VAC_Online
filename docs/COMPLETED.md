@@ -7,7 +7,8 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - Qua thử nâng cấp `3fb5ea0 → e26571b` bằng hai gói thật.
 - Chrome giữ phiên, bản xem khi mất mạng và dữ liệu khi quay lui.
 - Hai ngón mô phỏng qua. Typecheck, 305 test, build qua.
-- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn thử điện thoại thật trước LT-13.
+- iPhone mở icon, gieo và giữ tiến trình. Safari và icon tách phiên khách.
+- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn các mục thiết bị LT-14.
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
