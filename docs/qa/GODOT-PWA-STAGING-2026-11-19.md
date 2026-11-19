@@ -44,3 +44,12 @@ Nhánh `codex/godot-ios-install-guide` thêm hướng dẫn vào trang xuất Go
 - Typecheck, 305 test, build và check:docs qua. Log `ios-guide-browser.log` và ảnh `godot-ios-guide-*` trong bằng chứng của phiên.
 
 Việc này hướng dẫn người mới chọn cách mở trước khi bắt đầu. Chuyển nông trại đã có từ Safari sang icon còn chờ quyết định phạm vi theo LT-14.
+
+## Đóng và mở lại offline sau lần đầu
+
+- Tái hiện trên gói trước: sau lần đọc nông trại đầu, Chrome có HTML trong CacheStorage. WASM/PCK còn thiếu và mở lại khi ngắt mạng chỉ tới trang lỗi offline.
+- Nhánh `codex/godot-pwa-first-load-cache` đợi worker nhận trang trước khi tải WASM/PCK, có giới hạn 4 giây. Khi cache khả dụng, hai tệp được tái dùng từ lần tải đã phục vụ game. Luồng cập nhật vẫn đợi trang cũ đóng.
+- Chrome và WebKit trên Mac: hồ sơ mới, mở online một lần, đủ HTML/WASM/PCK và worker kiểm soát trang. Ngắt mạng mô phỏng, đóng tab, mở lại URL, thấy game.
+- Chrome: để PLANT hoàn tất trên API thử rồi ngắt phản hồi về trình duyệt. Bấm **Đọc lại** lấy đúng P5_7 có lúa và 2.498 vàng. Mở lại từ cache khi offline, nối mạng và đọc được cùng dữ liệu. Chỉ có một lần gửi PLANT.
+- Typecheck, 305 test, build, Web/PWA export và check:docs qua. Log `offline-first-before.log`, `offline-first-chrome.log`, `offline-first-webkit.log` và `offline-drop-with-cache.log` tại thư mục QA. Ảnh có tiền tố `godot-offline-`.
+- Chưa ngắt mạng trên iPhone/Android thật. Hồ sơ mạng mô phỏng kiểm bản xem và đọc lại, chưa thay thế mục nghiệm thu thiết bị ở LT-14.

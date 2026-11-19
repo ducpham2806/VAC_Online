@@ -2,6 +2,11 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
+## 19/11/2026 · Cache Web/PWA lần mở đầu · codex/godot-pwa-first-load-cache
+- Tiếp LT-14. Tái hiện lần đọc nông trại đầu có HTML trong cache nhưng thiếu WASM/PCK. Bản xuất đợi worker nhận trang trước khi tải gói, có giới hạn chờ và nạp online dự phòng.
+- Chrome/WebKit đóng và mở lại ngay khi ngắt mạng sau lần đầu, có game từ cache. Chrome thử gieo đã ghi trên server nhưng rơi phản hồi. Đọc lại giữ 2.498 vàng và đúng ô lúa, không gửi lại gieo.
+- Typecheck, 305 test, build, xuất Web và check:docs qua. Đang thử trên staging. Còn nghiệm thu trực tiếp offline, ngang, hai ngón, âm thanh trên iPhone và Android thật.
+
 ## 19/11/2026 · Nghiệm thu staging Web/PWA · codex/godot-pwa-staging-qa
 - Tiếp LT-14 bước 4. Thêm script đóng gói Phaser và Godot từ cùng commit để phục vụ cùng origin, kèm checksum. Xuất `3fb5ea0` và `e26571b` bằng Godot trên Mac.
 - HTTPS staging dùng GoTrue và PostgreSQL thử. Chrome giữ một danh tính và ô lúa/2.498 vàng sau làm mới phiên, mất mạng, cập nhật PWA và quay Phaser. Hai ngón mô phỏng đạt. WebKit giữ phiên khi tải lại bản mới. Typecheck, 305 test, build, check:docs qua.
@@ -17,8 +22,3 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - PO thấy chân bị bóp. Phục hồi dáng đứng và bốn khung đi ngang gốc trong clip. Chỉ chèn bốn khung dịch pixel ống quần/giày. Motion 28/28 có kiểm texture gốc và pixel thân. Typecheck, 305 test, 9 test art, build và check:docs qua. Có dải khung đối chiếu và video lượt sửa. Nhánh chờ duyệt hình ảnh.
 - PO góp ý bàn chân. Tách giày khỏi phần dịch ống quần trong bốn khung chèn. Chân trụ giữ đế nguyên pixel/cao độ, chân nhấc xoay ở cổ chân. Motion 29/29, Chương 1 50/50, 305 test và 9 test art. Đã xuất Web, đối chiếu dải khung và ghi clip hai cỡ. Dừng ở duyệt hình ảnh trên nhánh.
 - PO đánh dấu Chèn 2/3 giật bàn chân trước. Hai khung giữ giày trước từ dáng gốc liền trước và chuyển chân sau theo dáng kế. Chèn 1/4 giống bản trước từng pixel. Motion 30/30, Chương 1 50/50, 305 test và 9 test art. Xuất Web, có ảnh trước/sau và clip. Chờ PO duyệt hình ảnh.
-
-## 19/11/2026 · Vùng an toàn Web/PWA Godot · codex/godot-pwa-safe-area
-- Tiếp LT-14 bước 4 theo PO. Thêm `safe_area.gd` cho HUD, bảng danh sách và nội dung xác nhận; giữ lề gốc chỉnh trong scene. Bản Web đọc CSS safe-area, quy đổi theo canvas; cập nhật khi đổi kích thước. Native có nhánh đọc vùng an toàn nhưng chưa kiểm thiết bị.
-- Xuất Web bằng Godot trên Mac từ bản sao tạm. Chrome 1280×720 và 844×390 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía; có ảnh, không lỗi trình duyệt. Chương 1 qua 50/50; cảnh/tài nguyên qua kiểm cấu trúc. Typecheck, 305 test và build qua.
-- Đã code trên nhánh riêng, chưa merge/phát hành. Còn kiểm icon PWA, cảm ứng, âm thanh và hiệu năng Android/iPhone thật. Dừng ở cổng nghiệm thu LT-14, chưa mở P1-12.

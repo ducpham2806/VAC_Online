@@ -58,6 +58,7 @@ if [ "${1:-}" = "--prepare-only" ]; then
   exit 0
 fi
 "$GODOT_BIN" --headless --path godot --export-release Web dist/index.html
+python3 scripts/prepare-godot-pwa.py godot/dist
 if [ -f godot/generated/godot_online.json ]; then
   bridge_file="$(mktemp)"
   trap 'rm -f "$bridge_file"' EXIT

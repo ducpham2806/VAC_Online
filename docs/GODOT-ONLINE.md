@@ -49,6 +49,12 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 - Sau khi nông trại đã lưu, thử mở lại khi mất mạng. Đối chiếu bản xem với số dư đã ghi. Kết nối lại và đọc trạng thái máy chủ trước khi thử thao tác tiếp.
 - Giữ artifact Phaser đã kiểm. Đưa bản Godot mới lên cùng origin, đóng cửa sổ Godot và mở lại để kiểm mã bản dựng đã đổi và tiến trình còn đủ. Sau đó mở `/?p1` để diễn tập quay về Phaser và kiểm lại cùng nông trại.
 
+### Mở lại khi mất mạng
+
+Mở từ đúng nơi đã chơi và đã đọc nông trại online ít nhất một lần. Nếu trình duyệt đã lưu đủ gói Web và bản xem nông trại, game mở được từ cache để xem lại. Khi kết nối lại, bấm **Đọc lại**. Nếu mất phản hồi lúc gửi thao tác, dùng nút này để đối chiếu trước khi tiếp tục.
+
+Script xuất Web đợi service worker kiểm soát lần tải đầu trong một khoảng giới hạn để lưu gói game ngay lần đó. Khi bộ nhớ đệm bị chặn hoặc chậm, game vẫn có thể khởi động online. Kết quả thử ở [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#đóng-và-mở-lại-offline-sau-lần-đầu).
+
 ### Mở bản lưu offline cũ của Phaser
 
 Giữ đường dẫn `/?p1&offline` trên origin cũ khi thử chuyển URL chính. Mở bằng trình duyệt đã chơi để tiếp tục bản lưu có trên máy. Lần đầu mở bản Phaser đã tách chế độ, trình duyệt sao chép bản lưu chung hiện có sang ô offline. Sau đó `/?p1&offline` tiếp tục ghi vào ô riêng. Cơ chế này chỉ giữ được dữ liệu còn trong trình duyệt tại thời điểm sao chép. Nhập bản lưu offline vào tài khoản Godot là quyết định riêng ở LT-14.

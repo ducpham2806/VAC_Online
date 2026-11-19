@@ -257,3 +257,8 @@
 - Godot online cục bộ qua Supabase Auth và PostgreSQL thử chạy Chương 1 50/50. Xuất view và chạy báo cáo thật, nhận đúng tám bước, DONE và nhận thưởng. D1 còn 0 người đủ điều kiện vì đây là lượt diễn tập.
 - Chrome hai cỡ gửi phiên và mốc MOVE, có ảnh. Typecheck, 305 test, build, xuất Web/PWA và check:docs qua. Đã code trên nhánh riêng, chưa bật nhật ký trên URL thử công khai. Còn kiểm PWA trên Android/iPhone và chờ duyệt phát hành.
 - PO duyệt merge `codex/godot-p1-playtest-report` tại `cf53a36` vào main, gồm bản lưu offline và bộ kiểm Godot trên Mac. Phát hành PWA và mời nhóm thử theo LT-13 vẫn chờ kiểm điện thoại thật.
+
+## 19/11/2026 · Vùng an toàn Web/PWA Godot · codex/godot-pwa-safe-area
+- Tiếp LT-14 bước 4 theo PO. Thêm `safe_area.gd` cho HUD, bảng danh sách và nội dung xác nhận; giữ lề gốc chỉnh trong scene. Bản Web đọc CSS safe-area, quy đổi theo canvas; cập nhật khi đổi kích thước. Native có nhánh đọc vùng an toàn nhưng chưa kiểm thiết bị.
+- Xuất Web bằng Godot trên Mac từ bản sao tạm. Chrome 1280×720 và 844×390 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía; có ảnh, không lỗi trình duyệt. Chương 1 qua 50/50; cảnh/tài nguyên qua kiểm cấu trúc. Typecheck, 305 test và build qua.
+- Đã code trên nhánh riêng, chưa merge/phát hành. Còn kiểm icon PWA, cảm ứng, âm thanh và hiệu năng Android/iPhone thật. Dừng ở cổng nghiệm thu LT-14, chưa mở P1-12.

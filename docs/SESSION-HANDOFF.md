@@ -6,7 +6,7 @@
 - Luật vẫn chạy qua engine TypeScript trên server; Godot gửi thao tác. Hiện trạng chi tiết ở KY-90, plan ở LT-14, cấu hình ở [GODOT-ONLINE](GODOT-ONLINE.md).
 
 ## Nhánh đang chờ duyệt
-- `codex/godot-ios-install-guide`: staging thêm hướng dẫn cho iOS mới, hoãn tải game/tạo phiên đến khi chọn trình duyệt hoặc mở từ icon. Kiểm WebKit ba cỡ, Chrome và icon iPhone đã cài.
+- `codex/godot-pwa-first-load-cache`: worker lưu gói ngay lần mở đầu. Chrome/WebKit mở lại offline qua, Chrome đọc lại sau mất phản hồi gieo mà gửi đúng một lần. Có hướng dẫn cài iOS của nhánh trước.
 - `codex/godot-pwa-staging-qa` thêm script đóng gói cùng commit và mã bản dựng. Đã diễn tập chuyển `3fb5ea0 → e26571b` trên staging HTTPS. Chrome giữ phiên/ô lúa qua cache, cập nhật và quay lui. Hai ngón mô phỏng qua. iPhone 14 Pro Max mở từ icon và giữ lúa/2.498 vàng sau đóng mở. Safari và icon giữ nông trại riêng. Chi tiết ở [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
 - `codex/godot-living-farm-animation` kế thừa safe-area `94ae93e`. Sửa lịch hành vi vật nuôi/cá, bước chân điền chủ, NPC và gió cây theo AR-30. Mở `godot/animation_preview.tscn`, F6 xem riêng. Bước ngang xen 4 khung gốc và 4 khung chèn. Chèn 2 và 3 giữ cả giày trước sát đất qua các dáng gốc liền kề. Cá xoay theo cung, gà/vịt/NPC có khung chân. Kiểm motion 30/30, Chương 1 50/50, P1-9 41/41; Chrome cảnh thật và preview hai cỡ qua. Có ảnh/video, chưa merge.
 - `codex/godot-pwa-safe-area`: vùng an toàn cho HUD, bảng danh sách và hộp xác nhận. Giữ lề scene; đọc CSS env trên Web và quy đổi pixel canvas sang UI. Có nhánh native, chưa kiểm trên thiết bị.
