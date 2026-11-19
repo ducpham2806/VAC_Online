@@ -4,10 +4,10 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 
 ## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
 - Hai client cùng commit, một origin, có mã bản dựng và checksum.
-- Qua thử nâng cấp `3fb5ea0 → e26571b` bằng hai gói thật.
+- Thử nâng cấp `3fb5ea0 → e26571b` và `ca63b20 → 5687b0e`.
 - Chrome giữ phiên và dữ liệu khi quay lui. Chrome/WebKit mở cache offline ngay sau lần đầu.
 - Hai ngón mô phỏng, 305 test và build qua. Staging có hướng dẫn cài cho iOS mới.
-- iPhone mở icon, gieo và giữ tiến trình. Safari và icon tách phiên khách.
+- iPhone mở lại icon sau cập nhật, giữ tiến trình. Safari và icon tách phiên.
 - [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn các mục thiết bị LT-14.
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation

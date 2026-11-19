@@ -53,3 +53,17 @@ Việc này hướng dẫn người mới chọn cách mở trước khi bắt �
 - Chrome: để PLANT hoàn tất trên API thử rồi ngắt phản hồi về trình duyệt. Bấm **Đọc lại** lấy đúng P5_7 có lúa và 2.498 vàng. Mở lại từ cache khi offline, nối mạng và đọc được cùng dữ liệu. Chỉ có một lần gửi PLANT.
 - Typecheck, 305 test, build, Web/PWA export và check:docs qua. Log `offline-first-before.log`, `offline-first-chrome.log`, `offline-first-webkit.log` và `offline-drop-with-cache.log` tại thư mục QA. Ảnh có tiền tố `godot-offline-`.
 - Chưa ngắt mạng trên iPhone/Android thật. Hồ sơ mạng mô phỏng kiểm bản xem và đọc lại, chưa thay thế mục nghiệm thu thiết bị ở LT-14.
+
+## Bản main sau merge
+
+Ngày 19/11/2026, xuất `5687b0ef21951e7fef58a30bd76d7dc82414ab84` bằng Godot 4.7.2 trên Mac và cập nhật cùng origin HTTPS. Hai client dùng chung môi trường thử. Thay bản dựng staging, giữ dịch vụ và DB thử đang chạy.
+
+| Tiêu chí | Kết quả |
+|---|---|
+| Chuyển gói PWA từ `ca63b20` | Chrome giữ gói cũ khi tab còn mở. Sau khi đóng mở, SHA-256 của PCK trong cache trùng `build-info.json` của `5687b0e`. Cùng phiên khách, ô P5_7 có lúa và 2.498 vàng. |
+| Offline rồi nối mạng | Chrome mở game bằng gói mới từ cache khi ngắt mạng mô phỏng. Nối mạng và tải lại, đọc được cùng ô lúa và số vàng. WebKit trên Mac cũng mở offline sau một lần vào online. |
+| Quay lại Phaser `/?p1` | Chrome đọc cùng phiên, ô lúa và 2.498 vàng trên bản Phaser đóng gói cùng commit. |
+| iPhone 14 Pro Max mở lại từ icon | Qua iPhone Mirroring màn dọc. Đóng hẳn thẻ VAC rồi mở lại. Còn ruộng lúa chín, 1.970 vàng, 2 lúa trong kho và bước 5/8. Chạm ô trống di chuyển được, HUD thấy 60 FPS trong lượt đi. HUD báo 10,1 giây sau lần đóng hẳn. Chưa đối chiếu SHA-256 gói ngay trên iPhone. |
+| Nghiệm thu thiết bị còn lại | Chờ Android thật và thử ngang, hai ngón, âm thanh, offline trên iPhone thật. Giữ dấu mốc trước khi mở URL chính và nhóm P1-12. |
+
+Typecheck, 305 test, build, xuất Web và check:docs qua. Log `main-5687b0e-update.log`, `main-5687b0e-current.log` và `main-5687b0e-webkit.log` trong thư mục staging. Lượt nâng cấp đầu đã qua kiểm SHA-256 và dữ liệu. Bộ lọc log ban đầu bỏ qua query của request Phaser, nên kiểm quay về Phaser được chạy lại với bộ lọc đã sửa. Ảnh 844×390, 1280×720 và offline có tiền tố `godot-main-5687b0e-`. Phần cập nhật staging và kiểm trình duyệt đã xong, cổng phát hành LT-14 còn mở.
