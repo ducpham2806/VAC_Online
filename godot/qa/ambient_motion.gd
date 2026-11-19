@@ -39,9 +39,10 @@ func _run() -> void:
 	var originals_match := true
 	var inbetweens_keep_body := true
 	var inbetweens_keep_soles := true
+	var two_front_shoes_stay_planted := true
 	# Inspect the planted shoe in each in-between, below any overlap with the swinging leg.
-	var soles := [Rect2i(8, 60, 14, 3), Rect2i(29, 60, 10, 3), Rect2i(29, 60, 10, 3), Rect2i(11, 60, 13, 3)]
-	var sole_offsets := [3, -2, -3, 2]
+	var soles := [Rect2i(8, 60, 14, 3), Rect2i(10, 60, 13, 3), Rect2i(11, 60, 13, 3), Rect2i(11, 60, 13, 3)]
+	var sole_offsets := [3, 0, 0, 2]
 	var body := Rect2i(0, 0, 48, 53)
 	for i in range(contacts.size()):
 		var original: Texture2D = load("res://generated/farmer_walk_left_%d.png" % contacts[i])
@@ -50,6 +51,9 @@ func _run() -> void:
 			var inserted := stride.get_frame_texture(clip, i * 2 + 1).get_image()
 			var source := original.get_image()
 			inbetweens_keep_body = inbetweens_keep_body and same_visible_pixels(inserted, source, body)
+			if i in [1, 2]:
+				two_front_shoes_stay_planted = two_front_shoes_stay_planted and same_visible_pixels(
+					inserted, source, Rect2i(0, 53, 26, 11))
 			var sole: Rect2i = soles[i]
 			var moved_sole := Rect2i(sole.position + Vector2i(sole_offsets[i], 0), sole.size)
 			inbetweens_keep_soles = inbetweens_keep_soles and same_visible_pixels(
@@ -57,6 +61,7 @@ func _run() -> void:
 	check(originals_match, "bốn khung chính của mỗi hướng trỏ đúng texture gốc theo thứ tự")
 	check(inbetweens_keep_body, "bốn khung chèn giữ nguyên pixel đầu, thân và hông")
 	check(inbetweens_keep_soles, "đế giày chân trụ giữ nguyên pixel và cao độ gốc ở mỗi khung chèn")
+	check(two_front_shoes_stay_planted, "chèn 2 và 3 giữ cả giày trước sát đất, không rút bàn chân vào giữa hai dáng gốc")
 	var idle_original := load("res://generated/farmer_walk_left_2.png") as Texture2D
 	check(stride.get_frame_texture(&"idle_left", 0) == idle_original and
 		stride.get_frame_texture(&"idle_right", 0) == idle_original, "dáng đứng ngang dùng lại texture gốc")

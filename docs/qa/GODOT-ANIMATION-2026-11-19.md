@@ -2,7 +2,7 @@
 
 Nhánh `codex/godot-living-farm-animation`, kế thừa safe-area `94ae93e`. Yêu cầu PO: rà và sửa hoạt ảnh dựa trên prompt hiện có. Tiêu chí hình ảnh theo AR-30; phạm vi LT-14.
 
-- ✅ Bộ kiểm chuyển động: 29/29. Kiểm đế giày chân trụ trong từng dáng chèn, bốn khung gốc xen bốn khung chèn và dáng đứng gốc của điền chủ, hướng đầu cá theo cung, khung nhấc chân gà và NPC, cùng các trạng thái nghỉ/hành động.
+- ✅ Bộ kiểm chuyển động: 30/30. Kiểm giày trước sát đất ở Chèn 2/3 và đế giày chân trụ trong từng dáng chèn, bốn khung gốc xen bốn khung chèn và dáng đứng gốc của điền chủ, hướng đầu cá theo cung, khung nhấc chân gà và NPC, cùng các trạng thái nghỉ/hành động.
 - ✅ Luồng Chương 1: 50/50; vật nuôi/Bếp/đơn HTX: 41/41.
 - ✅ Typecheck, 305 test, build, check:docs; cấu trúc Godot không lỗi/cảnh báo. Xuất Web bằng Godot trên Mac.
 - ✅ Chrome cảnh chơi thật và cảnh xem thử: 1280×720, 844×390, không lỗi trình duyệt/shader. Đã xem ảnh; có video WebM.
@@ -26,7 +26,7 @@ bash tools/qa/godot-p1-9-flow.sh
 
 Mở `godot/animation_preview.tscn`, F6 xem riêng. Chỉnh `Idle Min/Max`, `Wander Distance` trong `animal_slot.tscn`; `Shuffle Distance`, `Rest Seconds` ở từng Sprite NPC trong `estate_features.tscn`; `Tree Wind Strength` ở gốc scene đó và `Wind Strength` trong `rice_plot.tscn`. `Walk Cycle Distance` trong `farmer.tscn` điều chỉnh quãng đường mỗi vòng chân.
 
-Bằng chứng lượt đầu nằm trong thư mục được trỏ bởi `/private/tmp/vac-animation-current`: `motion-final.log`, `chapter.log`, `livestock.log`, `browser.log`, `game-browser.log`. Ảnh/video `godot-animation-*` ở thư mục visualizations của phiên Codex. Lượt sửa bước ngang và cá ở `/private/tmp/vac-stride-current`. Video và ảnh dùng tiền tố `godot-stride-preview`. Lượt giữ tỷ lệ chân ở `/private/tmp/vac-inbetweens-current`. Dải khung gốc/chèn và video dùng tiền tố `godot-inbetween-`. Lượt sửa mũi và đế giày ở `/private/tmp/vac-walkfeet-current`, ảnh/video dùng tiền tố `godot-walkfeet-`.
+Bằng chứng lượt đầu nằm trong thư mục được trỏ bởi `/private/tmp/vac-animation-current`: `motion-final.log`, `chapter.log`, `livestock.log`, `browser.log`, `game-browser.log`. Ảnh/video `godot-animation-*` ở thư mục visualizations của phiên Codex. Lượt sửa bước ngang và cá ở `/private/tmp/vac-stride-current`. Video và ảnh dùng tiền tố `godot-stride-preview`. Lượt giữ tỷ lệ chân ở `/private/tmp/vac-inbetweens-current`. Dải khung gốc/chèn và video dùng tiền tố `godot-inbetween-`. Lượt sửa mũi và đế giày ở `/private/tmp/vac-walkfeet-current`, ảnh/video dùng tiền tố `godot-walkfeet-`. Lượt sửa riêng Chèn 2/3 ở `/private/tmp/vac-plantcontact-current`. Ảnh trước/sau và video dùng tiền tố `godot-plantcontact-`.
 
 Dựng lại atlas từ gốc repo bằng `godot --headless --script tools/art/godot_stride_frames.gd`. Giữ các PNG nguồn trong `art/source/` khi dựng.
 

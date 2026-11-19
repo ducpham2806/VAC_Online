@@ -21,24 +21,30 @@ func _initialize() -> void:
 
 func _farmer_inbetweens() -> Error:
 	var atlas := Image.create_empty(48 * 4, 64, false, Image.FORMAT_RGBA8)
-	# Source sprites face left. Keep one shoe on the original ground line in each pose.
-	# The negative rotations pick up the heel. The positive rotations lead with the toe.
+	# Source sprites face left. Preview and gameplay mirror the clip for right-facing steps.
 	var contacts := [0, 2, 1, 3]
-	var front_steps := [Vector2i(3, 0), Vector2i(4, -2), Vector2i(4, -3), Vector2i(2, 0)]
-	var rear_steps := [Vector2i(-5, -2), Vector2i(-2, 0), Vector2i(-3, 0), Vector2i(-5, -2)]
-	var front_angles := [0.0, 18.0, 12.0, 0.0]
-	var rear_angles := [-18.0, 0.0, 0.0, -12.0]
-	for i in range(contacts.size()):
-		var source := Image.load_from_file(SOURCE + "farmer_walk_left_%d.png" % contacts[i])
-		if source == null or source.get_size() != Vector2i(48, 64):
-			push_error("Missing 48x64 farmer contact frame %d" % contacts[i])
+	var sources: Array[Image] = []
+	for contact in contacts:
+		var art := Image.load_from_file(SOURCE + "farmer_walk_left_%d.png" % contact)
+		if art == null or art.get_size() != Vector2i(48, 64):
+			push_error("Missing 48x64 farmer contact frame %d" % contact)
 			return ERR_FILE_CORRUPT
+		sources.append(art)
+	for i in range(sources.size()):
+		var source := sources[i]
 		var pose := source.duplicate() as Image
-		pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
-		_place_lower_leg(pose, source, Rect2i(26, 55, 22, 9), Vector2(32, 55),
-			rear_steps[i], rear_angles[i])
-		_place_lower_leg(pose, source, Rect2i(0, 55, 26, 9), Vector2(20, 55),
-			front_steps[i], front_angles[i])
+		if i in [1, 2]:
+			# These contacts both keep the front sole low. Preserve it and settle the rear
+			# foot into the next contact as a whole, instead of lifting the front in between.
+			var rear_leg := Rect2i(26, 53, 22, 11)
+			pose.blit_rect(sources[i + 1], rear_leg, rear_leg.position)
+		else:
+			pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
+			var first_contact := i == 0
+			_place_lower_leg(pose, source, Rect2i(26, 55, 22, 9), Vector2(32, 55),
+				Vector2i(-5, -2), -18.0 if first_contact else -12.0)
+			_place_lower_leg(pose, source, Rect2i(0, 55, 26, 9), Vector2(20, 55),
+				Vector2i(3 if first_contact else 2, 0), 0.0)
 		atlas.blit_rect(pose, Rect2i(0, 0, 48, 64), Vector2i(i * 48, 0))
 	return atlas.save_png(OUTPUT + "farmer_stride.png")
 

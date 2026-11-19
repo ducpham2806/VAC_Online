@@ -6,7 +6,7 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
 - Điền chủ dùng 4 khung gốc xen 4 khung chèn. NPC nhấc chân, cây/lúa có gió.
 - F6 `godot/animation_preview.tscn` xem riêng.
-- Motion 29/29, Chương 1 50/50, P1-9 41/41, Chrome hai cỡ qua.
+- Motion 30/30, Chương 1 50/50, P1-9 41/41, Chrome hai cỡ qua.
 - Typecheck, 305 test, build, test art qua. Chưa merge/phát hành.
 - [Scene nông trại đã merge](archive/COMPLETED-2026-11.md). Tiếp LT-14.
 

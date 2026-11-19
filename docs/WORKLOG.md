@@ -9,6 +9,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - PO góp ý bước ngang và đầu cá. Đã dựng 8 khung đi ngang có chân trụ và chân vung, thêm atlas bước gà/vịt và NPC. Cá xoay theo cung, đầu lên khi bật và chúi khi rơi. Motion 25/25, 5 atlas qua kiểm palette và alpha. Chrome cảnh F6 hai cỡ qua, có WebM lượt sửa. Chờ PO xem lại chuyển động trên nhánh.
 - PO thấy chân bị bóp. Phục hồi dáng đứng và bốn khung đi ngang gốc trong clip. Chỉ chèn bốn khung dịch pixel ống quần/giày. Motion 28/28 có kiểm texture gốc và pixel thân. Typecheck, 305 test, 9 test art, build và check:docs qua. Có dải khung đối chiếu và video lượt sửa. Nhánh chờ duyệt hình ảnh.
 - PO góp ý bàn chân. Tách giày khỏi phần dịch ống quần trong bốn khung chèn. Chân trụ giữ đế nguyên pixel/cao độ, chân nhấc xoay ở cổ chân. Motion 29/29, Chương 1 50/50, 305 test và 9 test art. Đã xuất Web, đối chiếu dải khung và ghi clip hai cỡ. Dừng ở duyệt hình ảnh trên nhánh.
+- PO đánh dấu Chèn 2/3 giật bàn chân trước. Hai khung giữ giày trước từ dáng gốc liền trước và chuyển chân sau theo dáng kế. Chèn 1/4 giống bản trước từng pixel. Motion 30/30, Chương 1 50/50, 305 test và 9 test art. Xuất Web, có ảnh trước/sau và clip. Chờ PO duyệt hình ảnh.
 
 ## 19/11/2026 · Vùng an toàn Web/PWA Godot · codex/godot-pwa-safe-area
 - Tiếp LT-14 bước 4 theo PO. Thêm `safe_area.gd` cho HUD, bảng danh sách và nội dung xác nhận; giữ lề gốc chỉnh trong scene. Bản Web đọc CSS safe-area, quy đổi theo canvas; cập nhật khi đổi kích thước. Native có nhánh đọc vùng an toàn nhưng chưa kiểm thiết bị.
