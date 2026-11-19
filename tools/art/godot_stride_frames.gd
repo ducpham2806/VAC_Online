@@ -21,35 +21,52 @@ func _initialize() -> void:
 
 func _farmer_inbetweens() -> Error:
 	var atlas := Image.create_empty(48 * 4, 64, false, Image.FORMAT_RGBA8)
-	# Match the four original contacts in SpriteFrames. The legs overlap on the passing poses,
-	# but every row retains its original width, outline and colours.
+	# Source sprites face left. Keep one shoe on the original ground line in each pose.
+	# The negative rotations pick up the heel. The positive rotations lead with the toe.
 	var contacts := [0, 2, 1, 3]
-	var front_in := [6, 3, 8, 5]
-	var rear_in := [9, 6, 5, 3]
-	var bend_front := [0, 2, 2, 0]
-	var bend_rear := [2, 0, 0, 2]
+	var front_steps := [Vector2i(3, 0), Vector2i(4, -2), Vector2i(4, -3), Vector2i(2, 0)]
+	var rear_steps := [Vector2i(-5, -2), Vector2i(-2, 0), Vector2i(-3, 0), Vector2i(-5, -2)]
+	var front_angles := [0.0, 18.0, 12.0, 0.0]
+	var rear_angles := [-18.0, 0.0, 0.0, -12.0]
 	for i in range(contacts.size()):
 		var source := Image.load_from_file(SOURCE + "farmer_walk_left_%d.png" % contacts[i])
 		if source == null or source.get_size() != Vector2i(48, 64):
 			push_error("Missing 48x64 farmer contact frame %d" % contacts[i])
 			return ERR_FILE_CORRUPT
 		var pose := source.duplicate() as Image
-		# At row 53 the two legs separate. Everything above it comes directly from the contact.
 		pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
-		_shift_leg_rows(pose, source, 26, 48, -rear_in[i], bend_rear[i])
-		_shift_leg_rows(pose, source, 0, 26, front_in[i], bend_front[i])
+		_place_lower_leg(pose, source, Rect2i(26, 55, 22, 9), Vector2(32, 55),
+			rear_steps[i], rear_angles[i])
+		_place_lower_leg(pose, source, Rect2i(0, 55, 26, 9), Vector2(20, 55),
+			front_steps[i], front_angles[i])
 		atlas.blit_rect(pose, Rect2i(0, 0, 48, 64), Vector2i(i * 48, 0))
 	return atlas.save_png(OUTPUT + "farmer_stride.png")
 
 
-func _shift_leg_rows(pose: Image, source: Image, left: int, right: int, travel: int, lift: int) -> void:
-	for y in range(53, 63):
-		var weight := smoothstep(53.0, 61.0, float(y))
-		var dx := roundi(travel * weight)
-		var dy := roundi(lift * smoothstep(56.0, 62.0, float(y)))
-		# Keep the calf and shoe pixels attached, reaching the toe lift over several rows.
-		var row := Rect2i(left, y, right - left, 1)
-		pose.blit_rect_mask(source, source, row, Vector2i(left + dx, y - dy))
+func _place_lower_leg(pose: Image, source: Image, shoe: Rect2i, ankle: Vector2,
+		travel: Vector2i, degrees: float) -> void:
+	# Keep each cuff row intact and join it to the shifted ankle. Never shear the shoe itself.
+	for y in range(53, shoe.position.y):
+		var weight := (y - 53.0) / (shoe.position.y - 53.0)
+		var shift := Vector2i((Vector2(travel) * weight).round())
+		shift.y = maxi(53 - y, shift.y)
+		var row := Rect2i(shoe.position.x, y, shoe.size.x, 1)
+		pose.blit_rect_mask(source, source, row, row.position + shift)
+	if is_zero_approx(degrees):
+		pose.blit_rect_mask(source, source, shoe, shoe.position + travel)
+		return
+
+	# Sample the whole original shoe around the ankle at nearest pixel, preserving its palette.
+	var angle := deg_to_rad(degrees)
+	var new_ankle := ankle + Vector2(travel)
+	for y in range(53, pose.get_height()):
+		for x in range(pose.get_width()):
+			var from := ankle + (Vector2(x, y) - new_ankle).rotated(-angle)
+			var pixel := Vector2i(from.round())
+			if shoe.has_point(pixel):
+				var color := source.get_pixelv(pixel)
+				if color.a > 0.0:
+					pose.set_pixel(x, y, color)
 
 
 func _bird_stride(id: String) -> Error:

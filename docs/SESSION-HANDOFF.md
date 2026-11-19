@@ -6,7 +6,7 @@
 - Luật vẫn chạy qua engine TypeScript trên server; Godot gửi thao tác. Hiện trạng chi tiết ở KY-90, plan ở LT-14, cấu hình ở [GODOT-ONLINE](GODOT-ONLINE.md).
 
 ## Nhánh đang chờ duyệt
-- `codex/godot-living-farm-animation` kế thừa safe-area `94ae93e`. Sửa lịch hành vi vật nuôi/cá, bước chân điền chủ, NPC và gió cây theo AR-30. Mở `godot/animation_preview.tscn`, F6 xem riêng. Bước ngang xen 4 khung gốc với 4 khung chèn sau khi PO góp ý tỷ lệ chân. Cá xoay theo cung, gà/vịt/NPC có khung chân. Kiểm motion 28/28, Chương 1 50/50, P1-9 41/41; Chrome cảnh thật và preview hai cỡ qua. Có ảnh/video, chưa merge.
+- `codex/godot-living-farm-animation` kế thừa safe-area `94ae93e`. Sửa lịch hành vi vật nuôi/cá, bước chân điền chủ, NPC và gió cây theo AR-30. Mở `godot/animation_preview.tscn`, F6 xem riêng. Bước ngang xen 4 khung gốc và 4 khung chèn. Chân trụ giữ đế gốc, chân nhấc xoay giày ở cổ chân. Cá xoay theo cung, gà/vịt/NPC có khung chân. Kiểm motion 29/29, Chương 1 50/50, P1-9 41/41; Chrome cảnh thật và preview hai cỡ qua. Có ảnh/video, chưa merge.
 - `codex/godot-pwa-safe-area`: vùng an toàn cho HUD, bảng danh sách và hộp xác nhận. Giữ lề scene; đọc CSS env trên Web và quy đổi pixel canvas sang UI. Có nhánh native, chưa kiểm trên thiết bị.
 - Đã xuất Web bằng Godot trên Mac. Chrome hai cỡ UI-10 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía. Chương 1 fixture 50/50. Typecheck, 305 test, build và kiểm cấu trúc scene qua. Bằng chứng ở WORKLOG.
 
