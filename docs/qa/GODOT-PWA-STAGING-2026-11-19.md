@@ -81,3 +81,19 @@ Typecheck, 305 test, build, xuất Web và check:docs qua. Log `main-5687b0e-upd
 Ảnh tiền tố `godot-lt14-current-`. Log `lt14-current-device.log`, `lt14-current-two-touch.log`, `lt14-ios-standalone-offline.log`. Trang đo âm thanh và SHA-256 tạm tại `/godot/lt14-device-check-5687b0e.html` trên cùng origin staging. Trang ghi tín hiệu bằng WebAudio trong trình duyệt và giữ trang mở từ icon như cũ.
 
 Khi có thiết bị, mở icon đã cài, xoay ngang và kiểm HUD hai chiều. Thử giữ joystick và dùng ngón còn lại chạm ô trên nông trại thử, nghe tiếng nút, đóng app khi mất mạng rồi mở lại. Nối mạng, bấm **Đọc lại** và so ô ruộng, vàng, bước hướng dẫn. Android cần thử cả Chrome từ URL và từ icon, ghi tải đầu, tải lại và FPS để đối chiếu Phaser.
+
+## Cập nhật PWA rồi mở lại offline
+
+PO chọn tiếp tục mô phỏng. Dùng gói `ca63b20` đã cache đủ và đưa `5687b0e` lên origin loopback thử riêng khi cửa sổ cũ còn mở. Chrome và WebKit đều có worker chờ cùng cache mới thiếu WASM/PCK. Ngắt mạng, đóng cửa sổ cũ rồi mở lại thấy trang báo offline thay cho game.
+
+Nhánh `codex/godot-pwa-offline-update` chờ cache hoàn tất trong bước cài worker mới. Godot 4.7.2 xuất gói thử. So SHA-256 của PCK trong cache với tệp xuất ở từng lượt. Vòng đời cài worker theo [đặc tả Service Workers](https://www.w3.org/TR/service-workers/#extendableevent-waituntil).
+
+| Kịch bản | Chrome và WebKit |
+|---|---|
+| Tải đủ bản cập nhật, rồi ngắt mạng và đóng/mở | Game mở bằng đúng PCK mới. Trong khi cửa sổ cũ còn mở, cả hai gói đều nằm trong cache. |
+| WASM của bản cập nhật trả HTTP 503 | Worker cập nhật không cài xong. Đóng/mở offline vẫn chạy bằng PCK cũ. |
+| Hồ sơ mới mở lần đầu | WASM được tải một lần. Lần đóng/mở offline dùng cache. |
+
+WebKit qua hai tình huống cắt kết nối của thao tác gieo, dùng hai tài khoản thử HTTPS. Mô phỏng lỗi trước khi chuyển yêu cầu tới API thì **Đọc lại** thấy 2.500 vàng và ô P5_7 trống. Chuyển yêu cầu tới API, xác nhận server đã ghi rồi mô phỏng mất phản hồi về game thì **Đọc lại** thấy 2.498 vàng và P5_7 có lúa. Godot thử gọi PLANT một lần mỗi lượt. Khâu đọc lại chỉ gửi yêu cầu lấy trạng thái.
+
+Ảnh 844×390 và 1280×720, tiền tố `godot-lt14-`. Log `lt14-update-repro*.log`, `lt14-update-fixed-*.log`, `lt14-update-failed-*.log`, `lt14-update-fresh-*.log` và `lt14-action-boundaries.log` tại thư mục staging. Typecheck, 305 test, build, xuất Web và check:docs qua. Staging HTTPS tiếp tục phục vụ `5687b0e`.

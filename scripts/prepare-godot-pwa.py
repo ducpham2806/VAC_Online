@@ -1,4 +1,4 @@
-"""Prepare first-visit caching in the exported Godot Web preset."""
+"""Prepare first-visit and update caching in the exported Godot Web preset."""
 import sys
 from pathlib import Path
 
@@ -26,6 +26,14 @@ WAIT_FOR_CONTROL = """function waitForVacPwaControl(engine, script) {
 
 """
 
+INSTALL_CACHE = """self.addEventListener('install', (event) => {
+	// An update can activate while offline once the old window closes.
+	const files = self.registration.active
+		? FULL_CACHE.map((file) => new Request(file, { cache: 'reload' }))
+		: CACHED_FILES;
+	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(files)));
+});"""
+
 
 def replace_once(source, old, new):
     if source.count(old) != 1:
@@ -50,6 +58,13 @@ def main(folder):
         "\t\t})).then(() => {\n\t\t\tsetStatusMode('hidden');",
     )
 
+    sw = replace_once(
+        sw,
+        "self.addEventListener('install', (event) => {\n"
+        "\tevent.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_FILES)));\n"
+        "});",
+        INSTALL_CACHE,
+    )
     # First activation controls the loading page. Updates still wait for old pages to close.
     sw = replace_once(
         sw,

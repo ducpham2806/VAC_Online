@@ -278,3 +278,8 @@
 - Đang phục vụ `e26571b` trên tunnel thử. Chưa phát hành URL chính. Còn nghiệm thu Android thật và PO chốt offline. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
 - iPhone 14 Pro Max cài icon qua Safari, gieo thử, đóng hẳn rồi mở lại vẫn giữ ô lúa và 2.498 vàng. Safari tải lại vẫn ở thư mở đầu. Hai nơi mở có phiên khách riêng. Chờ thử màn ngang, hai ngón, âm thanh và offline thật; cần chốt luồng iPhone cho nhóm thử. check:docs qua.
 - `codex/godot-ios-install-guide` thêm hướng dẫn iOS mới ngay trên staging. WebKit ba cỡ xác nhận đợi lựa chọn trước khi tải hoặc đăng nhập. Phiên cũ, icon và Chrome vào thẳng. Icon iPhone đã cài còn 2.498 vàng. 305 test, typecheck, build, check:docs qua. Còn nghiệm thu Android và các mục iPhone LT-14.
+
+## 19/11/2026 · Cache Web/PWA lần mở đầu · codex/godot-pwa-first-load-cache
+- Tiếp LT-14. Tái hiện lần đọc nông trại đầu có HTML trong cache nhưng thiếu WASM/PCK. Bản xuất đợi worker nhận trang trước khi tải gói, có giới hạn chờ và nạp online dự phòng.
+- Chrome/WebKit đóng và mở lại ngay khi ngắt mạng sau lần đầu, có game từ cache. Chrome thử gieo đã ghi trên server nhưng rơi phản hồi. Đọc lại giữ 2.498 vàng và đúng ô lúa, không gửi lại gieo.
+- Typecheck, 305 test, build, xuất Web và check:docs qua. Đang thử trên staging. Còn nghiệm thu trực tiếp offline, ngang, hai ngón, âm thanh trên iPhone và Android thật.
