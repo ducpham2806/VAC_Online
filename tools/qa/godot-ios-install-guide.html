@@ -1,0 +1,94 @@
+<template id="vac-staging-install-template">
+  <main id="vac-staging-install" aria-labelledby="vac-install-heading">
+    <section class="vac-install-card">
+      <header>
+        <img src="./index.apple-touch-icon.png" width="48" height="48" alt="">
+        <h1 id="vac-install-heading">Cài VAC Online</h1>
+      </header>
+      <p>Cài trước khi bắt đầu nếu bạn muốn chơi từ icon. Safari và icon giữ tiến trình riêng.</p>
+      <ol>
+        <li>Mở trang này trong Safari. Chọn <strong>Chia sẻ</strong> (Share).</li>
+        <li>Chọn <strong>Thêm vào Màn hình chính</strong> (bấm <strong>Xem thêm</strong> nếu chưa thấy). Bật <strong>Mở dưới dạng ứng dụng web</strong>, rồi bấm <strong>Thêm</strong>.</li>
+        <li>Mở game từ icon <strong>VAC Online</strong>.</li>
+      </ol>
+      <button type="button" id="vac-install-continue">Chơi trong trình duyệt</button>
+    </section>
+  </main>
+</template>
+<style>
+  #vac-staging-install {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    box-sizing: border-box;
+    display: grid;
+    align-items: safe center;
+    justify-items: center;
+    overflow: auto;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+      max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    background: #1b3b2b;
+    color: #3d2314;
+    font: 1rem/1.45 system-ui, sans-serif;
+  }
+
+  #vac-staging-install .vac-install-card {
+    box-sizing: border-box;
+    width: min(100%, 32rem);
+    background: #f3e3c3;
+    border: 2px solid #3d2314;
+    border-radius: 16px;
+    padding: clamp(16px, 4vw, 26px);
+    box-shadow: 0 7px 0 #172f24;
+  }
+
+  #vac-staging-install header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #vac-staging-install img { border-radius: 10px; }
+  #vac-staging-install h1 { margin: 0; font-size: clamp(1.375rem, 4vw, 1.75rem); }
+  #vac-staging-install p { margin: 10px 0; }
+  #vac-staging-install ol { padding-inline-start: 1.4rem; margin: 0 0 14px; }
+  #vac-staging-install li + li { margin-top: 5px; }
+
+  #vac-install-continue {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 2px solid #3d2314;
+    border-radius: 8px;
+    background: #ffd166;
+    color: #3d2314;
+    font: 650 1rem/1.3 system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  #vac-install-continue:focus-visible { outline: 3px solid #1b3b2b; outline-offset: 3px; }
+</style>
+<script>
+window.vacStartStaging = (start) => {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const fromIcon = navigator.standalone === true
+    || matchMedia('(display-mode: standalone)').matches
+    || matchMedia('(display-mode: fullscreen)').matches;
+  if (!ios || fromIcon || window.vacGodotAuth?.account(__VAC_STAGING_API_URL__)) {
+    start();
+    return;
+  }
+
+  const template = document.getElementById('vac-staging-install-template');
+  document.body.append(template.content.cloneNode(true));
+  const previousTouchAction = document.body.style.touchAction;
+  document.body.style.touchAction = 'pan-y';
+  const button = document.getElementById('vac-install-continue');
+  button.addEventListener('click', () => {
+    document.getElementById('vac-staging-install').remove();
+    document.body.style.touchAction = previousTouchAction;
+    start();
+  }, { once: true });
+};
+</script>

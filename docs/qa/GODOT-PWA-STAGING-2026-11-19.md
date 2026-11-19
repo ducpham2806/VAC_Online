@@ -33,3 +33,14 @@ Thời gian và FPS là giá trị đọc được từ HUD, lấy một mẫu c
 Từ lần thử này, hai cách mở đang giữ hai phiên khách. Bản Web dùng localStorage cho phiên. Theo [WebKit](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#login-cookies), khi thêm vào Màn hình chính hệ thống có thể sao chép cookie nhưng không sao chép localStorage, và dữ liệu tiếp tục tách riêng sau cài. Vấn đề còn mở nếu đợt thử cần người chơi chuyển nông trại đã chơi trên Safari sang icon. Đề xuất cài trước khi bắt đầu với người mới và cho người có tiến trình tiếp tục dùng cách mở cũ. Chờ PO quyết định luồng cho nhóm thử và chính sách offline theo LT-14.
 
 Hoàn tất phần đóng gói, thử trình duyệt và các mục iPhone đã ghi đạt. Chưa phát hành URL chính và chưa mở nhóm LT-13.
+
+## Hướng dẫn cài iOS trên staging
+
+Nhánh `codex/godot-ios-install-guide` thêm hướng dẫn vào trang xuất Godot do script staging đóng gói. Trang vẫn giữ manifest, icon và vị trí cài cũ. Bản xuất Godot thường giữ hành vi khởi động ban đầu.
+
+- WebKit mô phỏng iPhone mới ở 393×852, 844×390 và 1280×720: hướng dẫn vừa khung, nút ít nhất 44 px. Chưa tải PCK/WASM, gọi Auth hay đọc nông trại trước khi người chơi chọn.
+- Chọn chơi trong trình duyệt: tạo một phiên, vào thư mở đầu. Tải lại dùng cùng phiên và bỏ qua hướng dẫn.
+- Mở từ icon mô phỏng và Chrome desktop: vào thẳng game. Trên iPhone thật, icon đã cài mở lại nông trại có lúa và 2.498 vàng. Chưa thử màn hướng dẫn mới bằng phiên Safari sạch trên máy thật.
+- Typecheck, 305 test, build và check:docs qua. Log `ios-guide-browser.log` và ảnh `godot-ios-guide-*` trong bằng chứng của phiên.
+
+Việc này hướng dẫn người mới chọn cách mở trước khi bắt đầu. Chuyển nông trại đã có từ Safari sang icon còn chờ quyết định phạm vi theo LT-14.

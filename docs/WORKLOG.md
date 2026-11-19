@@ -7,6 +7,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 - HTTPS staging dùng GoTrue và PostgreSQL thử. Chrome giữ một danh tính và ô lúa/2.498 vàng sau làm mới phiên, mất mạng, cập nhật PWA và quay Phaser. Hai ngón mô phỏng đạt. WebKit giữ phiên khi tải lại bản mới. Typecheck, 305 test, build, check:docs qua.
 - Đang phục vụ `e26571b` trên tunnel thử. Chưa phát hành URL chính. Còn nghiệm thu Android thật và PO chốt offline. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
 - iPhone 14 Pro Max cài icon qua Safari, gieo thử, đóng hẳn rồi mở lại vẫn giữ ô lúa và 2.498 vàng. Safari tải lại vẫn ở thư mở đầu. Hai nơi mở có phiên khách riêng. Chờ thử màn ngang, hai ngón, âm thanh và offline thật; cần chốt luồng iPhone cho nhóm thử. check:docs qua.
+- `codex/godot-ios-install-guide` thêm hướng dẫn iOS mới ngay trên staging. WebKit ba cỡ xác nhận đợi lựa chọn trước khi tải hoặc đăng nhập. Phiên cũ, icon và Chrome vào thẳng. Icon iPhone đã cài còn 2.498 vàng. 305 test, typecheck, build, check:docs qua. Còn nghiệm thu Android và các mục iPhone LT-14.
 
 ## 19/11/2026 · Sửa hoạt ảnh nông trại Godot · codex/godot-living-farm-animation
 - PO yêu cầu sửa theo prompt repo. Đối chiếu `p0_samples`, `p1_estate_npc`, `p1_nature` và AR-30. Gà/vịt có nghỉ, mổ, rỉa lông, bước ngắn; cá lặn/nổi/nhảy; chân điền chủ theo quãng đường, sửa thứ tự đi ngang và hướng phải. NPC thở, nói, bước quanh trong vùng marker. Cây/lúa có gió giữ gốc. Dùng khung sẵn có, chưa có clip NPC đi đủ hướng.

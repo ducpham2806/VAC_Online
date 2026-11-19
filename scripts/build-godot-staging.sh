@@ -54,6 +54,7 @@ cp godot/dist/* dist/godot/
 python3 - "$commit" <<'PY'
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -62,6 +63,26 @@ godot = root / "godot"
 files = ["index.html", "index.pck", "index.wasm.gz", "index.manifest.json", "index.service.worker.js"]
 if not (root / "index.html").is_file():
     raise SystemExit("Thiếu trang gốc của Phaser.")
+# Historical refs without the guide still export their original HTML.
+guide = Path("tools/qa/godot-ios-install-guide.html")
+if guide.is_file():
+    page = godot / "index.html"
+    html = page.read_text(encoding="utf-8")
+    engine_script = '<script src="index.js"></script>'
+    entry = "const engine = new Engine(GODOT_CONFIG);\n\n(function () {"
+    end = "}());\n\t\t</script>"
+    if any(html.count(marker) != 1 for marker in (engine_script, entry, end)):
+        raise SystemExit("Không tìm thấy phần khởi động Godot để gắn hướng dẫn cài iPhone.")
+    snippet = guide.read_text(encoding="utf-8").replace(
+        "__VAC_STAGING_API_URL__", json.dumps(os.environ["VAC_STAGING_API_URL"]),
+    )
+    page.write_text(
+        html.replace(engine_script, snippet + "\n" + engine_script)
+        .replace(entry, entry.replace("(function () {", "window.vacStartStaging(function () {"))
+        .replace(end, end.replace("}());", "});")),
+        encoding="utf-8",
+    )
+
 hashes = {}
 for name in files:
     path = godot / name
