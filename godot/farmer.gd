@@ -2,7 +2,7 @@ extends AnimatedSprite2D
 
 @export_range(1.0, 500.0, 1.0, "suffix:px/s") var walk_speed := 96.0
 
-@export_range(16.0, 96.0) var walk_cycle_distance := 48.0
+@export_range(16.0, 96.0) var walk_cycle_distance := 56.0
 var walk_distance := 0.0
 var facing := "down"
 var _foot_offsets: Dictionary = {}
@@ -45,6 +45,8 @@ func step_toward(target: Vector2, delta: float) -> bool:
 	flip_h = facing == "right"
 	var clip := StringName("walk_" + facing)
 	if animation != clip:
+		if str(animation).begins_with("idle_"):
+			walk_distance = 0.0
 		animation = clip
 	pause()
 	walk_distance += movement.length()

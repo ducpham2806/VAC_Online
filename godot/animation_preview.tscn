@@ -46,4 +46,4 @@ script = ExtResource("npc")
 step_atlas = ExtResource("huong_steps")
 
 [node name="Farmer" parent="." instance=ExtResource("farmer")]
-position = Vector2(360, 300)
+position = Vector2(360, 320)

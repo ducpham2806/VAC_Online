@@ -8,7 +8,7 @@
 ## Nhánh đang chờ duyệt
 - `codex/godot-pwa-first-load-cache`: worker lưu gói ngay lần mở đầu. Chrome/WebKit mở lại offline qua, Chrome đọc lại sau mất phản hồi gieo mà gửi đúng một lần. Có hướng dẫn cài iOS của nhánh trước.
 - `codex/godot-pwa-staging-qa` thêm script đóng gói cùng commit và mã bản dựng. Đã diễn tập chuyển `3fb5ea0 → e26571b` trên staging HTTPS. Chrome giữ phiên/ô lúa qua cache, cập nhật và quay lui. Hai ngón mô phỏng qua. iPhone 14 Pro Max mở từ icon và giữ lúa/2.498 vàng sau đóng mở. Safari và icon giữ nông trại riêng. Chi tiết ở [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
-- `codex/godot-living-farm-animation` kế thừa safe-area `94ae93e`. Sửa lịch hành vi vật nuôi/cá, bước chân điền chủ, NPC và gió cây theo AR-30. Mở `godot/animation_preview.tscn`, F6 xem riêng. Bước ngang xen 4 khung gốc và 4 khung chèn. Chèn 2 và 3 giữ cả giày trước sát đất qua các dáng gốc liền kề. Cá xoay theo cung, gà/vịt/NPC có khung chân. Kiểm motion 30/30, Chương 1 50/50, P1-9 41/41; Chrome cảnh thật và preview hai cỡ qua. Có ảnh/video, chưa merge.
+- `codex/godot-walk-reference` chỉnh nhịp bốn hướng theo sheet Walk của PO. Mỗi clip dùng bốn ảnh gốc và bốn khung chèn từ pixel VAC. F6 `godot/animation_preview.tscn` xem đủ hướng. Motion 35/35, Chương 1 50/50, Web hai cỡ qua. Kế thừa hoạt ảnh gà/vịt/cá, NPC, gió cây và safe-area. Chưa merge.
 - `codex/godot-pwa-safe-area`: vùng an toàn cho HUD, bảng danh sách và hộp xác nhận. Giữ lề scene; đọc CSS env trên Web và quy đổi pixel canvas sang UI. Có nhánh native, chưa kiểm trên thiết bị.
 - Đã xuất Web bằng Godot trên Mac. Chrome hai cỡ UI-10 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía. Chương 1 fixture 50/50. Typecheck, 305 test, build và kiểm cấu trúc scene qua. Bằng chứng ở WORKLOG.
 

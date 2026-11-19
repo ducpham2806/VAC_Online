@@ -27,41 +27,43 @@ func _run() -> void:
 	var farmer = load("res://farmer.tscn").instantiate()
 	root.add_child(farmer)
 	farmer.set_process(false)
-	farmer.step_toward(Vector2(24, 0), 0.125)
+	farmer.step_toward(Vector2(24, 0), 14.0 / farmer.walk_speed)
 	check(farmer.animation == &"walk_right" and farmer.flip_h, "đi phải dùng bộ chân trái lật hướng")
 	check(farmer.frame == 2, "khung chân đi theo quãng đường thực")
 	var stride: SpriteFrames = farmer.sprite_frames
-	var unique_poses := {}
-	for i in range(stride.get_frame_count(&"walk_right")):
-		unique_poses[stride.get_frame_texture(&"walk_right", i).get_image().get_data()] = true
-	check(unique_poses.size() == 8, "duỗi, dồn lực, chân ngang và nhấc gót có 8 dáng riêng")
-	var contacts := [0, 2, 1, 3]
+	var anchors := [1, 3, 0, 2]
+	var anchor_frames := [2, 3, 6, 7]
+	var bridge_sources := [2, 1, 3, 0]
+	var bridge_frames := [0, 1, 4, 5]
 	var originals_match := true
-	var inbetweens_keep_body := true
-	var inbetweens_keep_soles := true
-	var two_front_shoes_stay_planted := true
-	# Inspect the planted shoe in each in-between, below any overlap with the swinging leg.
-	var soles := [Rect2i(8, 60, 14, 3), Rect2i(10, 60, 13, 3), Rect2i(11, 60, 13, 3), Rect2i(11, 60, 13, 3)]
-	var sole_offsets := [3, 0, 0, 2]
-	var body := Rect2i(0, 0, 48, 53)
-	for i in range(contacts.size()):
-		var original: Texture2D = load("res://generated/farmer_walk_left_%d.png" % contacts[i])
-		for clip in [&"walk_left", &"walk_right"]:
-			originals_match = originals_match and stride.get_frame_texture(clip, i * 2) == original
-			var inserted := stride.get_frame_texture(clip, i * 2 + 1).get_image()
-			var source := original.get_image()
-			inbetweens_keep_body = inbetweens_keep_body and same_visible_pixels(inserted, source, body)
-			if i in [1, 2]:
-				two_front_shoes_stay_planted = two_front_shoes_stay_planted and same_visible_pixels(
-					inserted, source, Rect2i(0, 53, 26, 11))
-			var sole: Rect2i = soles[i]
-			var moved_sole := Rect2i(sole.position + Vector2i(sole_offsets[i], 0), sole.size)
-			inbetweens_keep_soles = inbetweens_keep_soles and same_visible_pixels(
-				inserted.get_region(moved_sole), source.get_region(sole), Rect2i(Vector2i.ZERO, sole.size))
-	check(originals_match, "bốn khung chính của mỗi hướng trỏ đúng texture gốc theo thứ tự")
-	check(inbetweens_keep_body, "bốn khung chèn giữ nguyên pixel đầu, thân và hông")
-	check(inbetweens_keep_soles, "đế giày chân trụ giữ nguyên pixel và cao độ gốc ở mỗi khung chèn")
-	check(two_front_shoes_stay_planted, "chèn 2 và 3 giữ cả giày trước sát đất, không rút bàn chân vào giữa hai dáng gốc")
+	var bridges_keep_body := true
+	for direction in ["down", "up", "left", "right"]:
+		var clip := StringName("walk_" + direction)
+		var base: String = "left" if direction == "right" else direction
+		var unique_poses := {}
+		for i in range(stride.get_frame_count(clip)):
+			unique_poses[stride.get_frame_texture(clip, i).get_image().get_data()] = true
+		check(unique_poses.size() == 8, "%s có 8 khung riêng cho bốn nhịp bước" % clip)
+		for i in range(4):
+			var original := load("res://generated/farmer_walk_%s_%d.png" % [base, anchors[i]]) as Texture2D
+			originals_match = originals_match and stride.get_frame_texture(clip, anchor_frames[i]) == original
+			var whole := load("res://generated/farmer_walk_%s_%d.png" % [base, bridge_sources[i]]) as Texture2D
+			var bridge := stride.get_frame_texture(clip, bridge_frames[i]).get_image()
+			bridges_keep_body = bridges_keep_body and same_visible_pixels(
+				bridge, whole.get_image(), Rect2i(0, 0, 48, 53))
+	check(originals_match, "cả bốn hướng vẫn dùng texture gốc ở nhịp đặt chân")
+	check(bridges_keep_body, "khung chuyển tiếp giữ pixel từ đầu tới hông")
+	var lower := Rect2i(0, 55, 48, 9)
+	var width_at := func(index: int) -> int:
+		return stride.get_frame_texture(&"walk_left", index).get_image().get_region(lower).get_used_rect().size.x
+	check(width_at.call(0) < width_at.call(1) and width_at.call(1) < width_at.call(2)
+		and width_at.call(4) < width_at.call(5) and width_at.call(5) < width_at.call(6),
+		"hai pha đi qua dưới hông mở dần tới hai nhịp đặt chân")
+	var planted := true
+	for index in range(8):
+		var foot := stride.get_frame_texture(&"walk_left", index).get_image().get_used_rect()
+		planted = planted and foot.end.y == 63
+	check(planted, "bước ngang giữ chung cao độ chân trụ")
 	var idle_original := load("res://generated/farmer_walk_left_2.png") as Texture2D
 	check(stride.get_frame_texture(&"idle_left", 0) == idle_original and
 		stride.get_frame_texture(&"idle_right", 0) == idle_original, "dáng đứng ngang dùng lại texture gốc")
@@ -72,6 +74,11 @@ func _run() -> void:
 	check(absf(farmer.offset.y + farmer.sprite_frames.get_frame_texture(farmer.animation, 0).get_image().get_used_rect().end.y - 32.0) < 0.01, "idle giữ chân ở gốc nhân vật")
 	farmer.step_toward(Vector2(-24, 0), 0.125)
 	check(farmer.animation == &"walk_left" and not farmer.flip_h, "đi trái không bị lẫn hướng")
+	farmer.stand()
+	farmer.step_toward(farmer.position + Vector2.UP * 24, 0.014)
+	check(farmer.animation == &"walk_up" and farmer.frame == 0, "từ đứng bắt đầu bằng pha đi qua ở hướng lên")
+	farmer.step_toward(farmer.position + Vector2.DOWN * 24, 0.014)
+	check(farmer.animation == &"walk_down" and not farmer.flip_h, "đổi hướng xuống dùng bộ bước hướng xuống")
 	var animals: Array[Node] = []
 	for i in range(2):
 		var animal = load("res://animal_slot.tscn").instantiate()

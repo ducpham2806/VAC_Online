@@ -1,16 +1,18 @@
 extends Node2D
 ## F6: a local animation review, without Auth, farm saves or server actions.
 
-@export var walk_end := Vector2(540, 300)
-@export_range(1.0, 20.0) var walk_pause := 2.5
-var walk_start := Vector2.ZERO
-var pause_left := 2.5
-var forward := true
+@export var walk_end := Vector2(540, 320)
+@export_range(1.0, 20.0) var walk_pause := 1.0
+var walk_targets := PackedVector2Array()
+var pause_left := 1.0
+var next_corner := 0
 var talk_clock := 0.0
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color("#f3e3c3"))
-	walk_start = $Farmer.position
+	var start: Vector2 = $Farmer.position
+	var top := walk_end.y - 60.0
+	walk_targets = PackedVector2Array([walk_end, Vector2(walk_end.x, top), Vector2(start.x, top), start])
 	for entry in [[$Hen, "ANI_01"], [$Duck, "ANI_03"], [$Fish, "AQUA_01"]]:
 		var textures: Array[Texture2D] = [load("res://generated/%s_0.png" % entry[1]), load("res://generated/%s_1.png" % entry[1])]
 		entry[0].setup(textures, entry[1] == "AQUA_01", entry[1])
@@ -35,8 +37,8 @@ func _process(delta: float) -> void:
 	if pause_left > 0.0:
 		pause_left -= delta
 		$Farmer.stand()
-	elif $Farmer.step_toward(walk_end if forward else walk_start, delta):
-		forward = not forward
+	elif $Farmer.step_toward(walk_targets[next_corner], delta):
+		next_corner = (next_corner + 1) % walk_targets.size()
 		pause_left = walk_pause
 	queue_redraw()
 
@@ -49,5 +51,5 @@ func _draw() -> void:
 	for entry in [["Gà", 60], ["Vịt", 175], ["Cá", 290], ["Lúa", 405], ["Cây", 535]]:
 		draw_string(font, Vector2(entry[1], 196), entry[0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, ink)
 	draw_string(font, Vector2(48, 338), "NPC: nghỉ / bước ngắn / nói", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
-	draw_string(font, Vector2(340, 338), "Điền chủ: nghỉ / đi trái–phải", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
+	draw_string(font, Vector2(340, 347), "Điền chủ: đi bốn hướng", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)
 	draw_string(font, Vector2(20, 220), "Gà: %s · Cá: %s" % [$Hen.motion, $Fish.motion], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, ink)

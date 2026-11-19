@@ -33,3 +33,12 @@ Dựng lại atlas từ gốc repo bằng `godot --headless --script tools/art/g
 RULE D0/D1: không đổi core loop, kinh tế, DB, vùng tương tác hay vị trí marker. Bản đồ và PNG của PO giữ nguyên. Native headless vẫn báo ObjectDB leak lúc thoát (6 ở Chương 1, 11 ở P1-9); chưa kết luận hoặc sửa nguyên nhân trong việc này.
 
 Kết luận **XONG CÓ GHI CHÚ** cho phần sửa dùng asset hiện có. Đã code trên nhánh riêng; chưa merge, áp DB hoặc phát hành. Chờ PO nghiệm thu hình ảnh theo AGENTS.md.
+
+## Nhịp đi theo sheet Walk của PO
+
+Nhánh `codex/godot-walk-reference` tham khảo nhịp Walk trong ảnh PO gửi. Bốn pha chính là qua chân A, đặt B, qua chân B và đặt A. Mỗi vòng có 8 khung với các pha vươn và dồn lực. Mỗi hướng dùng trực tiếp bốn ảnh đặt chân gốc. Lật bộ ngang để đi phải. Hai pha đi qua thu chân dưới hông khi đi ngang và giảm chênh cao hai bàn chân khi đi lên/xuống. Atlas chỉ dùng pixel VAC và ảnh gốc còn nguyên.
+
+- Motion 35/35, Chương 1 50/50. Có kiểm khung nguồn, pixel thân, chân trụ và thứ tự pha. 12 ô 48×64 trong atlas đúng palette và alpha.
+- Typecheck, 305 test, build, 9 test art và Web export qua. Browser chạy cảnh farm và F6 ở 1280×720, 844×390 không lỗi.
+- Bằng chứng trong thư mục `/private/tmp/vac-walkref-current` trỏ tới. Dải khung, ảnh và video có tiền tố `godot-walk-reference-`.
+- Cảnh `animation_preview.tscn` giờ đi cả bốn hướng. Chưa merge, giữ staging ở gói LT-14 đang nghiệm thu.

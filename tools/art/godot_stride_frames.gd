@@ -20,59 +20,67 @@ func _initialize() -> void:
 
 
 func _farmer_inbetweens() -> Error:
-	var atlas := Image.create_empty(48 * 4, 64, false, Image.FORMAT_RGBA8)
-	# Source sprites face left. Preview and gameplay mirror the clip for right-facing steps.
-	var contacts := [0, 2, 1, 3]
-	var sources: Array[Image] = []
-	for contact in contacts:
-		var art := Image.load_from_file(SOURCE + "farmer_walk_left_%d.png" % contact)
-		if art == null or art.get_size() != Vector2i(48, 64):
-			push_error("Missing 48x64 farmer contact frame %d" % contact)
-			return ERR_FILE_CORRUPT
-		sources.append(art)
-	for i in range(sources.size()):
-		var source := sources[i]
-		var pose := source.duplicate() as Image
-		if i in [1, 2]:
-			# These contacts both keep the front sole low. Preserve it and settle the rear
-			# foot into the next contact as a whole, instead of lifting the front in between.
-			var rear_leg := Rect2i(26, 53, 22, 11)
-			pose.blit_rect(sources[i + 1], rear_leg, rear_leg.position)
-		else:
-			pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
-			var first_contact := i == 0
-			_place_lower_leg(pose, source, Rect2i(26, 55, 22, 9), Vector2(32, 55),
-				Vector2i(-5, -2), -18.0 if first_contact else -12.0)
-			_place_lower_leg(pose, source, Rect2i(0, 55, 26, 9), Vector2(20, 55),
-				Vector2i(3 if first_contact else 2, 0), 0.0)
-		atlas.blit_rect(pose, Rect2i(0, 0, 48, 64), Vector2i(i * 48, 0))
+	var atlas := Image.create_empty(48 * 4, 64 * 3, false, Image.FORMAT_RGBA8)
+	var directions := ["left", "down", "up"]
+	for row in range(directions.size()):
+		var direction: String = directions[row]
+		var sources: Array[Image] = []
+		for contact in range(4):
+			var art := Image.load_from_file(SOURCE + "farmer_walk_%s_%d.png" % [direction, contact])
+			if art == null or art.get_size() != Vector2i(48, 64):
+				push_error("Missing 48x64 farmer frame %s %d" % [direction, contact])
+				return ERR_FILE_CORRUPT
+			sources.append(art)
+		# Following the reference's Walk beat: pass, reach, opposite pass, opposite reach.
+		# SpriteFrames place the original contacts and settling poses between these cells.
+		var passes: Array[int] = [2, 1, 3, 0]
+		for column in range(passes.size()):
+			var source := sources[passes[column]]
+			var pose := source.duplicate() as Image
+			if direction == "left":
+				_side_step(pose, source, column)
+			else:
+				_depth_step(pose, source, column)
+			atlas.blit_rect(pose, Rect2i(0, 0, 48, 64), Vector2i(column * 48, row * 64))
 	return atlas.save_png(OUTPUT + "farmer_stride.png")
 
 
-func _place_lower_leg(pose: Image, source: Image, shoe: Rect2i, ankle: Vector2,
-		travel: Vector2i, degrees: float) -> void:
-	# Keep each cuff row intact and join it to the shifted ankle. Never shear the shoe itself.
-	for y in range(53, shoe.position.y):
-		var weight := (y - 53.0) / (shoe.position.y - 53.0)
-		var shift := Vector2i((Vector2(travel) * weight).round())
-		shift.y = maxi(53 - y, shift.y)
-		var row := Rect2i(shoe.position.x, y, shoe.size.x, 1)
-		pose.blit_rect_mask(source, source, row, row.position + shift)
-	if is_zero_approx(degrees):
-		pose.blit_rect_mask(source, source, shoe, shoe.position + travel)
-		return
+func _side_step(pose: Image, source: Image, phase: int) -> void:
+	# Bring the intact shoes closer under the hips on the passing beat. Only the swinging
+	# shoe lifts one pixel. The two reaching poses come partway back to the original stride.
+	var passing := phase % 2 == 0
+	var approach := 5 if passing else 2
+	var front_lift := -1 if phase == 2 else 0
+	var rear_lift := -1 if phase == 0 else 0
+	pose.fill_rect(Rect2i(0, 53, 48, 11), Color.TRANSPARENT)
+	_side_leg(pose, source, Rect2i(26, 55, 22, 9), Vector2i(-approach, rear_lift))
+	_side_leg(pose, source, Rect2i(0, 55, 26, 9), Vector2i(approach, front_lift))
 
-	# Sample the whole original shoe around the ankle at nearest pixel, preserving its palette.
-	var angle := deg_to_rad(degrees)
-	var new_ankle := ankle + Vector2(travel)
-	for y in range(53, pose.get_height()):
-		for x in range(pose.get_width()):
-			var from := ankle + (Vector2(x, y) - new_ankle).rotated(-angle)
-			var pixel := Vector2i(from.round())
-			if shoe.has_point(pixel):
-				var color := source.get_pixelv(pixel)
-				if color.a > 0.0:
-					pose.set_pixel(x, y, color)
+
+func _side_leg(pose: Image, source: Image, shoe: Rect2i, travel: Vector2i) -> void:
+	# Taper the shift at the cuff. Copy the whole shoe once, preserving the sole and toe.
+	var seam := Rect2i(shoe.position.x, 53, shoe.size.x, 1)
+	pose.blit_rect_mask(source, source, seam, seam.position)
+	var cuff := Rect2i(shoe.position.x, 54, shoe.size.x, 1)
+	var mid := Vector2i((Vector2(travel) * 0.5).round())
+	pose.blit_rect_mask(source, source, cuff, cuff.position + mid)
+	pose.blit_rect_mask(source, source, shoe, shoe.position + travel)
+
+
+func _depth_step(pose: Image, source: Image, phase: int) -> void:
+	# In the frontal and rear views the feet move in depth, with very little side travel.
+	# Only close the shorter leg toward the ground plane. Leave the support leg untouched.
+	var swing_x := 0 if phase in [0, 3] else 24
+	var strip := Rect2i(swing_x, 56, 24, 8)
+	var used := source.get_region(strip).get_used_rect()
+	var shift := clampi(strip.size.y - used.end.y - 1, 0, 2)
+	if shift == 0:
+		return
+	pose.fill_rect(strip, Color.TRANSPARENT)
+	var cuff := Rect2i(swing_x, strip.position.y, strip.size.x, 1)
+	for y in range(shift):
+		pose.blit_rect_mask(source, source, cuff, cuff.position + Vector2i(0, y))
+	pose.blit_rect_mask(source, source, strip, strip.position + Vector2i(0, shift))
 
 
 func _bird_stride(id: String) -> Error:
