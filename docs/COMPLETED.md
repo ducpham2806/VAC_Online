@@ -1,12 +1,14 @@
 # Tóm tắt việc đã hoàn tất
 
-Bộ nhớ kết quả theo module, không phải nhật ký thứ hai. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
+Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
-## Chương 1 trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
-- Cảnh mở đầu, hướng dẫn 8 bước, NPC có tim, Sổ Gia Phả, âm thanh AR-40. Hết nội dung LT-14 bước 3.
-- Kiểm bằng `tools/qa/godot-chapter1-flow.sh` (50 bước) và Chrome hai cỡ. Ảnh `docs/screenshots/godot-ch1-*`.
-- PO duyệt, đã merge `main` tại `667445e`. Chưa thử Supabase thật và điện thoại.
-- 18/11 kiểm báo cáo LT-13 với nhật ký hướng dẫn Godot trong DB thử.
+## Vùng an toàn Godot Web/PWA · 19/11/2026 · codex/godot-pwa-safe-area
+- HUD, bảng và xác nhận dùng chung `safe_area.gd`, giữ lề scene.
+- Quy đổi CSS env sang đơn vị UI theo canvas; cập nhật khi đổi kích thước.
+- Xuất Web; Chrome hai cỡ UI-10 qua mô phỏng vùng khuyết và đổi cỡ.
+- Chương 1 50/50, typecheck, 305 test, build, kiểm scene qua.
+- Chưa merge/phát hành; native và điện thoại thật chưa nghiệm thu.
+- Tiếp cổng LT-14 trước P1-12. [Chương 1 đã merge](archive/COMPLETED-2026-11.md).
 
 ## Vật nuôi, Bếp, đơn HTX trong Godot · 15/11/2026 · ccr-b91fc534-n2yctl
 - Chỗ nuôi gà, vịt, cá; chọn giống; Kho; Bếp Củi và Nồi Đất; bảng đơn HTX theo LT-14 bước 3.

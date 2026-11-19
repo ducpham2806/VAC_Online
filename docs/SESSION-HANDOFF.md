@@ -1,33 +1,20 @@
-# Bàn giao · 18/11/2026 · Godot P1 ở bước thử phát hành
+# Bàn giao · 19/11/2026 · LT-14 thử phát hành Godot
 
-## Việc vừa làm
-Mã P1-8 đã có trên `main` tại `c58623e`. Đã rà lại cấu trúc repo và bộ công cụ agent, xem WORKLOG.
-- QD-82 áp bằng script; atlas `slice`; engine ở `src/engine/`; scene đi bộ `?p1` (`src/game/slice/`).
-- P1-4/5: chạm ô, kéo cả loạt, nút hành động, HUD lai, Kho bán HTX (`src/domain/tools.ts`, `src/store/useSliceStore.ts`, `src/ui/hud/SliceHud.tsx`).
-- P1-6/7: mùa trên bản đồ + công tắc mùa (⚙️), lưu cục bộ `vac_slice_save_v1`.
-- P1-10 (QD-83): dọn đá/gốc cây → Gỗ/Đá, sửa giếng/chuồng/nhà, khai hoang 2 vùng (`src/domain/estate.ts`, `src/game/slice/estateTarget.ts`).
-- P1-11 (QD-84): cảnh mở đầu, 2 NPC có tim, Sổ Gia Phả Chương 1, hướng dẫn 8 bước (`src/domain/npc.ts`, `story.ts`, `src/game/slice/sliceTutorial.ts`, `src/ui/hud/SliceStoryHud.tsx`).
-- P1-9 (QD-86, QD-87): 8 loài (`src/data/sliceContent.ts`), chỗ nuôi + Bếp Củi (`src/domain/estate.ts`), đơn HTX (`src/domain/orders.ts`), HUD `src/ui/hud/SliceKitchenHud.tsx`; engine `ctx.slice`.
-- Hoạt ảnh nông trại P1 ở `codex/p1-hoat-anh-nong-trai`, chờ PO duyệt (AR-30, AR-31). Chrome hai cỡ, P1-9 và hướng dẫn 844×390 PASS.
-- Thẻ P1: `docs/07_LO_TRINH.md` LT-12.
+## Đã merge
+- `main` tại `3fb5ea0`: Godot P1 có vòng ruộng, mùa, điền trang, vật nuôi, bếp, đơn HTX, NPC, Chương 1, hướng dẫn và âm thanh.
+- Giữ bản lưu offline Phaser khi mở online; nhật ký hướng dẫn Godot và mã chơi thử. Bản đồ chỉnh tay trong `godot/estate_map.tscn`, công trình trong `estate_features.tscn`; F5 chạy `estate_probe.tscn`.
+- Luật vẫn chạy qua engine TypeScript trên server; Godot gửi thao tác. Hiện trạng chi tiết ở KY-90, plan ở LT-14, cấu hình ở [GODOT-ONLINE](GODOT-ONLINE.md).
 
-## Đã xác minh
-- Lần nghiệm thu P1-8: typecheck, 303 test, test:sql, build, check:docs PASS ([nhật ký 11/11](archive/WORKLOG-2026-11.md)). Lần rà soát cục bộ sau đó xác nhận build và check:docs.
-- `tools/qa/p1-tutorial-smoke.cjs`: người mới theo hướng dẫn đi hết 8 bước + nhận Chương 1 ở 2 cỡ, không kẹt.
-- `tools/qa/p1-slice-smoke.cjs` (cần `npx vite --port 5179`): cả vòng gieo → bán, điền trang (dọn, sửa, khai hoang, giếng mở tưới cả loạt), 4 mùa, tải lại giữ tiến trình ở 2 cỡ, 0 nút < 44 px, 0 lỗi JS.
-- Playwright `?p1` ở 1280×720 và 844×390: chạm đi tới, joystick, 0 lỗi JS. Ảnh: `docs/screenshots/p1-3-*.png`.
-
-## Chưa xác minh
-- Trên điện thoại thật (cảm ứng nhiều ngón, safe-area).
-- Online trên điện thoại thật của người chơi ở Việt Nam (đã đo từ máy cloud, chưa đo từ VN).
+## Nhánh đang chờ duyệt
+- `codex/godot-pwa-safe-area`: vùng an toàn cho HUD, bảng danh sách và hộp xác nhận. Giữ lề scene; đọc CSS env trên Web và quy đổi pixel canvas sang UI. Có nhánh native, chưa kiểm trên thiết bị.
+- Đã xuất Web bằng Godot trên Mac. Chrome hai cỡ UI-10 qua kiểm vùng khuyết mô phỏng, đổi cỡ và đổi phía. Chương 1 fixture 50/50. Typecheck, 305 test, build và kiểm cấu trúc scene qua. Bằng chứng ở WORKLOG.
 
 ## Bước tiếp theo
-1. Chương 1 đã ở main và qua 50/50 bước với fixture.
-2. LT-14 bước 4: staging qua thử phiên, cache, cập nhật và quay về Phaser. Phần giữ bản lưu offline và nhật ký Godot đã được PO duyệt merge. Còn kiểm Android/iPhone và duyệt chính sách offline.
-3. Đã diễn tập báo cáo LT-13 từ Godot. Chạy P1-12 sau cổng LT-14.
-4. Việc cũ: ô trắng 844×390 trên điện thoại thật, PO cho phép xóa dữ liệu thử trên DB thật.
+1. Duyệt nhánh vùng an toàn; chỉ merge khi PO yêu cầu.
+2. LT-14 bước 4 còn kiểm từ icon PWA, nhiều ngón, safe-area, âm thanh và hiệu năng trên Android/iPhone thật. Máy chủ staging tạm của phiên trước đã dừng; cần dựng lại trước khi gửi URL cho người thử.
+3. PO chốt chính sách offline và duyệt phát hành trước chuyển URL chính, rồi mới chạy P1-12 theo LT-13. Diễn tập báo cáo LT-13 đã đọc được phiên/mốc hướng dẫn; chưa có nhóm người chơi thật.
 
-## Bối cảnh giữ nguyên
-- Game mặc định (không `?p1`) vẫn là MVP cũ (KY-90). Bảng MVP chưa đổi; DB thật đã có thêm `0016` (P1-8). `?p1` mặc định chơi online; `?p1&offline` chơi trên máy (kiểm thử khói dùng cách này).
-- Không đụng project Supabase "Nam_A_CRM".
-- Mọi hình điền trang trong `?p1` (nhà, giếng, chuồng, NPC, cây đa, tre, đá, cỏ dại, rào) đã là ảnh thật của PO (atlas `estate`, `python3 tools/art/import_sheet.py --p1` rồi `pack_atlas.py art/source/p1_ai --name estate`).
+## Giữ nguyên
+- `/?p1` là Phaser P1 online, `/?p1&offline` mở bản lưu cục bộ cũ. Game mặc định là MVP cũ. Không đổi DB thật; chỉ áp migration khi PO cho phép rõ ràng.
+- Bản đồ/asset PO chỉnh tay phải giữ. Xuất và chạy Godot trong bản sao tạm để tránh thay đổi cache đã được theo dõi trong Git.
+- Không đụng project Supabase “Nam_A_CRM”.
