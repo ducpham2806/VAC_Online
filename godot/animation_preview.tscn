@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://ambient_npc.gd" id="npc"]
 [ext_resource type="Texture2D" path="res://generated/tree_0.png" id="tree"]
 
+[ext_resource type="Texture2D" path="res://sprites/npc_bacbay_step.png" id="bay_steps"]
+[ext_resource type="Texture2D" path="res://sprites/npc_cohuong_step.png" id="huong_steps"]
+
 [node name="AnimationPreview" type="Node2D"]
 script = ExtResource("preview")
 
@@ -33,12 +36,14 @@ position = Vector2(95, 310)
 centered = false
 offset = Vector2(-28, -74)
 script = ExtResource("npc")
+step_atlas = ExtResource("bay_steps")
 
 [node name="CoHuong" type="Sprite2D" parent="."]
 position = Vector2(205, 310)
 centered = false
 offset = Vector2(-28, -74)
 script = ExtResource("npc")
+step_atlas = ExtResource("huong_steps")
 
 [node name="Farmer" parent="." instance=ExtResource("farmer")]
 position = Vector2(360, 300)

@@ -13,7 +13,7 @@ func _ready() -> void:
 	walk_start = $Farmer.position
 	for entry in [[$Hen, "ANI_01"], [$Duck, "ANI_03"], [$Fish, "AQUA_01"]]:
 		var textures: Array[Texture2D] = [load("res://generated/%s_0.png" % entry[1]), load("res://generated/%s_1.png" % entry[1])]
-		entry[0].setup(textures, entry[1] == "AQUA_01")
+		entry[0].setup(textures, entry[1] == "AQUA_01", entry[1])
 		entry[0].render(3, false, false, [])
 	for entry in [[$BacBay, "bacbay"], [$CoHuong, "cohuong"]]:
 		var frames := {}

@@ -6,10 +6,18 @@ const PAPER := Color("#f3e3c3")
 const READY := Color("#ffd166")
 const SIZE := Vector2(32, 32)
 const CORNER := 8.0
+const FISH_SURFACE := 11.0
+const FISH_TRAVEL := 20.0
+const FISH_HEIGHT := 21.0
+const BIRD_STRIDES := {
+	"ANI_01": preload("res://sprites/ANI_01_stride.png"),
+	"ANI_03": preload("res://sprites/ANI_03_stride.png"),
+}
 
 @onready var animal: Sprite2D = $Animal
 
 var frames: Array[Texture2D] = []
+var walk_frames: Array[Texture2D] = []
 var occupied := false
 var ripe := false
 var selected := false
@@ -26,13 +34,24 @@ var wander_to := Vector2.ZERO
 var rng := RandomNumberGenerator.new()
 
 
-func setup(textures: Array[Texture2D], is_aquatic := false) -> void:
+func setup(textures: Array[Texture2D], is_aquatic := false, item_id := "") -> void:
 	frames = textures
 	aquatic = is_aquatic
 	rng.seed = hash(str(get_path()))
 	var height := float(textures[0].get_height())
 	# Chân con vật chạm mép dưới ô.
 	animal.offset = Vector2(0, SIZE.y * 0.5 - height * 0.5)
+	if aquatic:
+		# Rotate around the fish body, which sits low in the source frame.
+		animal.offset.y = -6.0
+	var atlas: Texture2D = BIRD_STRIDES.get(item_id)
+	walk_frames.clear()
+	if atlas != null:
+		for i in range(4):
+			var pose := AtlasTexture.new()
+			pose.atlas = atlas
+			pose.region = Rect2(i * 48, 0, 48, 48)
+			walk_frames.append(pose)
 	set_process(false)
 
 
@@ -70,12 +89,14 @@ func _enter(state: String, seconds: float) -> void:
 	duration = seconds
 	remaining = seconds
 	animal.rotation = 0.0
+	animal.scale = Vector2.ONE
 	animal.modulate.a = 1.0
 	animal.visible = occupied and state != "SUBMERGED"
 	animal.texture = frames[0]
 	if state == "WALK":
 		wander_from = animal.position
-		wander_to = Vector2(rng.randf_range(-wander_distance, wander_distance), 0)
+		# Cross to the other half of the slot so the foot poses read as a step.
+		wander_to = Vector2(wander_distance if wander_from.x <= 0.0 else -wander_distance, 0)
 
 
 func _process(delta: float) -> void:
@@ -96,31 +117,57 @@ func _process(delta: float) -> void:
 			_enter("IDLE", rng.randf_range(idle_min, idle_max))
 	var t := clampf(elapsed / duration, 0.0, 1.0)
 	match motion:
-		"PECK": animal.texture = frames[1 if int(elapsed * 5.0) % 2 == 0 else 0]
-		"PREEN": animal.rotation = sin(t * TAU) * 0.07
+		"PECK":
+			# Lean in, touch the ground twice, then return to the upright pose.
+			var dip := pow(sin(t * PI), 2.0) * (0.64 + 0.36 * absf(sin(t * TAU)))
+			animal.texture = frames[1 if dip >= 0.52 else 0]
+			animal.scale.y = 1.0 - 0.035 * dip
+		"PREEN":
+			var tuck := sin(t * PI)
+			animal.rotation = sin(t * TAU * 2.0) * tuck * 0.045
+			animal.scale.y = 1.0 - tuck * 0.04
 		"WALK":
 			animal.position = wander_from.lerp(wander_to, smoothstep(0.0, 1.0, t))
-			animal.position.y = -absf(sin(t * TAU * 2.0))
-			animal.flip_h = wander_to.x > wander_from.x
+			# Both supplied bird sprites face right.
+			animal.flip_h = wander_to.x < wander_from.x
+			if not walk_frames.is_empty():
+				animal.texture = walk_frames[mini(int(t * walk_frames.size()), walk_frames.size() - 1)]
 		"SURFACE":
-			animal.modulate.a = t * 0.6
-			animal.position.y = 2.0
+			_fish_pose(0.0)
+			animal.position.y += (1.0 - t) * 4.0
+			animal.modulate.a = smoothstep(0.0, 1.0, t)
 		"JUMP":
-			animal.texture = frames[int(t * 8.0) % 2]
-			animal.position.y = -sin(t * PI) * 12.0
-			animal.rotation = lerpf(-0.3, 0.3, t)
+			_fish_pose(t)
 		"DIVE":
-			animal.position.y = t * 4.0
-			animal.modulate.a = 1.0 - t
-	queue_redraw()
+			_fish_pose(1.0)
+			animal.position += Vector2(-3.0, 8.0) * t
+			animal.modulate.a = 1.0 - smoothstep(0.0, 1.0, t)
+	if aquatic:
+		queue_redraw()
+
+
+func _fish_pose(progress: float) -> void:
+	# Parabola in screen coordinates. Source fish looks left, so subtract its rest heading.
+	animal.position = Vector2(FISH_TRAVEL * (0.5 - progress),
+		FISH_SURFACE - 4.0 * FISH_HEIGHT * progress * (1.0 - progress))
+	var velocity := Vector2(-FISH_TRAVEL, 4.0 * FISH_HEIGHT * (2.0 * progress - 1.0))
+	animal.rotation = wrapf(velocity.angle() - PI, -PI, PI)
+	animal.texture = frames[1 if cos(progress * TAU * 2.0) < 0.0 else 0]
 
 
 func _draw() -> void:
 	if occupied and aquatic:
 		var ripple := 0.35 if motion == "SUBMERGED" else 0.7 * (1.0 - clampf(elapsed / duration, 0.0, 1.0))
-		draw_set_transform(Vector2(0, 12), 0.0, Vector2(1.0, 0.3))
+		var wave_x := FISH_TRAVEL * 0.5 if motion == "SURFACE" else -FISH_TRAVEL * 0.5
+		draw_set_transform(Vector2(wave_x, FISH_SURFACE), 0.0, Vector2(1.0, 0.3))
 		draw_arc(Vector2.ZERO, 5.0 + fmod(elapsed, 2.0) * 2.0, 0.0, TAU, 20, Color(PAPER, ripple), 1.0)
 		draw_set_transform(Vector2.ZERO)
+		if motion == "DIVE":
+			var t := clampf(elapsed / duration, 0.0, 1.0)
+			var splash := Vector2(wave_x, FISH_SURFACE)
+			for side in [-1.0, 1.0]:
+				draw_circle(splash + Vector2(side * (3.0 + 10.0 * t), -28.0 * t * (1.0 - t)),
+					1.25, Color(PAPER, 1.0 - t))
 	var area := Rect2(-SIZE * 0.5, SIZE).grow(-2)
 	if not occupied or selected:
 		var color := READY if selected else Color(PAPER, 0.85)

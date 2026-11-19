@@ -3,12 +3,11 @@
 Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
-- Theo prompt nguồn, AR-30; dùng ảnh hiện có.
-- Gà/vịt có khoảng nghỉ; cá chủ yếu lặn; chân điền chủ theo quãng đường.
-- NPC có nhịp riêng và bước ngắn; cây/lúa có gió giữ gốc.
-- F6 `godot/animation_preview.tscn` để xem riêng, không đổi bản lưu.
-- Kiểm chuyển động 19/19, Chương 1 50/50, P1-9 41/41; Chrome hai cỡ qua.
-- Typecheck, 305 test, build qua. Chưa merge/phát hành; chưa có clip NPC đi đủ hướng.
+- Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
+- Điền chủ có 8 dáng bước ngang. NPC nhấc chân, cây/lúa có gió.
+- F6 `godot/animation_preview.tscn` xem riêng.
+- Motion 25/25, Chương 1 50/50, P1-9 41/41, Chrome hai cỡ qua.
+- Typecheck, 305 test, build, test art qua. Chưa merge/phát hành.
 - [Scene nông trại đã merge](archive/COMPLETED-2026-11.md). Tiếp LT-14.
 
 ## Vùng an toàn Godot Web/PWA · 19/11/2026 · codex/godot-pwa-safe-area

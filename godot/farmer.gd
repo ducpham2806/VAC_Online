@@ -48,7 +48,8 @@ func step_toward(target: Vector2, delta: float) -> bool:
 		animation = clip
 	pause()
 	walk_distance += movement.length()
-	frame = int(walk_distance / walk_cycle_distance * 4.0) % 4
+	var frame_count := sprite_frames.get_frame_count(clip)
+	frame = int(walk_distance / walk_cycle_distance * frame_count) % frame_count
 	_ground_feet()
 	return next.is_equal_approx(target)
 

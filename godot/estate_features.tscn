@@ -21,6 +21,9 @@
 
 [ext_resource type="Script" path="res://ambient_npc.gd" id="ambient_npc"]
 
+[ext_resource type="Texture2D" path="res://sprites/npc_bacbay_step.png" id="bay_steps"]
+[ext_resource type="Texture2D" path="res://sprites/npc_cohuong_step.png" id="huong_steps"]
+
 [node name="EstateFeatures" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("features")
@@ -232,6 +235,7 @@ centered = false
 offset = Vector2(-28, -74)
 
 script = ExtResource("ambient_npc")
+step_atlas = ExtResource("bay_steps")
 
 [node name="Npc_CO_HUONG" type="Marker2D" parent="."]
 position = Vector2(848, 338)
@@ -242,3 +246,4 @@ centered = false
 offset = Vector2(-28, -74)
 
 script = ExtResource("ambient_npc")
+step_atlas = ExtResource("huong_steps")
