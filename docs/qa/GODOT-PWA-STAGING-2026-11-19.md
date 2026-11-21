@@ -97,3 +97,18 @@ Nhánh `codex/godot-pwa-offline-update` chờ cache hoàn tất trong bước c�
 WebKit qua hai tình huống cắt kết nối của thao tác gieo, dùng hai tài khoản thử HTTPS. Mô phỏng lỗi trước khi chuyển yêu cầu tới API thì **Đọc lại** thấy 2.500 vàng và ô P5_7 trống. Chuyển yêu cầu tới API, xác nhận server đã ghi rồi mô phỏng mất phản hồi về game thì **Đọc lại** thấy 2.498 vàng và P5_7 có lúa. Godot thử gọi PLANT một lần mỗi lượt. Khâu đọc lại chỉ gửi yêu cầu lấy trạng thái.
 
 Ảnh 844×390 và 1280×720, tiền tố `godot-lt14-`. Log `lt14-update-repro*.log`, `lt14-update-fixed-*.log`, `lt14-update-failed-*.log`, `lt14-update-fresh-*.log` và `lt14-action-boundaries.log` tại thư mục staging. Typecheck, 305 test, build, xuất Web và check:docs qua. Staging HTTPS tiếp tục phục vụ `5687b0e`.
+
+## Nâng cấp trên HTTPS staging · 21/11/2026
+
+Dựng lại cả hai client của `5687b0e` và `d325444` bằng Godot 4.7.2 cho cùng origin HTTPS tạm. Dùng GoTrue và PostgreSQL cô lập. Kiểm trên Chrome desktop và WebKit mô phỏng iPhone mở từ icon. Bản dựng để lại trên staging là `d325444`.
+
+| Tiêu chí | Chrome và WebKit |
+|---|---|
+| Chuẩn bị trên `5687b0e` | PCK trong cache khớp SHA-256 bản cũ. Gieo ô P5_7 qua API thử, tải lại thấy lúa và 2.498 vàng. |
+| Đổi bản khi cửa sổ cũ còn mở | `build-info.json` báo `d325444`. Worker mới chờ với PCK đúng SHA-256 và WASM đã có trong cache. Worker cũ vẫn điều khiển cửa sổ. |
+| Ngắt mạng trước khi đóng rồi mở lại | Game khởi động từ cache của `d325444`, còn phiên khách, ô lúa và 2.498 vàng. Cache cũ đã được dọn. |
+| Nối mạng và tải lại | Cùng tài khoản đọc ô P5_7 có lúa và 2.498 vàng từ server thử. Không có lỗi JavaScript chưa xử lý. |
+
+Typecheck, 305 test, build cả hai client, xuất Web và check:docs qua. Ảnh offline 844×390 và 1280×720 cho mỗi trình duyệt, cùng log `verify-upgrade-full.log`, nằm tại thư mục staging được trỏ bởi `/private/tmp/vac-staging-p1-current`.
+
+Cổng LT-14 bước 4 còn nghiệm thu trên Android/iPhone thật và các quyết định phát hành đã ghi trong bàn giao.
