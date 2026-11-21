@@ -1,4 +1,4 @@
-# Bàn giao · 19/11/2026 · Godot P1 trên main, tiếp nghiệm thu thiết bị
+# Bàn giao · 21/11/2026 · Godot P1 trên main, tiếp nghiệm thu thiết bị
 
 ## Đã merge
 - PO duyệt merge `codex/godot-walk-reference` tại `001f209` vào `main`. Điền chủ có bước bốn hướng theo sheet Walk, dùng bốn khung gốc và bốn khung chèn. F6 `godot/animation_preview.tscn` xem đủ hướng. Có hoạt ảnh nghỉ/hành động cho gà/vịt/cá, NPC và gió cây.
@@ -6,6 +6,7 @@
 - Godot P1 có ruộng, mùa, điền trang, vật nuôi, bếp, đơn HTX, NPC, Chương 1, hướng dẫn, âm thanh. Bản đồ chỉnh tay trong `godot/estate_map.tscn`, công trình ở `estate_features.tscn`; F5 chạy `estate_probe.tscn`. Hiện trạng xem KY-90.
 
 ## Nghiệm thu phát hành
+- Rà soát ngày 21/11: GitHub main và bản dựng staging trên máy đều ở `5687b0e`. Tunnel thử không phân giải khi kiểm lại.
 - Staging thử riêng. iPhone 14 Pro Max mở từ icon và giữ lúa/2.498 vàng sau đóng mở. Safari và icon giữ nông trại riêng. Chrome/WebKit mở offline sau lần online đầu, đọc lại sau mất phản hồi gieo chỉ gửi một lần. [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
 - Staging HTTPS cùng URL đã chạy `main` tại `5687b0e`. Chrome kiểm SHA-256 gói mới, mở offline, nối mạng và quay Phaser giữ tiến trình. WebKit mở offline. iPhone mở lại icon giữ lúa chín/1.970 vàng. Link tunnel tạm ở `/private/tmp/vac-staging-p1-current` → tệp `origin`.
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
