@@ -110,7 +110,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **Giữ tiến trình khi chuyển client.** Trạng thái online gắn với tài khoản Supabase. Thử giữ phiên khi chuyển trên cùng origin. Nếu khác origin hoặc chuyển sang app, thử phương án liên kết tài khoản để người chơi truy cập lại nông trại. Bản lưu offline và hàng chờ cũ cần bộ mẫu đọc thử, xác nhận sau nhập và cách quay lui. Khi một yêu cầu gửi đi có kết quả chưa rõ, đối chiếu trạng thái server trước khi gửi lại thao tác có thể cộng/trừ hai lần. Đề xuất bổ sung chống xử lý trùng ở server nếu kiểm thử chứng minh cần, theo RULE D1.
 
-**Phần offline cần PO chốt.** Bước 0–2 ưu tiên online và thử mở lại PWA đã tải. Đề xuất bản Godot đầu tiên cho xem trạng thái đã tải khi mất mạng, báo rõ thao tác đang chờ xác nhận và tiếp tục sau khi kết nối lại. Chơi hoàn toàn offline như chế độ thử `?p1&offline` cần phương án giữ một bộ luật theo ADR-001. Nếu bắt buộc có ở đợt đầu, thử khả năng dùng lại bộ luật trên cả Web và native rồi ước lượng riêng trước khi phát hành.
+**Phát hành P1.** Quyết định về phiên, offline và URL xem QD-91 đến QD-93. Triển khai và quay lui theo [hướng dẫn](GODOT-ONLINE.md#phát-hành-p1).
 
 **Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt lại sau bước 0 và sau khi xác định yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
 

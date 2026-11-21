@@ -305,3 +305,8 @@
 - GitHub main ở `5687b0e`. Typecheck, 305 test, build và check:docs qua trên main. Bản dựng staging trên máy khớp `5687b0e`; hôm nay không phân giải được tên miền tunnel thử.
 - Đối chiếu phiếu staging và nhánh `d325444`. Bản sửa cập nhật cache đã qua mô phỏng Chrome/WebKit và còn chờ kiểm nâng cấp trên HTTPS staging.
 - Dừng ở LT-14 bước 4. Còn nghiệm thu Android và các mục iPhone trên máy thật, PO chốt phiên Safari/icon, offline và URL chính trước P1-12.
+
+## 21/11/2026 · Nâng cấp PWA trên HTTPS staging · codex/godot-pwa-https-qa
+- Dựng `5687b0e` và `d325444` cho cùng tunnel HTTPS mới với GoTrue/PostgreSQL thử. Bản staging hiện ở `d325444`.
+- Chrome và WebKit mô phỏng tải đủ PCK/WASM trước khi worker mới kích hoạt. Ngắt mạng trước khi đóng, mở lại đúng SHA-256 của gói mới. Nối mạng và tải lại vẫn cùng khách, ô P5_7 có lúa và 2.498 vàng.
+- Typecheck, 305 test, build, xuất Web, check:docs qua. Có ảnh hai cỡ và [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#nâng-cấp-trên-https-staging--21112026). Chưa merge. Dừng ở nghiệm thu thiết bị thật LT-14.

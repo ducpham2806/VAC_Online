@@ -6,9 +6,6 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
-| QD-91 | Chốt phiên khách Safari/icon cho P1? | LT-14 bước 4 | Cài icon trước khi bắt đầu nếu muốn chơi từ icon. Người đã chơi tiếp tục mở ở nơi đang có nông trại. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
-| QD-92 | Chốt phạm vi offline Godot cho P1? | LT-14 bước 4 | Cho xem bản lưu gần nhất khi mất mạng. Nối mạng và Đọc lại trước khi thao tác. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
-| QD-93 | Đổi URL chơi thử P1 sang Godot? | LT-14 bước 4, P1-12 | Chuyển tạm `/?p1` sang Godot cùng origin. Giữ lối về Phaser và bản lưu offline cũ. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
@@ -57,3 +54,6 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 | QD-88 | 11/11 | Chơi thử P1-12: thu số liệu qua server sau P1-8 (trong game ghi sự kiện ẩn danh trên máy, tự gửi khi có server); PO tự triển khai link chơi thử | `07` LT-13 |
 | QD-89 | 11/11 | P1-8 theo đề xuất: migration `0016` chỉ thêm (`farm_states`, `ledger`, `_commit_farm_state`, `playtest_events`); Edge Function `apply-actions` chạy luật `src/engine`; đăng nhập ẩn danh (PO đã bật); đồng bộ lô, ảnh chụp server thắng; online bắt đầu từ đầu, ẩn công tắc mùa và chơi lại; đo p95 < 400 ms | `04` KY-10, KY-90; `07` P1-8 |
 | QD-90 | 11/11 | PO chọn Godot 4 làm engine client lâu dài cho VAC. Ưu tiên Web/PWA, sau đó cân nhắc bản Android và iOS. | `07` LT-14 |
+| QD-91 | 21/11 | P1 giữ phiên khách theo nơi mở. Cài icon trước khi bắt đầu nếu muốn chơi từ icon. Người đã có nông trại tiếp tục ở nơi đã chơi. | [Phát hành P1](GODOT-ONLINE.md#phát-hành-p1), LT-14 |
+| QD-92 | 21/11 | Godot P1 chỉ xem bản lưu khi mất mạng. Đọc lại đúng phiên và trạng thái máy chủ trước khi ghi. Bản lưu offline cũ mở bằng Phaser. | [Phát hành P1](GODOT-ONLINE.md#phát-hành-p1), LT-14 |
+| QD-93 | 21/11 | Duyệt chuyển tạm URL P1 sang Godot cùng origin sau nghiệm thu. Lượt này triển khai và diễn tập trên staging. URL chính chờ lệnh chuyển riêng. | [Phát hành P1](GODOT-ONLINE.md#phát-hành-p1), LT-14, P1-12 |

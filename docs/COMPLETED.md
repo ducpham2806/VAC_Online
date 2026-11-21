@@ -5,10 +5,10 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 ## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
 - Hai client cùng commit, một origin, có mã bản dựng và checksum.
 - Staging: `3fb5ea0 → e26571b`, `ca63b20 → 5687b0e`, `5687b0e → d325444`.
-- Chrome quay lui giữ phiên. Chrome/WebKit mở offline sau tải đầu và nâng cấp.
-- Hai ngón mô phỏng, 305 test và build qua. Staging có hướng dẫn cài cho iOS mới.
+- Chrome/WebKit giữ phiên khi chuyển Godot và quay lui Phaser.
+- Mở lại offline, đồng bộ hàng chờ qua Phaser, 317 test và build qua.
 - PO thử `d325444` trên iPhone/Android thật, đạt 5/5 mỗi máy. Safari và icon tách phiên.
-- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Chờ PO chốt phát hành LT-14.
+- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Chờ PO duyệt chuyển URL chính.
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.

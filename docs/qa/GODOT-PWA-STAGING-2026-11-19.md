@@ -126,3 +126,18 @@ PO thử trực tiếp bản staging HTTPS `d325444` và xác nhận đạt cả
 | Mở lại khi mất mạng | Đạt | Đạt |
 
 Nguồn kết quả là báo cáo trực tiếp của PO ngày 21/11. Phiên bản hệ điều hành, mẫu Android và số liệu tải/FPS chưa được ghi trong lượt này. Cổng phát hành LT-14 còn chờ PO chốt phiên Safari/icon, chính sách offline và URL chính.
+
+## Chuyển URL P1 và quay lui trên staging · 21/11/2026
+
+PO duyệt QD-91 đến QD-93 và cho thử trên staging. Gói Phaser/Godot dựng từ `e12e2d8`, cùng cây mã với commit triển khai `05f9897` trên GitHub. Dùng origin HTTPS và GoTrue/PostgreSQL staging đã có. Staging gọi cùng hàm định tuyến với middleware Vercel. Middleware Vercel được chạy thử cục bộ.
+
+| Tiêu chí | Kết quả |
+|---|---|
+| Bật chuyển hướng | `/?p1` và `/?p1=` trả 307 không lưu cache về `/godot/index.html`. Trang gốc, hai lối Phaser, tài nguyên Godot và worker trả đúng đường dẫn. |
+| Giữ phiên | Chrome và WebKit chuyển với worker Phaser đã có. Godot mở PCK đúng SHA-256 và giữ cùng tài khoản, ô P5_7 có lúa và 2.498 vàng. |
+| Safari/icon | WebKit mô phỏng iPhone. Safari mới hiện hướng dẫn trước khi tạo phiên. Icon mới vào thẳng bằng phiên riêng. Safari có phiên giữ nông trại đang chơi. |
+| Offline Godot và Phaser | Ngắt mạng khi Godot đang mở rồi đóng/mở lại. Godot hiện **Đang xem bản lưu** và không gửi thao tác ghi. Nối mạng, **Đọc lại** xác nhận cùng nông trại. `/?p1&offline` vẫn đọc đúng bản lưu riêng. |
+| Hàng chờ Phaser | Chrome mở **Mở Phaser**, gửi một thao tác gieo còn chờ rồi quay lại Godot. Cùng tài khoản nhận 2.496 vàng và ô mới. |
+| Quay lui | Tắt chuyển hướng. Chrome và WebKit mở `/?p1` bằng Phaser với cùng tài khoản và nông trại. Điểm mở trực tiếp Godot vẫn phục vụ. |
+
+Typecheck, 317 test, build, xuất Web Godot 4.7.2 và check:docs qua. Log `verify-cutover.log` cùng ảnh hai cỡ 844×390 và 1280×720 nằm tại thư mục trỏ bởi `/private/tmp/vac-staging-p1-current`. Staging để chuyển hướng tắt sau lượt thử. URL chính và `main` chờ PO.
