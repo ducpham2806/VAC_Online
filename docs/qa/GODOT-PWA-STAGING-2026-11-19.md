@@ -202,3 +202,17 @@ PO duyệt QD-95. Dùng gói Production chung từ `524ef73` và Supabase VAC ch
 | Quay lui | B qua kiểm nên giữ B. A là bản Production ngay trước B và có gói Godot cùng đường mở icon. Khi cần, quay lui tới `dpl_7e6QFkUN9jCrGCYRUaurAiYhNpsz` rồi kiểm `/?p1` trả 200 qua Phaser và mở lại trực tiếp Godot. Đã diễn tập trên Preview, ở mục trên. |
 
 Kiểm bằng Chrome với một tài khoản QA. Ảnh 844×390, 1280×720 và log `verify-production-cutover.log` ở thư mục trỏ bởi `/private/tmp/vac-godot-production-candidate-current`. Lượt này không áp migration, chưa mở P1-12 và chưa merge `main`. [Chơi P1 trên URL chính](https://vac-online-preview.vercel.app/?p1).
+
+## Nghiệm thu bản B trên điện thoại
+
+**21/11/2026 · LT-14 bước 4.** Đích là [URL chính P1](https://vac-online-preview.vercel.app/?p1), deployment B theo QD-95, mã bản dựng `524ef73`. Kiểm HTTPS trực tiếp xác nhận `/?p1` trả 307 sang `/godot/index.html` và build-info trả đúng commit. Manifest cấu hình mở độc lập tới `/godot/index.html`, service worker trả 200. Typecheck, 317 test và build đều qua. Lượt Chrome kiểm chuyển A/B ở mục trên và lượt PO thử `d325444` trên staging là bằng chứng của các lượt riêng.
+
+| Tiêu chí trên máy thật | iPhone | Android |
+|---|---|---|
+| Mở bản B từ icon đã cài khi có mạng | Chờ kết quả | Chờ kết quả |
+| Đóng hẳn rồi mở lại từ icon, giữ đúng phiên và dấu mốc nông trại | Chờ kết quả | Chờ kết quả |
+| Đóng app, tắt Wi-Fi và dữ liệu di động, mở lại từ icon, xem đúng bản lưu và khóa thao tác ghi theo QD-92 | Chờ kết quả | Chờ kết quả |
+
+Trên mỗi máy, tạo dấu mốc QA sau khi mở bằng icon, ghi số vàng và ô ruộng hoặc nhiệm vụ để đối chiếu sau khi mở lại. Giữ cùng icon suốt lượt thử theo QD-91. Sau lượt offline, bật lại mạng và dùng **Đọc lại** để đối chiếu trạng thái máy chủ. Nếu gặp lỗi, ghi mẫu máy, phiên bản hệ điều hành, bước lỗi và nội dung hiển thị.
+
+**Trạng thái.** Đã gửi các bước thử cho PO. Chưa có báo cáo từ iPhone hoặc Android thật cho lần kiểm này. B vẫn phục vụ Production và lượt này chưa merge `main`.
