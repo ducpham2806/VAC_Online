@@ -73,12 +73,12 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 ### LT-13 · Kế hoạch chơi thử P1-12 (QD-88)
 - **Mục tiêu:** kiểm cổng LT-02 (tỉ lệ quay lại ngày hôm sau) và tìm chỗ người mới bị kẹt.
 - **Người chơi:** 10–20 người chưa biết game, chơi trên điện thoại màn ngang hoặc máy tính. Không hướng dẫn thêm ngoài game; ngày 2 không nhắc để đo đúng việc tự quay lại.
-- **Link:** PO tự triển khai. `npm run build` ra thư mục tĩnh `dist/`, đưa lên hosting bất kỳ (`vercel.json` có sẵn rewrite), gửi người chơi `<link>/?p1`.
-- **Số liệu tự ghi trong game** (ẩn danh, không tên/email; mã chơi thử hiện ở ⚙️ Cài đặt):
+- **Link:** PO duyệt địa chỉ `/?p1` trước khi mời. [Phiếu duyệt bản B](GODOT-ONLINE.md#phiếu-duyệt-chơi-thử-p1-12).
+- **Số liệu tự ghi trong game** (không tên/email; mã chơi thử ở ⚙️ Cài đặt trên Phaser hoặc cuối Sổ Gia Phả trên Godot khi bật nhật ký):
   - Sự kiện: mở phiên, thao tác thành công theo loại, lên cấp, bước hướng dẫn. Dạng dữ liệu: `src/game/slice/playtest.ts`.
   - D1 = số người có sự kiện ở ngày (giờ VN) ngay sau ngày đầu ÷ số người đã qua hết ngày hôm sau đó.
   - Kèm: phễu 8 bước hướng dẫn, thời lượng phiên đầu, số phiên, cấp cao nhất (trung vị).
-  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8) mỗi 30 giây và khi rời trang. Xuất cho báo cáo: chạy `select json_agg(log) from public.playtest_logs;` trong SQL Editor, lưu kết quả thành `logs.json`.
+  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8). Phaser gửi định kỳ và khi rời trang. Godot gửi khi có sự kiện, lưu hàng chờ trên máy và thử gửi lại khi lỗi. Xuất cho báo cáo: chạy `select json_agg(log) from public.playtest_logs;` trong SQL Editor, lưu kết quả thành `logs.json`.
 - **Báo cáo:** `npm run playtest:report -- <file.json>` (mảng nhật ký mỗi máy) → D1 so cổng LT-02, phễu, thao tác.
 - **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
 

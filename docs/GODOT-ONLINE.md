@@ -42,6 +42,51 @@ Chuyển nông trại của người chơi cũ giữa hai nơi mở cần luồn
 
 Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** và cuộn xuống cuối để lấy mã chơi thử. Chơi qua các mốc hướng dẫn rồi xuất dữ liệu và chạy báo cáo theo LT-13. Lượt diễn tập dùng dữ liệu thử riêng với nhóm chơi thật. Dùng một client cho mỗi nhóm để đối chiếu D1, vì mã chơi thử do từng client tạo.
 
+### Phiếu duyệt chơi thử P1-12
+
+**22/11/2026 · Chờ PO duyệt · LT-13, QD-88.** Gói Godot B đang phục vụ [URL chính P1](https://vac-online-preview.vercel.app/?p1), commit `524ef73`. Đối chiếu SHA-256 của `index.pck` với build-info Production cho thấy đúng gói B đã nghiệm thu. Cấu hình trong gói là `playtest: false`. Gói đang phục vụ không gửi nhật ký Godot và không hiện mã chơi thử.
+
+**Diễn tập nhật ký.** Xuất lại đúng mã B với nhật ký bật và API thử cục bộ. Chrome ghi `SESSION` cho hai lần mở dưới cùng một mã, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE`. Mã ở cuối **Sổ Gia Phả** đọc được ở 1280×720 và 844×390. PostgreSQL thử ghi qua vai trò người chơi, xuất được 1/1 nhật ký từ `playtest_logs` và khớp một phản hồi mẫu bằng mã. Báo cáo LT-13 đọc hai phiên, một thao tác và mốc MOVE; D1 chưa đủ dữ liệu trong lượt thử cùng ngày. Typecheck, 317 test (gồm 6 test nhật ký và số liệu), build và kiểm tra tài liệu đều qua.
+
+**Bản ứng viên.** Đã đóng gói cục bộ bản B bật nhật ký cho cùng Supabase. So với bản B đang chạy, chỉ khác gói Godot, phiên bản service worker và build-info. SHA-256 của `index.pck` ứng viên là `f40e28de0e01b9be820dafdfc6a6adade3c9c2675fef5126a9d86b45e60adc3a`. Chưa tải ứng viên lên Vercel. Việc kiểm ghi và xuất trên Supabase chính thức thuộc lượt QA trước khi mời.
+
+#### Đề nghị triển khai và mời nhóm thử
+
+1. Dựng gói ứng viên từ đúng mã B, bật `playtest: true` cho Godot. Giữ URL P1, dự án Supabase và lối quay lui. Thử gói ứng viên trước khi gán URL chính. Khi được duyệt, bật trong khung chạy thử. Cờ áp dụng cho mọi phiên Godot mở bằng gói này trên URL chính. Thông báo về nhật ký chơi thử trong lời mời và gửi link cho nhóm đã chọn.
+2. Trước khi mời, dùng một mã QA riêng trên chính bản ứng viên ở môi trường dự định mời. Kiểm mở từ icon, giữ phiên sau cập nhật, cùng mã qua hai lần mở; một thao tác thành công và một bước hướng dẫn có trong bản xuất từ `public.playtest_logs`. Kiểm đường lui về B hiện tại để tắt thu. Nếu thiếu mã hoặc thiếu bản ghi, dừng ở QA. Chỉ dùng môi trường dữ liệu thật sau khi PO duyệt.
+3. PO chọn nhóm và gửi lời mời theo LT-13. Dùng Godot và giữ cùng thiết bị, trình duyệt hoặc icon suốt lượt thử. Ghi riêng mã chơi thử của người đã tham gia sau buổi đầu, dù họ chưa trả lời phiếu. Thu phiếu sau buổi đầu, không gợi ý cách chơi. Ngày hôm sau không nhắc quay lại.
+4. Chốt danh sách mã đủ điều kiện, loại mã QA và lượt ngoài nhóm trước khi xuất nhật ký. Tính D1 khi ngày hôm sau của từng người đã kết thúc theo giờ Việt Nam. Báo số người đã bắt đầu, số mã ghép được, số người đủ điều kiện và kết quả LT-02. So bước rớt trong phễu với phản hồi. Khi chốt đợt, khôi phục gói B tắt nhật ký.
+
+#### Lời mời nháp
+
+> Mời bạn chơi thử VAC Online P1 tại https://vac-online-preview.vercel.app/?p1. Bạn có thể chơi trên điện thoại màn ngang hoặc máy tính. Hãy chơi theo hướng dẫn trong game và dùng cùng một cách mở (tab hoặc icon) trong suốt đợt thử. Game ghi lại các lần mở, bước hướng dẫn, thao tác thành công và mốc lên cấp bằng mã chơi thử. Sau buổi đầu, bạn gửi riêng cho mình mã ở cuối **Sổ Gia Phả** và phản hồi theo mẫu dưới đây nhé.
+
+#### Phiếu phản hồi sau buổi đầu
+
+**Kênh đề nghị.** Người chơi gửi riêng cho PO qua kênh nhận lời mời. PO ghi mã và phản hồi vào bảng riêng. Dùng mã 8 ký tự ở cuối **Sổ Gia Phả** để ghép nhật ký, không yêu cầu tên, email hay số điện thoại trong phiếu. Nếu chưa thấy mã, ghi “chưa thấy mã” để đếm phản hồi chưa ghép.
+
+```text
+Mã chơi thử (Sổ Gia Phả → cuộn xuống cuối):
+1. Trong 5 phút đầu, bạn có hiểu mình cần làm gì không?
+2. Bạn bị kẹt hoặc khó chịu ở chỗ nào?
+3. Bạn thích nhất việc gì?
+4. Ngày mai bạn có muốn quay lại không? Vì sao?
+5. Hình và chữ có dễ nhìn trên máy bạn không?
+6. Bạn dùng máy và trình duyệt nào? Bạn mở từ tab hay icon?
+```
+
+**Ghép và xuất.** Nhập mã chữ thường, bỏ khoảng trắng ở hai đầu. Đối chiếu mỗi mã với đúng một `player` trước khi tính. Mã trùng hoặc thiếu để riêng và ghi số lượng. Chỉ xuất nhật ký của danh sách nhóm đã xác nhận. Ví dụ trong SQL Editor với danh sách đã đối chiếu:
+
+```sql
+select coalesce(json_agg(log order by player), '[]'::json)
+from public.playtest_logs
+where left(player, 8) in ('thay_ma_1', 'thay_ma_2');
+```
+
+Lưu tệp riêng và chạy `npm run playtest:report -- logs.json`. Giữ phiếu phản hồi và nhật ký thô ngoài GitHub. Báo cáo gửi PO dùng số liệu tổng hợp và mô tả điểm kẹt.
+
+**Cần PO duyệt.** Bật nhật ký trên URL chính trong khung chơi thử, thu mã và phản hồi qua kênh riêng. Lượt chuẩn bị chưa gửi lời mời. Chỉ mời nhóm theo LT-13 sau khi QA trên bản ứng viên đạt.
+
 ### Nghiệm thu trước khi chuyển URL chính
 
 - Dùng nông trại thử, gieo một ô và ghi lại ô, vàng, kho. Mở cùng origin trong Godot, tải lại và đối chiếu.

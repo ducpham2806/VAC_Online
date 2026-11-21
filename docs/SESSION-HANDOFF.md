@@ -12,7 +12,7 @@
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
 - PO xác nhận `d325444` đạt 5/5 mục trên iPhone và Android thật. Xem [phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
-- QD-95: B `524ef73` phục vụ URL chính P1, đã giữ phiên và nông trại qua A/B trên Chrome. A sẵn để quay lui. 22/11, PO xác nhận B đạt 3/3 trên mỗi máy iPhone và Android. [Phiếu thiết bị Production](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại). Chưa merge, chưa mời P1-12.
+- B `524ef73` đã qua A/B và 3/3 trên iPhone, Android. [Phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại). P1-12 đã diễn tập ghi, xuất và ghép phản hồi. B đang tắt nhật ký. [Phiếu chờ duyệt](GODOT-ONLINE.md#phiếu-duyệt-chơi-thử-p1-12). Chưa mời, chưa merge.
 
 ## Giữ nguyên
 - Luật TypeScript ở server; Godot gửi thao tác. Production `/?p1` mở Godot. `/?p1&client=phaser` và `/?p1&offline` giữ lối Phaser. Game mặc định `/` là MVP cũ.
