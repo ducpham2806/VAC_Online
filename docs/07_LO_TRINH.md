@@ -89,7 +89,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.**
 
-15/11 xong bước 3. Staging `d325444`. 21/11 qua thử hai máy thật.
+15/11 xong bước 3. 21/11 thử hai máy thật và chuyển URL chính P1 theo QD-95. P1-12 chờ mở.
 
 **Tác động**
 

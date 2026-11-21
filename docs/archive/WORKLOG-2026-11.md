@@ -324,3 +324,8 @@
 - PO duyệt QD-91 đến QD-93. Có hướng dẫn giữ phiên Safari/icon, chế độ chỉ xem khi mất mạng và chuyển hướng P1 mặc định tắt. Build staging `e12e2d8`.
 - Chrome/WebKit qua định tuyến, giữ phiên và nông trại, mở lại offline và quay lui. Chrome qua đồng bộ hàng chờ Phaser. Typecheck, 317 test, build, xuất Godot và check:docs qua.
 - Staging đã tắt redirect sau thử. Dừng ở chờ PO chuyển URL chính. Chưa merge. [Phiếu QA](qa/GODOT-PWA-STAGING-2026-11-19.md#chuyển-url-p1-và-quay-lui-trên-staging--21112026).
+
+## 21/11/2026 · Vercel Preview và diễn tập quay lui · codex/godot-pwa-vercel-qa
+- PO duyệt dự án Preview riêng và trang giữ chỗ Production bắt buộc, không gán tên miền. Đưa đúng `524ef73` lên hai bản Preview bật/tắt, dùng API staging thử.
+- Vercel trả đúng 307 và ngoại lệ. Chrome/WebKit giữ cùng phiên, ô P5_7 và 2.498 vàng qua Phaser → Godot → Phaser. Kiểm tra tài liệu qua.
+- Để Preview ở bản tắt, có xác thực. URL chính và main giữ nguyên. Dừng ở chờ PO cho chuyển URL chính. [Phiếu Preview](qa/GODOT-PWA-STAGING-2026-11-19.md#vercel-preview-giữ-phiên-và-quay-lui--21112026).

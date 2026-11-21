@@ -1,4 +1,4 @@
-# Bàn giao · 21/11/2026 · Godot P1 chờ duyệt hai bản Production
+# Bàn giao · 21/11/2026 · Godot P1 đã lên URL chính
 
 ## Đã merge
 - PO duyệt merge `codex/godot-walk-reference` tại `001f209` vào `main`. Điền chủ có bước bốn hướng theo sheet Walk, dùng bốn khung gốc và bốn khung chèn. F6 `godot/animation_preview.tscn` xem đủ hướng. Có hoạt ảnh nghỉ/hành động cho gà/vịt/cá, NPC và gió cây.
@@ -12,8 +12,8 @@
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
 - PO xác nhận `d325444` đạt 5/5 mục trên iPhone và Android thật. Xem [phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
-- QD-94 chọn đích Vercel riêng. Supabase VAC đã qua kiểm Auth, function và CORS. `524ef73` đã đóng gói hai phương án dùng chung tài nguyên, chờ PO duyệt tải lên/gán URL. [Phiếu duyệt](qa/GODOT-PWA-STAGING-2026-11-19.md#hai-bản-chờ-duyệt-trên-đích-chính--21112026). P1-12 theo LT-13.
+- QD-95: `524ef73` đã phục vụ Godot tại URL chính P1. A/B giữ cùng phiên và nông trại QA. A sẵn để quay lui. [Phiếu Production](qa/GODOT-PWA-STAGING-2026-11-19.md#chuyển-url-chính-sang-godot--21112026). Chưa merge, chưa mời nhóm P1-12 theo LT-13.
 
 ## Giữ nguyên
-- Luật TypeScript ở server; Godot gửi thao tác. `/?p1` là Phaser P1 online, `/?p1&offline` mở bản lưu cục bộ cũ. Game mặc định là MVP cũ. Merge mã không đồng nghĩa đã áp DB, triển khai hay mời nhóm thử.
+- Luật TypeScript ở server; Godot gửi thao tác. Production `/?p1` mở Godot. `/?p1&client=phaser` và `/?p1&offline` giữ lối Phaser. Game mặc định `/` là MVP cũ.
 - Bản đồ/asset PO chỉnh tay phải giữ. Nên xuất Godot trong bản sao tạm để tránh thay đổi cache được theo dõi. Không đụng Supabase “Nam_A_CRM”.

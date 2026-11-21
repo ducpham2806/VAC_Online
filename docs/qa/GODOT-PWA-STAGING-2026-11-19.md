@@ -190,3 +190,15 @@ Hai bản dùng chung gói Vercel Production dựng cục bộ từ `524ef73`, 3
 Sau duyệt, chuẩn bị A/B dưới dạng staged Production với `--skip-domain` và ghi lại ID. Gán bản A trước để kiểm cùng hostname, gồm đăng nhập khách, giữ tiến trình và đường mở trực tiếp Godot. Chỉ gán B sau khi A qua kiểm. Nếu mất phiên, lệch tiến trình hoặc Godot không tải, quay về A. Với Vercel Hobby, A là bản Production ngay trước B. [Vercel về staged production](https://vercel.com/docs/deployments/promoting-a-deployment) · [Vercel về quay lui](https://vercel.com/docs/deployments/rollback-production-deployment).
 
 Việc giữ phiên đã được thử giữa hai bản trên cùng origin Preview. Origin đích mới có vùng lưu riêng khỏi Preview và các địa chỉ khác. Nếu người chơi đang dùng URL khác, cần xác nhận cách tiếp tục dùng phiên/bản lưu ở URL đó trước khi mời họ chuyển.
+
+## Chuyển URL chính sang Godot · 21/11/2026
+
+PO duyệt QD-95. Dùng gói Production chung từ `524ef73` và Supabase VAC chính thức. Trên `vac-online-preview.vercel.app`, triển khai A trước, đợi QA đạt rồi mới triển khai B.
+
+| Bước | Kết quả trên Production |
+|---|---|
+| A, chuyển hướng tắt | Deployment `dpl_7e6QFkUN9jCrGCYRUaurAiYhNpsz`. `/?p1` mở Phaser. Tạo đúng một khách QA bằng Phaser, gieo lúa P5_7. Phaser tải lại và Godot mở trực tiếp đều đọc đúng tài khoản, cùng ô lúa, 2.498 vàng, kho và nhánh Chương 1. |
+| B, chuyển hướng bật | Deployment `dpl_5uLQGj4SYqgfNb1R4XaRNMtZCwTP` đang phục vụ Production. `/?p1` và `/?p1=` trả 307 cùng origin sang `/godot/index.html`. Chrome đọc lại đúng phiên QA và tiến trình. Lối Phaser online đọc cùng nông trại. `/`, lối offline, worker và WASM phục vụ qua HTTPS. |
+| Quay lui | B qua kiểm nên giữ B. A là bản Production ngay trước B và có gói Godot cùng đường mở icon. Khi cần, quay lui tới `dpl_7e6QFkUN9jCrGCYRUaurAiYhNpsz` rồi kiểm `/?p1` trả 200 qua Phaser và mở lại trực tiếp Godot. Đã diễn tập trên Preview, ở mục trên. |
+
+Kiểm bằng Chrome với một tài khoản QA. Ảnh 844×390, 1280×720 và log `verify-production-cutover.log` ở thư mục trỏ bởi `/private/tmp/vac-godot-production-candidate-current`. Lượt này không áp migration, chưa mở P1-12 và chưa merge `main`. [Chơi P1 trên URL chính](https://vac-online-preview.vercel.app/?p1).
