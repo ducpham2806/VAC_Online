@@ -300,3 +300,8 @@
 - Script xuất Web chờ nạp đủ tài nguyên của bản cập nhật. Chrome/WebKit mở game offline từ gói mới, giữ cache cũ nếu WASM trả 503 và chỉ tải WASM một lần ở hồ sơ mới. Xuất Web Godot 4.7.2, typecheck, 305 test, build và check:docs qua.
 - WebKit trên HTTPS staging cắt yêu cầu gieo trước khi gửi và cắt phản hồi sau khi server lưu. Đọc lại cho kết quả tương ứng 2.500 vàng/ô trống và 2.498 vàng/có lúa, mỗi lượt chỉ có một lần bấm gieo.
 - Sửa trên nhánh riêng, bản staging chính vẫn là `5687b0e`. Còn thử nâng cấp ở HTTPS staging và nghiệm thu thiết bị LT-14. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#cập-nhật-pwa-rồi-mở-lại-offline).
+
+## 21/11/2026 · Rà soát tiến độ LT-14 · codex/progress-review-2026-11-21
+- GitHub main ở `5687b0e`. Typecheck, 305 test, build và check:docs qua trên main. Bản dựng staging trên máy khớp `5687b0e`; hôm nay không phân giải được tên miền tunnel thử.
+- Đối chiếu phiếu staging và nhánh `d325444`. Bản sửa cập nhật cache đã qua mô phỏng Chrome/WebKit và còn chờ kiểm nâng cấp trên HTTPS staging.
+- Dừng ở LT-14 bước 4. Còn nghiệm thu Android và các mục iPhone trên máy thật, PO chốt phiên Safari/icon, offline và URL chính trước P1-12.

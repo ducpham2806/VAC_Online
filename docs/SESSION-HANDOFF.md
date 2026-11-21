@@ -12,7 +12,7 @@
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
 - PO xác nhận `d325444` đạt 5/5 mục trên iPhone và Android thật. Xem [phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
-- LT-14 bước 4 chờ PO chốt chuyển phiên Safari/icon, chính sách offline và duyệt URL chính. Rồi mới chạy P1-12 theo LT-13.
+- LT-14 bước 4 chờ PO duyệt QD-91 đến QD-93. [Đề xuất phát hành](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1). Rồi chuẩn bị triển khai và P1-12 theo LT-13.
 
 ## Giữ nguyên
 - Luật TypeScript ở server; Godot gửi thao tác. `/?p1` là Phaser P1 online, `/?p1&offline` mở bản lưu cục bộ cũ. Game mặc định là MVP cũ. Merge mã không đồng nghĩa đã áp DB, triển khai hay mời nhóm thử.

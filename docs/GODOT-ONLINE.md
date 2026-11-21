@@ -49,6 +49,30 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 - Sau khi nông trại đã lưu, thử mở lại khi mất mạng. Đối chiếu bản xem với số dư đã ghi. Kết nối lại và đọc trạng thái máy chủ trước khi thử thao tác tiếp.
 - Giữ artifact Phaser đã kiểm. Đưa bản Godot mới lên cùng origin, đóng cửa sổ Godot và mở lại để kiểm mã bản dựng đã đổi và tiến trình còn đủ. Sau đó mở `/?p1` để diễn tập quay về Phaser và kiểm lại cùng nông trại.
 
+### Đề xuất chốt phát hành P1
+
+**21/11/2026 · Chờ PO duyệt QD-91, QD-92 và QD-93.** PO đã thử `d325444` trên iPhone và Android, mỗi máy đạt 5/5. Luồng nâng cấp và mở lại offline đã qua Chrome/WebKit trên HTTPS staging. Nghiệm thu định tuyến trên cấu hình phát hành vẫn là bước tiếp theo. [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
+
+**QD-91 · Phiên khách Safari/icon.** Giữ phiên riêng theo nơi người chơi mở game. Người mới muốn chơi từ icon cài trước khi bắt đầu hướng dẫn. Người đã làm nông trại trong Safari tiếp tục trên Safari. Hướng dẫn nói rõ mở theo cách khác có thể thấy nông trại khác. Người đang dùng icon tiếp tục mở đúng icon. Luồng liên kết tài khoản để chuyển nông trại giữa hai nơi mở có thể làm sau P1 và nghiệm thu riêng. Phiên khách hiện nằm trong localStorage. WebKit có thể sao chép cookie lúc cài nhưng tách localStorage. [WebKit](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#login-cookies).
+
+**QD-92 · Offline ở Godot P1.** Sau khi đã mở online, đọc nông trại và lưu đủ tài nguyên, người chơi có thể mở lại để xem bản đã lưu. Giao diện báo đang xem dữ liệu đã lưu và khóa thao tác ghi. Nếu chưa có dữ liệu lưu, hiển thị yêu cầu kết nối. Khi có mạng, bấm **Đọc lại** và chỉ mở thao tác ghi sau khi máy chủ xác nhận đúng phiên và trạng thái. Nếu mất phản hồi lúc gửi thao tác, đọc lại để đối chiếu kết quả trước khi cho làm tiếp. Khi còn hàng chờ Phaser, Godot chỉ đường về lối Phaser online trong bảng dưới để đồng bộ, rồi người chơi quay lại và bấm **Đọc lại**. Giữ bản lưu cục bộ hiện có truy cập qua link Phaser offline.
+
+**QD-93 · URL chính của bản chơi thử P1.** Đề xuất chuyển điểm vào P1 trên cùng tên miền, dùng cùng dự án Supabase và giữ đường mở app đã kiểm.
+
+| Đường dẫn | Đích sau chuyển |
+|---|---|
+| `/?p1` | Chuyển tạm sang `/godot/index.html` bằng 307. |
+| `/?p1&client=phaser` | Phaser P1 online để xử lý hàng chờ và quay lui. Đây là lối vào cần thêm. |
+| `/?p1&offline` | Phaser P1 offline. Ưu tiên đường này khi query có `offline`. |
+| `/godot/index.html` | Điểm mở trực tiếp của Godot và icon đã cài. |
+| `/` | MVP hiện tại. Việc đổi trang gốc thuộc phạm vi phát hành riêng. |
+
+Vercel hỗ trợ chuyển hướng tạm theo query. Kiểm các biến thể `?p1` và `?p1=`, query offline, lối Phaser và đường trực tiếp trên deployment thử. Giữ tài nguyên và service worker Godot trong phạm vi `/godot/` và kiểm trên hồ sơ đã có worker Phaser. [Tài liệu Vercel](https://vercel.com/docs/project-configuration/vercel-json#redirects).
+
+**Trình tự sau duyệt.** Chuẩn bị hai bước triển khai. Bước đầu phục vụ cả hai gói với redirect còn tắt. Xác nhận mã bản dựng, phiên khách và nông trại trên cùng origin, xử lý hàng chờ Phaser, đọc bản lưu offline cũ và cập nhật PWA từ icon. Kiểm nhật ký P1-12 theo LT-13 trên dữ liệu thử. Sau khi QA ghi kết quả và PO cho phép chuyển URL, bật 307 cho nhóm P1. PO dùng URL này để mời nhóm theo QD-88.
+
+**Quay lui.** Nếu mất phiên, lệch tiến trình hoặc Godot không mở được sau cập nhật, tắt 307 để `/?p1` về Phaser từ bản triển khai trước khi đổi URL. Giữ đường `/godot/` cho icon đã cài và phục vụ gói Godot đã kiểm trên cùng đường nếu cần khôi phục. Kiểm lại tài khoản và dữ liệu trước khi tiếp tục chơi. Bảo toàn cache, bản lưu trên thiết bị và dữ liệu máy chủ.
+
 ### Mở lại khi mất mạng
 
 Mở từ đúng nơi đã chơi và đã đọc nông trại online ít nhất một lần. Nếu trình duyệt đã lưu đủ gói Web và bản xem nông trại, game mở được từ cache để xem lại. Khi kết nối lại, bấm **Đọc lại**. Nếu mất phản hồi lúc gửi thao tác, dùng nút này để đối chiếu trước khi tiếp tục.

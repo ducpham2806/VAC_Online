@@ -6,6 +6,9 @@ Quy tắc: mỗi quyết định có mã `QD-nn`, không xóa, không sửa ngh�
 ## Đang chờ PO
 | Mã | Câu hỏi | Chặn | Đề xuất của AI |
 |---|---|---|---|
+| QD-91 | Chốt phiên khách Safari/icon cho P1? | LT-14 bước 4 | Cài icon trước khi bắt đầu nếu muốn chơi từ icon. Người đã chơi tiếp tục mở ở nơi đang có nông trại. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
+| QD-92 | Chốt phạm vi offline Godot cho P1? | LT-14 bước 4 | Cho xem bản lưu gần nhất khi mất mạng. Nối mạng và Đọc lại trước khi thao tác. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
+| QD-93 | Đổi URL chơi thử P1 sang Godot? | LT-14 bước 4, P1-12 | Chuyển tạm `/?p1` sang Godot cùng origin. Giữ lối về Phaser và bản lưu offline cũ. [Chi tiết](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1) |
 
 ## Đã quyết
 | Mã | Ngày | Quyết định | Áp vào |
