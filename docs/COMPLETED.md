@@ -5,7 +5,7 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 ## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
 - Hai client cùng commit, một origin, có mã bản dựng và checksum.
 - Staging: `3fb5ea0 → e26571b`, `ca63b20 → 5687b0e`, `5687b0e → d325444`.
-- Chrome/WebKit giữ phiên khi chuyển Godot và quay lui Phaser.
+- Chrome/WebKit giữ phiên qua Godot và quay lui Phaser trên Vercel Preview.
 - Mở lại offline, đồng bộ hàng chờ qua Phaser, 317 test và build qua.
 - PO thử `d325444` trên iPhone/Android thật, đạt 5/5 mỗi máy. Safari và icon tách phiên.
 - [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Chờ PO duyệt chuyển URL chính.

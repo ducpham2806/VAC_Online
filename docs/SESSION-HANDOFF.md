@@ -1,4 +1,4 @@
-# Bàn giao · 21/11/2026 · Godot P1 thử chuyển URL trên staging
+# Bàn giao · 21/11/2026 · Godot P1 qua diễn tập Vercel Preview
 
 ## Đã merge
 - PO duyệt merge `codex/godot-walk-reference` tại `001f209` vào `main`. Điền chủ có bước bốn hướng theo sheet Walk, dùng bốn khung gốc và bốn khung chèn. F6 `godot/animation_preview.tscn` xem đủ hướng. Có hoạt ảnh nghỉ/hành động cho gà/vịt/cá, NPC và gió cây.
@@ -12,7 +12,7 @@
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
 - PO xác nhận `d325444` đạt 5/5 mục trên iPhone và Android thật. Xem [phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
-- PO duyệt QD-91 đến QD-93. Triển khai trên nhánh riêng, staging mặc định tắt chuyển hướng sau diễn tập. [Phát hành P1](GODOT-ONLINE.md#phát-hành-p1). Còn duyệt chuyển URL chính và P1-12 theo LT-13.
+- PO duyệt QD-91 đến QD-93. `524ef73` qua định tuyến, giữ phiên và quay lui trên Vercel Preview. Địa chỉ Preview đang trỏ bản tắt. [Phiếu Preview](qa/GODOT-PWA-STAGING-2026-11-19.md#vercel-preview-giữ-phiên-và-quay-lui--21112026). Còn duyệt chuyển URL chính và P1-12 theo LT-13.
 
 ## Giữ nguyên
 - Luật TypeScript ở server; Godot gửi thao tác. `/?p1` là Phaser P1 online, `/?p1&offline` mở bản lưu cục bộ cũ. Game mặc định là MVP cũ. Merge mã không đồng nghĩa đã áp DB, triển khai hay mời nhóm thử.

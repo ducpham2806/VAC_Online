@@ -141,3 +141,15 @@ PO duyệt QD-91 đến QD-93 và cho thử trên staging. Gói Phaser/Godot d�
 | Quay lui | Tắt chuyển hướng. Chrome và WebKit mở `/?p1` bằng Phaser với cùng tài khoản và nông trại. Điểm mở trực tiếp Godot vẫn phục vụ. |
 
 Typecheck, 317 test, build, xuất Web Godot 4.7.2 và check:docs qua. Log `verify-cutover.log` cùng ảnh hai cỡ 844×390 và 1280×720 nằm tại thư mục trỏ bởi `/private/tmp/vac-staging-p1-current`. Staging để chuyển hướng tắt sau lượt thử. URL chính và `main` chờ PO.
+
+## Vercel Preview giữ phiên và quay lui · 21/11/2026
+
+Đưa đúng commit `524ef73` của `codex/godot-pwa-release-staging` lên dự án riêng `vac-online-preview` theo duyệt của PO. Dự án mới khởi tạo bằng một trang giữ chỗ rỗng ở Production, không gán tên miền. Game được đóng gói thành hai bản Preview với cùng cây mã và cờ chuyển hướng bật/tắt. [Địa chỉ Preview](https://vac-online-p1-preview-524ef73.vercel.app/).
+
+| Hạng mục | Kết quả |
+|---|---|
+| Bật chuyển hướng | Vercel trả 307, `Cache-Control: no-store`, cho `/?p1` và `/?p1=`. Trang gốc, hai lối Phaser, Godot trực tiếp và worker vẫn phục vụ. WASM trả đúng loại nội dung. |
+| Giữ phiên cùng địa chỉ | Chrome và WebKit mở Phaser bằng phiên khách, gieo P5_7 trên API thử, rồi chuyển cùng địa chỉ sang Godot. Cả hai đọc đúng cùng tài khoản, ô lúa và 2.498 vàng. |
+| Quay lui | Gán lại địa chỉ Preview về bản tắt. `/?p1` trả 200 và mở Phaser. Cả hai giữ cùng tiến trình. Đường trực tiếp Godot vẫn đọc đúng nông trại. |
+
+Sau diễn tập, địa chỉ Preview đang trỏ bản tắt và xác thực Vercel vẫn hoạt động. Dữ liệu thử dùng API staging cô lập qua tunnel tạm. URL chính của VAC và `main` giữ nguyên. Log `verify-vercel-preview.log` và ảnh 844×390, 1280×720 ở thư mục ghi trong `/private/tmp/vac-vercel-preview-current-build`.
