@@ -153,3 +153,23 @@ Typecheck, 317 test, build, xuất Web Godot 4.7.2 và check:docs qua. Log `veri
 | Quay lui | Gán lại địa chỉ Preview về bản tắt. `/?p1` trả 200 và mở Phaser. Cả hai giữ cùng tiến trình. Đường trực tiếp Godot vẫn đọc đúng nông trại. |
 
 Sau diễn tập, địa chỉ Preview đang trỏ bản tắt và xác thực Vercel vẫn hoạt động. Dữ liệu thử dùng API staging cô lập qua tunnel tạm. URL chính của VAC và `main` giữ nguyên. Log `verify-vercel-preview.log` và ảnh 844×390, 1280×720 ở thư mục ghi trong `/private/tmp/vac-vercel-preview-current-build`.
+
+## Phiếu duyệt chuyển URL chính · 21/11/2026
+
+**Trạng thái: chưa đủ điều kiện chuyển.** Bản đề nghị là `524ef73`. Chỉ đổi đường vào P1 theo QD-93 trên tên miền chính đã xác nhận. Bằng chứng giữ phiên và quay lui hiện có từ Vercel Preview ở mục trên.
+
+| Hạng mục | Kiểm tra và điều kiện |
+|---|---|
+| Đích chính thức | GitHub và tài liệu chưa chỉ ra URL chính. Vercel trong nhóm đang kết nối chỉ có dự án VAC riêng cho Preview, chưa ghi URL Production của VAC. Cần xác nhận tên miền chính, dự án Vercel quản lý và bản đang phục vụ. |
+| API chính thức | Cấu hình cục bộ của VAC khớp project ref QD-89 và dùng khóa publishable. `znabynzbcimpesrxxxsz.supabase.co` trả NXDOMAIN trên Google DNS và Cloudflare DNS, trong khi `supabase.com` phân giải bình thường. Các yêu cầu chỉ đọc tới Auth và `apply-actions` dừng trước kết nối HTTP. Cần xác nhận Project URL đang hoạt động hoặc khôi phục hostname cũ. |
+| Phiên và dữ liệu | Phaser và Godot phải dùng cùng Supabase VAC và cùng origin với bản đang chơi. Sau khi API hoạt động, xác nhận HTTPS, cấu hình đăng nhập khách, sự hiện diện của `apply-actions`, và CORS từ đúng URL chính với các header phiên. Dùng phiên QA được phép để đối chiếu danh tính, ô ruộng, vàng và kho. |
+| Quay lui | Đã chuyển bản bật về bản tắt trên cùng địa chỉ Vercel Preview. Chrome/WebKit giữ phiên và tiến trình. Bản tắt chính thức và ID quay lui chỉ xác định được sau khi chốt đích và đóng gói với API chính thức. |
+
+### Trình tự đề nghị sau khi đủ điều kiện
+
+1. Ghi ID bản đang phục vụ URL chính. Dựng hai bản từ cùng mã và cùng cấu hình API chính thức. Gói A đặt `VAC_P1_GODOT_CUTOVER=0`, gói B đặt `VAC_P1_GODOT_CUTOVER=1`. Cả hai đóng chung Phaser và Godot, với cùng checksum tài nguyên. Ghi ID từng bản vào phiếu duyệt trước khi gán tên miền. [Vercel về staged production](https://vercel.com/docs/deployments/promoting-a-deployment).
+2. Khi PO cho phép thay đổi chính thức, dùng A làm mốc trên cùng tên miền. Kiểm `/?p1` mở Phaser, `/godot/index.html` mở đúng bản và đọc cùng nông trại. Kiểm đường offline, lối Phaser với hàng chờ, tải worker/WASM/PCK và mở lại từ icon.
+3. Gán URL chính sang B theo duyệt. Kiểm `/?p1` và `/?p1=` trả 307 cùng tên miền. Kiểm `/`, `/?p1&offline` và `/?p1&client=phaser` vẫn về đúng đích. Đối chiếu lại phiên, nông trại và đường mở trực tiếp Godot.
+4. Nếu sai phiên, lệch tiến trình hoặc Godot không tải, quay về A và kiểm `/?p1` trả 200 qua Phaser. A giữ `/godot/` cho icon đã cài và dùng cùng API. Bảo toàn cache và dữ liệu. Nếu A chưa qua kiểm, khôi phục bản đang phục vụ đã ghi ở bước 1. Nếu dùng Vercel Hobby, A phải là bản Production ngay trước B để có thể quay lui. [Vercel về quay lui Production](https://vercel.com/docs/deployments/rollback-production-deployment).
+
+Chờ PO xác nhận đích hosting và API. Lượt chuẩn bị chỉ kiểm tra đọc. Chưa đóng gói với API lỗi DNS, chưa gán URL chính và chưa merge.
