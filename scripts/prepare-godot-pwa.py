@@ -78,8 +78,22 @@ def main(folder):
         "if (isCacheable && response.ok) {\n"
         "\t\tevent.waitUntil(cache.put(event.request, response.clone()).catch(() => {}));",
     )
+    fallback = folder / "index.offline.html"
+    offline_html = fallback.read_text(encoding="utf-8")
+    for old, new in (
+        ('lang="en"', 'lang="vi"'),
+        ("You are offline", "Đang mất mạng"),
+        ("This application requires an Internet connection to run for the first time.",
+         "Hãy kết nối mạng để tải VAC Online và đọc nông trại lần đầu."),
+        ("Press the button below to try reloading:", "Khi có mạng, bấm Tải lại."),
+        (">Reload</button>", ">Tải lại</button>"),
+        ("#000000", "#1b3b2b"),
+        ("#ffffff", "#f3e3c3"),
+    ):
+        offline_html = offline_html.replace(old, new)
     page.write_text(html, encoding="utf-8")
     worker.write_text(sw, encoding="utf-8")
+    fallback.write_text(offline_html, encoding="utf-8")
 
 
 if __name__ == "__main__":
