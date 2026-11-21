@@ -11,6 +11,7 @@
 - Staging HTTPS cùng URL đã chạy `main` tại `5687b0e`. Chrome kiểm SHA-256 gói mới, mở offline, nối mạng và quay Phaser giữ tiến trình. WebKit mở offline. iPhone mở lại icon giữ lúa chín/1.970 vàng. Link tunnel tạm ở `/private/tmp/vac-staging-p1-current` → tệp `origin`.
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
+- Safari trên iPhone 14 Pro Max đã mở `d325444`. Chờ thao tác trực tiếp trên hai máy vì Mirroring mờ ở bước thêm icon và Mac chưa nhận Android qua USB.
 - LT-14 bước 4 còn kiểm Android thật và màn ngang, hai ngón, âm thanh, mất mạng trên iPhone thật. PO còn chốt chuyển phiên Safari/icon, chính sách offline và duyệt URL chính. Rồi mới chạy P1-12 theo LT-13.
 
 ## Giữ nguyên

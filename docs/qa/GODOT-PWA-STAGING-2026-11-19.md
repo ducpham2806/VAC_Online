@@ -112,3 +112,18 @@ Dựng lại cả hai client của `5687b0e` và `d325444` bằng Godot 4.7.2 ch
 Typecheck, 305 test, build cả hai client, xuất Web và check:docs qua. Ảnh offline 844×390 và 1280×720 cho mỗi trình duyệt, cùng log `verify-upgrade-full.log`, nằm tại thư mục staging được trỏ bởi `/private/tmp/vac-staging-p1-current`.
 
 Cổng LT-14 bước 4 còn nghiệm thu trên Android/iPhone thật và các quyết định phát hành đã ghi trong bàn giao.
+
+## Nghiệm thu trên thiết bị thật · 21/11/2026
+
+Endpoint staging HTTPS trả đúng commit `d325444`. Lượt này dùng iPhone 14 Pro Max qua iPhone Mirroring. Safari trên máy thật đã mở trang hướng dẫn **Cài VAC Online**. Đã đến mục **Thêm vào Màn hình chính**; màn hình xác nhận bị mờ trong Mirroring nên chưa xác nhận xong cài đặt. Mac chưa nhận diện Android qua USB. PO xác nhận có cả hai thiết bị để thử trực tiếp.
+
+| Tiêu chí | iPhone 14 Pro Max | Android |
+|---|---|---|
+| Mở URL staging trên trình duyệt | Đạt trên Safari | Chờ kiểm Chrome |
+| Cài và mở từ icon | Chờ xác nhận trên máy | Chờ kiểm |
+| Xoay ngang và kiểm HUD | Chờ kiểm | Chờ kiểm |
+| Giữ joystick và chạm ô bằng ngón còn lại | Chờ kiểm | Chờ kiểm |
+| Nghe hiệu ứng thao tác | Chờ kiểm | Chờ kiểm |
+| Ngắt mạng, đóng app, mở lại từ icon rồi nối mạng | Chờ kiểm | Chờ kiểm |
+
+Bằng chứng mô phỏng và lượt máy thật trên bản cũ nằm ở các mục trước. Kết quả trực tiếp cần ghi thiết bị, hệ điều hành, ô đã gieo và số vàng trước/sau khi mở lại. LT-14 bước 4 vẫn chờ nghiệm thu thiết bị.
