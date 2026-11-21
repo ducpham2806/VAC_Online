@@ -87,9 +87,9 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **PO đã duyệt bắt đầu bước 0 ngày 11/11.** Chuyển P1 Bắc Bộ theo LT-12 trước khi mở nội dung P2. Chốt một commit Phaser làm mốc hành vi, hình ảnh và dữ liệu thử. Dùng bản đó để đối chiếu và quay lui trong thời gian chuyển. Sau khi nghiệm thu, tính năng mới đi vào client Godot.
 
-**14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
+**14/11, PO duyệt merge mã Godot đến phần điền trang vào main.**
 
-15/11 xong bước 3. Staging `d325444`.
+15/11 xong bước 3. Staging `d325444`. 21/11 qua thử hai máy thật.
 
 **Tác động**
 

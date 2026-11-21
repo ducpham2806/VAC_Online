@@ -4,7 +4,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 
 ## 21/11/2026 · Kiểm thiết bị thật cho PWA · codex/godot-pwa-real-device-qa
 - Xác nhận staging HTTPS trả `d325444`. Safari trên iPhone 14 Pro Max mở được hướng dẫn cài. Đến mục thêm icon; Mirroring không hiện rõ màn hình xác nhận. Mac chưa nhận diện Android qua USB.
-- PO có cả hai máy. Đã gửi đường dẫn và trình tự thử trên máy. Dừng ở xác nhận cài, mở icon, màn ngang, hai ngón, âm thanh và mở lại offline. [Phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md).
+- PO thử trực tiếp `d325444` trên iPhone và Android: 5/5 mục đạt trên mỗi máy, gồm mở từ icon, màn ngang, hai ngón, âm thanh và mở lại khi mất mạng. Kiểm tra tài liệu qua. Chưa merge. Dừng ở quyết định phát hành LT-14. [Phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
 
 ## 21/11/2026 · Nâng cấp PWA trên HTTPS staging · codex/godot-pwa-https-qa
 - Dựng `5687b0e` và `d325444` cho cùng tunnel HTTPS mới với GoTrue/PostgreSQL thử. Bản staging hiện ở `d325444`.

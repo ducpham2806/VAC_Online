@@ -1,4 +1,4 @@
-# Bàn giao · 21/11/2026 · Godot P1 trên main, tiếp nghiệm thu thiết bị
+# Bàn giao · 21/11/2026 · Godot P1 qua thử thiết bị, chờ chốt phát hành
 
 ## Đã merge
 - PO duyệt merge `codex/godot-walk-reference` tại `001f209` vào `main`. Điền chủ có bước bốn hướng theo sheet Walk, dùng bốn khung gốc và bốn khung chèn. F6 `godot/animation_preview.tscn` xem đủ hướng. Có hoạt ảnh nghỉ/hành động cho gà/vịt/cá, NPC và gió cây.
@@ -11,8 +11,8 @@
 - Staging HTTPS cùng URL đã chạy `main` tại `5687b0e`. Chrome kiểm SHA-256 gói mới, mở offline, nối mạng và quay Phaser giữ tiến trình. WebKit mở offline. iPhone mở lại icon giữ lúa chín/1.970 vàng. Link tunnel tạm ở `/private/tmp/vac-staging-p1-current` → tệp `origin`.
 - `5687b0e` qua mô phỏng WebKit dọc/ngang, tiếng nút và offline ở chế độ standalone, Chrome Android qua hai chạm. Phiếu staging có trang đo tạm và các bước nghiệm thu thật. Lượt sau chưa mở được iPhone Mirroring, Mac chưa thấy Android.
 - PO chọn tiếp tục mô phỏng. Nhánh `codex/godot-pwa-offline-update` sửa cache khi bản cập nhật chờ kích hoạt rồi mở lại offline. Chrome/WebKit qua cả tải đủ, WASM trả 503 và hồ sơ mới. Bản sửa đã qua kiểm trên HTTPS staging và chưa merge.
-- Safari trên iPhone 14 Pro Max đã mở `d325444`. Chờ thao tác trực tiếp trên hai máy vì Mirroring mờ ở bước thêm icon và Mac chưa nhận Android qua USB.
-- LT-14 bước 4 còn kiểm Android thật và màn ngang, hai ngón, âm thanh, mất mạng trên iPhone thật. PO còn chốt chuyển phiên Safari/icon, chính sách offline và duyệt URL chính. Rồi mới chạy P1-12 theo LT-13.
+- PO xác nhận `d325444` đạt 5/5 mục trên iPhone và Android thật. Xem [phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
+- LT-14 bước 4 chờ PO chốt chuyển phiên Safari/icon, chính sách offline và duyệt URL chính. Rồi mới chạy P1-12 theo LT-13.
 
 ## Giữ nguyên
 - Luật TypeScript ở server; Godot gửi thao tác. `/?p1` là Phaser P1 online, `/?p1&offline` mở bản lưu cục bộ cũ. Game mặc định là MVP cũ. Merge mã không đồng nghĩa đã áp DB, triển khai hay mời nhóm thử.
