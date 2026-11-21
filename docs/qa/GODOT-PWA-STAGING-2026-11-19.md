@@ -209,10 +209,8 @@ Kiểm bằng Chrome với một tài khoản QA. Ảnh 844×390, 1280×720 và 
 
 | Tiêu chí trên máy thật | iPhone | Android |
 |---|---|---|
-| Mở bản B từ icon đã cài khi có mạng | Chờ kết quả | Chờ kết quả |
-| Đóng hẳn rồi mở lại từ icon, giữ đúng phiên và dấu mốc nông trại | Chờ kết quả | Chờ kết quả |
-| Đóng app, tắt Wi-Fi và dữ liệu di động, mở lại từ icon, xem đúng bản lưu và khóa thao tác ghi theo QD-92 | Chờ kết quả | Chờ kết quả |
+| Mở bản B từ icon đã cài | Đạt | Đạt |
+| Đóng rồi mở lại từ icon, giữ phiên và tiến trình | Đạt | Đạt |
+| Tắt cả Wi-Fi lẫn dữ liệu di động, mở lại từ icon và xem được bản lưu | Đạt | Đạt |
 
-Trên mỗi máy, tạo dấu mốc QA sau khi mở bằng icon, ghi số vàng và ô ruộng hoặc nhiệm vụ để đối chiếu sau khi mở lại. Giữ cùng icon suốt lượt thử theo QD-91. Sau lượt offline, bật lại mạng và dùng **Đọc lại** để đối chiếu trạng thái máy chủ. Nếu gặp lỗi, ghi mẫu máy, phiên bản hệ điều hành, bước lỗi và nội dung hiển thị.
-
-**Trạng thái.** Đã gửi các bước thử cho PO. Chưa có báo cáo từ iPhone hoặc Android thật cho lần kiểm này. B vẫn phục vụ Production và lượt này chưa merge `main`.
+**22/11/2026 · Kết quả.** PO xác nhận trực tiếp bản B trên tên miền Production, đạt 3/3 mục trên mỗi máy. Báo cáo chưa có mẫu máy, phiên bản hệ điều hành, kết quả thử thao tác ghi khi offline hoặc đọc lại sau khi nối mạng theo QD-92. Chưa merge `main` và chưa mở P1-12.

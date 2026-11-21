@@ -89,7 +89,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **14/11, PO duyệt merge mã Godot đến phần điền trang vào main.**
 
-15/11 xong bước 3. 21/11 thử staging trên hai máy thật và chuyển URL chính P1 theo QD-95. [Nghiệm thu bản B trên máy thật](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại) đang chờ kết quả. P1-12 chờ mở.
+15/11 xong bước 3. 21/11 thử staging trên hai máy thật và chuyển URL chính P1 theo QD-95. 22/11, [nghiệm thu bản B trên máy thật](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại) đạt 3/3 trên iPhone và Android. P1-12 chờ mở.
 
 **Tác động**
 
