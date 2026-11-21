@@ -8,7 +8,7 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - Chrome/WebKit giữ phiên qua Godot và quay lui Phaser trên Vercel Preview.
 - Mở lại offline, đồng bộ hàng chờ qua Phaser, 317 test và build qua.
 - PO thử `d325444` trên iPhone/Android thật, đạt 5/5 mỗi máy. Safari và icon tách phiên.
-- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Chờ PO duyệt chuyển URL chính.
+- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Chờ PO duyệt hai bản Production.
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.

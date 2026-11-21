@@ -156,7 +156,7 @@ Sau diễn tập, địa chỉ Preview đang trỏ bản tắt và xác thực V
 
 ## Phiếu duyệt chuyển URL chính · 21/11/2026
 
-**Trạng thái: chưa đủ điều kiện chuyển.** Bản đề nghị là `524ef73`. Chỉ đổi đường vào P1 theo QD-93 trên tên miền chính đã xác nhận. Bằng chứng giữ phiên và quay lui hiện có từ Vercel Preview ở mục trên.
+**Lượt kiểm ban đầu, trước khi Supabase hoạt động lại.** Bản đề nghị là `524ef73`. Chỉ đổi đường vào P1 theo QD-93 trên tên miền chính đã xác nhận. Bằng chứng giữ phiên và quay lui hiện có từ Vercel Preview ở mục trên.
 
 | Hạng mục | Kiểm tra và điều kiện |
 |---|---|
@@ -172,4 +172,21 @@ Sau diễn tập, địa chỉ Preview đang trỏ bản tắt và xác thực V
 3. Gán URL chính sang B theo duyệt. Kiểm `/?p1` và `/?p1=` trả 307 cùng tên miền. Kiểm `/`, `/?p1&offline` và `/?p1&client=phaser` vẫn về đúng đích. Đối chiếu lại phiên, nông trại và đường mở trực tiếp Godot.
 4. Nếu sai phiên, lệch tiến trình hoặc Godot không tải, quay về A và kiểm `/?p1` trả 200 qua Phaser. A giữ `/godot/` cho icon đã cài và dùng cùng API. Bảo toàn cache và dữ liệu. Nếu A chưa qua kiểm, khôi phục bản đang phục vụ đã ghi ở bước 1. Nếu dùng Vercel Hobby, A phải là bản Production ngay trước B để có thể quay lui. [Vercel về quay lui Production](https://vercel.com/docs/deployments/rollback-production-deployment).
 
-Chờ PO xác nhận đích hosting và API. Lượt chuẩn bị chỉ kiểm tra đọc. Chưa đóng gói với API lỗi DNS, chưa gán URL chính và chưa merge.
+Tại thời điểm lượt kiểm này, API còn lỗi DNS. Kết quả xác minh lại và hai bản cần duyệt được ghi ở mục sau.
+
+## Hai bản chờ duyệt trên đích chính · 21/11/2026
+
+Theo QD-94, dự án đích là `vac-online-preview` của nhóm NamA Uniform. Vercel xác nhận `vac-online-preview.vercel.app` là tên miền đã xác minh và thuộc dự án này. Kiểm tra trước khi chuyển trả 404 `DEPLOYMENT_NOT_FOUND` tại tên miền; dự án đã có bản giữ chỗ được triển khai không gán tên miền. Địa chỉ Vercel Preview tiếp tục dùng cho thử nghiệm.
+
+Supabase VAC cũ đã phân giải DNS. Kiểm chỉ đọc với khóa publishable hiện có: Auth health và settings trả 200, đăng nhập khách bật, `apply-actions` trả 405 theo kiểm tra phương thức, và CORS từ origin đích chấp nhận POST cùng các header cần thiết ở Auth và Edge Function. Lượt này chưa dùng phiên QA để đọc hay ghi nông trại trên DB chính thức.
+
+| Bản xin duyệt | Cờ runtime | Kết quả tại tên miền đích |
+|---|---|---|
+| **A · Quay lui** | `VAC_P1_GODOT_CUTOVER=0` | `/?p1` mở Phaser. `/godot/index.html` vẫn mở Godot cho icon đã cài. |
+| **B · Chuyển Godot** | `VAC_P1_GODOT_CUTOVER=1` | `/?p1` và `/?p1=` chuyển 307 sang Godot. `/`, `/?p1&client=phaser` và `/?p1&offline` giữ cùng đích như bản A. |
+
+Hai bản dùng chung gói Vercel Production dựng cục bộ từ `524ef73`, 38 tệp tĩnh, SHA-256 của danh sách tệp và checksum là `31443017035b2401932338c2bc1d4cf5e72fc4085dbcd96c31619ff4c1886429`. Đã kiểm đúng endpoint Supabase trong Phaser và Godot, checksum PWA, middleware A/B, 317 test, typecheck, build và check:docs. Gói này tắt nhật ký Godot cho P1-12 theo cấu hình đóng gói hiện tại. Hai bản chưa có ID deployment vì còn chờ PO duyệt tải lên.
+
+Sau duyệt, chuẩn bị A/B dưới dạng staged Production với `--skip-domain` và ghi lại ID. Gán bản A trước để kiểm cùng hostname, gồm đăng nhập khách, giữ tiến trình và đường mở trực tiếp Godot. Chỉ gán B sau khi A qua kiểm. Nếu mất phiên, lệch tiến trình hoặc Godot không tải, quay về A. Với Vercel Hobby, A là bản Production ngay trước B. [Vercel về staged production](https://vercel.com/docs/deployments/promoting-a-deployment) · [Vercel về quay lui](https://vercel.com/docs/deployments/rollback-production-deployment).
+
+Việc giữ phiên đã được thử giữa hai bản trên cùng origin Preview. Origin đích mới có vùng lưu riêng khỏi Preview và các địa chỉ khác. Nếu người chơi đang dùng URL khác, cần xác nhận cách tiếp tục dùng phiên/bản lưu ở URL đó trước khi mời họ chuyển.
