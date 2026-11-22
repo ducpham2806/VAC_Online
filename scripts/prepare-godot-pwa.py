@@ -1,4 +1,4 @@
-"""Prepare first-visit caching in the exported Godot Web preset."""
+"""Prepare first-visit and update caching in the exported Godot Web preset."""
 import sys
 from pathlib import Path
 
@@ -26,6 +26,14 @@ WAIT_FOR_CONTROL = """function waitForVacPwaControl(engine, script) {
 
 """
 
+INSTALL_CACHE = """self.addEventListener('install', (event) => {
+	// An update can activate while offline once the old window closes.
+	const files = self.registration.active
+		? FULL_CACHE.map((file) => new Request(file, { cache: 'reload' }))
+		: CACHED_FILES;
+	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(files)));
+});"""
+
 
 def replace_once(source, old, new):
     if source.count(old) != 1:
@@ -50,6 +58,13 @@ def main(folder):
         "\t\t})).then(() => {\n\t\t\tsetStatusMode('hidden');",
     )
 
+    sw = replace_once(
+        sw,
+        "self.addEventListener('install', (event) => {\n"
+        "\tevent.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_FILES)));\n"
+        "});",
+        INSTALL_CACHE,
+    )
     # First activation controls the loading page. Updates still wait for old pages to close.
     sw = replace_once(
         sw,
@@ -63,8 +78,22 @@ def main(folder):
         "if (isCacheable && response.ok) {\n"
         "\t\tevent.waitUntil(cache.put(event.request, response.clone()).catch(() => {}));",
     )
+    fallback = folder / "index.offline.html"
+    offline_html = fallback.read_text(encoding="utf-8")
+    for old, new in (
+        ('lang="en"', 'lang="vi"'),
+        ("You are offline", "Đang mất mạng"),
+        ("This application requires an Internet connection to run for the first time.",
+         "Hãy kết nối mạng để tải VAC Online và đọc nông trại lần đầu."),
+        ("Press the button below to try reloading:", "Khi có mạng, bấm Tải lại."),
+        (">Reload</button>", ">Tải lại</button>"),
+        ("#000000", "#1b3b2b"),
+        ("#ffffff", "#f3e3c3"),
+    ):
+        offline_html = offline_html.replace(old, new)
     page.write_text(html, encoding="utf-8")
     worker.write_text(sw, encoding="utf-8")
+    fallback.write_text(offline_html, encoding="utf-8")
 
 
 if __name__ == "__main__":

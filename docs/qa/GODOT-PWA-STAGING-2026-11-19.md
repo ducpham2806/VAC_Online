@@ -53,3 +53,164 @@ Việc này hướng dẫn người mới chọn cách mở trước khi bắt �
 - Chrome: để PLANT hoàn tất trên API thử rồi ngắt phản hồi về trình duyệt. Bấm **Đọc lại** lấy đúng P5_7 có lúa và 2.498 vàng. Mở lại từ cache khi offline, nối mạng và đọc được cùng dữ liệu. Chỉ có một lần gửi PLANT.
 - Typecheck, 305 test, build, Web/PWA export và check:docs qua. Log `offline-first-before.log`, `offline-first-chrome.log`, `offline-first-webkit.log` và `offline-drop-with-cache.log` tại thư mục QA. Ảnh có tiền tố `godot-offline-`.
 - Chưa ngắt mạng trên iPhone/Android thật. Hồ sơ mạng mô phỏng kiểm bản xem và đọc lại, chưa thay thế mục nghiệm thu thiết bị ở LT-14.
+
+## Bản main sau merge
+
+Ngày 19/11/2026, xuất `5687b0ef21951e7fef58a30bd76d7dc82414ab84` bằng Godot 4.7.2 trên Mac và cập nhật cùng origin HTTPS. Hai client dùng chung môi trường thử. Thay bản dựng staging, giữ dịch vụ và DB thử đang chạy.
+
+| Tiêu chí | Kết quả |
+|---|---|
+| Chuyển gói PWA từ `ca63b20` | Chrome giữ gói cũ khi tab còn mở. Sau khi đóng mở, SHA-256 của PCK trong cache trùng `build-info.json` của `5687b0e`. Cùng phiên khách, ô P5_7 có lúa và 2.498 vàng. |
+| Offline rồi nối mạng | Chrome mở game bằng gói mới từ cache khi ngắt mạng mô phỏng. Nối mạng và tải lại, đọc được cùng ô lúa và số vàng. WebKit trên Mac cũng mở offline sau một lần vào online. |
+| Quay lại Phaser `/?p1` | Chrome đọc cùng phiên, ô lúa và 2.498 vàng trên bản Phaser đóng gói cùng commit. |
+| iPhone 14 Pro Max mở lại từ icon | Qua iPhone Mirroring màn dọc. Đóng hẳn thẻ VAC rồi mở lại. Còn ruộng lúa chín, 1.970 vàng, 2 lúa trong kho và bước 5/8. Chạm ô trống di chuyển được, HUD thấy 60 FPS trong lượt đi. HUD báo 10,1 giây sau lần đóng hẳn. Chưa đối chiếu SHA-256 gói ngay trên iPhone. |
+| Nghiệm thu thiết bị còn lại | Chờ Android thật và thử ngang, hai ngón, âm thanh, offline trên iPhone thật. Giữ dấu mốc trước khi mở URL chính và nhóm P1-12. |
+
+Typecheck, 305 test, build, xuất Web và check:docs qua. Log `main-5687b0e-update.log`, `main-5687b0e-current.log` và `main-5687b0e-webkit.log` trong thư mục staging. Lượt nâng cấp đầu đã qua kiểm SHA-256 và dữ liệu. Bộ lọc log ban đầu bỏ qua query của request Phaser, nên kiểm quay về Phaser được chạy lại với bộ lọc đã sửa. Ảnh 844×390, 1280×720 và offline có tiền tố `godot-main-5687b0e-`. Phần cập nhật staging và kiểm trình duyệt đã xong, cổng phát hành LT-14 còn mở.
+
+## Ngang, hai chạm, âm thanh và offline trên bản staging hiện tại
+
+| Kiểm tra | Kết quả trên `5687b0e` |
+|---|---|
+| Vùng an toàn WebKit mô phỏng iPhone | 844×390 với lề khuyết 55 px trái rồi phải, phần nền HUD trên dịch đúng 55 px ở cả hai đầu. Đổi sang 393×852 có ảnh bố cục dọc. |
+| Tiếng nút trên WebKit mô phỏng | SHA-256 PCK khớp. Bộ phân tích ở đầu ra WebAudio đọc khoảng −34 dBFS quanh 880 Hz sau khi chạm nút, nền im lặng. Còn nghe tiếng trực tiếp trên iPhone. |
+| Hai chạm Chrome mô phỏng Android | Một ngón giữ joystick, ngón kia chạm gieo. Web nhận hai điểm chạm, gửi một PLANT, trừ đúng 2 vàng, tải lại còn lúa ở P5_7. |
+| Mở offline với cấu hình iPhone standalone mô phỏng | Có sẵn gói game trong cache. Đóng tab, giả lập mất mạng và mở lại thấy nông trại. Nối mạng, bấm **Đọc lại**, phiên và ô P5_7 cùng 2.498 vàng khớp. |
+| Thiết bị thật | Lượt này iPhone Mirroring không có cửa sổ để điều khiển, Mac chưa thấy Android. Còn xác nhận ngang, hai ngón, âm thanh và mất mạng trực tiếp. |
+
+Ảnh tiền tố `godot-lt14-current-`. Log `lt14-current-device.log`, `lt14-current-two-touch.log`, `lt14-ios-standalone-offline.log`. Trang đo âm thanh và SHA-256 tạm tại `/godot/lt14-device-check-5687b0e.html` trên cùng origin staging. Trang ghi tín hiệu bằng WebAudio trong trình duyệt và giữ trang mở từ icon như cũ.
+
+Khi có thiết bị, mở icon đã cài, xoay ngang và kiểm HUD hai chiều. Thử giữ joystick và dùng ngón còn lại chạm ô trên nông trại thử, nghe tiếng nút, đóng app khi mất mạng rồi mở lại. Nối mạng, bấm **Đọc lại** và so ô ruộng, vàng, bước hướng dẫn. Android cần thử cả Chrome từ URL và từ icon, ghi tải đầu, tải lại và FPS để đối chiếu Phaser.
+
+## Cập nhật PWA rồi mở lại offline
+
+PO chọn tiếp tục mô phỏng. Dùng gói `ca63b20` đã cache đủ và đưa `5687b0e` lên origin loopback thử riêng khi cửa sổ cũ còn mở. Chrome và WebKit đều có worker chờ cùng cache mới thiếu WASM/PCK. Ngắt mạng, đóng cửa sổ cũ rồi mở lại thấy trang báo offline thay cho game.
+
+Nhánh `codex/godot-pwa-offline-update` chờ cache hoàn tất trong bước cài worker mới. Godot 4.7.2 xuất gói thử. So SHA-256 của PCK trong cache với tệp xuất ở từng lượt. Vòng đời cài worker theo [đặc tả Service Workers](https://www.w3.org/TR/service-workers/#extendableevent-waituntil).
+
+| Kịch bản | Chrome và WebKit |
+|---|---|
+| Tải đủ bản cập nhật, rồi ngắt mạng và đóng/mở | Game mở bằng đúng PCK mới. Trong khi cửa sổ cũ còn mở, cả hai gói đều nằm trong cache. |
+| WASM của bản cập nhật trả HTTP 503 | Worker cập nhật không cài xong. Đóng/mở offline vẫn chạy bằng PCK cũ. |
+| Hồ sơ mới mở lần đầu | WASM được tải một lần. Lần đóng/mở offline dùng cache. |
+
+WebKit qua hai tình huống cắt kết nối của thao tác gieo, dùng hai tài khoản thử HTTPS. Mô phỏng lỗi trước khi chuyển yêu cầu tới API thì **Đọc lại** thấy 2.500 vàng và ô P5_7 trống. Chuyển yêu cầu tới API, xác nhận server đã ghi rồi mô phỏng mất phản hồi về game thì **Đọc lại** thấy 2.498 vàng và P5_7 có lúa. Godot thử gọi PLANT một lần mỗi lượt. Khâu đọc lại chỉ gửi yêu cầu lấy trạng thái.
+
+Ảnh 844×390 và 1280×720, tiền tố `godot-lt14-`. Log `lt14-update-repro*.log`, `lt14-update-fixed-*.log`, `lt14-update-failed-*.log`, `lt14-update-fresh-*.log` và `lt14-action-boundaries.log` tại thư mục staging. Typecheck, 305 test, build, xuất Web và check:docs qua. Staging HTTPS tiếp tục phục vụ `5687b0e`.
+
+## Nâng cấp trên HTTPS staging · 21/11/2026
+
+Dựng lại cả hai client của `5687b0e` và `d325444` bằng Godot 4.7.2 cho cùng origin HTTPS tạm. Dùng GoTrue và PostgreSQL cô lập. Kiểm trên Chrome desktop và WebKit mô phỏng iPhone mở từ icon. Bản dựng để lại trên staging là `d325444`.
+
+| Tiêu chí | Chrome và WebKit |
+|---|---|
+| Chuẩn bị trên `5687b0e` | PCK trong cache khớp SHA-256 bản cũ. Gieo ô P5_7 qua API thử, tải lại thấy lúa và 2.498 vàng. |
+| Đổi bản khi cửa sổ cũ còn mở | `build-info.json` báo `d325444`. Worker mới chờ với PCK đúng SHA-256 và WASM đã có trong cache. Worker cũ vẫn điều khiển cửa sổ. |
+| Ngắt mạng trước khi đóng rồi mở lại | Game khởi động từ cache của `d325444`, còn phiên khách, ô lúa và 2.498 vàng. Cache cũ đã được dọn. |
+| Nối mạng và tải lại | Cùng tài khoản đọc ô P5_7 có lúa và 2.498 vàng từ server thử. Không có lỗi JavaScript chưa xử lý. |
+
+Typecheck, 305 test, build cả hai client, xuất Web và check:docs qua. Ảnh offline 844×390 và 1280×720 cho mỗi trình duyệt, cùng log `verify-upgrade-full.log`, nằm tại thư mục staging được trỏ bởi `/private/tmp/vac-staging-p1-current`.
+
+Kết quả thiết bị thật ghi bên dưới. Các quyết định phát hành theo bàn giao.
+
+## Nghiệm thu trên thiết bị thật · 21/11/2026
+
+PO thử trực tiếp bản staging HTTPS `d325444` và xác nhận đạt cả 5 mục trên iPhone và Android. Trước lượt này, Safari trên iPhone 14 Pro Max đã mở được trang hướng dẫn **Cài VAC Online** qua iPhone Mirroring.
+
+| Tiêu chí | iPhone | Android |
+|---|---|---|
+| Mở từ icon | Đạt | Đạt |
+| Xoay ngang | Đạt | Đạt |
+| Điều khiển hai ngón | Đạt | Đạt |
+| Âm thanh | Đạt | Đạt |
+| Mở lại khi mất mạng | Đạt | Đạt |
+
+Nguồn kết quả là báo cáo trực tiếp của PO ngày 21/11. Phiên bản hệ điều hành, mẫu Android và số liệu tải/FPS chưa được ghi trong lượt này. Cổng phát hành LT-14 còn chờ PO chốt phiên Safari/icon, chính sách offline và URL chính.
+
+## Chuyển URL P1 và quay lui trên staging · 21/11/2026
+
+PO duyệt QD-91 đến QD-93 và cho thử trên staging. Gói Phaser/Godot dựng từ `e12e2d8`, cùng cây mã với commit triển khai `05f9897` trên GitHub. Dùng origin HTTPS và GoTrue/PostgreSQL staging đã có. Staging gọi cùng hàm định tuyến với middleware Vercel. Middleware Vercel được chạy thử cục bộ.
+
+| Tiêu chí | Kết quả |
+|---|---|
+| Bật chuyển hướng | `/?p1` và `/?p1=` trả 307 không lưu cache về `/godot/index.html`. Trang gốc, hai lối Phaser, tài nguyên Godot và worker trả đúng đường dẫn. |
+| Giữ phiên | Chrome và WebKit chuyển với worker Phaser đã có. Godot mở PCK đúng SHA-256 và giữ cùng tài khoản, ô P5_7 có lúa và 2.498 vàng. |
+| Safari/icon | WebKit mô phỏng iPhone. Safari mới hiện hướng dẫn trước khi tạo phiên. Icon mới vào thẳng bằng phiên riêng. Safari có phiên giữ nông trại đang chơi. |
+| Offline Godot và Phaser | Ngắt mạng khi Godot đang mở rồi đóng/mở lại. Godot hiện **Đang xem bản lưu** và không gửi thao tác ghi. Nối mạng, **Đọc lại** xác nhận cùng nông trại. `/?p1&offline` vẫn đọc đúng bản lưu riêng. |
+| Hàng chờ Phaser | Chrome mở **Mở Phaser**, gửi một thao tác gieo còn chờ rồi quay lại Godot. Cùng tài khoản nhận 2.496 vàng và ô mới. |
+| Quay lui | Tắt chuyển hướng. Chrome và WebKit mở `/?p1` bằng Phaser với cùng tài khoản và nông trại. Điểm mở trực tiếp Godot vẫn phục vụ. |
+
+Typecheck, 317 test, build, xuất Web Godot 4.7.2 và check:docs qua. Log `verify-cutover.log` cùng ảnh hai cỡ 844×390 và 1280×720 nằm tại thư mục trỏ bởi `/private/tmp/vac-staging-p1-current`. Staging để chuyển hướng tắt sau lượt thử. URL chính và `main` chờ PO.
+
+## Vercel Preview giữ phiên và quay lui · 21/11/2026
+
+Đưa đúng commit `524ef73` của `codex/godot-pwa-release-staging` lên dự án riêng `vac-online-preview` theo duyệt của PO. Dự án mới khởi tạo bằng một trang giữ chỗ rỗng ở Production, không gán tên miền. Game được đóng gói thành hai bản Preview với cùng cây mã và cờ chuyển hướng bật/tắt. [Địa chỉ Preview](https://vac-online-p1-preview-524ef73.vercel.app/).
+
+| Hạng mục | Kết quả |
+|---|---|
+| Bật chuyển hướng | Vercel trả 307, `Cache-Control: no-store`, cho `/?p1` và `/?p1=`. Trang gốc, hai lối Phaser, Godot trực tiếp và worker vẫn phục vụ. WASM trả đúng loại nội dung. |
+| Giữ phiên cùng địa chỉ | Chrome và WebKit mở Phaser bằng phiên khách, gieo P5_7 trên API thử, rồi chuyển cùng địa chỉ sang Godot. Cả hai đọc đúng cùng tài khoản, ô lúa và 2.498 vàng. |
+| Quay lui | Gán lại địa chỉ Preview về bản tắt. `/?p1` trả 200 và mở Phaser. Cả hai giữ cùng tiến trình. Đường trực tiếp Godot vẫn đọc đúng nông trại. |
+
+Sau diễn tập, địa chỉ Preview đang trỏ bản tắt và xác thực Vercel vẫn hoạt động. Dữ liệu thử dùng API staging cô lập qua tunnel tạm. URL chính của VAC và `main` giữ nguyên. Log `verify-vercel-preview.log` và ảnh 844×390, 1280×720 ở thư mục ghi trong `/private/tmp/vac-vercel-preview-current-build`.
+
+## Phiếu duyệt chuyển URL chính · 21/11/2026
+
+**Lượt kiểm ban đầu, trước khi Supabase hoạt động lại.** Bản đề nghị là `524ef73`. Chỉ đổi đường vào P1 theo QD-93 trên tên miền chính đã xác nhận. Bằng chứng giữ phiên và quay lui hiện có từ Vercel Preview ở mục trên.
+
+| Hạng mục | Kiểm tra và điều kiện |
+|---|---|
+| Đích chính thức | GitHub và tài liệu chưa chỉ ra URL chính. Vercel trong nhóm đang kết nối chỉ có dự án VAC riêng cho Preview, chưa ghi URL Production của VAC. Cần xác nhận tên miền chính, dự án Vercel quản lý và bản đang phục vụ. |
+| API chính thức | Cấu hình cục bộ của VAC khớp project ref QD-89 và dùng khóa publishable. `znabynzbcimpesrxxxsz.supabase.co` trả NXDOMAIN trên Google DNS và Cloudflare DNS, trong khi `supabase.com` phân giải bình thường. Các yêu cầu chỉ đọc tới Auth và `apply-actions` dừng trước kết nối HTTP. Cần xác nhận Project URL đang hoạt động hoặc khôi phục hostname cũ. |
+| Phiên và dữ liệu | Phaser và Godot phải dùng cùng Supabase VAC và cùng origin với bản đang chơi. Sau khi API hoạt động, xác nhận HTTPS, cấu hình đăng nhập khách, sự hiện diện của `apply-actions`, và CORS từ đúng URL chính với các header phiên. Dùng phiên QA được phép để đối chiếu danh tính, ô ruộng, vàng và kho. |
+| Quay lui | Đã chuyển bản bật về bản tắt trên cùng địa chỉ Vercel Preview. Chrome/WebKit giữ phiên và tiến trình. Bản tắt chính thức và ID quay lui chỉ xác định được sau khi chốt đích và đóng gói với API chính thức. |
+
+### Trình tự đề nghị sau khi đủ điều kiện
+
+1. Ghi ID bản đang phục vụ URL chính. Dựng hai bản từ cùng mã và cùng cấu hình API chính thức. Gói A đặt `VAC_P1_GODOT_CUTOVER=0`, gói B đặt `VAC_P1_GODOT_CUTOVER=1`. Cả hai đóng chung Phaser và Godot, với cùng checksum tài nguyên. Ghi ID từng bản vào phiếu duyệt trước khi gán tên miền. [Vercel về staged production](https://vercel.com/docs/deployments/promoting-a-deployment).
+2. Khi PO cho phép thay đổi chính thức, dùng A làm mốc trên cùng tên miền. Kiểm `/?p1` mở Phaser, `/godot/index.html` mở đúng bản và đọc cùng nông trại. Kiểm đường offline, lối Phaser với hàng chờ, tải worker/WASM/PCK và mở lại từ icon.
+3. Gán URL chính sang B theo duyệt. Kiểm `/?p1` và `/?p1=` trả 307 cùng tên miền. Kiểm `/`, `/?p1&offline` và `/?p1&client=phaser` vẫn về đúng đích. Đối chiếu lại phiên, nông trại và đường mở trực tiếp Godot.
+4. Nếu sai phiên, lệch tiến trình hoặc Godot không tải, quay về A và kiểm `/?p1` trả 200 qua Phaser. A giữ `/godot/` cho icon đã cài và dùng cùng API. Bảo toàn cache và dữ liệu. Nếu A chưa qua kiểm, khôi phục bản đang phục vụ đã ghi ở bước 1. Nếu dùng Vercel Hobby, A phải là bản Production ngay trước B để có thể quay lui. [Vercel về quay lui Production](https://vercel.com/docs/deployments/rollback-production-deployment).
+
+Tại thời điểm lượt kiểm này, API còn lỗi DNS. Kết quả xác minh lại và hai bản cần duyệt được ghi ở mục sau.
+
+## Hai bản chờ duyệt trên đích chính · 21/11/2026
+
+Theo QD-94, dự án đích là `vac-online-preview` của nhóm NamA Uniform. Vercel xác nhận `vac-online-preview.vercel.app` là tên miền đã xác minh và thuộc dự án này. Kiểm tra trước khi chuyển trả 404 `DEPLOYMENT_NOT_FOUND` tại tên miền; dự án đã có bản giữ chỗ được triển khai không gán tên miền. Địa chỉ Vercel Preview tiếp tục dùng cho thử nghiệm.
+
+Supabase VAC cũ đã phân giải DNS. Kiểm chỉ đọc với khóa publishable hiện có: Auth health và settings trả 200, đăng nhập khách bật, `apply-actions` trả 405 theo kiểm tra phương thức, và CORS từ origin đích chấp nhận POST cùng các header cần thiết ở Auth và Edge Function. Lượt này chưa dùng phiên QA để đọc hay ghi nông trại trên DB chính thức.
+
+| Bản xin duyệt | Cờ runtime | Kết quả tại tên miền đích |
+|---|---|---|
+| **A · Quay lui** | `VAC_P1_GODOT_CUTOVER=0` | `/?p1` mở Phaser. `/godot/index.html` vẫn mở Godot cho icon đã cài. |
+| **B · Chuyển Godot** | `VAC_P1_GODOT_CUTOVER=1` | `/?p1` và `/?p1=` chuyển 307 sang Godot. `/`, `/?p1&client=phaser` và `/?p1&offline` giữ cùng đích như bản A. |
+
+Hai bản dùng chung gói Vercel Production dựng cục bộ từ `524ef73`, 38 tệp tĩnh, SHA-256 của danh sách tệp và checksum là `31443017035b2401932338c2bc1d4cf5e72fc4085dbcd96c31619ff4c1886429`. Đã kiểm đúng endpoint Supabase trong Phaser và Godot, checksum PWA, middleware A/B, 317 test, typecheck, build và check:docs. Gói này tắt nhật ký Godot cho P1-12 theo cấu hình đóng gói hiện tại. Hai bản chưa có ID deployment vì còn chờ PO duyệt tải lên.
+
+Sau duyệt, chuẩn bị A/B dưới dạng staged Production với `--skip-domain` và ghi lại ID. Gán bản A trước để kiểm cùng hostname, gồm đăng nhập khách, giữ tiến trình và đường mở trực tiếp Godot. Chỉ gán B sau khi A qua kiểm. Nếu mất phiên, lệch tiến trình hoặc Godot không tải, quay về A. Với Vercel Hobby, A là bản Production ngay trước B. [Vercel về staged production](https://vercel.com/docs/deployments/promoting-a-deployment) · [Vercel về quay lui](https://vercel.com/docs/deployments/rollback-production-deployment).
+
+Việc giữ phiên đã được thử giữa hai bản trên cùng origin Preview. Origin đích mới có vùng lưu riêng khỏi Preview và các địa chỉ khác. Nếu người chơi đang dùng URL khác, cần xác nhận cách tiếp tục dùng phiên/bản lưu ở URL đó trước khi mời họ chuyển.
+
+## Chuyển URL chính sang Godot · 21/11/2026
+
+PO duyệt QD-95. Dùng gói Production chung từ `524ef73` và Supabase VAC chính thức. Trên `vac-online-preview.vercel.app`, triển khai A trước, đợi QA đạt rồi mới triển khai B.
+
+| Bước | Kết quả trên Production |
+|---|---|
+| A, chuyển hướng tắt | Deployment `dpl_7e6QFkUN9jCrGCYRUaurAiYhNpsz`. `/?p1` mở Phaser. Tạo đúng một khách QA bằng Phaser, gieo lúa P5_7. Phaser tải lại và Godot mở trực tiếp đều đọc đúng tài khoản, cùng ô lúa, 2.498 vàng, kho và nhánh Chương 1. |
+| B, chuyển hướng bật | Deployment `dpl_5uLQGj4SYqgfNb1R4XaRNMtZCwTP` đang phục vụ Production. `/?p1` và `/?p1=` trả 307 cùng origin sang `/godot/index.html`. Chrome đọc lại đúng phiên QA và tiến trình. Lối Phaser online đọc cùng nông trại. `/`, lối offline, worker và WASM phục vụ qua HTTPS. |
+| Quay lui | B qua kiểm nên giữ B. A là bản Production ngay trước B và có gói Godot cùng đường mở icon. Khi cần, quay lui tới `dpl_7e6QFkUN9jCrGCYRUaurAiYhNpsz` rồi kiểm `/?p1` trả 200 qua Phaser và mở lại trực tiếp Godot. Đã diễn tập trên Preview, ở mục trên. |
+
+Kiểm bằng Chrome với một tài khoản QA. Ảnh 844×390, 1280×720 và log `verify-production-cutover.log` ở thư mục trỏ bởi `/private/tmp/vac-godot-production-candidate-current`. Lượt này không áp migration, chưa mở P1-12 và chưa merge `main`. [Chơi P1 trên URL chính](https://vac-online-preview.vercel.app/?p1).
+
+## Nghiệm thu bản B trên điện thoại
+
+**21/11/2026 · LT-14 bước 4.** Đích là [URL chính P1](https://vac-online-preview.vercel.app/?p1), deployment B theo QD-95, mã bản dựng `524ef73`. Kiểm HTTPS trực tiếp xác nhận `/?p1` trả 307 sang `/godot/index.html` và build-info trả đúng commit. Manifest cấu hình mở độc lập tới `/godot/index.html`, service worker trả 200. Typecheck, 317 test và build đều qua. Lượt Chrome kiểm chuyển A/B ở mục trên và lượt PO thử `d325444` trên staging là bằng chứng của các lượt riêng.
+
+| Tiêu chí trên máy thật | iPhone | Android |
+|---|---|---|
+| Mở bản B từ icon đã cài | Đạt | Đạt |
+| Đóng rồi mở lại từ icon, giữ phiên và tiến trình | Đạt | Đạt |
+| Tắt cả Wi-Fi lẫn dữ liệu di động, mở lại từ icon và xem được bản lưu | Đạt | Đạt |
+
+**22/11/2026 · Kết quả.** PO xác nhận trực tiếp bản B trên tên miền Production, đạt 3/3 mục trên mỗi máy. Báo cáo chưa có mẫu máy, phiên bản hệ điều hành, kết quả thử thao tác ghi khi offline hoặc đọc lại sau khi nối mạng theo QD-92. Chưa merge `main` và chưa mở P1-12.

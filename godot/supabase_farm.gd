@@ -19,6 +19,7 @@ var events_retry_at := 0
 var web_auth: JavaScriptObject
 var web_callback: JavaScriptObject
 var web_account := ""
+var phaser_queue_pending := false
 
 
 func _init(config: Dictionary, game_request: HTTPRequest, event_request: HTTPRequest) -> void:
@@ -62,7 +63,7 @@ func send(actions: Array) -> Dictionary:
 	var previous_cache := cache_path()
 	var auth_error := await _ensure_session()
 	if not auth_error.is_empty():
-		return {"error": auth_error}
+		return {"error": auth_error, "phaserQueuePending": phaser_queue_pending}
 	if not actions.is_empty() and previous_cache != cache_path():
 		return {"error": "Tài khoản đã đổi. Bấm Đọc lại để mở đúng nông trại."}
 	var reply := await _apply(actions)
@@ -70,7 +71,7 @@ func send(actions: Array) -> Dictionary:
 		var attempted_cache := cache_path()
 		auth_error = await _ensure_session(true)
 		if not auth_error.is_empty():
-			return {"error": auth_error}
+			return {"error": auth_error, "phaserQueuePending": phaser_queue_pending}
 		if not actions.is_empty() and attempted_cache != cache_path():
 			return {"error": "Tài khoản đã đổi. Bấm Đọc lại để mở đúng nông trại."}
 		reply = await _apply(actions)
@@ -140,6 +141,7 @@ func _ensure_web_session(force_refresh: bool) -> String:
 	var payload: String = await web_session_received
 	web_callback = null
 	var result: Variant = JSON.parse_string(payload)
+	phaser_queue_pending = result is Dictionary and result.get("phaserQueuePending", false) == true
 	if result is Dictionary:
 		if result.has("error"):
 			return str(result.error)

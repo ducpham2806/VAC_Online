@@ -9,6 +9,7 @@
   "include": [
     "src",
     "scripts",
+    "middleware.ts",
     "prototypes",
     "vitest.config.ts"
   ],

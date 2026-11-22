@@ -1,14 +1,27 @@
 # Tóm tắt việc đã hoàn tất
 
-Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
+Kết quả theo module. [Thành quả đã lưu trữ](archive/COMPLETED-2026-11.md). Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
+
+## P1-12 · Bảng phản hồi và báo cáo theo mã · 22/11/2026
+- Mẫu bảng riêng cho PO, truy vấn xuất theo mã và mẫu báo cáo LT-13.
+- Dữ liệu giả kiểm mã lặp, trùng, thiếu và loại mã ngoài nhóm.
+- PostgreSQL xuất 3/3 nhật ký của nhóm giả. Báo cáo tính D1 cho 2 người đủ thời gian.
+- Chờ xuất QA trên Supabase chính thức trước khi mời. [Mẫu và truy vấn](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo).
+
+## LT-14 bước 4 · Nghiệm thu bản B trên điện thoại · 22/11/2026
+- Bản Production `524ef73` theo QD-95, nhánh `codex/godot-pwa-cutover-preflight`.
+- PO xác nhận iPhone và Android thật mở được từ icon.
+- Đóng mở lại giữ phiên và tiến trình. Tắt Wi-Fi và dữ liệu di động vẫn mở và xem được bản lưu.
+- Mỗi máy đạt 3/3 tiêu chí của lượt thử. [Phiếu thiết bị Production](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại).
+- Chưa merge `main`. P1-12 chờ mở.
 
 ## Gói staging Web/PWA · 19/11/2026 · codex/godot-pwa-staging-qa
 - Hai client cùng commit, một origin, có mã bản dựng và checksum.
-- Qua thử nâng cấp `3fb5ea0 → e26571b` bằng hai gói thật.
-- Chrome giữ phiên và dữ liệu khi quay lui. Chrome/WebKit mở cache offline ngay sau lần đầu.
-- Hai ngón mô phỏng, 305 test và build qua. Staging có hướng dẫn cài cho iOS mới.
-- iPhone mở icon, gieo và giữ tiến trình. Safari và icon tách phiên khách.
-- [Phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md). Còn các mục thiết bị LT-14.
+- Staging: `3fb5ea0 → e26571b`, `ca63b20 → 5687b0e`, `5687b0e → d325444`.
+- Chrome/WebKit giữ phiên qua Godot và quay lui Phaser trên Vercel Preview.
+- Mở lại offline, đồng bộ hàng chờ qua Phaser, 317 test và build qua.
+- PO thử `d325444` trên iPhone/Android thật, đạt 5/5 mỗi máy. Safari và icon tách phiên.
+- URL chính P1 đã sang Godot. [Phiếu nghiệm thu](qa/GODOT-PWA-STAGING-2026-11-19.md).
 
 ## Hoạt ảnh nông trại Godot · 19/11/2026 · codex/godot-living-farm-animation
 - Theo prompt nguồn và AR-30. Gà/vịt nghỉ và bước. Cá xoay theo cung nhảy.
@@ -105,11 +118,3 @@ Kết quả theo module. Chỉ đọc mục liên quan. Chi tiết từng ngày:
 - **P0-5:** wireframe HUD điều khiển lai (`docs/wireframes/`). Rút ra: thanh công cụ thu gọn mặc định.
 - **P0-2:** mẫu hình vẽ code 28 khung theo chuẩn mới; ảnh thật PO tạo (QD-80) nhập bằng `tools/art/import_sheet.py` → `art/source/p0_ai/` (28 khung, 0 pixel lạc bảng, cảnh ghép `scene_x3.png`).
 - **Bằng chứng:** typecheck, 190 test, build, check:docs, test:art PASS; `run-local.sh` PASS.
-
-## DOCS-01 · Bộ tài liệu mới `docs/00 → 08` · 10/11/2026 — DONE, chờ PO duyệt nội dung
-- PO chốt hướng: Green Farm 3 + Harvest Moon, điều khiển lai, 4 mùa theo tuần thật, ⚡ cho việc nặng, 1 miền trước, lưu trữ bộ cũ (QD-12…17).
-- Bộ cũ `00 → 17` (17 file, ~494 KB) chuyển nguyên văn sang `docs_archive_merged/v1-2026-11-10/`. Thay bằng 9 file ~68 KB: tổng quan, gameplay, thế giới, kinh tế, kỹ thuật, art, UI, lộ trình, sổ quyết định.
-- Chống chồng chéo: mỗi luật một mã mục (`GP-`, `KT-`…); số chỉ ở `03` + dữ liệu; quyết định chỉ ở `08`; `check:docs` kiểm mã dẫn sai/trùng.
-- CSV `04` → `data/catalog.csv`; key art → `art/key_art/`. `VIEC_CAN_LAM.md` rút gọn (bản cũ ở `docs/archive/`). Cập nhật agent/skill/rule `vac-*`, AGENTS, README, chú thích code.
-- Bằng chứng: typecheck, 178 test, build, check:docs PASS. Không đổi luật code, DB hay số kinh tế.
-- Giới hạn: các mục "(đề xuất)" và các câu chờ PO (PO duyệt hết ngày 10/11, nay là QD-18…33); code vẫn theo thiết kế cũ (KY-90).

@@ -73,12 +73,12 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 ### LT-13 · Kế hoạch chơi thử P1-12 (QD-88)
 - **Mục tiêu:** kiểm cổng LT-02 (tỉ lệ quay lại ngày hôm sau) và tìm chỗ người mới bị kẹt.
 - **Người chơi:** 10–20 người chưa biết game, chơi trên điện thoại màn ngang hoặc máy tính. Không hướng dẫn thêm ngoài game; ngày 2 không nhắc để đo đúng việc tự quay lại.
-- **Link:** PO tự triển khai. `npm run build` ra thư mục tĩnh `dist/`, đưa lên hosting bất kỳ (`vercel.json` có sẵn rewrite), gửi người chơi `<link>/?p1`.
-- **Số liệu tự ghi trong game** (ẩn danh, không tên/email; mã chơi thử hiện ở ⚙️ Cài đặt):
+- **Link:** PO duyệt địa chỉ `/?p1` trước khi mời. [Phiếu duyệt bản B](GODOT-ONLINE.md#phiếu-duyệt-chơi-thử-p1-12).
+- **Số liệu tự ghi trong game** (không tên/email; mã chơi thử ở ⚙️ Cài đặt trên Phaser hoặc cuối Sổ Gia Phả trên Godot khi bật nhật ký):
   - Sự kiện: mở phiên, thao tác thành công theo loại, lên cấp, bước hướng dẫn. Dạng dữ liệu: `src/game/slice/playtest.ts`.
   - D1 = số người có sự kiện ở ngày (giờ VN) ngay sau ngày đầu ÷ số người đã qua hết ngày hôm sau đó.
   - Kèm: phễu 8 bước hướng dẫn, thời lượng phiên đầu, số phiên, cấp cao nhất (trung vị).
-  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8) mỗi 30 giây và khi rời trang. Xuất cho báo cáo: chạy `select json_agg(log) from public.playtest_logs;` trong SQL Editor, lưu kết quả thành `logs.json`.
+  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8). Phaser gửi định kỳ và khi rời trang. Godot gửi khi có sự kiện, lưu hàng chờ trên máy và thử gửi lại khi lỗi. [Xuất theo mã nhóm thử](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo) từ `public.playtest_logs`.
 - **Báo cáo:** `npm run playtest:report -- <file.json>` (mảng nhật ký mỗi máy) → D1 so cổng LT-02, phễu, thao tác.
 - **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
 
@@ -87,9 +87,9 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **PO đã duyệt bắt đầu bước 0 ngày 11/11.** Chuyển P1 Bắc Bộ theo LT-12 trước khi mở nội dung P2. Chốt một commit Phaser làm mốc hành vi, hình ảnh và dữ liệu thử. Dùng bản đó để đối chiếu và quay lui trong thời gian chuyển. Sau khi nghiệm thu, tính năng mới đi vào client Godot.
 
-**14/11, PO duyệt merge mã Godot đến phần điền trang vào main.** Còn kiểm PWA trên điện thoại thật.
+**14/11, PO duyệt merge mã Godot đến phần điền trang vào main.**
 
-15/11 xong bước 3; 19/11 merge hoạt ảnh.
+15/11 xong bước 3. 21/11 thử staging trên hai máy thật và chuyển URL chính P1 theo QD-95. 22/11, [nghiệm thu bản B trên máy thật](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại) đạt 3/3 trên iPhone và Android. P1-12 chờ mở.
 
 **Tác động**
 
@@ -110,7 +110,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **Giữ tiến trình khi chuyển client.** Trạng thái online gắn với tài khoản Supabase. Thử giữ phiên khi chuyển trên cùng origin. Nếu khác origin hoặc chuyển sang app, thử phương án liên kết tài khoản để người chơi truy cập lại nông trại. Bản lưu offline và hàng chờ cũ cần bộ mẫu đọc thử, xác nhận sau nhập và cách quay lui. Khi một yêu cầu gửi đi có kết quả chưa rõ, đối chiếu trạng thái server trước khi gửi lại thao tác có thể cộng/trừ hai lần. Đề xuất bổ sung chống xử lý trùng ở server nếu kiểm thử chứng minh cần, theo RULE D1.
 
-**Phần offline cần PO chốt.** Bước 0–2 ưu tiên online và thử mở lại PWA đã tải. Đề xuất bản Godot đầu tiên cho xem trạng thái đã tải khi mất mạng, báo rõ thao tác đang chờ xác nhận và tiếp tục sau khi kết nối lại. Chơi hoàn toàn offline như chế độ thử `?p1&offline` cần phương án giữ một bộ luật theo ADR-001. Nếu bắt buộc có ở đợt đầu, thử khả năng dùng lại bộ luật trên cả Web và native rồi ước lượng riêng trước khi phát hành.
+**Phát hành P1.** Quyết định về phiên, offline và URL xem QD-91 đến QD-93. Triển khai và quay lui theo [hướng dẫn](GODOT-ONLINE.md#phát-hành-p1).
 
 **Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt lại sau bước 0 và sau khi xác định yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
 

@@ -47,7 +47,7 @@ async function ensure(
   const legacy: { access_token?: string; refresh_token?: string } = JSON.parse(legacyJson);
   const key = storageKey(url);
   if (hasPendingActions()) {
-    return { error: 'Phaser còn thao tác chờ. Mở Phaser để đồng bộ rồi bấm Đọc lại.' };
+    return { phaserQueuePending: true, error: 'Đồng bộ trong Phaser rồi quay lại.' };
   }
   client ??= createClient(url, publishableKey, {
     auth: { storageKey: key, autoRefreshToken: false, detectSessionInUrl: false },

@@ -41,4 +41,4 @@ Nhánh `codex/godot-walk-reference` tham khảo nhịp Walk trong ảnh PO gửi
 - Motion 35/35, Chương 1 50/50. Có kiểm khung nguồn, pixel thân, chân trụ và thứ tự pha. 12 ô 48×64 trong atlas đúng palette và alpha.
 - Typecheck, 305 test, build, 9 test art và Web export qua. Browser chạy cảnh farm và F6 ở 1280×720, 844×390 không lỗi.
 - Bằng chứng trong thư mục `/private/tmp/vac-walkref-current` trỏ tới. Dải khung, ảnh và video có tiền tố `godot-walk-reference-`.
-- Cảnh `animation_preview.tscn` đi cả bốn hướng. PO duyệt merge `001f209` vào `main`. Staging giữ gói LT-14 đang nghiệm thu.
+- Cảnh `animation_preview.tscn` đi cả bốn hướng. PO duyệt merge `001f209` vào `main`. Staging chạy `5687b0e`. Xem [phiếu staging](GODOT-PWA-STAGING-2026-11-19.md#bản-main-sau-merge).

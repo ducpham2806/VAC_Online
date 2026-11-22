@@ -60,6 +60,8 @@ var farm := FarmProbeState.new()
 var notice := ""
 var busy := false
 var connected := false
+var phaser_queue_pending := false
+var offline_callback: JavaScriptObject
 var ready_ms := 0
 var plots: Dictionary[String, Node2D] = {}
 var slot_items: Dictionary[String, String] = {}
@@ -123,7 +125,28 @@ func _ready() -> void:
 	$MetricsTimer.timeout.connect(_update_metrics)
 	_load_cache()
 	_load_guide()
+	if OS.has_feature("web"):
+		offline_callback = JavaScriptBridge.create_callback(_on_browser_offline)
+		JavaScriptBridge.get_interface("window").addEventListener("offline", offline_callback)
 	_refresh([])
+
+
+func _exit_tree() -> void:
+	if offline_callback != null:
+		JavaScriptBridge.get_interface("window").removeEventListener("offline", offline_callback)
+
+
+func _browser_is_offline() -> bool:
+	return OS.has_feature("web") and not bool(JavaScriptBridge.get_interface("navigator").onLine)
+
+
+func _on_browser_offline(_args: Array) -> void:
+	connected = false
+	phaser_queue_pending = false
+	farm.freeze()
+	if not busy:
+		notice = ""
+	_update_view()
 
 
 func _add_plots() -> void:
@@ -323,7 +346,8 @@ func _tap_world(viewport_point: Vector2) -> void:
 	if not plot_id.is_empty():
 		selected_plot = plot_id
 		notice = ""
-		_on_action()
+		if not phaser_queue_pending:
+			_on_action()
 		_update_view()
 		return
 	var target := features.target_at(point)
@@ -415,6 +439,9 @@ func _item_name(id: String) -> String:
 
 func _on_action() -> void:
 	if busy or not pending_task.is_empty() or _modal():
+		return
+	if phaser_queue_pending:
+		JavaScriptBridge.get_interface("location").assign("/?p1&client=phaser")
 		return
 	if not connected or (farm.clock_rate == 0.0 and farm.stage(farm.tile(selected_plot)) >= 0):
 		_refresh([])
@@ -951,12 +978,16 @@ func _order_rows(level: int) -> Array:
 
 
 func _refresh(actions: Array, work_point := Vector2.ZERO) -> void:
+	if _browser_is_offline():
+		_on_browser_offline([])
+		return
 	busy = true
 	notice = "Đang gửi thao tác…" if not actions.is_empty() else "Đang đọc nông trại…"
 	_update_view()
 	var previous_cache: String = transport.cache_path()
 	var reply: Dictionary = await transport.send(actions)
 	busy = false
+	phaser_queue_pending = reply.get("phaserQueuePending", false) == true and not _browser_is_offline()
 	if reply.has("error"):
 		connected = false
 		if previous_cache != transport.cache_path():
@@ -965,8 +996,10 @@ func _refresh(actions: Array, work_point := Vector2.ZERO) -> void:
 			farm.freeze()
 		notice = str(reply.error)
 	else:
-		connected = true
+		connected = not _browser_is_offline()
 		farm.receive(reply)
+		if not connected:
+			farm.freeze()
 		notice = ""
 		if ready_ms == 0 and OS.has_feature("web"):
 			var performance := JavaScriptBridge.get_interface("performance")
@@ -1043,12 +1076,22 @@ func _update_view() -> void:
 	var waiting := connected and farm.clock_rate > 0.0 and command.is_empty()
 	var out_of_season := connected and not tile.is_empty() and stage < 0 and _seed_for(selected_plot).is_empty()
 	action.text = labels.get(command, "Đang lớn" if waiting else "Đọc lại") if connected else "Đọc lại"
-	if out_of_season:
+	if phaser_queue_pending:
+		action.text = "Mở Phaser"
+	elif out_of_season:
 		action.text = "Trái vụ"
 	action.disabled = blocked or waiting or out_of_season
 	for button: Button in [seeds_button, store_button, orders_button]:
 		button.disabled = not connected or blocked
-	if not notice.is_empty():
+	if phaser_queue_pending:
+		status.text = "Còn thao tác chờ. Đồng bộ trong Phaser rồi quay lại."
+	elif not connected and not busy:
+		if farm.snapshot.is_empty():
+			status.text = notice if not notice.is_empty() else "Kết nối mạng để tải nông trại."
+		else:
+			var detail := notice if not notice.is_empty() else "Khi có mạng, bấm Đọc lại."
+			status.text = "Đang xem bản lưu. " + detail
+	elif not notice.is_empty():
 		status.text = notice
 	elif not pending_task.is_empty():
 		status.text = "Đang đi tới…"

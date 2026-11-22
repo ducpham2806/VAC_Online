@@ -2,19 +2,17 @@
 
 Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên văn ở `docs/archive/` ([trước 10/11](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md)); tóm tắt bền vững ở [COMPLETED](COMPLETED.md); quy trình ở [WORKFLOW](WORKFLOW.md).
 
-## 19/11/2026 · Nhịp đi bốn hướng theo sheet PO · codex/godot-walk-reference
-- Đọc hàng Walk. Mỗi hướng có hai nhịp qua dưới hông xen hai nhịp đặt chân, thêm vươn và dồn lực. Bốn khung nguồn vẫn dùng trực tiếp. Khung mới giữ thân và cụm giày gốc, chỉnh vị trí chân theo góc. Dáng đi tính theo quãng đường, tốc độ điều khiển giữ nguyên.
-- F6 đi bốn hướng. Motion 35/35, Chương 1 50/50, 305 test, 9 test art, typecheck, build, Web và check:docs qua. Mở cảnh farm và preview ở hai cỡ. Có dải khung và video.
-- PO duyệt merge `001f209` vào `main`. Gộp bước đi cùng hoạt ảnh, safe-area và các sửa PWA kế thừa. Chưa đổi staging. Còn cổng nghiệm thu thiết bị LT-14.
+## 22/11/2026 · Duyệt tích hợp bản phát hành P1 vào main · codex/godot-pwa-cutover-preflight
+- PO duyệt merge theo QD-97. Nhánh gồm định tuyến và cache Godot PWA, kiểm bản B trên máy thật, phiếu P1-12 và quy trình thu phản hồi.
+- Kiểm trên cây mã đã commit: typecheck, 317 test và build qua. Kiểm tài liệu qua.
+- Tiếp P1-12 ở xuất mã QA trên Supabase chính thức. Chưa mời người chơi. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
 
-## 19/11/2026 · Cache Web/PWA lần mở đầu · codex/godot-pwa-first-load-cache
-- Tiếp LT-14. Tái hiện lần đọc nông trại đầu có HTML trong cache nhưng thiếu WASM/PCK. Bản xuất đợi worker nhận trang trước khi tải gói, có giới hạn chờ và nạp online dự phòng.
-- Chrome/WebKit đóng và mở lại ngay khi ngắt mạng sau lần đầu, có game từ cache. Chrome thử gieo đã ghi trên server nhưng rơi phản hồi. Đọc lại giữ 2.498 vàng và đúng ô lúa, không gửi lại gieo.
-- Typecheck, 305 test, build, xuất Web và check:docs qua. Đang thử trên staging. Còn nghiệm thu trực tiếp offline, ngang, hai ngón, âm thanh trên iPhone và Android thật.
+## 22/11/2026 · Chuẩn bị ghép mã, phản hồi và báo cáo P1-12 · codex/godot-pwa-cutover-preflight
+- Làm phần độc lập trong lúc PO xử lý quyền Supabase. Có mẫu bảng theo dõi, lọc nhật ký theo mã và mẫu báo cáo riêng. [Mẫu và truy vấn](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo).
+- PostgreSQL tạm loại mã ngoài nhóm, xử lý mã lặp/trùng/thiếu. Báo cáo đọc 3/3 nhật ký giả và cho D1 1/2 theo giờ Việt Nam. Kiểm tài liệu qua.
+- Chờ PO vào đúng dự án để xuất QA thật, sau đó báo PO trước khi mời. Chưa mời, chưa merge.
 
-## 19/11/2026 · Nghiệm thu staging Web/PWA · codex/godot-pwa-staging-qa
-- Tiếp LT-14 bước 4. Thêm script đóng gói Phaser và Godot từ cùng commit để phục vụ cùng origin, kèm checksum. Xuất `3fb5ea0` và `e26571b` bằng Godot trên Mac.
-- HTTPS staging dùng GoTrue và PostgreSQL thử. Chrome giữ một danh tính và ô lúa/2.498 vàng sau làm mới phiên, mất mạng, cập nhật PWA và quay Phaser. Hai ngón mô phỏng đạt. WebKit giữ phiên khi tải lại bản mới. Typecheck, 305 test, build, check:docs qua.
-- Đang phục vụ `e26571b` trên tunnel thử. Chưa phát hành URL chính. Còn nghiệm thu Android thật và PO chốt offline. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
-- iPhone 14 Pro Max cài icon qua Safari, gieo thử, đóng hẳn rồi mở lại vẫn giữ ô lúa và 2.498 vàng. Safari tải lại vẫn ở thư mở đầu. Hai nơi mở có phiên khách riêng. Chờ thử màn ngang, hai ngón, âm thanh và offline thật; cần chốt luồng iPhone cho nhóm thử. check:docs qua.
-- `codex/godot-ios-install-guide` thêm hướng dẫn iOS mới ngay trên staging. WebKit ba cỡ xác nhận đợi lựa chọn trước khi tải hoặc đăng nhập. Phiên cũ, icon và Chrome vào thẳng. Icon iPhone đã cài còn 2.498 vàng. 305 test, typecheck, build, check:docs qua. Còn nghiệm thu Android và các mục iPhone LT-14.
+## 22/11/2026 · Bật nhật ký P1-12 và kiểm ghi chính thức · codex/godot-pwa-cutover-preflight
+- PO duyệt QD-96. Đã gán B bật nhật ký lên URL chính. Chrome giữ phiên và tiến trình khi cập nhật; Supabase chính thức nhận hai lần mở cùng mã QA, thao tác và mốc hướng dẫn.
+- Kiểm quyền khách đọc nhật ký trả 403 như dự kiến. Kiểm lại SQL Editor và danh sách dự án trên Dashboard vẫn thiếu quyền vào VAC. Đã xác nhận URL chính còn phục vụ đúng gói bật nhật ký. Câu truy vấn chỉ đọc đúng mã QA đã sẵn sàng. Dừng ở xuất nhật ký và chạy báo cáo. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
+- Chưa mời nhóm thử, chưa áp migration và chưa merge `main`.

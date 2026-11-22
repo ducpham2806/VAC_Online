@@ -271,3 +271,90 @@
 - PO thấy chân bị bóp. Phục hồi dáng đứng và bốn khung đi ngang gốc trong clip. Chỉ chèn bốn khung dịch pixel ống quần/giày. Motion 28/28 có kiểm texture gốc và pixel thân. Typecheck, 305 test, 9 test art, build và check:docs qua. Có dải khung đối chiếu và video lượt sửa. Nhánh chờ duyệt hình ảnh.
 - PO góp ý bàn chân. Tách giày khỏi phần dịch ống quần trong bốn khung chèn. Chân trụ giữ đế nguyên pixel/cao độ, chân nhấc xoay ở cổ chân. Motion 29/29, Chương 1 50/50, 305 test và 9 test art. Đã xuất Web, đối chiếu dải khung và ghi clip hai cỡ. Dừng ở duyệt hình ảnh trên nhánh.
 - PO đánh dấu Chèn 2/3 giật bàn chân trước. Hai khung giữ giày trước từ dáng gốc liền trước và chuyển chân sau theo dáng kế. Chèn 1/4 giống bản trước từng pixel. Motion 30/30, Chương 1 50/50, 305 test và 9 test art. Xuất Web, có ảnh trước/sau và clip. Chờ PO duyệt hình ảnh.
+
+## 19/11/2026 · Nghiệm thu staging Web/PWA · codex/godot-pwa-staging-qa
+- Tiếp LT-14 bước 4. Thêm script đóng gói Phaser và Godot từ cùng commit để phục vụ cùng origin, kèm checksum. Xuất `3fb5ea0` và `e26571b` bằng Godot trên Mac.
+- HTTPS staging dùng GoTrue và PostgreSQL thử. Chrome giữ một danh tính và ô lúa/2.498 vàng sau làm mới phiên, mất mạng, cập nhật PWA và quay Phaser. Hai ngón mô phỏng đạt. WebKit giữ phiên khi tải lại bản mới. Typecheck, 305 test, build, check:docs qua.
+- Đang phục vụ `e26571b` trên tunnel thử. Chưa phát hành URL chính. Còn nghiệm thu Android thật và PO chốt offline. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
+- iPhone 14 Pro Max cài icon qua Safari, gieo thử, đóng hẳn rồi mở lại vẫn giữ ô lúa và 2.498 vàng. Safari tải lại vẫn ở thư mở đầu. Hai nơi mở có phiên khách riêng. Chờ thử màn ngang, hai ngón, âm thanh và offline thật; cần chốt luồng iPhone cho nhóm thử. check:docs qua.
+- `codex/godot-ios-install-guide` thêm hướng dẫn iOS mới ngay trên staging. WebKit ba cỡ xác nhận đợi lựa chọn trước khi tải hoặc đăng nhập. Phiên cũ, icon và Chrome vào thẳng. Icon iPhone đã cài còn 2.498 vàng. 305 test, typecheck, build, check:docs qua. Còn nghiệm thu Android và các mục iPhone LT-14.
+
+## 19/11/2026 · Cache Web/PWA lần mở đầu · codex/godot-pwa-first-load-cache
+- Tiếp LT-14. Tái hiện lần đọc nông trại đầu có HTML trong cache nhưng thiếu WASM/PCK. Bản xuất đợi worker nhận trang trước khi tải gói, có giới hạn chờ và nạp online dự phòng.
+- Chrome/WebKit đóng và mở lại ngay khi ngắt mạng sau lần đầu, có game từ cache. Chrome thử gieo đã ghi trên server nhưng rơi phản hồi. Đọc lại giữ 2.498 vàng và đúng ô lúa, không gửi lại gieo.
+- Typecheck, 305 test, build, xuất Web và check:docs qua. Đang thử trên staging. Còn nghiệm thu trực tiếp offline, ngang, hai ngón, âm thanh trên iPhone và Android thật.
+
+## 19/11/2026 · Nhịp đi bốn hướng theo sheet PO · codex/godot-walk-reference
+- Đọc hàng Walk. Mỗi hướng có hai nhịp qua dưới hông xen hai nhịp đặt chân, thêm vươn và dồn lực. Bốn khung nguồn vẫn dùng trực tiếp. Khung mới giữ thân và cụm giày gốc, chỉnh vị trí chân theo góc. Dáng đi tính theo quãng đường, tốc độ điều khiển giữ nguyên.
+- F6 đi bốn hướng. Motion 35/35, Chương 1 50/50, 305 test, 9 test art, typecheck, build, Web và check:docs qua. Mở cảnh farm và preview ở hai cỡ. Có dải khung và video.
+- PO duyệt merge `001f209` vào `main`. Gộp bước đi cùng hoạt ảnh, safe-area và các sửa PWA kế thừa. Chưa đổi staging. Còn cổng nghiệm thu thiết bị LT-14.
+
+## 19/11/2026 · Godot main trên staging · codex/godot-main-staging-qa
+- Xuất `5687b0e` trên Mac và đưa lên cùng URL HTTPS thử. Chrome xác nhận PCK đổi từ `ca63b20`, giữ cùng phiên, lúa và 2.498 vàng. Mở offline, nối mạng rồi quay Phaser đều giữ dữ liệu. WebKit mở lại offline. Có ảnh 1280×720 và 844×390.
+- iPhone 14 Pro Max đóng hẳn, mở icon và giữ ruộng lúa chín, 1.970 vàng và bước 5/8. Chạm đất trống đi được. Chưa đo mã gói trên iPhone. Chi tiết ở [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md).
+- Typecheck, 305 test, build, xuất Web và check:docs qua. Còn kiểm Android thật và màn ngang, hai ngón, tiếng và mất mạng trên iPhone theo LT-14.
+- `codex/godot-lt14-device-checks` thử tiếp `5687b0e`: WebKit đo tiếng nút 880 Hz, HUD dịch 55 px khi đổi phía vùng khuyết, mở standalone offline và Đọc lại giữ lúa/vàng. Chrome mô phỏng Android dùng hai điểm chạm, gửi một lần gieo. iPhone Mirroring trả `cgWindowNotFound`, Mac chưa thấy Android. Chờ thiết bị cho mục nghiệm thu thật.
+
+## 19/11/2026 · Cập nhật PWA và mở lại offline · codex/godot-pwa-offline-update
+- PO chọn tiếp tục mô phỏng. Tái hiện lỗi trên Chrome và WebKit khi bản cập nhật đã chờ, mất mạng rồi đóng/mở game. Worker kích hoạt với cache thiếu WASM/PCK.
+- Script xuất Web chờ nạp đủ tài nguyên của bản cập nhật. Chrome/WebKit mở game offline từ gói mới, giữ cache cũ nếu WASM trả 503 và chỉ tải WASM một lần ở hồ sơ mới. Xuất Web Godot 4.7.2, typecheck, 305 test, build và check:docs qua.
+- WebKit trên HTTPS staging cắt yêu cầu gieo trước khi gửi và cắt phản hồi sau khi server lưu. Đọc lại cho kết quả tương ứng 2.500 vàng/ô trống và 2.498 vàng/có lúa, mỗi lượt chỉ có một lần bấm gieo.
+- Sửa trên nhánh riêng, bản staging chính vẫn là `5687b0e`. Còn thử nâng cấp ở HTTPS staging và nghiệm thu thiết bị LT-14. Xem [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#cập-nhật-pwa-rồi-mở-lại-offline).
+
+## 21/11/2026 · Rà soát tiến độ LT-14 · codex/progress-review-2026-11-21
+- GitHub main ở `5687b0e`. Typecheck, 305 test, build và check:docs qua trên main. Bản dựng staging trên máy khớp `5687b0e`; hôm nay không phân giải được tên miền tunnel thử.
+- Đối chiếu phiếu staging và nhánh `d325444`. Bản sửa cập nhật cache đã qua mô phỏng Chrome/WebKit và còn chờ kiểm nâng cấp trên HTTPS staging.
+- Dừng ở LT-14 bước 4. Còn nghiệm thu Android và các mục iPhone trên máy thật, PO chốt phiên Safari/icon, offline và URL chính trước P1-12.
+
+## 21/11/2026 · Nâng cấp PWA trên HTTPS staging · codex/godot-pwa-https-qa
+- Dựng `5687b0e` và `d325444` cho cùng tunnel HTTPS mới với GoTrue/PostgreSQL thử. Bản staging hiện ở `d325444`.
+- Chrome và WebKit mô phỏng tải đủ PCK/WASM trước khi worker mới kích hoạt. Ngắt mạng trước khi đóng, mở lại đúng SHA-256 của gói mới. Nối mạng và tải lại vẫn cùng khách, ô P5_7 có lúa và 2.498 vàng.
+- Typecheck, 305 test, build, xuất Web, check:docs qua. Có ảnh hai cỡ và [phiếu staging](qa/GODOT-PWA-STAGING-2026-11-19.md#nâng-cấp-trên-https-staging--21112026). Chưa merge. Dừng ở nghiệm thu thiết bị thật LT-14.
+
+## 21/11/2026 · Kiểm thiết bị thật cho PWA · codex/godot-pwa-real-device-qa
+- Xác nhận staging HTTPS trả `d325444`. Safari trên iPhone 14 Pro Max mở được hướng dẫn cài. Đến mục thêm icon; Mirroring không hiện rõ màn hình xác nhận. Mac chưa nhận diện Android qua USB.
+- PO thử trực tiếp `d325444` trên iPhone và Android: 5/5 mục đạt trên mỗi máy, gồm mở từ icon, màn ngang, hai ngón, âm thanh và mở lại khi mất mạng. Kiểm tra tài liệu qua. Chưa merge. Dừng ở quyết định phát hành LT-14. [Phiếu thiết bị](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-trên-thiết-bị-thật--21112026).
+
+## 21/11/2026 · Đề xuất phát hành Godot P1 · codex/godot-pwa-release-proposal
+- Ghi QD-91 đến QD-93 chờ PO duyệt. Giữ phiên khách ở nơi đã chơi, xem bản lưu khi offline và chuyển tạm URL P1 sang Godot cùng origin.
+- Bổ sung điều kiện nghiệm thu định tuyến, quay lui và giữ lối Phaser xử lý hàng chờ. Kiểm tra tài liệu qua.
+- Dừng ở duyệt phương án. Chưa đổi code, URL, DB hay phát hành. [Đề xuất](GODOT-ONLINE.md#đề-xuất-chốt-phát-hành-p1).
+
+## 21/11/2026 · Triển khai và diễn tập URL Godot P1 · codex/godot-pwa-release-staging
+- PO duyệt QD-91 đến QD-93. Có hướng dẫn giữ phiên Safari/icon, chế độ chỉ xem khi mất mạng và chuyển hướng P1 mặc định tắt. Build staging `e12e2d8`.
+- Chrome/WebKit qua định tuyến, giữ phiên và nông trại, mở lại offline và quay lui. Chrome qua đồng bộ hàng chờ Phaser. Typecheck, 317 test, build, xuất Godot và check:docs qua.
+- Staging đã tắt redirect sau thử. Dừng ở chờ PO chuyển URL chính. Chưa merge. [Phiếu QA](qa/GODOT-PWA-STAGING-2026-11-19.md#chuyển-url-p1-và-quay-lui-trên-staging--21112026).
+
+## 21/11/2026 · Vercel Preview và diễn tập quay lui · codex/godot-pwa-vercel-qa
+- PO duyệt dự án Preview riêng và trang giữ chỗ Production bắt buộc, không gán tên miền. Đưa đúng `524ef73` lên hai bản Preview bật/tắt, dùng API staging thử.
+- Vercel trả đúng 307 và ngoại lệ. Chrome/WebKit giữ cùng phiên, ô P5_7 và 2.498 vàng qua Phaser → Godot → Phaser. Kiểm tra tài liệu qua.
+- Để Preview ở bản tắt, có xác thực. URL chính và main giữ nguyên. Dừng ở chờ PO cho chuyển URL chính. [Phiếu Preview](qa/GODOT-PWA-STAGING-2026-11-19.md#vercel-preview-giữ-phiên-và-quay-lui--21112026).
+
+## 21/11/2026 · Chuẩn bị duyệt chuyển URL chính · codex/godot-pwa-cutover-preflight
+- Cấu hình VAC dùng đúng project ref đã ghi và khóa publishable. Host Supabase trả NXDOMAIN ở Google/Cloudflare DNS, Auth và function chưa kiểm được qua HTTP.
+- Nhóm Vercel đang kết nối chỉ có dự án VAC cho Preview. Ghi tiêu chí xác minh URL, gói bật/tắt và phương án quay lui giữ đường icon từ kết quả Preview. Kiểm tra tài liệu qua.
+- Chờ PO xác nhận URL chính và Supabase đang hoạt động. Chưa đổi URL, ghi API/DB hoặc merge. [Phiếu duyệt](qa/GODOT-PWA-STAGING-2026-11-19.md#phiếu-duyệt-chuyển-url-chính--21112026).
+
+## 21/11/2026 · Hai bản Production chờ duyệt · codex/godot-pwa-cutover-preflight
+- PO chọn đích Vercel riêng và khôi phục Supabase VAC (QD-94). Vercel xác nhận tên miền đích. Supabase qua DNS, Auth, kiểm function và CORS bằng yêu cầu chỉ đọc.
+- Dựng gói chung từ `524ef73`; bản A tắt chuyển hướng, B bật. Middleware, checksum, 317 test, typecheck, build và check:docs qua.
+- Chờ PO duyệt hai bản. Chưa tải gói Production, đổi URL, ghi DB hay merge. [Phiếu duyệt](qa/GODOT-PWA-STAGING-2026-11-19.md#hai-bản-chờ-duyệt-trên-đích-chính--21112026).
+
+## 21/11/2026 · Chuyển P1 chính thức sang Godot · codex/godot-pwa-cutover-preflight
+- PO duyệt A/B (QD-95). Đã đưa A lên trước, Phaser và Godot đọc cùng tài khoản QA, P5_7 có lúa, 2.498 vàng, kho và nhánh Chương 1.
+- Đã chuyển B. Kiểm 307, cùng phiên/tiến trình, Phaser dự phòng và đường trực tiếp Godot. A là mốc quay lui. Kiểm tra tài liệu qua. [Phiếu Production](qa/GODOT-PWA-STAGING-2026-11-19.md#chuyển-url-chính-sang-godot--21112026).
+- Đã triển khai Production từ `524ef73`. Chưa merge `main`, chưa áp migration, chưa mời nhóm P1-12. Dừng ở chuẩn bị P1-12.
+
+## 21/11/2026 · Nghiệm thu bản B trên điện thoại · codex/godot-pwa-cutover-preflight
+- HTTPS Production trả 307 sang Godot và build-info đúng B `524ef73`. Typecheck, 317 test, build và check:docs qua.
+- Gửi PO các bước kiểm từ icon, giữ phiên và nông trại, đóng/mở offline theo QD-91/QD-92 trên iPhone và Android thật. [Phiếu thiết bị Production](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại).
+- Dừng ở chờ kết quả hai máy. B đang phục vụ Production, chưa có bản phát hành mới và chưa merge `main`.
+
+## 22/11/2026 · Bản B đạt nghiệm thu trên iPhone và Android · codex/godot-pwa-cutover-preflight
+- PO thử B `524ef73` trên URL chính. Mỗi máy đạt 3/3: mở từ icon, đóng/mở vẫn giữ phiên và tiến trình, tắt Wi-Fi và dữ liệu di động vẫn mở xem được bản lưu. [Phiếu thiết bị Production](qa/GODOT-PWA-STAGING-2026-11-19.md#nghiệm-thu-bản-b-trên-điện-thoại).
+- Cập nhật LT-14, bàn giao và tóm tắt nghiệm thu. Kiểm tra tài liệu qua. Chưa merge `main`, chưa mở P1-12.
+
+## 22/11/2026 · Chuẩn bị P1-12 trên bản B · codex/godot-pwa-cutover-preflight
+- Xác nhận gói B `524ef73` ở URL chính đang tắt nhật ký. Đã đóng gói cục bộ ứng viên bật nhật ký, chưa tải lên Vercel.
+- Chrome/PostgreSQL thử ghi hai phiên cùng mã, thao tác và mốc hướng dẫn. Xuất báo cáo 1/1 nhật ký, ghép được phản hồi mẫu. Check tài liệu qua.
+- Dừng ở chờ PO duyệt bật nhật ký và kênh thu phản hồi. Còn QA trên bản ứng viên với API chính thức trước khi mời. Chưa gửi lời mời, chưa merge. [Phiếu duyệt](GODOT-ONLINE.md#phiếu-duyệt-chơi-thử-p1-12).
