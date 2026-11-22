@@ -5,7 +5,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 ## 22/11/2026 · Duyệt tích hợp bản phát hành P1 vào main · codex/godot-pwa-cutover-preflight
 - PO duyệt merge theo QD-97. Nhánh gồm định tuyến và cache Godot PWA, kiểm bản B trên máy thật, phiếu P1-12 và quy trình thu phản hồi.
 - Kiểm trên cây mã đã commit: typecheck, 317 test và build qua. Kiểm tài liệu qua.
-- Tiếp P1-12 ở xuất mã QA trên Supabase chính thức. Chưa mời người chơi. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
+- PR #4 đã merge tại `1b0f441`, CI mã và SQL qua. Lượt tiếp theo mở lại SQL Editor, tài khoản hiện tại vẫn bị chuyển về danh sách nhóm. Còn xuất đúng mã QA và chạy báo cáo. Chưa mời người chơi. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
 
 ## 22/11/2026 · Chuẩn bị ghép mã, phản hồi và báo cáo P1-12 · codex/godot-pwa-cutover-preflight
 - Làm phần độc lập trong lúc PO xử lý quyền Supabase. Có mẫu bảng theo dõi, lọc nhật ký theo mã và mẫu báo cáo riêng. [Mẫu và truy vấn](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo).
