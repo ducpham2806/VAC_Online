@@ -58,7 +58,7 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 |---|---|
 | Giữ dữ liệu qua cập nhật | Chrome cập nhật PWA, dùng đúng gói cache mới và giữ tài khoản khách, vàng, kho, điền trang và Chương 1 khi mở lại. Manifest vẫn mở đúng đường Godot. |
 | Ghi Supabase chính thức | Từ URL chính, hai sự kiện `SESSION` cùng mã QA, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE` được Supabase trả HTTP 201. Mã nhìn thấy cuối **Sổ Gia Phả**. |
-| Xuất nhật ký chính thức | Đang chờ quyền đọc. Phiên khách QA đọc `playtest_logs` bị từ chối HTTP 403 đúng phân quyền. Tài khoản Dashboard đang dùng không có quyền vào dự án VAC. Khi có quyền đọc, xuất đúng mã QA và chạy báo cáo LT-13. |
+| Xuất nhật ký chính thức | Đang chờ quyền đọc. Phiên khách QA đọc `playtest_logs` bị từ chối HTTP 403 đúng phân quyền. Đã kiểm lại SQL Editor và danh sách dự án trong các nhóm tài khoản Dashboard thấy được. VAC chính thức không có trong danh sách và truy cập trực tiếp bị từ chối. Câu truy vấn đọc đã sẵn sàng, lọc đúng một mã QA. Chờ đăng nhập bằng tài khoản có quyền rồi xuất và chạy báo cáo LT-13. |
 | Mời người chơi | Chưa mời. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
 
 #### Đề nghị triển khai và mời nhóm thử

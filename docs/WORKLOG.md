@@ -4,7 +4,7 @@ Nhật ký chính duy nhất, giữ ≤ 3 mục mới nhất. Mục cũ nguyên 
 
 ## 22/11/2026 · Bật nhật ký P1-12 và kiểm ghi chính thức · codex/godot-pwa-cutover-preflight
 - PO duyệt QD-96. Đã gán B bật nhật ký lên URL chính. Chrome giữ phiên và tiến trình khi cập nhật; Supabase chính thức nhận hai lần mở cùng mã QA, thao tác và mốc hướng dẫn.
-- Kiểm quyền khách đọc nhật ký trả 403 như dự kiến. Dashboard hiện thiếu quyền vào VAC. Dừng ở xuất đúng mã QA và chạy báo cáo. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
+- Kiểm quyền khách đọc nhật ký trả 403 như dự kiến. Kiểm lại SQL Editor và danh sách dự án trên Dashboard vẫn thiếu quyền vào VAC. Đã xác nhận URL chính còn phục vụ đúng gói bật nhật ký. Câu truy vấn chỉ đọc đúng mã QA đã sẵn sàng. Dừng ở xuất nhật ký và chạy báo cáo. [Phiếu Production](GODOT-ONLINE.md#kiểm-trên-production).
 - Chưa mời nhóm thử, chưa áp migration và chưa merge `main`.
 
 ## 22/11/2026 · Chuẩn bị P1-12 trên bản B · codex/godot-pwa-cutover-preflight
