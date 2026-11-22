@@ -2,6 +2,12 @@
 
 Kết quả theo module. [Thành quả đã lưu trữ](archive/COMPLETED-2026-11.md). Chi tiết từng ngày: [archive nhật ký cũ](archive/WORKLOG-2026-11-03-VIEC_CAN_LAM-muc-F.md); hiện trạng đầy đủ: `17` Phần C. "Đã code" ≠ "đã áp DB thật" ≠ "đã có người chơi".
 
+## P1-12 · Bảng phản hồi và báo cáo theo mã · 22/11/2026
+- Mẫu bảng riêng cho PO, truy vấn xuất theo mã và mẫu báo cáo LT-13.
+- Dữ liệu giả kiểm mã lặp, trùng, thiếu và loại mã ngoài nhóm.
+- PostgreSQL xuất 3/3 nhật ký của nhóm giả. Báo cáo tính D1 cho 2 người đủ thời gian.
+- Chờ xuất QA trên Supabase chính thức trước khi mời. [Mẫu và truy vấn](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo).
+
 ## LT-14 bước 4 · Nghiệm thu bản B trên điện thoại · 22/11/2026
 - Bản Production `524ef73` theo QD-95, nhánh `codex/godot-pwa-cutover-preflight`.
 - PO xác nhận iPhone và Android thật mở được từ icon.

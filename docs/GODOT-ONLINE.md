@@ -86,15 +86,56 @@ Mã chơi thử (Sổ Gia Phả → cuộn xuống cuối):
 6. Bạn dùng máy và trình duyệt nào? Bạn mở từ tab hay icon?
 ```
 
-**Ghép và xuất.** Nhập mã chữ thường, bỏ khoảng trắng ở hai đầu. Đối chiếu mỗi mã với đúng một `player` trước khi tính. Mã trùng hoặc thiếu để riêng và ghi số lượng. Chỉ xuất nhật ký của danh sách nhóm đã xác nhận. Ví dụ trong SQL Editor với danh sách đã đối chiếu:
+#### Bảng theo dõi riêng của PO
+
+Dùng một dòng cho mỗi người được mời. Gán số thứ tự nội bộ và ghi mã sau buổi đầu, kể cả khi người đó chưa gửi phiếu. Dùng một mã cho mỗi người và giữ cùng nơi mở game. Nếu họ đổi thiết bị hoặc chuyển giữa tab và icon, để riêng các mã phát sinh để đối chiếu với nhật ký buổi đầu. Không nhắc người chơi quay lại ngày hôm sau.
+
+| STT | Đã bắt đầu | Mã chơi thử | Thiết bị và cách mở | Đã nhận phiếu | Điểm kẹt | Trạng thái ghép |
+|---|---|---|---|---|---|---|
+| 01 |  |  |  |  |  |  |
+
+Để trống mã khi chưa nhận được. Chỉ đưa mã đã xác nhận của nhóm thật vào truy vấn dưới đây. Giữ bảng theo dõi, phản hồi và nhật ký thô trong kênh riêng, ngoài GitHub.
+
+#### Xuất theo mã và chốt báo cáo
+
+Thay hai mã ví dụ trong `values` bằng danh sách đã xác nhận. Truy vấn chuẩn hóa chữ hoa và khoảng trắng, gộp mã lặp trong danh sách và chỉ xuất mã ghép duy nhất. Cột `review` ghi mã chưa có nhật ký hoặc ghép nhiều nhật ký. Chốt các trường hợp đó riêng trước khi dùng báo cáo. Đã diễn tập trên PostgreSQL cục bộ bằng dữ liệu giả, gồm mã lặp, mã trùng giữa hai nhật ký, mã thiếu và lượt ngoài nhóm. Báo cáo mẫu đọc 3/3 nhật ký đã ghép và tính D1 trên 2 người đủ thời gian.
 
 ```sql
-select coalesce(json_agg(log order by player), '[]'::json)
-from public.playtest_logs
-where left(player, 8) in ('thay_ma_1', 'thay_ma_2');
+with cohort as (
+  select distinct lower(btrim(input.code)) as code
+  from (values ('0123abcd'), ('4567efab')) as input(code)
+  where nullif(btrim(input.code), '') is not null
+),
+matches as (
+  select cohort.code, count(l.player) as match_count,
+         jsonb_agg(l.log) filter (where l.player is not null) as logs
+  from cohort
+  left join public.playtest_logs as l
+    on cohort.code ~ '^[a-f0-9]{8}$' and left(l.player, 8) = cohort.code
+  group by cohort.code
+)
+select
+  coalesce(
+    jsonb_agg(logs -> 0 order by code) filter (where match_count = 1), '[]'::jsonb
+  ) as logs,
+  coalesce(
+    jsonb_agg(jsonb_build_object('code', code, 'matches', match_count) order by code)
+      filter (where match_count <> 1), '[]'::jsonb
+  ) as review
+from matches;
 ```
 
-Lưu tệp riêng và chạy `npm run playtest:report -- logs.json`. Giữ phiếu phản hồi và nhật ký thô ngoài GitHub. Báo cáo gửi PO dùng số liệu tổng hợp và mô tả điểm kẹt.
+Lưu riêng giá trị mảng ở cột `logs` thành `logs.json`, rồi chạy `npm run playtest:report -- logs.json`. Chốt D1 sau khi ngày hôm sau của người cuối cùng trong nhóm đã kết thúc (giờ Việt Nam). Nếu báo cáo sớm hơn, ghi rõ số người còn chờ đủ thời gian. Dùng mẫu sau để trả kết quả tổng hợp cho PO.
+
+```text
+Khoảng thời gian chơi thử (giờ Việt Nam):
+Đã mời / đã bắt đầu / đã nhận phiếu:
+Mã ghép được / chưa có mã / mã cần đối chiếu:
+D1 (quay lại / đủ điều kiện; tỷ lệ; kết quả so LT-02):
+Bước rớt nhiều nhất và điểm kẹt tương ứng trong phiếu:
+Vấn đề theo thiết bị hoặc cách mở:
+Việc đề nghị sửa trước lượt thử tiếp theo:
+```
 
 **Phê duyệt.** PO đã chốt bật nhật ký và thu phản hồi riêng theo QD-96. Chỉ mời nhóm theo LT-13 sau khi báo kết quả QA trên Supabase chính thức cho PO.
 

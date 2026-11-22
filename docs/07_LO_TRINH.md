@@ -78,7 +78,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
   - Sự kiện: mở phiên, thao tác thành công theo loại, lên cấp, bước hướng dẫn. Dạng dữ liệu: `src/game/slice/playtest.ts`.
   - D1 = số người có sự kiện ở ngày (giờ VN) ngay sau ngày đầu ÷ số người đã qua hết ngày hôm sau đó.
   - Kèm: phễu 8 bước hướng dẫn, thời lượng phiên đầu, số phiên, cấp cao nhất (trung vị).
-  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8). Phaser gửi định kỳ và khi rời trang. Godot gửi khi có sự kiện, lưu hàng chờ trên máy và thử gửi lại khi lỗi. Xuất cho báo cáo: chạy `select json_agg(log) from public.playtest_logs;` trong SQL Editor, lưu kết quả thành `logs.json`.
+  - Thu về: game tự gửi lên bảng `playtest_events` (P1-8). Phaser gửi định kỳ và khi rời trang. Godot gửi khi có sự kiện, lưu hàng chờ trên máy và thử gửi lại khi lỗi. [Xuất theo mã nhóm thử](GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo) từ `public.playtest_logs`.
 - **Báo cáo:** `npm run playtest:report -- <file.json>` (mảng nhật ký mỗi máy) → D1 so cổng LT-02, phễu, thao tác.
 - **Phiếu hỏi sau buổi đầu** (kèm mã chơi thử): (1) Có hiểu phải làm gì trong 5 phút đầu không? (2) Chỗ nào bị kẹt hoặc khó chịu? (3) Thích nhất việc gì? (4) Ngày mai có muốn quay lại không, vì sao? (5) Hình, chữ có dễ đọc trên máy của bạn không? (6) Máy và trình duyệt đang dùng.
 
