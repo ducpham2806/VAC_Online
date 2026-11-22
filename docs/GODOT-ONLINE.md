@@ -44,11 +44,22 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 
 ### Phiếu duyệt chơi thử P1-12
 
-**22/11/2026 · Chờ PO duyệt · LT-13, QD-88.** Gói Godot B đang phục vụ [URL chính P1](https://vac-online-preview.vercel.app/?p1), commit `524ef73`. Đối chiếu SHA-256 của `index.pck` với build-info Production cho thấy đúng gói B đã nghiệm thu. Cấu hình trong gói là `playtest: false`. Gói đang phục vụ không gửi nhật ký Godot và không hiện mã chơi thử.
+**22/11/2026 · LT-13, QD-88 và QD-96.** Trước khi bật nhật ký, gói Godot B phục vụ [URL chính P1](https://vac-online-preview.vercel.app/?p1), commit `524ef73`. Đối chiếu SHA-256 của `index.pck` với build-info Production cho thấy đúng gói B đã nghiệm thu. Cấu hình trong gói là `playtest: false`. Gói này dùng để quay lui khi cần tắt nhật ký.
 
 **Diễn tập nhật ký.** Xuất lại đúng mã B với nhật ký bật và API thử cục bộ. Chrome ghi `SESSION` cho hai lần mở dưới cùng một mã, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE`. Mã ở cuối **Sổ Gia Phả** đọc được ở 1280×720 và 844×390. PostgreSQL thử ghi qua vai trò người chơi, xuất được 1/1 nhật ký từ `playtest_logs` và khớp một phản hồi mẫu bằng mã. Báo cáo LT-13 đọc hai phiên, một thao tác và mốc MOVE; D1 chưa đủ dữ liệu trong lượt thử cùng ngày. Typecheck, 317 test (gồm 6 test nhật ký và số liệu), build và kiểm tra tài liệu đều qua.
 
-**Bản ứng viên.** Đã đóng gói cục bộ bản B bật nhật ký cho cùng Supabase. So với bản B đang chạy, chỉ khác gói Godot, phiên bản service worker và build-info. SHA-256 của `index.pck` ứng viên là `f40e28de0e01b9be820dafdfc6a6adade3c9c2675fef5126a9d86b45e60adc3a`. Chưa tải ứng viên lên Vercel. Việc kiểm ghi và xuất trên Supabase chính thức thuộc lượt QA trước khi mời.
+**Bản ứng viên.** Đã đóng gói cục bộ bản B bật nhật ký cho cùng Supabase. So với bản B đang chạy, chỉ khác gói Godot, phiên bản service worker và build-info. SHA-256 của `index.pck` ứng viên là `f40e28de0e01b9be820dafdfc6a6adade3c9c2675fef5126a9d86b45e60adc3a`.
+
+#### Kiểm trên Production
+
+**22/11/2026 · Đã bật theo QD-96.** Vercel đang phục vụ deployment `dpl_CtjAkZFbdPCjj58Zc9CfQ2ASGGsp` trên URL chính, đúng checksum ứng viên. Kiểm `/?p1`, manifest, worker và hai lối Phaser đều qua. B tắt nhật ký để quay lui là `dpl_5uLQGj4SYqgfNb1R4XaRNMtZCwTP`. Đã xác nhận quay về B tắt khi lượt QA đầu so nhầm dấu thời gian máy chủ; lượt kiểm lại đối chiếu dữ liệu nông trại đã lưu và giữ bản bật.
+
+| Hạng mục | Kết quả |
+|---|---|
+| Giữ dữ liệu qua cập nhật | Chrome cập nhật PWA, dùng đúng gói cache mới và giữ tài khoản khách, vàng, kho, điền trang và Chương 1 khi mở lại. Manifest vẫn mở đúng đường Godot. |
+| Ghi Supabase chính thức | Từ URL chính, hai sự kiện `SESSION` cùng mã QA, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE` được Supabase trả HTTP 201. Mã nhìn thấy cuối **Sổ Gia Phả**. |
+| Xuất nhật ký chính thức | Đang chờ quyền đọc. Phiên khách QA đọc `playtest_logs` bị từ chối HTTP 403 đúng phân quyền. Tài khoản Dashboard đang dùng không có quyền vào dự án VAC. Khi có quyền đọc, xuất đúng mã QA và chạy báo cáo LT-13. |
+| Mời người chơi | Chưa mời. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
 
 #### Đề nghị triển khai và mời nhóm thử
 
@@ -85,7 +96,7 @@ where left(player, 8) in ('thay_ma_1', 'thay_ma_2');
 
 Lưu tệp riêng và chạy `npm run playtest:report -- logs.json`. Giữ phiếu phản hồi và nhật ký thô ngoài GitHub. Báo cáo gửi PO dùng số liệu tổng hợp và mô tả điểm kẹt.
 
-**Cần PO duyệt.** Bật nhật ký trên URL chính trong khung chơi thử, thu mã và phản hồi qua kênh riêng. Lượt chuẩn bị chưa gửi lời mời. Chỉ mời nhóm theo LT-13 sau khi QA trên bản ứng viên đạt.
+**Phê duyệt.** PO đã chốt bật nhật ký và thu phản hồi riêng theo QD-96. Chỉ mời nhóm theo LT-13 sau khi báo kết quả QA trên Supabase chính thức cho PO.
 
 ### Nghiệm thu trước khi chuyển URL chính
 
