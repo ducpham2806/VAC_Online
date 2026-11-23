@@ -59,7 +59,7 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 | Giữ dữ liệu qua cập nhật | Chrome cập nhật PWA, dùng đúng gói cache mới và giữ tài khoản khách, vàng, kho, điền trang và Chương 1 khi mở lại. Manifest vẫn mở đúng đường Godot. |
 | Ghi Supabase chính thức | Từ URL chính, hai sự kiện `SESSION` cùng mã QA, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE` được Supabase trả HTTP 201. Mã nhìn thấy cuối **Sổ Gia Phả**. |
 | Xuất nhật ký chính thức | Đạt ngày 22/11. PO xuất dữ liệu đã lọc từ Supabase VAC. Đối chiếu đúng một mã QA, hai phiên, một thao tác `CHOOSE_PATH` và hai mốc `MOVE`. Báo cáo LT-13 đọc 1/1 nhật ký. D1 chưa có dữ liệu đủ điều kiện trong lượt QA cùng ngày. |
-| Mời người chơi | Chưa mời. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
+| Mời người chơi | PO xác nhận đã gửi lời mời ngày 23/11. Đang thu mã và phản hồi. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
 
 #### Đề nghị triển khai và mời nhóm thử
 
