@@ -112,7 +112,7 @@ Thứ tự: làm phần client chạy offline trước (một bản luật chạ
 
 **Phát hành P1.** Quyết định về phiên, offline và URL xem QD-91 đến QD-93. Triển khai và quay lui theo [hướng dẫn](GODOT-ONLINE.md#phát-hành-p1).
 
-**Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt lại sau bước 0 và sau khi xác định yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
+**Tổng dự kiến** 18–28 ngày làm việc tới web/PWA với một người và AI. Chốt sau bước 0, khi rõ yêu cầu offline. Kiểm thử người chơi theo LT-13 và xuất app tính riêng.
 
 **Chạy lại bước 0.** Cài Godot 4.7.2 và Web export template đơn luồng đồng phiên bản. Dựng bản Web, chạy bộ thử Deno/PostgreSQL, rồi chạy máy chủ Web ở terminal khác.
 
