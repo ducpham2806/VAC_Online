@@ -55,7 +55,8 @@ Danh sách việc duy nhất. Xong thì `[x]` + gạch + ghi ngày, không xóa 
 - [x] ~~PO duyệt số liệu P1-9: Bếp Củi, chỗ nuôi gà/vịt/cá, bảng đơn HTX~~ (QD-87, 11/11)
 - [x] ~~PO tạo 7 ảnh theo `art/prompts/p1_species.md`~~ (đã nhập 11/11)
 - [x] ~~P1-12: PO triển khai link `?p1`~~ (22/11, B đã bật nhật ký theo QD-96)
-- [ ] P1-12: PO mời 10–20 người chơi thử, gửi phiếu hỏi LT-13 sau khi kiểm xuất nhật ký QA chính thức ([phiếu P1-12](docs/GODOT-ONLINE.md#kiểm-trên-production)).
+- [x] ~~P1-12: PO gửi lời mời và mẫu phản hồi LT-13~~ (23/11, PO xác nhận đã gửi lời mời).
+- [ ] P1-12: thu mã, đối chiếu nhật ký, tính D1 và tổng hợp phản hồi ([phiếu P1-12](docs/GODOT-ONLINE.md#xuất-theo-mã-và-chốt-báo-cáo)).
 
 ## F. Nhật ký
 Nhật ký chính: [docs/WORKLOG.md](docs/WORKLOG.md) (≤ 3 mục). Việc đã xong: [docs/COMPLETED.md](docs/COMPLETED.md).

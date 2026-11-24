@@ -58,8 +58,8 @@ Bật `playtest` trong cấu hình bản dựng thử. Mở **Sổ Gia Phả** v
 |---|---|
 | Giữ dữ liệu qua cập nhật | Chrome cập nhật PWA, dùng đúng gói cache mới và giữ tài khoản khách, vàng, kho, điền trang và Chương 1 khi mở lại. Manifest vẫn mở đúng đường Godot. |
 | Ghi Supabase chính thức | Từ URL chính, hai sự kiện `SESSION` cùng mã QA, `ACTION: CHOOSE_PATH` và `TUTORIAL: MOVE` được Supabase trả HTTP 201. Mã nhìn thấy cuối **Sổ Gia Phả**. |
-| Xuất nhật ký chính thức | Đang chờ quyền đọc. Phiên khách QA đọc `playtest_logs` bị từ chối HTTP 403 đúng phân quyền. Đã kiểm lại SQL Editor và danh sách dự án trong các nhóm tài khoản Dashboard thấy được. VAC chính thức không có trong danh sách và truy cập trực tiếp bị từ chối. Câu truy vấn đọc đã sẵn sàng, lọc đúng một mã QA. Chờ đăng nhập bằng tài khoản có quyền rồi xuất và chạy báo cáo LT-13. |
-| Mời người chơi | Chưa mời. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
+| Xuất nhật ký chính thức | Đạt ngày 22/11. PO xuất dữ liệu đã lọc từ Supabase VAC. Đối chiếu đúng một mã QA, hai phiên, một thao tác `CHOOSE_PATH` và hai mốc `MOVE`. Báo cáo LT-13 đọc 1/1 nhật ký. D1 chưa có dữ liệu đủ điều kiện trong lượt QA cùng ngày. |
+| Mời người chơi | PO xác nhận đã gửi lời mời ngày 23/11. Đang thu mã và phản hồi. Dữ liệu QA giữ riêng khỏi danh sách mã tính D1. |
 
 #### Đề nghị triển khai và mời nhóm thử
 
@@ -88,9 +88,9 @@ Mã chơi thử (Sổ Gia Phả → cuộn xuống cuối):
 
 #### Bảng theo dõi riêng của PO
 
-Dùng một dòng cho mỗi người được mời. Gán số thứ tự nội bộ và ghi mã sau buổi đầu, kể cả khi người đó chưa gửi phiếu. Dùng một mã cho mỗi người và giữ cùng nơi mở game. Nếu họ đổi thiết bị hoặc chuyển giữa tab và icon, để riêng các mã phát sinh để đối chiếu với nhật ký buổi đầu. Không nhắc người chơi quay lại ngày hôm sau.
+Dùng một dòng cho mỗi người được mời. Gán số thứ tự nội bộ và ghi mã sau buổi đầu, kể cả khi người đó chưa gửi phiếu. Dùng một mã cho mỗi người và giữ cùng nơi mở game. Nếu họ đổi thiết bị hoặc chuyển giữa tab và icon, để riêng các mã phát sinh để đối chiếu với nhật ký buổi đầu. Không nhắc người chơi quay lại ngày hôm sau. Ghi ngày bắt đầu đã xác nhận theo giờ Việt Nam; nếu không chắc thì không đoán từ mã hoặc sự kiện đầu tiên.
 
-| STT | Đã bắt đầu | Mã chơi thử | Thiết bị và cách mở | Đã nhận phiếu | Điểm kẹt | Trạng thái ghép |
+| STT | Ngày bắt đầu (giờ VN) | Mã chơi thử | Thiết bị và cách mở | Đã nhận phiếu | Điểm kẹt | Trạng thái ghép |
 |---|---|---|---|---|---|---|
 | 01 |  |  |  |  |  |  |
 
@@ -125,13 +125,23 @@ select
 from matches;
 ```
 
-Lưu riêng giá trị mảng ở cột `logs` thành `logs.json`, rồi chạy `npm run playtest:report -- logs.json`. Chốt D1 sau khi ngày hôm sau của người cuối cùng trong nhóm đã kết thúc (giờ Việt Nam). Nếu báo cáo sớm hơn, ghi rõ số người còn chờ đủ thời gian. Dùng mẫu sau để trả kết quả tổng hợp cho PO.
+Lưu riêng giá trị mảng ở cột `logs` thành `logs.json`, rồi chạy `npm run playtest:report -- logs.json`. Kết quả mặc định là D1 **quan sát được trong nhật ký**, không kết luận cổng LT-02. Chốt cả nhóm sau khi ngày hôm sau của người cuối cùng đã kết thúc (giờ Việt Nam). Nếu báo cáo sớm hơn, ghi rõ số người còn chờ hoặc chưa rõ ngày bắt đầu, và chưa chốt cả nhóm.
+
+Chỉ bật kết luận trên số liệu nhóm sau khi đối chiếu bảng riêng tại cùng thời điểm:
+
+- `N` = số người đã bắt đầu được xác nhận, đã hết ngày D1 theo lịch Việt Nam, kể cả người chưa ghép mã. Nếu chưa xác nhận đủ số người hoặc ngày bắt đầu, dùng báo cáo mặc định, không điền số ước lượng.
+- `M` = số người trong `N` đã ghép được đúng một nhật ký tin cậy mỗi người; đối chiếu ngày đầu của nhật ký với ngày bắt đầu đã xác nhận. Dùng tệp `logs.json` chỉ gồm đúng `M` nhật ký này; nếu thiếu, trùng hoặc không chắc nhật ký bao quát D1, để người đó vào nhóm chưa rõ, không tính là “không quay lại”. CLI không kiểm tra thay bảng riêng, chỉ kiểm tra số đếm và cửa sổ của nhật ký.
+- Ví dụ **dữ liệu giả**, 10 người đã hết D1, 7 ghép được, 4 quay lại: `npm run playtest:report -- logs.json 2026-11-24T00:00:00+07:00 --d1-closed-starters 10 --d1-matched-starters 7`. Quan sát 4/7, cả nhóm 4/10 đến 7/10, nên **tạm chờ** vì khoảng này cắt cổng LT-02. Chỉ kết luận khi hai đầu khoảng đều đạt hoặc đều dưới cổng.
+
+Tổng thao tác chỉ là tham khảo nếu còn nghi lô sự kiện đã ghi nhưng gửi lại do mất phản hồi. Không tự gộp chỉ vì hai thao tác có cùng dấu thời gian. Dùng mẫu sau để trả kết quả tổng hợp cho PO, không kèm mã người chơi.
 
 ```text
 Khoảng thời gian chơi thử (giờ Việt Nam):
 Đã mời / đã bắt đầu / đã nhận phiếu:
 Mã ghép được / chưa có mã / mã cần đối chiếu:
-D1 (quay lại / đủ điều kiện; tỷ lệ; kết quả so LT-02):
+D1 đã hết / còn mở / chưa rõ ngày bắt đầu:
+D1 quan sát (quay lại / ghép đủ điều kiện; tỷ lệ):
+Nhóm đã hết D1 (đã bắt đầu / ghép được / chưa rõ; khoảng tỷ lệ; so LT-02 hoặc chưa đối chiếu):
 Bước rớt nhiều nhất và điểm kẹt tương ứng trong phiếu:
 Vấn đề theo thiết bị hoặc cách mở:
 Việc đề nghị sửa trước lượt thử tiếp theo:
