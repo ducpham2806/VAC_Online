@@ -14,7 +14,9 @@ export const MAX_EVENTS = 3000;
 /** Ghi xuống máy sau ngần này ms kể từ sự kiện cuối (gom nhiều thao tác một lần ghi). */
 export const SAVE_DEBOUNCE_MS = 2000;
 
-export type PlaytestEventType = 'SESSION' | 'ACTION' | 'LEVEL' | 'TUTORIAL';
+/** Các loại sự kiện của nhật ký chơi thử v1. */
+export const PLAYTEST_EVENT_TYPES = ['SESSION', 'ACTION', 'LEVEL', 'TUTORIAL'] as const;
+export type PlaytestEventType = (typeof PLAYTEST_EVENT_TYPES)[number];
 
 export interface PlaytestEvent {
   /** Thời điểm (ms). */

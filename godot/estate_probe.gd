@@ -71,7 +71,8 @@ var pot: Array[String] = []
 var orders_key := ""
 var intro_page := 0
 ## Cờ hướng dẫn lưu trên máy: đã tự đi, đã bán HTX, ẩn hướng dẫn, tắt tiếng.
-var guide := {"moved": false, "sold": false, "hidden": false, "muted": false}
+const GUIDE_DEFAULTS := {"moved": false, "sold": false, "hidden": false, "muted": false}
+var guide := GUIDE_DEFAULTS.duplicate()
 var guide_step := ""
 var portraits: Dictionary[String, Texture2D] = {}
 var plot_specs: Dictionary[String, Dictionary] = {}
@@ -624,13 +625,14 @@ func _guide_path() -> String:
 
 
 func _load_guide() -> void:
+	guide = GUIDE_DEFAULTS.duplicate()
+	guide_step = ""
 	var path := _guide_path()
-	if path.is_empty() or not FileAccess.file_exists(path):
-		return
-	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-	if saved is Dictionary:
-		for flag: String in guide:
-			guide[flag] = saved.get(flag, false) == true
+	if not path.is_empty() and FileAccess.file_exists(path):
+		var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if saved is Dictionary:
+			for flag: String in guide:
+				guide[flag] = saved.get(flag, false) == true
 	sfx.muted = guide.muted
 
 
@@ -986,11 +988,14 @@ func _refresh(actions: Array, work_point := Vector2.ZERO) -> void:
 	_update_view()
 	var previous_cache: String = transport.cache_path()
 	var reply: Dictionary = await transport.send(actions)
+	var changed_cache: bool = previous_cache != transport.cache_path()
+	if changed_cache:
+		_load_guide()
 	busy = false
 	phaser_queue_pending = reply.get("phaserQueuePending", false) == true and not _browser_is_offline()
 	if reply.has("error"):
 		connected = false
-		if previous_cache != transport.cache_path():
+		if changed_cache:
 			farm.receive({"state": {}})
 		else:
 			farm.freeze()
