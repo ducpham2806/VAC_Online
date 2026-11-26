@@ -7,7 +7,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import { type PlaytestLog, parseLog } from '../../src/game/slice/playtest';
+import { PLAYTEST_EVENT_TYPES, type PlaytestLog, parseLog } from '../../src/game/slice/playtest';
 import { D1_TARGET, playtestReport } from '../../src/game/slice/playtestMetrics';
 
 function fail(message: string): never {
@@ -78,6 +78,18 @@ if (closed !== null && (logs.length !== list.length || logs.some((log, index) =>
 }
 if (closed !== null && new Set(logs.map(({ player }) => player)).size !== logs.length) {
   fail('Có nhật ký trùng. Đối chiếu riêng và chỉ dùng một nhật ký cho mỗi người.');
+}
+if (closed !== null) {
+  const supported = new Set<string>(PLAYTEST_EVENT_TYPES);
+  let unsupported = 0;
+  for (const log of logs) {
+    for (const { type } of log.events) {
+      if (!supported.has(type)) unsupported++;
+    }
+  }
+  if (unsupported > 0) {
+    fail(`Có ${unsupported} sự kiện có loại ngoài quy ước v1. Đối chiếu lại nhật ký, không kết luận LT-02.`);
+  }
 }
 const r = playtestReport(logs, now);
 if (matched !== null && (matched !== r.d1Eligible || matched !== logs.length)) {

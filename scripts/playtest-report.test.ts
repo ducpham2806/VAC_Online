@@ -62,6 +62,42 @@ describe('P1-12 D1 cohort report (synthetic log input)', () => {
     expect(r.stdout + r.stderr).not.toContain(privateMarker);
   });
 
+  it.each(['', 'NOT_A_GAME_EVENT-' + privateMarker])(
+    'rejects an unsupported v1 event before calculating a reconciled D1 verdict (%j)',
+    (type) => {
+      const logs = fixture(2, 0);
+      logs[0].events.push({ t: d1, s: 2, type });
+      const r = run(logs, counts(2, 2));
+      expect(r.status).toBe(2);
+      expect(r.stdout).toBe('');
+      expect(r.stderr).toContain('1 sự kiện có loại ngoài quy ước v1');
+      expect(r.stderr).not.toContain(privateMarker);
+      // Diagnostic-only mode remains available and cannot issue a cohort verdict.
+      const observed = run(logs);
+      expect(observed.status).toBe(0);
+      expect(observed.stdout).toContain('CHƯA ĐỐI CHIẾU NHÓM');
+      expect(observed.stdout).not.toContain('D1 nhóm:');
+      expect(observed.stdout + observed.stderr).not.toContain(privateMarker);
+    },
+  );
+
+  it.each([
+    { type: 'SESSION' },
+    { type: 'ACTION', name: 'PLANT', value: 1 },
+    { type: 'LEVEL', value: 2 },
+    { type: 'TUTORIAL', name: 'MOVE' },
+  ])('keeps D1 evidence from the declared $type event', (ev) => {
+    const logs = fixture(2, 0);
+    const before = run(logs, counts(2, 2));
+    expect(before.status).toBe(0);
+    expect(before.stdout).toContain('D1 nhóm: 0/2–0/2 (0.0%–0.0%) — cổng LT-02 ≥ 50%: CHƯA ĐẠT');
+    logs[0].events.push({ t: d1, s: 2, ...ev });
+    const r = run(logs, counts(2, 2));
+    expect(r.status).toBe(0);
+    expect(r.stdout).toContain('D1 nhóm: 1/2–1/2 (50.0%–50.0%) — cổng LT-02 ≥ 50%: ĐẠT');
+    expect(r.stdout + r.stderr).not.toContain(privateMarker);
+  });
+
   it('does not turn zero closed windows into a verdict', () => {
     const r = run([], counts(0, 0));
     expect(r.status).toBe(0);
