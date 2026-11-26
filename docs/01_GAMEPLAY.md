@@ -99,7 +99,7 @@ Hướng thiết kế: QD-12…15. Các mục AI đề xuất đã được PO d
 
 ### GP-30 · Xưởng và Bếp (QD-08)
 - **Xây xưởng:** xưởng (`MAC_`) xây bằng vàng; mỗi xưởng nấu 1 mẻ một lúc, có hàng chờ. Bản thử: Bếp Củi là một hạng mục điền trang, sửa bằng vàng + vật liệu (KT-18); chạm Bếp đã sửa để mở bảng nấu.
-- **Nồi Đất:** bỏ 2–4 nguyên liệu để khám phá công thức. Công thức đúng được ghi vào Sổ tay món và có thưởng (KT-30); sai thì trả lại nguyên liệu.
+- **Nồi Đất:** bỏ 1–4 nguyên liệu để thử khám phá công thức. Công thức đúng được ghi vào Sổ tay món và có thưởng (KT-30); sai thì trả lại nguyên liệu.
 - **Món ăn:** dùng để ăn hồi ⚡, giao đơn, tặng NPC hoặc bán.
 - **Xưởng nghề** (Đan Lát, Khung Cửi): làm đồ thợ và vật phẩm trang trí từ nông sản.
 - Thời gian, nguyên liệu, giá: dữ liệu (`machineId`, `recipe`).
